@@ -1,6 +1,8 @@
 #!/home/bewinche/anaconda3/envs/py310/bin/python
 # Test space for playing with GUI features.
 
+import enum
+import functools
 import os
 import tkinter
 import tkinter.messagebox
@@ -325,11 +327,11 @@ class PVSettingsWindow(customtkinter.CTkToplevel):
         self.frame.grid(padx=60, pady=20, sticky="")
 
         self.label = customtkinter.CTkLabel(self.frame, text="Solar PV settings")
-        self.label.grid(row=0, column=0, columnspan=3, padx=20, pady=20)
+        self.label.grid(row=0, column=0, columnspan=5, padx=20, pady=20)
 
         self.protocol("WM_DELETE_WINDOW", self.withdraw)
 
-        # Content contained within the window
+        # Azimuthal orientation
         self.azimuthal_bar = customtkinter.CTkProgressBar(master=self.frame)
         self.azimuthal_bar.grid(row=1, column=0, columnspan=3, pady=10, padx=10)
 
@@ -343,9 +345,50 @@ class PVSettingsWindow(customtkinter.CTkToplevel):
         self.azimuthal_slider.grid(row=2, column=0, columnspan=3, pady=10, padx=10)
         self.azimuthal_slider.set(0.5)
 
+        # Tilt
+        self.tilt_bar = customtkinter.CTkProgressBar(
+            master=self.frame, orientation="vertical"
+        )
+        self.tilt_bar.grid(row=0, column=3, pady=10, padx=10)
+
+        self.tilt_slider = customtkinter.CTkSlider(
+            master=self.frame,
+            command=self.tilt_slider_callback,
+            from_=0,
+            to=1,
+            number_of_steps=90,
+            orientation="vertical",
+        )
+        self.tilt_slider.grid(row=0, column=4, pady=10, padx=10)
+        self.tilt_slider.set(0.5)
+
     def azimuthal_slider_callback(self, value):
         self.azimuthal_bar.set(value)
         print(int(value * 360 - 180))
+
+    def tilt_slider_callback(self, value):
+        self.tilt_bar.set(value)
+        print(int(value * 360))
+
+
+class ResourceType(enum.Enum):
+    """
+    Used for differentiating buttons by resource type.
+
+    - ELECTRIC:
+        Represents electric buttons.
+
+    - HOT_WATER:
+        Represents hot-water buttons.
+
+    - COLD_WATER:
+        Represents cold-water buttons.
+
+    """
+
+    ELECTRIC: str = "electric"
+    HOT_WATER: str = "hot_water"
+    COLD_WATER: str = "cold_water"
 
 
 class ScenarioPage(customtkinter.CTkScrollableFrame):
@@ -383,50 +426,72 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             grid_selected.set(not grid_selected.get())
             grid_button.configure(image=grid_images[grid_selected.get()])
 
-        def electric_button_callback():
+        def resource_button_callback(resource_type: ResourceType):
             print("Button click", combobox_1.get())
-            electric_selected.set(not electric_selected.get())
-            electric_button.configure(image=electric_images[electric_selected.get()])
-
-            # If electric loads are enabled, colour these buttons in
-            if electric_selected.get():
-                domestic_button.configure(
-                    image=domestic_images[domestic_selected.get()]
-                )
-                commercial_button.configure(
-                    image=commercial_images[commercial_selected.get()]
-                )
-                public_button.configure(image=public_images[public_selected.get()])
-            else:
-                domestic_button.configure(image=domestic_button_disabled_image)
-                commercial_button.configure(image=commercial_button_disabled_image)
-                public_button.configure(image=public_button_disabled_image)
-
-        def domestic_button_callback():
-            print("Button click", combobox_1.get())
-            # Return if electric loads are not selected
-            if not electric_selected.get():
-                return
-            domestic_selected.set(not domestic_selected.get())
-            domestic_button.configure(image=domestic_images[domestic_selected.get()])
-
-        def commercial_button_callback():
-            print("Button click", combobox_1.get())
-            # Return if electric loads are not selected
-            if not electric_selected.get():
-                return
-            commercial_selected.set(not commercial_selected.get())
-            commercial_button.configure(
-                image=commercial_images[commercial_selected.get()]
+            resource_selected[resource_type].set(
+                not resource_selected[resource_type].get()
+            )
+            resource_buttons[resource_type].configure(
+                image=resource_images[resource_type][
+                    resource_selected[resource_type].get()
+                ]
             )
 
-        def public_button_callback():
+            # If loads are enabled, colour these buttons in
+            if resource_selected[resource_type].get():
+                domestic_buttons[resource_type].configure(
+                    image=domestic_images[domestic_selected[resource_type].get()]
+                )
+                commercial_buttons[resource_type].configure(
+                    image=commercial_images[commercial_selected[resource_type].get()]
+                )
+                public_buttons[resource_type].configure(
+                    image=public_images[public_selected[resource_type].get()]
+                )
+            else:
+                domestic_buttons[resource_type].configure(
+                    image=domestic_button_disabled_image
+                )
+                commercial_buttons[resource_type].configure(
+                    image=commercial_button_disabled_image
+                )
+                public_buttons[resource_type].configure(
+                    image=public_button_disabled_image
+                )
+
+        def domestic_button_callback(resource_type: ResourceType) -> None:
             print("Button click", combobox_1.get())
             # Return if electric loads are not selected
-            if not electric_selected.get():
+            if not resource_selected[resource_type].get():
                 return
-            public_selected.set(not public_selected.get())
-            public_button.configure(image=public_images[public_selected.get()])
+            domestic_selected[resource_type].set(
+                not domestic_selected[resource_type].get()
+            )
+            domestic_buttons[resource_type].configure(
+                image=domestic_images[domestic_selected[resource_type].get()]
+            )
+
+        def commercial_button_callback(resource_type: ResourceType) -> None:
+            print("Button click", combobox_1.get())
+            # Return if electric loads are not selected
+            if not resource_selected[resource_type].get():
+                return
+            commercial_selected[resource_type].set(
+                not commercial_selected[resource_type].get()
+            )
+            commercial_buttons[resource_type].configure(
+                image=commercial_images[commercial_selected[resource_type].get()]
+            )
+
+        def public_button_callback(resource_type: ResourceType) -> None:
+            print("Button click", combobox_1.get())
+            # Return if electric loads are not selected
+            if not resource_selected[resource_type].get():
+                return
+            public_selected[resource_type].set(not public_selected[resource_type].get())
+            public_buttons[resource_type].configure(
+                image=public_images[public_selected[resource_type].get()]
+            )
 
         # frame_1 = customtkinter.CTkScrollableFrame(master=app, width=680, height=680)
         # frame_1.grid(row=15, column=4, columnspan=4, pady=20, padx=60, sticky="")
@@ -530,26 +595,77 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
         )
         grid_button.grid(row=1, column=3, pady=10, padx=10)
 
-        # Demand type selection
-        electric_images: dict[bool, tkinter.PhotoImage] = {
-            True: tkinter.PhotoImage(
-                file=os.path.join("images", "electric_gui_selected_filled.png")
-            ),
-            False: tkinter.PhotoImage(
-                file=os.path.join("images", "electric_gui_selected_outline.png")
-            ),
+        # Resource types selection
+        resource_images: dict[ResourceType, dict[bool, tkinter.PhotoImage]] = {
+            ResourceType.ELECTRIC: {
+                True: tkinter.PhotoImage(
+                    file=os.path.join("images", "electric_gui_selected_filled.png")
+                ),
+                False: tkinter.PhotoImage(
+                    file=os.path.join("images", "electric_gui_selected_outline.png")
+                ),
+            },
+            ResourceType.HOT_WATER: {
+                True: tkinter.PhotoImage(
+                    file=os.path.join("images", "hot_water_gui_selected_filled.png")
+                ),
+                False: tkinter.PhotoImage(
+                    file=os.path.join("images", "hot_water_gui_selected_outline.png")
+                ),
+            },
+            ResourceType.COLD_WATER: {
+                True: tkinter.PhotoImage(
+                    file=os.path.join("images", "cold_water_gui_selected_filled.png")
+                ),
+                False: tkinter.PhotoImage(
+                    file=os.path.join("images", "cold_water_gui_selected_outline.png")
+                ),
+            },
         }
-        electric_selected: customtkinter.BooleanVar = customtkinter.BooleanVar(
-            value=True
-        )
+
+        resource_selected: dict[ResourceType : customtkinter.BooleanVa] = {
+            ResourceType.ELECTRIC: customtkinter.BooleanVar(value=True),
+            ResourceType.HOT_WATER: customtkinter.BooleanVar(value=False),
+            ResourceType.COLD_WATER: customtkinter.BooleanVar(value=False),
+        }
+
         electric_button = customtkinter.CTkButton(
             master=self,
-            command=electric_button_callback,
+            command=functools.partial(resource_button_callback, ResourceType.ELECTRIC),
             fg_color="transparent",
-            image=electric_images[electric_selected.get()],
+            image=resource_images[ResourceType.ELECTRIC][
+                resource_selected[ResourceType.ELECTRIC].get()
+            ],
             text="",
         )
         electric_button.grid(row=3, column=0, pady=10, padx=10, sticky="")
+        hot_water_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(resource_button_callback, ResourceType.HOT_WATER),
+            fg_color="transparent",
+            image=resource_images[ResourceType.HOT_WATER][
+                resource_selected[ResourceType.HOT_WATER].get()
+            ],
+            text="",
+        )
+        hot_water_button.grid(row=4, column=0, pady=10, padx=10, sticky="")
+        cold_water_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(
+                resource_button_callback, ResourceType.COLD_WATER
+            ),
+            fg_color="transparent",
+            image=resource_images[ResourceType.COLD_WATER][
+                resource_selected[ResourceType.COLD_WATER].get()
+            ],
+            text="",
+        )
+        cold_water_button.grid(row=5, column=0, pady=10, padx=10, sticky="")
+        resource_buttons: dict[ResourceType, customtkinter.CTkButton] = {
+            ResourceType.ELECTRIC: electric_button,
+            ResourceType.HOT_WATER: hot_water_button,
+            ResourceType.COLD_WATER: cold_water_button,
+        }
 
         domestic_images: dict[bool, tkinter.PhotoImage] = {
             True: tkinter.PhotoImage(
@@ -562,17 +678,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
         domestic_button_disabled_image: tkinter.PhotoImage = tkinter.PhotoImage(
             file=os.path.join("images", "domestic_gui_disabled.png")
         )
-        domestic_selected: customtkinter.BooleanVar = customtkinter.BooleanVar(
-            value=False
-        )
-        domestic_button = customtkinter.CTkButton(
-            master=self,
-            command=domestic_button_callback,
-            fg_color="transparent",
-            image=domestic_images[domestic_selected.get()],
-            text="",
-        )
-        domestic_button.grid(row=3, column=1, pady=10, padx=10, sticky="")
 
         commercial_images: dict[bool, tkinter.PhotoImage] = {
             True: tkinter.PhotoImage(
@@ -585,17 +690,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
         commercial_button_disabled_image: tkinter.PhotoImage = tkinter.PhotoImage(
             file=os.path.join("images", "commercial_gui_disabled.png")
         )
-        commercial_selected: customtkinter.BooleanVar = customtkinter.BooleanVar(
-            value=False
-        )
-        commercial_button = customtkinter.CTkButton(
-            master=self,
-            command=commercial_button_callback,
-            fg_color="transparent",
-            image=commercial_images[commercial_selected.get()],
-            text="",
-        )
-        commercial_button.grid(row=3, column=2, pady=10, padx=10)
 
         public_images: dict[bool, tkinter.PhotoImage] = {
             True: tkinter.PhotoImage(
@@ -608,17 +702,130 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
         public_button_disabled_image: tkinter.PhotoImage = tkinter.PhotoImage(
             file=os.path.join("images", "public_gui_disabled.png")
         )
-        public_selected: customtkinter.BooleanVar = customtkinter.BooleanVar(
-            value=False
-        )
-        public_button = customtkinter.CTkButton(
+
+        # Domestic buttons
+        domestic_selected: dict[ResourceType, customtkinter.BooleanVar] = {
+            ResourceType.ELECTRIC: customtkinter.BooleanVar(value=False),
+            ResourceType.HOT_WATER: customtkinter.BooleanVar(value=False),
+            ResourceType.COLD_WATER: customtkinter.BooleanVar(value=False),
+        }
+        electric_domestic_button = customtkinter.CTkButton(
             master=self,
-            command=public_button_callback,
+            command=functools.partial(domestic_button_callback, ResourceType.ELECTRIC),
             fg_color="transparent",
-            image=public_images[public_selected.get()],
+            image=domestic_images[domestic_selected[ResourceType.ELECTRIC].get()],
             text="",
         )
-        public_button.grid(row=3, column=3, pady=10, padx=10)
+        electric_domestic_button.grid(row=3, column=1, pady=10, padx=10, sticky="")
+
+        hot_water_domestic_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(domestic_button_callback, ResourceType.HOT_WATER),
+            fg_color="transparent",
+            image=domestic_button_disabled_image,
+            text="",
+        )
+        hot_water_domestic_button.grid(row=4, column=1, pady=10, padx=10, sticky="")
+
+        cold_water_domestic_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(
+                domestic_button_callback, ResourceType.COLD_WATER
+            ),
+            fg_color="transparent",
+            image=domestic_button_disabled_image,
+            text="",
+        )
+        cold_water_domestic_button.grid(row=5, column=1, pady=10, padx=10, sticky="")
+        domestic_buttons: dict[ResourceType, customtkinter.CTkButton] = {
+            ResourceType.ELECTRIC: electric_domestic_button,
+            ResourceType.HOT_WATER: hot_water_domestic_button,
+            ResourceType.COLD_WATER: cold_water_domestic_button,
+        }
+
+        # Commercial buttons
+        commercial_selected: dict[ResourceType, customtkinter.BooleanVar] = {
+            ResourceType.ELECTRIC: customtkinter.BooleanVar(value=False),
+            ResourceType.HOT_WATER: customtkinter.BooleanVar(value=False),
+            ResourceType.COLD_WATER: customtkinter.BooleanVar(value=False),
+        }
+
+        electric_commercial_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(
+                commercial_button_callback, ResourceType.ELECTRIC
+            ),
+            fg_color="transparent",
+            image=commercial_images[commercial_selected[ResourceType.ELECTRIC].get()],
+            text="",
+        )
+        electric_commercial_button.grid(row=3, column=2, pady=10, padx=10)
+
+        hot_water_commercial_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(
+                commercial_button_callback, ResourceType.HOT_WATER
+            ),
+            fg_color="transparent",
+            image=commercial_button_disabled_image,
+            text="",
+        )
+        hot_water_commercial_button.grid(row=4, column=2, pady=10, padx=10)
+
+        cold_water_commercial_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(
+                commercial_button_callback, ResourceType.COLD_WATER
+            ),
+            fg_color="transparent",
+            image=commercial_button_disabled_image,
+            text="",
+        )
+        cold_water_commercial_button.grid(row=5, column=2, pady=10, padx=10)
+        commercial_buttons: dict[ResourceType, customtkinter.CTkButton] = {
+            ResourceType.ELECTRIC: electric_commercial_button,
+            ResourceType.HOT_WATER: hot_water_commercial_button,
+            ResourceType.COLD_WATER: cold_water_commercial_button,
+        }
+
+        # Public buttons
+        public_selected: dict[ResourceType, customtkinter.BooleanVar] = {
+            ResourceType.ELECTRIC: customtkinter.BooleanVar(value=False),
+            ResourceType.HOT_WATER: customtkinter.BooleanVar(value=False),
+            ResourceType.COLD_WATER: customtkinter.BooleanVar(value=False),
+        }
+
+        electric_public_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(public_button_callback, ResourceType.ELECTRIC),
+            fg_color="transparent",
+            image=public_images[public_selected[ResourceType.ELECTRIC].get()],
+            text="",
+        )
+        electric_public_button.grid(row=3, column=3, pady=10, padx=10)
+
+        hot_water_public_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(public_button_callback, ResourceType.HOT_WATER),
+            fg_color="transparent",
+            image=public_button_disabled_image,
+            text="",
+        )
+        hot_water_public_button.grid(row=4, column=3, pady=10, padx=10)
+
+        cold_water_public_button = customtkinter.CTkButton(
+            master=self,
+            command=functools.partial(public_button_callback, ResourceType.COLD_WATER),
+            fg_color="transparent",
+            image=public_button_disabled_image,
+            text="",
+        )
+        cold_water_public_button.grid(row=5, column=3, pady=10, padx=10)
+        public_buttons: dict[ResourceType, customtkinter.CTkButton] = {
+            ResourceType.ELECTRIC: electric_public_button,
+            ResourceType.HOT_WATER: hot_water_public_button,
+            ResourceType.COLD_WATER: cold_water_public_button,
+        }
 
         entry_1 = customtkinter.CTkEntry(master=self, placeholder_text="CTkEntry")
         entry_1.grid(row=6, columnspan=4, column=0, pady=10, padx=10)
