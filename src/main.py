@@ -67,7 +67,7 @@ class SplashScreen(tk.Toplevel):
         self.progress_bar = ttk.Progressbar(
             self, bootstyle=f"{SUCCESS}-striped", mode="determinate"
         )
-        self.progress_bar.pack(pady=20, fill="x")
+        self.progress_bar.pack(pady=20, padx=20, fill="x")
         self.progress_bar.start()
 
         # Disable the in-built minimise, maximise and close buttons.
@@ -184,15 +184,54 @@ class NewLocationFrame(ttk.Frame):
         super().__init__()
 
         self.pack(fill="both", expand=True)
-        self.rowconfigure(0, weight=6)
+
+        self.rowconfigure(0, weight=2)
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
         self.rowconfigure(4, weight=1)
-        self.columnconfigure(0, weight=1)
+        self.rowconfigure(5, weight=1)
+        self.rowconfigure(6, weight=1)
 
-        self.label = ttk.Label(self, text="New location")
-        self.label.grid(row=0, column=0, sticky="news")
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+
+        self.label = ttk.Label(self, text="Create a new location")
+        self.label.grid(row=0, column=0, columnspan=3, pady=10)
+
+        self.new_location_label = ttk.Label(self, text="Location name")
+        self.new_location_label.grid(row=1, column=0, sticky="e")
+
+        self.new_location_entry = ttk.Entry(self, bootstyle="primary")
+        self.new_location_entry.grid(row=1, column=1, padx=10, pady=5, sticky="e", ipadx=80)
+
+        self.latitude_label = ttk.Label(self, text="Latitude")
+        self.latitude_label.grid(row=2, column=0, sticky="e")
+
+        self.latitude_entry = ttk.Entry(self, bootstyle="primary")
+        self.latitude_entry.grid(row=2, column=1, padx=10, pady=5, sticky="e", ipadx=80)
+
+        self.latitude_unit = ttk.Label(self, text="degrees North")
+        self.latitude_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
+
+        self.longitude_label = ttk.Label(self, text="Longitude")
+        self.longitude_label.grid(row=3, column=0, sticky="e")
+
+        self.longitude_entry = ttk.Entry(self, bootstyle="primary")
+        self.longitude_entry.grid(row=3, column=1, padx=10, pady=5, sticky="e", ipadx=80)
+
+        self.longitude_unit = ttk.Label(self, text="degrees East")
+        self.longitude_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
+
+        self.time_zone_label = ttk.Label(self, text="Time zone")
+        self.time_zone_label.grid(row=4, column=0, sticky="e")
+
+        self.time_zone_entry = ttk.Spinbox(self, bootstyle="primary", from_=-13, to=13, increment=0.25, format="%.2f")
+        self.time_zone_entry.grid(row=4, column=1, padx=10, pady=5, sticky="e", ipadx=68)
+
+        self.time_zone_unit = ttk.Label(self, text="hours from UTC")
+        self.time_zone_unit.grid(row=4, column=2, padx=10, pady=5, sticky="w")
 
 
 class App(ttk.Window):
