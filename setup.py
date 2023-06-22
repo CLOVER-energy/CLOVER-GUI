@@ -46,7 +46,8 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        "customtkinter >= 5.1.3",
+        "RangeSlider >= 2021.7.4",
+        "ttkbootstrap >= 1.10.1"
     ],
     package_dir={"": "src"},
     packages=find_packages(where="src"),

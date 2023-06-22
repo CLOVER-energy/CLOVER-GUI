@@ -1,0 +1,2 @@
+RangeSlider>=2021.7.4
+ttkbootstrap>=1.10.1
