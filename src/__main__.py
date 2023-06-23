@@ -128,104 +128,6 @@ class SplashScreen(BaseScreen):
         self.progress_bar["value"] = value
         self.update()
 
-
-class ConfigurationFrame(ttk.Frame):
-    """
-    Represents the configuration frame.
-
-    The configure frame contains toggles for configuration top-level settings for each
-    run.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        # TODO: Add configuration frame widgets and layout
-
-class SimulationFrame(ttk.Frame):
-    """
-    Represents the simulation frame.
-
-    The simulation frame contains the necessary parameters needed to launch a simulation
-    in CLOVER as well as a launch button for initiating the run.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=4)
-        self.columnconfigure(1, weight=1)
-
-        self.start_year = tk.DoubleVar()
-        self.end_year = tk.DoubleVar()
-
-        self.years_slider = RangeSliderH(self, [self.start_year, self.end_year])
-
-        self.years_slider.grid(parent, row=3, column=1, padx=20)
-
-        # TODO: Add configuration frame widgets and layout
-
-class OptimisationFrame(ttk.Frame):
-    """
-    Represents the optimisation frame.
-
-    The optimisation frame contains the launch parameters needed for launching an
-    optimisation in CLOVER as well as a launch button for initiating the run.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        # TODO: Add configuration frame widgets and layout
-
-class ConfigurationScreen(ttk.Frame):
-    """
-    Represents the configuration screen.
-
-    The configure screen contains tabbed information for configuring the screen.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(
-        self,
-    ) -> None:
-        """
-        Instantiate a :class:`ConfigureFrame` instance.
-
-        """
-
-        super().__init__()
-
-        self.pack(fill="both", expand=True)
-
-        self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
-
-        style = ttk.Style()
-        style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 4))
-
-        self.configuration_frame = ConfigurationFrame(self.configuration_notebook)
-        self.configuration_notebook.add(self.configuration_frame, text="Configure")
-
-        self.simulation_frame = ConfigurationFrame(self.configuration_notebook)
-        self.configuration_notebook.add(self.simulation_frame, text="Simulate")
-
-        self.optimisation_frame = ConfigurationFrame(self.configuration_notebook)
-        self.configuration_notebook.add(self.optimisation_frame, text="Optimise")
-
-        self.configuration_notebook.pack(fill="both", expand=True, padx=60, pady=40)
-
 class MainMenuScreen(ttk.Frame):
     """
     Represents the main-menu frame.
@@ -330,29 +232,31 @@ class NewLocationScreen(ttk.Frame):
 
         """
 
+        # Instntiate the parent class
         super().__init__()
 
         self.pack(fill="both", expand=True)
 
-        self.rowconfigure(0, weight=2)
-        self.rowconfigure(1, weight=1)
+        # Set the physical distance weights of the rows and columns
+        self.rowconfigure(0, weight=2)  # First row has the header
+        self.rowconfigure(1, weight=1)  # These rows have entries
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
         self.rowconfigure(4, weight=1)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(6, weight=1)
 
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)  # First three have forward, home, back
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
-        self.columnconfigure(3, weight=4)
+        self.columnconfigure(3, weight=4)  # These three have the entries
         self.columnconfigure(4, weight=4)
         self.columnconfigure(5, weight=4)
 
         self.label = ttk.Label(
             self, text="Create a new location", style=f"{PRIMARY}", font=80
         )
-        self.label.grid(row=0, column=3, columnspan=3, pady=10)
+        self.label.grid(row=0, column=0, columnspan=6, pady=10)
 
         self.new_location_label = ttk.Label(self, text="Location name")
         self.new_location_label.grid(row=1, column=3, sticky="e")

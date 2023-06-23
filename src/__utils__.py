@@ -41,6 +41,7 @@ class BaseScreen(tk.Toplevel, abc.ABC):
         applicable.
 
         :param: show_navigation
-            
+
         """
+
         return super().__init_subclass__()
