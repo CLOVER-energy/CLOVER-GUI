@@ -40,7 +40,7 @@ class SplashScreen(tk.Toplevel):
 
         """
 
-        tk.Toplevel(self, parent)
+        tk.Toplevel.__init__(self, parent)
 
         self.title("CLOVER-GUI Splash")
         self.background_image = tk.PhotoImage(

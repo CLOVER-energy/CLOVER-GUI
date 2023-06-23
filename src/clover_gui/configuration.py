@@ -13,6 +13,9 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from ttkbootstrap.constants import *
+from ttkbootstrap.scrolled import *
+
 from .__utils__ import BaseScreen
 
 __all__ = "ConfigurationScreen"

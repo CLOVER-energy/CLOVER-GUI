@@ -9,6 +9,8 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
+import os
+
 import tkinter as tk
 
 import ttkbootstrap as ttk
@@ -26,7 +28,7 @@ CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
 
 # Images directory:
 #   The directory containing the images to display.
-IMAGES_DIRECTORY: str = "images"
+IMAGES_DIRECTORY: str = os.path.join("clover_gui", "images")
 
 # Main-window geometry:
 #   The geometry to use for the main window, specified in width and height.
