@@ -9,7 +9,6 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
-import abc
 import tkinter as tk
 
 import ttkbootstrap as ttk
@@ -34,7 +33,7 @@ IMAGES_DIRECTORY: str = "images"
 MAIN_WINDOW_GEOMETRY: str = "1220x800"
 
 
-class BaseScreen(ttk.Frame, abc.ABC):
+class BaseScreen(ttk.Frame):
     """
     Abstract class that represents a screen within the CLOVER-GUI application.
 

@@ -10,15 +10,12 @@
 ########################################################################################
 
 import os
-import sys
 import tkinter as tk
-import time
 
 from typing import Callable
 
 import ttkbootstrap as ttk
 
-from RangeSlider.RangeSlider import RangeSliderH
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -266,6 +263,31 @@ class App(ttk.Window):
 
         # Setup the CLOVER-GUI application.
         self.title("CLOVER")
+
+        # Setup the menubar
+        self.menu_bar = ttk.Menu()
+
+        # File menu
+        self.file_menu = ttk.Menu(self.menu_bar, tearoff=0)
+        self.file_menu.add_command(label="Open", command=open_configuration)
+        self.file_menu.add_command(label="Save", command=save_configuration)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Exit", command=self.quit)
+        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
+
+        # Edit menu
+        self.edit_menu = ttk.Menu(self.menu_bar, tearoff=0)
+        self.edit_menu.add_command(label="Preferences", command=open_preferences_window)
+        self.menu_bar.add_cascade(label="Edit", menu=self.edit_menu)
+
+        # Help menu
+        self.help_menu = ttk.Menu(self.menu_bar, tearoff=0)
+        self.help_menu.add_command(label="Help", command=open_help_window)
+        self.menu_bar.add_cascade(label="Help", menu=self.help_menu)
+
+        self.config(menu=self.menu_bar)
+        self.splash.set_progress_bar_progerss(20)
+
         self.setup()
 
         # Show the window once setup is complete.
@@ -285,9 +307,9 @@ class App(ttk.Window):
         # Compute the x and y coordinates of the window based on the size of the screen.
         width = self.winfo_width()
         height = self.winfo_height()
-        x = max((self.winfo_screenwidth() // 2) - (width // 2), 0)
-        y = max((self.winfo_screenheight() // 2) - (height // 2), 0)
-        self.geometry(f"+{x}+{y}")
+        x_coordinate = max((self.winfo_screenwidth() // 2) - (width // 2), 0)
+        y_coordinate = max((self.winfo_screenheight() // 2) - (height // 2), 0)
+        self.geometry(f"+{x_coordinate}+{y_coordinate}")
 
     def create_new_location(self) -> None:
         """Called when the create-location button is depressed."""
@@ -319,50 +341,25 @@ class App(ttk.Window):
 
         # Menu-bar
         self.setup_menubar()
-        self.splash.set_progress_bar_progerss(25)
+        self.splash.set_progress_bar_progerss(40)
 
         # Main-menu
         self.main_menu_frame = MainMenuScreen(
             self.splash, self.open_new_location_frame, self.data_directory
         )
-        self.splash.set_progress_bar_progerss(50)
+        self.splash.set_progress_bar_progerss(60)
 
         # New-location
         self.new_location_frame = NewLocationScreen(
             self.splash, self.create_new_location
         )
         self.new_location_frame.pack_forget()
-        self.splash.set_progress_bar_progerss(75)
+        self.splash.set_progress_bar_progerss(80)
 
         # Configuration
         self.configuration_screen = ConfigurationScreen()
         self.splash.set_progress_bar_progerss(100)
         self.configuration_screen.pack_forget()
-
-    def setup_menubar(self) -> None:
-        """Setup the menu bar."""
-
-        self.menu_bar = ttk.Menu()
-
-        # File menu
-        self.file_menu = ttk.Menu(self.menu_bar, tearoff=0)
-        self.file_menu.add_command(label="Open", command=open_configuration)
-        self.file_menu.add_command(label="Save", command=save_configuration)
-        self.file_menu.add_separator()
-        self.file_menu.add_command(label="Exit", command=self.quit)
-        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
-
-        # Edit menu
-        self.edit_menu = ttk.Menu(self.menu_bar, tearoff=0)
-        self.edit_menu.add_command(label="Preferences", command=open_preferences_window)
-        self.menu_bar.add_cascade(label="Edit", menu=self.edit_menu)
-
-        # Help menu
-        self.help_menu = ttk.Menu(self.menu_bar, tearoff=0)
-        self.help_menu.add_command(label="Help", command=open_help_window)
-        self.menu_bar.add_cascade(label="Help", menu=self.help_menu)
-
-        self.config(menu=self.menu_bar)
 
     def destroy_splash(self):
         self.splash.destroy()
