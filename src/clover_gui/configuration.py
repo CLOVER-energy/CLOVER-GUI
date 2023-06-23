@@ -70,12 +70,14 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         self.columnconfigure(0, weight=1)  # First three have forward, home, back
         self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
 
         self.start_year = tk.DoubleVar()
         self.end_year = tk.DoubleVar()
 
-        self.end_year_slider = ttk.Scale(self, bootstyle="danger")
-        self.end_year_slider.grid(row=3, column=1, padx=20)
+        # self.end_year_slider = ttk.Scale(self, bootstyle="danger")
+        # self.end_year_slider.grid(row=3, column=1, padx=20)
         self.checkbox_var = tk.BooleanVar()
 
         self.pv_size_label = ttk.Label(self, text="PV System Size")
