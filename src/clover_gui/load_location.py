@@ -84,8 +84,9 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         self.progress_bar = ttk.Progressbar(
             self, bootstyle=f"{PRIMARY}-striped", mode="determinate"
         )
-        self.progress_bar.grid(row=3, column=0, columnspan=2, pady=20, padx=20, sticky="ew")
-
+        self.progress_bar.grid(
+            row=3, column=0, columnspan=2, pady=20, padx=20, sticky="ew"
+        )
 
     def populate_available_locations(self) -> None:
         """Populates available locations for selection."""
@@ -134,7 +135,6 @@ class LoadLocationWindow(tk.Toplevel):
         """
 
         self.load_location_frame.progress_bar.start()
-
 
     def set_progress_bar_progerss(self, value) -> None:
         """

@@ -96,7 +96,10 @@ class MainMenuScreen(BaseScreen, show_navigation=False):
         )
 
         self.load_location_button = ttk.Button(
-            self, text="Load location", bootstyle=f"{PRIMARY}-outline", command=load_location_callback
+            self,
+            text="Load location",
+            bootstyle=f"{PRIMARY}-outline",
+            command=load_location_callback,
         )
         self.load_location_button.grid(
             row=1, column=1, padx=5, pady=5, ipadx=80, ipady=20

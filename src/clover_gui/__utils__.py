@@ -27,6 +27,10 @@ __all__ = (
 #   The name of the CLOVER splash-screen image.
 CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
 
+# Details geometry:
+#   The geometry to use for the details window.
+DETAILS_GEOMETRY: str = "1080x720"
+
 # Images directory:
 #   The directory containing the images to display.
 IMAGES_DIRECTORY: str = os.path.join("clover_gui", "images")

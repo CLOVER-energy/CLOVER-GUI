@@ -20,6 +20,7 @@ from .__utils__ import (
     MAIN_WINDOW_GEOMETRY,
 )
 from .configuration import ConfigurationScreen
+from .details import DetailsWindow
 from .load_location import LoadLocationWindow
 from .main_menu import MainMenuScreen
 from .new_location import NewLocationScreen
@@ -169,6 +170,15 @@ class App(ttk.Window):
         self.main_menu_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
 
+    def open_details_window(self) -> None:
+        """Opens the details window."""
+
+        if self.details_window is None:
+            self.details_window: DetailsWindow | None = DetailsWindow()
+        else:
+            self.details_window.deiconify()
+        self.details_window.mainloop()
+
     def open_new_location_frame(self) -> None:
         """Opens the new-location frame."""
 
@@ -179,7 +189,9 @@ class App(ttk.Window):
         """Open the load-location window."""
 
         if self.load_location_window is None:
-            self.load_location_window: LoadLocationWindow | None = LoadLocationWindow(self.load_location)
+            self.load_location_window: LoadLocationWindow | None = LoadLocationWindow(
+                self.load_location
+            )
         else:
             self.load_location_window.deiconify()
         self.load_location_window.mainloop()
@@ -192,7 +204,9 @@ class App(ttk.Window):
 
         # Main-menu
         self.main_menu_frame = MainMenuScreen(
-             self.data_directory, self.open_load_location_window, self.open_new_location_frame,
+            self.data_directory,
+            self.open_load_location_window,
+            self.open_new_location_frame,
         )
         self.splash.set_progress_bar_progerss(50)
 
@@ -207,9 +221,12 @@ class App(ttk.Window):
         self.load_location_window = None
 
         # Configuration
-        self.configuration_screen = ConfigurationScreen()
+        self.configuration_screen = ConfigurationScreen(self.open_details_window)
         self.splash.set_progress_bar_progerss(100)
         self.configuration_screen.pack_forget()
+
+        # Details
+        self.details_window = None
 
     def destroy_splash(self):
         self.splash.destroy()
