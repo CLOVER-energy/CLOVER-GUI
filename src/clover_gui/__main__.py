@@ -14,7 +14,7 @@ import sys
 import tkinter as tk
 import time
 
-from types import FunctionType
+from typing import Callable
 
 import ttkbootstrap as ttk
 
@@ -22,19 +22,9 @@ from RangeSlider.RangeSlider import RangeSliderH
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
-from .__utils__ import BaseScreen
-
-# CLOVER splash-screen image:
-#   The name of the CLOVER splash-screen image.
-CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
-
-# Images directory:
-#   The directory containing the images to display.
-IMAGES_DIRECTORY: str = "images"
-
-# Main-window geometry:
-#   The geometry to use for the main window, specified in width and height.
-MAIN_WINDOW_GEOMETRY: str = "1220x800"
+from .__utils__ import BaseScreen, CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY,  MAIN_WINDOW_GEOMETRY
+from .configuration import ConfigurationScreen
+from .splash_screen import SplashScreen
 
 
 # All-purpose callback commands
@@ -72,63 +62,7 @@ def open_help_window() -> None:
     pass
 
 
-# Screens
-class SplashScreen(BaseScreen):
-    """
-    Represents a splash screen.
-
-    """
-
-    def __init__(self, parent, data_directory: str) -> None:
-        """
-        Instantiate the :class:`SplashScreen` instance.
-
-        :param: parent
-            The parent screen.
-
-        :param: data_directory
-            The path to the data directory.
-
-        """
-
-        tk.Toplevel(self, parent)
-
-        self.title("CLOVER-GUI Splash")
-        self.background_image = tk.PhotoImage(
-            file=os.path.join(
-                data_directory, IMAGES_DIRECTORY, CLOVER_SPLASH_SCREEN_IMAGE
-            )
-        )
-        self.background_image = self.background_image.subsample(2)
-        self.splash_label = tk.Label(self, image=self.background_image)
-        self.splash_label.pack()
-
-        # Create an updatable progress bar.
-        self.progress_bar = ttk.Progressbar(
-            self, bootstyle=f"{SUCCESS}-striped", mode="determinate"
-        )
-        self.progress_bar.pack(pady=20, padx=20, fill="x")
-        self.progress_bar.start()
-
-        # Disable the in-built minimise, maximise and close buttons.
-        self.overrideredirect(True)
-
-        # Required to make the splash screen visible.
-        self.update()
-
-    def set_progress_bar_progerss(self, value) -> None:
-        """
-        Sets the value of the progress bar.
-
-        :param: value
-            The value to use for setting the progress bar position.
-
-        """
-
-        self.progress_bar["value"] = value
-        self.update()
-
-class MainMenuScreen(ttk.Frame):
+class MainMenuScreen(BaseScreen, show_navigation=False):
     """
     Represents the main-menu frame.
 
@@ -155,7 +89,7 @@ class MainMenuScreen(ttk.Frame):
     def __init__(
         self,
         splash_screen: SplashScreen,
-        new_location_callback: FunctionType,
+        new_location_callback: Callable,
         data_directory: str,
     ) -> None:
         """
@@ -208,7 +142,7 @@ class MainMenuScreen(ttk.Frame):
         )
 
 
-class NewLocationScreen(ttk.Frame):
+class NewLocationScreen(BaseScreen, show_navigation=True):
     """
     Represents the new-location frame.
 
@@ -219,7 +153,7 @@ class NewLocationScreen(ttk.Frame):
     """
 
     def __init__(
-        self, splash_screen: SplashScreen, create_location_callback: FunctionType
+        self, splash_screen: SplashScreen, create_location_callback: Callable
     ) -> None:
         """
         Instantiate a :class:`MainMenuFrame` instance.
@@ -361,14 +295,13 @@ class App(ttk.Window):
         self.new_location_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
 
-
     @property
     def data_directory(self) -> str:
         """The path to the data directory."""
 
         if self._data_directory is None:
             # self._data_directory: str | None = os.path.dirname(sys.executable)
-            self._data_directory: str = "src"
+            self._data_directory = "src"
 
         return self._data_directory
 

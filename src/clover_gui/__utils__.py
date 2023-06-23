@@ -12,11 +12,34 @@
 import abc
 import tkinter as tk
 
-__all__ = ("BaseScreen")
+import ttkbootstrap as ttk
 
-class BaseScreen(tk.Toplevel, abc.ABC):
+__all__ = (
+    "BaseScreen",
+    "CLOVER_SPLASH_SCREEN_IMAGE",
+    "IMAGES_DIRECTORY",
+    "MAIN_WINDOW_GEOMETRY",
+)
+
+# CLOVER splash-screen image:
+#   The name of the CLOVER splash-screen image.
+CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
+
+# Images directory:
+#   The directory containing the images to display.
+IMAGES_DIRECTORY: str = "images"
+
+# Main-window geometry:
+#   The geometry to use for the main window, specified in width and height.
+MAIN_WINDOW_GEOMETRY: str = "1220x800"
+
+
+class BaseScreen(ttk.Frame, abc.ABC):
     """
     Abstract class that represents a screen within the CLOVER-GUI application.
+
+    .. attribute:: show_navigation
+        Whether to show the navigation buttons.
 
     """
 
@@ -30,10 +53,7 @@ class BaseScreen(tk.Toplevel, abc.ABC):
 
     _backward_journey: list = []
     _forward_journey: list = []
-
-    def __init__(self, parent) -> None:
-        """Instnatiate the screen."""
-        tk.Toplevel(self, parent)
+    show_navigation: bool
 
     def __init_subclass__(cls, show_navigation: bool) -> None:
         """
@@ -43,5 +63,7 @@ class BaseScreen(tk.Toplevel, abc.ABC):
         :param: show_navigation
 
         """
+
+        cls.show_navigation = show_navigation
 
         return super().__init_subclass__()

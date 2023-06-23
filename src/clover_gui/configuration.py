@@ -9,6 +9,13 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
+import tkinter as tk
+
+import ttkbootstrap as ttk
+
+from .__utils__ import BaseScreen
+
+__all__ = "ConfigurationScreen"
 
 
 class ConfigurationFrame(ttk.Frame):
@@ -26,6 +33,7 @@ class ConfigurationFrame(ttk.Frame):
         super().__init__(parent)
 
         # TODO: Add configuration frame widgets and layout
+
 
 class SimulationFrame(ttk.Frame):
     """
@@ -48,11 +56,10 @@ class SimulationFrame(ttk.Frame):
         self.start_year = tk.DoubleVar()
         self.end_year = tk.DoubleVar()
 
-        self.years_slider = RangeSliderH(self, [self.start_year, self.end_year])
-
-        self.years_slider.grid(parent, row=3, column=1, padx=20)
+        # self.years_slider.grid(parent, row=3, column=1, padx=20)
 
         # TODO: Add configuration frame widgets and layout
+
 
 class OptimisationFrame(ttk.Frame):
     """
@@ -70,7 +77,8 @@ class OptimisationFrame(ttk.Frame):
 
         # TODO: Add configuration frame widgets and layout
 
-class ConfigurationScreen(ttk.Frame):
+
+class ConfigurationScreen(BaseScreen, show_navigation=True):
     """
     Represents the configuration screen.
 
