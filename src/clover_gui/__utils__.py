@@ -35,6 +35,10 @@ IMAGES_DIRECTORY: str = os.path.join("clover_gui", "images")
 #   The geometry to use for the load-location window, specified in width and height.
 LOAD_LOCATION_GEOMETRY: str = "800x600"
 
+# Locations directory:
+#   The name of the locations directory.
+LOCATIONS_DIRECTORY: str = "locations"
+
 # Main-window geometry:
 #   The geometry to use for the main window, specified in width and height.
 MAIN_WINDOW_GEOMETRY: str = "1220x800"

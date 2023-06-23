@@ -40,17 +40,17 @@ class SplashScreenWindow(tk.Toplevel):
 
         """
 
-        super().__init__(parent)
+        tk.Toplevel.__init__(self, parent)
 
         self.title("CLOVER-GUI Splash")
-        background_image = ttk.PhotoImage(
+        self.background_image = tk.PhotoImage(
             file=os.path.join(
                 data_directory, IMAGES_DIRECTORY, CLOVER_SPLASH_SCREEN_IMAGE
             )
         )
-        self.background_image = background_image.subsample(2)
-        self.splash_label = ttk.Label(self, image=self.background_image)
-        self.splash_label.pack(fill="both", expand=True)
+        self.background_image = self.background_image.subsample(2)
+        self.splash_label = tk.Label(self, image=self.background_image)
+        self.splash_label.pack()
 
         # Create an updatable progress bar.
         self.progress_bar = ttk.Progressbar(

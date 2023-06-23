@@ -9,6 +9,7 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
+import threading
 import time
 import ttkbootstrap as ttk
 
@@ -70,17 +71,17 @@ class App(ttk.Window):
         """Instantiate the CLOVER-GUI main app window."""
 
         # Set the theme and styles
-        ttk.Window.__init__(self)
+        super().__init__()
         self.theme = "journal"
 
         # Set attributes
         self._data_directory: str | None = None
 
-        # Display the splash screen whilst loading
+        # Setup the CLOVER-GUI application.
         self.withdraw()
         self.splash = SplashScreenWindow(self, self.data_directory)
 
-        # Setup the CLOVER-GUI application.
+        # Display the splash screen whilst loading
         self.title("CLOVER")
 
         # Setup the menubar

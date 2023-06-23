@@ -9,6 +9,7 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
+import os
 import tkinter as tk
 
 from typing import Callable
@@ -19,7 +20,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 
-from .__utils__ import BaseScreen, LOAD_LOCATION_GEOMETRY
+from .__utils__ import BaseScreen, LOAD_LOCATION_GEOMETRY, LOCATIONS_DIRECTORY
 
 __all__ = "LoadLocationWindow"
 
@@ -70,9 +71,11 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
             row=1, column=1, padx=10, pady=5, sticky="w", ipadx=80
         )
 
+        self.populate_available_locations()
+
         self.load_button = ttk.Button(
             self,
-            text="Create",
+            text="Load",
             bootstyle=f"{PRIMARY}-outline",
             command=load_location_callback,
         )
@@ -82,6 +85,15 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
             self, bootstyle=f"{PRIMARY}-striped", mode="determinate"
         )
         self.progress_bar.grid(row=3, column=0, columnspan=2, pady=20, padx=20, sticky="ew")
+
+
+    def populate_available_locations(self) -> None:
+        """Populates available locations for selection."""
+
+        if not os.path.isdir(LOCATIONS_DIRECTORY):
+            return
+
+        self.load_location_entry["values"] = os.listdir(LOCATIONS_DIRECTORY)
 
 
 class LoadLocationWindow(tk.Toplevel):
