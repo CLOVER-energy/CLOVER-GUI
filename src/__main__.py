@@ -22,6 +22,8 @@ from RangeSlider.RangeSlider import RangeSliderH
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
+from .__utils__ import BaseScreen
+
 # CLOVER splash-screen image:
 #   The name of the CLOVER splash-screen image.
 CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
@@ -71,7 +73,7 @@ def open_help_window() -> None:
 
 
 # Screens
-class SplashScreen(tk.Toplevel):
+class SplashScreen(BaseScreen):
     """
     Represents a splash screen.
 
@@ -89,7 +91,7 @@ class SplashScreen(tk.Toplevel):
 
         """
 
-        tk.Toplevel.__init__(self, parent)
+        tk.Toplevel(self, parent)
 
         self.title("CLOVER-GUI Splash")
         self.background_image = tk.PhotoImage(
