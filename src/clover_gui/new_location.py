@@ -20,7 +20,7 @@ from ttkbootstrap.scrolled import *
 
 
 from .__utils__ import BaseScreen
-from .splash_screen import SplashScreen
+from .splash_screen import SplashScreenWindow
 
 
 class NewLocationScreen(BaseScreen, show_navigation=True):
@@ -34,10 +34,10 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
     """
 
     def __init__(
-        self, splash_screen: SplashScreen, create_location_callback: Callable
+        self, splash_screen: SplashScreenWindow, create_location_callback: Callable
     ) -> None:
         """
-        Instantiate a :class:`MainMenuFrame` instance.
+        Instantiate a :class:`NewLocationScreen` instance.
 
         :param: splash_screen
             The :class:`SplashScreen` being displayed.
@@ -69,14 +69,14 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.columnconfigure(5, weight=4)
 
         self.label = ttk.Label(
-            self, text="Create a new location", style=f"{PRIMARY}", font=80
+            self, text="Create a new location", style=SUCCESS, font=80
         )
         self.label.grid(row=0, column=0, columnspan=6, pady=10)
 
         self.new_location_label = ttk.Label(self, text="Location name")
         self.new_location_label.grid(row=1, column=3, sticky="e")
 
-        self.new_location_entry = ttk.Entry(self, bootstyle="primary")
+        self.new_location_entry = ttk.Entry(self, bootstyle=SUCCESS)
         self.new_location_entry.grid(
             row=1, column=4, padx=10, pady=5, sticky="e", ipadx=80
         )
@@ -84,7 +84,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.latitude_label = ttk.Label(self, text="Latitude")
         self.latitude_label.grid(row=2, column=3, sticky="e")
 
-        self.latitude_entry = ttk.Entry(self, bootstyle="primary")
+        self.latitude_entry = ttk.Entry(self, bootstyle=SUCCESS)
         self.latitude_entry.grid(row=2, column=4, padx=10, pady=5, sticky="e", ipadx=80)
 
         self.latitude_unit = ttk.Label(self, text="degrees North")
@@ -93,7 +93,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.longitude_label = ttk.Label(self, text="Longitude")
         self.longitude_label.grid(row=3, column=3, sticky="e")
 
-        self.longitude_entry = ttk.Entry(self, bootstyle="primary")
+        self.longitude_entry = ttk.Entry(self, bootstyle=SUCCESS)
         self.longitude_entry.grid(
             row=3, column=4, padx=10, pady=5, sticky="e", ipadx=80
         )
@@ -105,7 +105,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.time_zone_label.grid(row=4, column=3, sticky="e")
 
         self.time_zone_entry = ttk.Spinbox(
-            self, bootstyle="primary", from_=-13, to=13, increment=0.25, format="%.2f"
+            self, bootstyle=SUCCESS, from_=-13, to=13, increment=0.25, format="%.2f"
         )
         self.time_zone_entry.grid(
             row=4, column=4, padx=10, pady=5, sticky="e", ipadx=68
@@ -117,7 +117,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.create_location_button = ttk.Button(
             self,
             text="Create",
-            bootstyle=f"{PRIMARY}-outline",
+            bootstyle=f"{SUCCESS}-outline",
             command=create_location_callback,
         )
         self.create_location_button.grid(

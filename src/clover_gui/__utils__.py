@@ -19,6 +19,7 @@ __all__ = (
     "BaseScreen",
     "CLOVER_SPLASH_SCREEN_IMAGE",
     "IMAGES_DIRECTORY",
+    "LOAD_LOCATION_GEOMETRY",
     "MAIN_WINDOW_GEOMETRY",
 )
 
@@ -29,6 +30,10 @@ CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
 # Images directory:
 #   The directory containing the images to display.
 IMAGES_DIRECTORY: str = os.path.join("clover_gui", "images")
+
+# Load-location geometry:
+#   The geometry to use for the load-location window, specified in width and height.
+LOAD_LOCATION_GEOMETRY: str = "800x600"
 
 # Main-window geometry:
 #   The geometry to use for the main window, specified in width and height.

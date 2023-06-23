@@ -20,7 +20,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 from .__utils__ import BaseScreen, CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY
-from .splash_screen import SplashScreen
+from .splash_screen import SplashScreenWindow
 
 
 class MainMenuScreen(BaseScreen, show_navigation=False):
@@ -49,21 +49,21 @@ class MainMenuScreen(BaseScreen, show_navigation=False):
 
     def __init__(
         self,
-        splash_screen: SplashScreen,
-        new_location_callback: Callable,
         data_directory: str,
+        load_location_callback: Callable,
+        new_location_callback: Callable,
     ) -> None:
         """
         Instantiate a :class:`MainMenuFrame` instance.
 
-        :param: splash_screen
-            The splash screen, passed in to update the progress bar if necessary.
+        :param: data_directory
+            The name of the data directory to use.
+
+        :param: load_location_callback
+            The callback function to use when the load-location button is pressed.
 
         :param: new_location_callback
             The callback function to use when the new-location button is pressed.
-
-        :param: data_directory
-            The name of the data directory to use.
 
         """
 
@@ -96,7 +96,7 @@ class MainMenuScreen(BaseScreen, show_navigation=False):
         )
 
         self.load_location_button = ttk.Button(
-            self, text="Load location", bootstyle=f"{PRIMARY}-outline"
+            self, text="Load location", bootstyle=f"{PRIMARY}-outline", command=load_location_callback
         )
         self.load_location_button.grid(
             row=1, column=1, padx=5, pady=5, ipadx=80, ipady=20

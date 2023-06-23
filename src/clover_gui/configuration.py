@@ -35,7 +35,7 @@ class ConfigurationFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.label = ttk.Label(self, text = "Configuration frame")
+        self.label = ttk.Label(self, text="Configuration frame")
         self.label.grid(row=0, column=0)
 
         # TODO: Add configuration frame widgets and layout
@@ -112,13 +112,17 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(0, weight=1)
 
         self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
-        self.configuration_notebook.grid(row=0, column=0, sticky="nsew", padx=60, pady=40)  # Use grid
+        self.configuration_notebook.grid(
+            row=0, column=0, sticky="nsew", padx=60, pady=40
+        )  # Use grid
 
         style = ttk.Style()
         style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 4))
 
         self.configuration_frame = ConfigurationFrame(self.configuration_notebook)
-        self.configuration_notebook.add(self.configuration_frame, text="Configure", sticky="news")
+        self.configuration_notebook.add(
+            self.configuration_frame, text="Configure", sticky="news"
+        )
 
         self.simulation_frame = SimulationFrame(self.configuration_notebook)
         self.configuration_notebook.add(self.simulation_frame, text="Simulate")
