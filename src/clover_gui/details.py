@@ -407,9 +407,7 @@ class BatteryFrame(ttk.Frame):
         self.leakage_entry = ttk.Entry(
             self, bootstyle=WARNING, textvariable=self.leakage
         )
-        self.leakage_entry.grid(
-            row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=80
-        )
+        self.leakage_entry.grid(row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
         self.leakage_unit = ttk.Label(self, text="% / hour")
         self.leakage_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
@@ -515,9 +513,7 @@ class BatteryFrame(ttk.Frame):
             row=9, column=0, padx=10, pady=5, sticky="w"
         )
 
-        self.lifetime_capacity_loss = ttk.DoubleVar(
-            self, 0, "lifetime_capacity_loss"
-        )
+        self.lifetime_capacity_loss = ttk.DoubleVar(self, 0, "lifetime_capacity_loss")
 
         self.lifetime_capacity_loss_unit = ttk.Label(self, text=f"  0%")
         self.lifetime_capacity_loss_unit.grid(
@@ -548,7 +544,9 @@ class BatteryFrame(ttk.Frame):
 
         # C-rate discharging
         self.c_rate_discharging_label = ttk.Label(self, text="C-rate discharging")
-        self.c_rate_discharging_label.grid(row=10, column=0, padx=10, pady=5, sticky="w")
+        self.c_rate_discharging_label.grid(
+            row=10, column=0, padx=10, pady=5, sticky="w"
+        )
 
         self.c_rate_discharging = ttk.DoubleVar(self, 0, "c_rate_discharging")
         self.c_rate_discharging_entry = ttk.Entry(
@@ -581,12 +579,8 @@ class BatteryFrame(ttk.Frame):
         self.cost_label.grid(row=12, column=0, padx=10, pady=5, sticky="w")
 
         self.cost = ttk.DoubleVar(self, 0, "cost")
-        self.cost_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.cost
-        )
-        self.cost_entry.grid(
-            row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80
-        )
+        self.cost_entry = ttk.Entry(self, bootstyle=WARNING, textvariable=self.cost)
+        self.cost_entry.grid(row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
         self.cost_unit = ttk.Label(self, text="USD ($)")
         self.cost_unit.grid(row=12, column=2, padx=10, pady=5, sticky="w")
@@ -670,7 +664,9 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.annual_emissions_decrease_unit = ttk.Label(self, text="% / year")
-        self.annual_emissions_decrease_unit.grid(row=17, column=2, padx=10, pady=5, sticky="w")
+        self.annual_emissions_decrease_unit.grid(
+            row=17, column=2, padx=10, pady=5, sticky="w"
+        )
 
         # TODO: Add configuration frame widgets and layout
 
