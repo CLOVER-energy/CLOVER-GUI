@@ -81,32 +81,80 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             row=1, column=4, padx=10, pady=5, sticky="e", ipadx=80
         )
 
+        # Latitude
         self.latitude_label = ttk.Label(self, text="Latitude")
-        self.latitude_label.grid(row=2, column=3, sticky="e")
+        self.latitude_label.grid(row=2, column=3, sticky="e", padx=10, pady=5)
 
-        self.latitude_entry = ttk.Entry(self, bootstyle=SUCCESS)
-        self.latitude_entry.grid(row=2, column=4, padx=10, pady=5, sticky="e", ipadx=80)
+        self.latitude = ttk.DoubleVar(self, 0, "latitude")
 
-        self.latitude_unit = ttk.Label(self, text="degrees North")
-        self.latitude_unit.grid(row=2, column=5, padx=10, pady=5, sticky="w")
-
-        self.longitude_label = ttk.Label(self, text="Longitude")
-        self.longitude_label.grid(row=3, column=3, sticky="e")
-
-        self.longitude_entry = ttk.Entry(self, bootstyle=SUCCESS)
-        self.longitude_entry.grid(
-            row=3, column=4, padx=10, pady=5, sticky="e", ipadx=80
+        self.scalar_latitude_value = ttk.Label(
+            self, text=f"  0 degrees North"
         )
+        self.scalar_latitude_value.grid(row=2, column=5, padx=10, pady=5, sticky="w")
 
-        self.longitude_unit = ttk.Label(self, text="degrees East")
-        self.longitude_unit.grid(row=3, column=5, padx=10, pady=5, sticky="w")
+        def scalar_latitude(_):
+            self.scalar_latitude_value.config(
+                text=f"{' ' * (int(abs(self.latitude.get())) < 100)}"
+                f"{' ' * (int(abs(self.latitude.get())) < 10)}"
+                f"{abs(round(self.latitude.get(), 2))} degrees"
+                f" {'North' if self.latitude.get() >= 0 else 'South'}"
+            )
+
+        self.latitude_entry = ttk.Scale(
+            self,
+            from_=-90,
+            to=90,
+            orient=tk.HORIZONTAL,
+            length=320,
+            command=scalar_latitude,
+            bootstyle=SUCCESS,
+            variable=self.latitude,
+        )
+        self.latitude_entry.grid(row=2, column=4, padx=10, pady=5, sticky="e")
+
+        # Longitude
+        self.longitude_label = ttk.Label(self, text="Longitude")
+        self.longitude_label.grid(row=3, column=3, sticky="e", padx=10, pady=5)
+
+        self.longitude = ttk.DoubleVar(self, 0, "longitude")
+
+        self.scalar_longitude_value = ttk.Label(
+            self, text=f"  0 degrees East"
+        )
+        self.scalar_longitude_value.grid(row=3, column=5, padx=10, pady=5, sticky="w")
+
+        def scalar_longitude(_):
+            self.scalar_longitude_value.config(
+                text=f"{' ' * (int(abs(self.longitude.get())) < 100)}"
+                f"{' ' * (int(abs(self.longitude.get())) < 10)}"
+                f"{abs(round(self.longitude.get(), 2))} degrees"
+                f" {'East' if self.longitude.get() >= 0 else 'West'}"
+            )
+
+        self.longitude_entry = ttk.Scale(
+            self,
+            from_=-180,
+            to=180,
+            orient=tk.HORIZONTAL,
+            length=320,
+            command=scalar_longitude,
+            bootstyle=SUCCESS,
+            variable=self.longitude,
+        )
+        self.longitude_entry.grid(row=3, column=4, padx=10, pady=5, sticky="e")
 
         self.time_zone_label = ttk.Label(self, text="Time zone")
         self.time_zone_label.grid(row=4, column=3, sticky="e")
 
+        self.time_zone = ttk.DoubleVar(self, 0, "time_zone")
+
+        def set_time_zone():
+            self.time_zone.set(self.time_zone_entry.get())
+
         self.time_zone_entry = ttk.Spinbox(
-            self, bootstyle=SUCCESS, from_=-13, to=13, increment=0.25, format="%.2f"
+            self, bootstyle=SUCCESS, from_=-13, to=13, increment=0.25, format="%.2f", command=set_time_zone
         )
+        self.time_zone_entry.set(0)
         self.time_zone_entry.grid(
             row=4, column=4, padx=10, pady=5, sticky="e", ipadx=68
         )
