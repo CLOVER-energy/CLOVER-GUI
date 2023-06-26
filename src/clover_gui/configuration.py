@@ -82,15 +82,13 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         self.pv_size_label = ttk.Label(self, text="PV System Size")
         self.pv_size_label.grid(row=1, column=1, sticky="e")
-        
+
         self.pv_size_info = ttk.Label(self, text="kWp")
         self.pv_size_info.grid(row=1, column=3, sticky="w")
-        
+
         self.pv_size_entry = ttk.Entry(self, bootstyle="primary")
-        self.pv_size_entry.grid(
-            row=1, column=2, padx=10, pady=5, sticky="e", ipadx=80
-        )
-        
+        self.pv_size_entry.grid(row=1, column=2, padx=10, pady=5, sticky="e", ipadx=80)
+
         self.storage_size_label = ttk.Label(self, text="Storage Size")
         self.storage_size_label.grid(row=2, column=1, sticky="e")
 
@@ -112,27 +110,27 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.scaler_number.grid(row=3, column=3, sticky="w")
 
         def scaler(e):
-            self.scaler_number.config(text=f'{int(self.years_slider.get())}')    
-        
-        self.years_slider = ttk.Scale(self, from_=0, to=30, orient=tk.HORIZONTAL, length=200, command=scaler)
+            self.scaler_number.config(text=f"{int(self.years_slider.get())}")
+
+        self.years_slider = ttk.Scale(
+            self, from_=0, to=30, orient=tk.HORIZONTAL, length=200, command=scaler
+        )
         self.years_slider.grid(row=3, column=2, padx=10, pady=5, ipadx=80, sticky="e")
 
         self.do_plots_label = ttk.Label(self, text="Generate plots")
         self.do_plots_label.grid(row=4, column=1, sticky="e")
-        
-        self.checkbox = ttk.Checkbutton(self, variable=self.checkbox_var, bootstyle="round-toggle")
+
+        self.checkbox = ttk.Checkbutton(
+            self, variable=self.checkbox_var, bootstyle="round-toggle"
+        )
         self.checkbox.grid(row=4, column=2, padx=50)
 
         self.load_location_button = ttk.Button(
-        self, text="Run Simulation", bootstyle=f"{PRIMARY}-outline"
+            self, text="Run Simulation", bootstyle=f"{PRIMARY}-outline"
         )
         self.load_location_button.grid(
             row=5, column=3, padx=5, pady=5, ipadx=80, ipady=20
-        )        
-
-        
-        
-
+        )
 
         # TODO: Add configuration frame widgets and layout
 

@@ -103,7 +103,9 @@ class SolarFrame(ttk.Frame):
         # )
         self.panel_lifetime_entry.grid(row=2, column=1, padx=20, pady=20, sticky="ew")
 
-        self.panel_lifetime_display = ttk.Label(self, textvariable=self.panel_lifetime_variable)
+        self.panel_lifetime_display = ttk.Label(
+            self, textvariable=self.panel_lifetime_variable
+        )
         self.panel_lifetime_display.grid(row=2, column=2, padx=20, pady=20, sticky="ew")
 
         self.panel_tilt_label = ttk.Label(self, text="Panel name")
