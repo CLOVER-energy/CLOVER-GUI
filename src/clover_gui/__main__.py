@@ -107,7 +107,7 @@ class App(ttk.Window):
         self.menu_bar.add_cascade(label="Help", menu=self.help_menu)
 
         self.config(menu=self.menu_bar)
-        self.splash.set_progress_bar_progerss(25)
+        self.splash.set_progress_bar_progerss(20)
 
         self.setup()
 
@@ -208,25 +208,27 @@ class App(ttk.Window):
             self.open_load_location_window,
             self.open_new_location_frame,
         )
-        self.splash.set_progress_bar_progerss(50)
+        self.splash.set_progress_bar_progerss(40)
 
         # New-location
         self.new_location_frame = NewLocationScreen(
             self.splash, self.create_new_location
         )
         self.new_location_frame.pack_forget()
-        self.splash.set_progress_bar_progerss(75)
+        self.splash.set_progress_bar_progerss(60)
 
         # Load-location
         self.load_location_window = None
 
         # Configuration
         self.configuration_screen = ConfigurationScreen(self.open_details_window)
-        self.splash.set_progress_bar_progerss(100)
+        self.splash.set_progress_bar_progerss(80)
         self.configuration_screen.pack_forget()
 
         # Details
-        self.details_window = None
+        self.details_window: DetailsWindow | None = DetailsWindow()
+        self.details_window.withdraw()
+        self.splash.set_progress_bar_progerss(100)
 
     def destroy_splash(self):
         self.splash.destroy()

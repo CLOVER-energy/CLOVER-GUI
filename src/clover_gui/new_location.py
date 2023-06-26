@@ -87,9 +87,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
 
         self.latitude = ttk.DoubleVar(self, 0, "latitude")
 
-        self.scalar_latitude_value = ttk.Label(
-            self, text=f"  0 degrees North"
-        )
+        self.scalar_latitude_value = ttk.Label(self, text=f"  0 degrees North")
         self.scalar_latitude_value.grid(row=2, column=5, padx=10, pady=5, sticky="w")
 
         def scalar_latitude(_):
@@ -118,9 +116,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
 
         self.longitude = ttk.DoubleVar(self, 0, "longitude")
 
-        self.scalar_longitude_value = ttk.Label(
-            self, text=f"  0 degrees East"
-        )
+        self.scalar_longitude_value = ttk.Label(self, text=f"  0 degrees East")
         self.scalar_longitude_value.grid(row=3, column=5, padx=10, pady=5, sticky="w")
 
         def scalar_longitude(_):
@@ -152,7 +148,13 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             self.time_zone.set(self.time_zone_entry.get())
 
         self.time_zone_entry = ttk.Spinbox(
-            self, bootstyle=SUCCESS, from_=-13, to=13, increment=0.25, format="%.2f", command=set_time_zone
+            self,
+            bootstyle=SUCCESS,
+            from_=-13,
+            to=13,
+            increment=0.25,
+            format="%.2f",
+            command=set_time_zone,
         )
         self.time_zone_entry.set(0)
         self.time_zone_entry.grid(
