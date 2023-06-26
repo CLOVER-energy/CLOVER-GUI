@@ -108,15 +108,25 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         # self.simulation_period_info = ttk.Label(self, text="Years")
         # self.simulation_period_info.grid(row=3, column=3)
 
-        self.scaler_number = ttk.Label(self, text=f"{int(self.simulation_period.get())} years")
+        self.scaler_number = ttk.Label(
+            self, text=f"{int(self.simulation_period.get())} years"
+        )
         self.scaler_number.grid(row=3, column=4, sticky="w")
 
         def scaler(e):
-            self.scaler_number.config(text=f"{' ' * (int(self.years_slider.get()) < 10)}{int(self.years_slider.get())} years")
-
+            self.scaler_number.config(
+                text=f"{' ' * (int(self.years_slider.get()) < 10)}{int(self.years_slider.get())} years"
+            )
 
         self.years_slider = ttk.Scale(
-            self, from_=0, to=30, orient=tk.HORIZONTAL, length=320, command=scaler, bootstyle=INFO, variable=self.simulation_period
+            self,
+            from_=0,
+            to=30,
+            orient=tk.HORIZONTAL,
+            length=320,
+            command=scaler,
+            bootstyle=INFO,
+            variable=self.simulation_period,
         )
         self.years_slider.grid(row=3, column=3, padx=10, pady=5, sticky="e")
 

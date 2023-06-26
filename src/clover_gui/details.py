@@ -47,9 +47,7 @@ class SolarFrame(ttk.Frame):
         self.columnconfigure(2, weight=1)  # These rows have entries
 
         self.pv_panel_entry = ttk.Combobox(self, bootstyle="primary")
-        self.pv_panel_entry.grid(
-            row=0, column=0, padx=20, pady=20, sticky="w", ipadx=60
-        )
+        self.pv_panel_entry.grid(row=0, column=0, padx=10, pady=5, sticky="w", ipadx=60)
         self.populate_available_panels()
 
         self.renewables_ninja_token = tk.StringVar(value="YOUR API TOKEN")
@@ -60,68 +58,125 @@ class SolarFrame(ttk.Frame):
             textvariable=self.renewables_ninja_token,
         )
         self.renewables_ninja_token_entry.grid(
-            row=0, column=1, columnspan=2, padx=20, pady=20, sticky="ew", ipadx=80
+            row=0, column=1, columnspan=2, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
+        # Panel name
         self.panel_name_label = ttk.Label(self, text="Panel name")
-        self.panel_name_label.grid(row=1, column=0, padx=20, pady=20, sticky="w")
+        self.panel_name_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         self.panel_name_variable = tk.StringVar(value="m-Si")
         self.panel_name_entry = ttk.Entry(
             self, bootstyle=PRIMARY, textvariable=self.panel_name_variable
         )
         self.panel_name_entry.grid(
-            row=1, column=1, padx=20, pady=20, sticky="ew", ipadx=80
+            row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
+        # Panel lifetime
         self.panel_lifetime_label = ttk.Label(self, text="Lifetime")
-        self.panel_lifetime_label.grid(row=2, column=0, padx=20, pady=20, sticky="w")
+        self.panel_lifetime_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
-        self.panel_lifetime_variable = tk.IntVar(value=20)
+        self.panel_lifetime = ttk.IntVar(self, 20, "panel_lifetime")
+
+        self.scalar_lifetime_label = ttk.Label(
+            self, text=f"{int(self.panel_lifetime.get())} years"
+        )
+        self.scalar_lifetime_label.grid(row=2, column=2, sticky="w")
+
+        def scalar(e):
+            self.scalar_lifetime_label.config(
+                text=f"{' ' * (int(self.panel_lifetime.get()) < 10)}{int(self.panel_lifetime_entry.get())} years"
+            )
+
         self.panel_lifetime_entry = ttk.Scale(
             self,
-            bootstyle=SUCCESS,
             from_=0,
             to=30,
-            value=20,
-            variable=self.panel_lifetime_variable,
+            orient=tk.HORIZONTAL,
+            length=320,
+            command=scalar,
+            bootstyle=SUCCESS,
+            variable=self.panel_lifetime,
         )
-        # self.panel_lifetime_entry = ttk.Meter(
-        #     self,
-        #     bootstyle=SUCCESS,
-        #     amounttotal=30,
-        #     amountused=20,
-        #     metersize=180,
-        #     stripethickness=1,
-        #     subtext="Panel lifetime",
-        #     interactive=True ,
-        #     textright="years",
-        #     wedgesize=1,
-        #     metertype="semi",
-        #     arcrange=180,
-        #     arcoffset=-180,
-        # )
-        self.panel_lifetime_entry.grid(row=2, column=1, padx=20, pady=20, sticky="ew")
+        self.panel_lifetime_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
-        self.panel_lifetime_display = ttk.Label(
-            self, textvariable=self.panel_lifetime_variable
+        # Panel tilt
+        self.panel_tilt_label = ttk.Label(self, text="Tilt")
+        self.panel_tilt_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        self.panel_tilt = ttk.IntVar(self, 22, "panel_tilt")
+
+        self.scalar_panel_tilt_label = ttk.Label(
+            self, text=f"{int(self.panel_tilt.get())} degrees"
         )
-        self.panel_lifetime_display.grid(row=2, column=2, padx=20, pady=20, sticky="ew")
+        self.scalar_panel_tilt_label.grid(row=3, column=2, sticky="w")
 
-        self.panel_tilt_label = ttk.Label(self, text="Panel name")
-        self.panel_tilt_label.grid(row=3, column=0, padx=20, pady=20, sticky="w")
+        def scalar_tilt(e):
+            self.scalar_panel_tilt_label.config(
+                text=f"{' ' * (int(self.panel_tilt.get()) < 10)}"
+                f"{int(self.panel_tilt_entry.get())} degrees"
+            )
 
-        self.azimuthal_orientation_label = ttk.Label(self, text="Panel name")
-        self.azimuthal_orientation_label.grid(
-            row=4, column=0, padx=20, pady=20, sticky="w"
+        self.panel_tilt_entry = ttk.Scale(
+            self,
+            from_=0,
+            to=90,
+            orient=tk.HORIZONTAL,
+            length=320,
+            command=scalar_tilt,
+            bootstyle=WARNING,
+            variable=self.panel_tilt,
         )
+        self.panel_tilt_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
-        self.panel_present_label = ttk.Label(self, text="Panel name")
-        self.panel_present_label.grid(row=5, column=0, padx=20, pady=20, sticky="w")
+        # Azimuthal orientation
+        self.panel_orientation_label = ttk.Label(self, text="Azimuthal orientation")
+        self.panel_orientation_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+
+        self.panel_orientation = ttk.IntVar(self, 180, "panel_orientation")
+
+        self.scalar_panel_orientation_label = ttk.Label(
+            self, text=f"{int(self.panel_orientation.get())} degrees"
+        )
+        self.scalar_panel_orientation_label.grid(row=4, column=2, sticky="w")
+
+        def scalar_orientation(e):
+            self.scalar_panel_orientation_label.config(
+                text=f"{' ' * (int(self.panel_orientation.get()) < 100)}"
+                f"{' ' * (int(self.panel_orientation.get()) < 10)}"
+                f"{int(self.panel_orientation_entry.get())} degrees"
+            )
+
+        self.panel_orientation_entry = ttk.Scale(
+            self,
+            from_=0,
+            to=360,
+            orient=tk.HORIZONTAL,
+            length=320,
+            command=scalar_orientation,
+            bootstyle=DANGER,
+            variable=self.panel_orientation,
+        )
+        self.panel_orientation_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
+
+        # Panel present in the system
+        self.panel_present_label = ttk.Label(self, text="Panel present")
+        self.panel_present_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.reference_efficiency_label = ttk.Label(self, text="Panel name")
         self.reference_efficiency_label.grid(
-            row=6, column=0, padx=20, pady=20, sticky="w"
+            row=6, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.reference_temperature_label = ttk.Label(self, text="Panel name")
+        self.reference_temperature_label.grid(
+            row=6, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.thermal_coefficient_label = ttk.Label(self, text="Panel name")
+        self.thermal_coefficient_label.grid(
+            row=6, column=0, padx=10, pady=5, sticky="w"
         )
 
         # TODO: Add configuration frame widgets and layout
@@ -299,11 +354,11 @@ class DetailsWindow(tk.Toplevel):
         self.details_label = ttk.Label(
             self, bootstyle=SECONDARY, text="Detailed settings", font="80"
         )
-        self.details_label.grid(row=0, column=0, sticky="w", padx=60, pady=20)
+        self.details_label.grid(row=0, column=0, sticky="w", padx=60, pady=5)
 
         self.details_notebook = ttk.Notebook(self, bootstyle=f"{SECONDARY}")
         self.details_notebook.grid(
-            row=1, column=0, sticky="nsew", padx=60, pady=20
+            row=1, column=0, sticky="nsew", padx=60, pady=5
         )  # Use grid
 
         style = ttk.Style()
