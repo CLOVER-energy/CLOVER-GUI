@@ -47,7 +47,11 @@ class SolarFrame(ttk.Frame):
         self.columnconfigure(1, weight=2)  # These rows have entries
         self.columnconfigure(2, weight=1)  # These rows have entries
 
-        self.pv_panel_entry = ttk.Combobox(self, bootstyle=WARNING)
+        self.panel_name_variable = tk.StringVar(value="m-Si")
+
+        self.pv_panel_entry = ttk.Combobox(
+            self, bootstyle=WARNING, textvariable=self.panel_name_variable
+        )
         self.pv_panel_entry.grid(row=0, column=0, padx=10, pady=5, sticky="w", ipadx=60)
         self.populate_available_panels()
 
@@ -66,7 +70,6 @@ class SolarFrame(ttk.Frame):
         self.panel_name_label = ttk.Label(self, text="Panel name")
         self.panel_name_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
-        self.panel_name_variable = tk.StringVar(value="m-Si")
         self.panel_name_entry = ttk.Entry(
             self, bootstyle=WARNING, textvariable=self.panel_name_variable
         )

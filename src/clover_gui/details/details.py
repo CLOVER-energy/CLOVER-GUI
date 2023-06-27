@@ -20,6 +20,7 @@ from ..__utils__ import DETAILS_GEOMETRY
 
 __all__ = ("DetailsWindow",)
 
+from .grid import GridFrame
 from .load import LoadFrame
 from .storage import StorageFrame
 from .solar import SolarFrame
@@ -39,25 +40,6 @@ class DieselFrame(ttk.Frame):
         super().__init__(parent)
 
         self.label = ttk.Label(self, text="Diesel frame")
-        self.label.grid(row=0, column=0)
-
-        # TODO: Add configuration frame widgets and layout
-
-
-class GridFrame(ttk.Frame):
-    """
-    Represents the Grid frame.
-
-    Contains settings for grid connection.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.label = ttk.Label(self, text="Grid frame")
         self.label.grid(row=0, column=0)
 
         # TODO: Add configuration frame widgets and layout
@@ -154,11 +136,11 @@ class DetailsWindow(tk.Toplevel):
         self.details_label = ttk.Label(
             self, bootstyle=SECONDARY, text="Detailed settings", font="80"
         )
-        self.details_label.grid(row=0, column=0, sticky="w", padx=60, pady=5)
+        self.details_label.grid(row=0, column=0, sticky="w", padx=20, pady=5)
 
         self.details_notebook = ttk.Notebook(self, bootstyle=f"{SECONDARY}")
         self.details_notebook.grid(
-            row=1, column=0, sticky="nsew", padx=60, pady=5
+            row=1, column=0, sticky="nsew", padx=20, pady=5
         )  # Use grid
 
         style = ttk.Style()
