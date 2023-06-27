@@ -20,7 +20,7 @@ from .__utils__ import (
     MAIN_WINDOW_GEOMETRY,
 )
 from .configuration import ConfigurationScreen
-from .details import DetailsWindow
+from .details.details import DetailsWindow
 from .load_location import LoadLocationWindow
 from .main_menu import MainMenuScreen
 from .new_location import NewLocationScreen

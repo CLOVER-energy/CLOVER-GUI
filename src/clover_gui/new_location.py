@@ -202,5 +202,12 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             command=create_location_callback,
         )
         self.create_location_button.grid(
-            row=5, column=5, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20, sticky="w"
+            row=5,
+            column=5,
+            columnspan=2,
+            padx=5,
+            pady=5,
+            ipadx=80,
+            ipady=20,
+            sticky="w",
         )
