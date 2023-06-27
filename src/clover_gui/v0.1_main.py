@@ -230,12 +230,12 @@ MODE: str = "System"
 #         self.checkbox_3.grid(row=4, column=0, pady=20, padx=20, sticky="n")
 
 #         # set default values
-#         self.sidebar_button_3.configure(state="disabled", text="Disabled CTkButton")
-#         self.checkbox_3.configure(state="disabled")
+#         self.sidebar_button_3.configure(state=DISABLED, text="Disabled CTkButton")
+#         self.checkbox_3.configure(state=DISABLED)
 #         self.checkbox_1.select()
 #         self.scrollable_frame_switches[0].select()
 #         self.scrollable_frame_switches[4].select()
-#         self.radio_button_3.configure(state="disabled")
+#         self.radio_button_3.configure(state=DISABLED)
 #         self.appearance_mode_optionemenu.set("Dark")
 #         self.scaling_optionemenu.set("100%")
 #         self.optionmenu_1.set("CTkOptionmenu")

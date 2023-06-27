@@ -1,0 +1,506 @@
+#!/usr/bin/python3.10
+########################################################################################
+# load.py - The load module for CLOVER-GUI application.                                #
+#                                                                                      #
+# Author: Ben Winchester, Hamish Beath                                                 #
+# Copyright: Ben Winchester, 2022                                                      #
+# Date created: 23/06/2023                                                             #
+# License: MIT, Open-source                                                            #
+# For more information, contact: benedict.winchester@gmail.com                         #
+########################################################################################
+
+import enum
+
+from typing import Any, Callable
+
+import ttkbootstrap as ttk
+
+from ttkbootstrap.constants import *
+from ttkbootstrap.scrolled import *
+
+__all__ = ("LoadFrame",)
+
+
+class DeviceType(enum.Enum):
+    """
+    Denotes the type of device."""
+
+    DOMESTIC: str = "domestic"
+    COMMERCIAL: str = "commercial"
+    PUBLIC: str = "public"
+
+
+class Device:
+    """
+    Contains settings for a device.
+
+    TODO: Update docstring.
+
+    """
+
+    def __init__(
+        self,
+        parent: Any,
+        name: str,
+        active: bool,
+        electric_power: float,
+        initial_ownership: float,
+        final_ownership: float,
+        innovation: float,
+        imitation: float,
+        device_type: DeviceType,
+        clean_water_consumption: float = 0,
+    ) -> None:
+
+        self.name: ttk.StringVar = ttk.StringVar(parent, name)
+        self.electric_power: ttk.DoubleVar = ttk.DoubleVar(parent, electric_power)
+        self.initial_ownership: ttk.DoubleVar = ttk.DoubleVar(parent, initial_ownership)
+        self.final_ownership: ttk.DoubleVar = ttk.DoubleVar(parent, final_ownership)
+        self.innovation: ttk.DoubleVar = ttk.DoubleVar(parent, innovation)
+        self.imitation: ttk.DoubleVar = ttk.DoubleVar(parent, imitation)
+        self.device_type: ttk.StringVar = ttk.StringVar(parent, device_type.value)
+        self.clean_water_consumption: ttk.DoubleVar = ttk.DoubleVar(
+            parent, clean_water_consumption
+        )
+        self.active: ttk.BooleanVar = ttk.BooleanVar(
+            parent, active, f"{self.name}-active"
+        )
+
+
+class DeviceSettingsFrame(ttk.Frame):
+    """
+    Represents the device-settings frame.
+
+    Contains settings the device selected.
+
+    TODO: Update attributes.
+
+    """
+
+    def __init__(self, parent: Any):
+        super().__init__(parent)
+
+        self.columnconfigure(0, weight=4)
+        self.columnconfigure(1, weight=4)
+        self.columnconfigure(2, weight=1)
+
+        # Device name
+        self.name_label = ttk.Label(self, text="Device name", style=SUCCESS)
+        self.name_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+
+        self.name_entry = ttk.Entry(
+            self, textvariable=parent.active_device.name, style=SUCCESS
+        )
+        self.name_entry.grid(row=0, column=1, padx=10, pady=5, ipadx=10)
+
+        self.name_entry.bind("<Return>", parent.update_button_label)
+
+        # Electric Power
+        self.electric_power_label = ttk.Label(self, text="Electric Power")
+        self.electric_power_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        self.electric_power_entry = ttk.Entry(
+            self, textvariable=parent.active_device.electric_power.get()
+        )
+        self.electric_power_entry.grid(
+            row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+        )
+
+        self.electric_power_unit = ttk.Label(self, text="kW")
+        self.electric_power_unit.grid(row=1, column=2, padx=10, pady=5, sticky="w")
+
+        # Initial Ownership
+        self.initial_ownership_label = ttk.Label(self, text="Initial Ownership")
+        self.initial_ownership_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
+        self.initial_ownership_entry = ttk.Entry(
+            self, textvariable=parent.active_device.initial_ownership.get()
+        )
+        self.initial_ownership_entry.grid(
+            row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+        )
+
+        self.initial_ownership_unit = ttk.Label(self, text="devices / household")
+        self.initial_ownership_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
+
+        # Final Ownership
+        self.final_ownership_label = ttk.Label(self, text="Final Ownership")
+        self.final_ownership_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        self.final_ownership_entry = ttk.Entry(
+            self, textvariable=parent.active_device.final_ownership.get()
+        )
+        self.final_ownership_entry.grid(
+            row=3, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+        )
+
+        self.final_ownership_unit = ttk.Label(self, text="devices / household")
+        self.final_ownership_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
+
+        # Innovation
+        self.innovation_label = ttk.Label(self, text="Innovation")
+        self.innovation_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+
+        self.innovation_entry = ttk.Entry(
+            self, textvariable=parent.active_device.innovation.get()
+        )
+        self.innovation_entry.grid(
+            row=4, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+        )
+
+        self.innovation_unit = ttk.Label(self, text="innovation_units")
+        self.innovation_unit.grid(row=4, column=2, padx=10, pady=5, sticky="w")
+
+        # Imitation
+        self.imitation_label = ttk.Label(self, text="Imitation")
+        self.imitation_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
+
+        self.imitation_entry = ttk.Entry(
+            self, textvariable=parent.active_device.imitation.get()
+        )
+        self.imitation_entry.grid(
+            row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+        )
+
+        self.imitation_unit = ttk.Label(self, text="imitation unit")
+        self.imitation_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
+
+        # Clean Water Consumption
+        self.clean_water_consumption_label = ttk.Label(
+            self, text="Clean Water Consumption"
+        )
+        self.clean_water_consumption_label.grid(
+            row=6, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.clean_water_consumption_entry = ttk.Entry(
+            self,
+            textvariable=parent.active_device.clean_water_consumption.get(),
+            state=DISABLED,
+        )
+        self.clean_water_consumption_entry.grid(
+            row=6,
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="ew",
+            ipadx=10,
+        )
+
+        self.clean_water_consumption_unit = ttk.Label(
+            self, text="litres / hour", style=SUCCESS, state=DISABLED
+        )
+        self.clean_water_consumption_unit.grid(
+            row=6, column=2, padx=10, pady=5, sticky="w"
+        )
+
+
+class DevicesFrame(ttk.Frame):
+    """
+    Represents the scrollable frame where devices can be selected.
+
+    TODO: Update attributes.
+
+    """
+
+    def __init__(
+        self, parent, select_device: Callable, update_device_settings_frame: Callable
+    ):
+        super().__init__(parent)
+
+        # Create the scrollable frame
+        scrollable_frame = ScrolledFrame(self)
+        scrollable_frame.grid(
+            row=0, column=0, padx=10, pady=5, sticky="news", ipadx=10, ipady=200
+        )
+
+        # Duplicate functional call
+        self.update_device_settings_frame = update_device_settings_frame
+
+        self.device_active_buttons: dict[Device, ttk.Button] = {
+            device: ttk.Checkbutton(
+                scrollable_frame,
+                style=f"{SUCCESS}.{OUTLINE}.{TOOLBUTTON}",
+                variable=device.active,
+            )
+            for device in parent.devices
+        }
+
+        self.device_selected_buttons: dict[Device, ttk.Button] = {
+            device: ttk.Button(
+                scrollable_frame,
+                text=device.name.get().capitalize(),
+                style=f"{SUCCESS}.{OUTLINE}",
+            )
+            for device in parent.devices
+        }
+
+        for index, button in enumerate(self.device_active_buttons.values()):
+            # Check button
+            button.grid(row=index, column=0, padx=10, pady=5)
+
+        for index, button in enumerate(self.device_selected_buttons.values()):
+            button.grid(row=index, column=1, padx=10, pady=5, sticky="w")
+
+
+class LoadFrame(ttk.Frame):
+    """
+    Represents the Load frame.
+
+    Contains settings for load management.
+
+    TODO: Update attributes.
+
+    """
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=4)
+
+        self.rowconfigure(0, weight=1)
+
+        self.devices = [
+            Device(self, "light", True, 3, 2, 4, 0.04, 0.5, DeviceType.DOMESTIC),
+            Device(self, "phone", True, 5, 2.2, 3, 0.02, 0.2, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "radio",
+                True,
+                10,
+                0.28,
+                0.35,
+                0.01,
+                0.2,
+                DeviceType.DOMESTIC,
+            ),
+            Device(self, "tv", True, 20, 0.08, 0.9, 0.03, 0.25, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "laptop",
+                True,
+                40,
+                0.01,
+                0.5,
+                0.02,
+                0.2,
+                DeviceType.DOMESTIC,
+            ),
+            Device(self, "fridge", True, 50, 0, 0.5, 0.02, 0.2, DeviceType.DOMESTIC),
+            Device(self, "fan", True, 10, 0.1, 2, 0.04, 0.3, DeviceType.DOMESTIC),
+            Device(self, "kerosene", True, 1, 3.4, 2, 0.02, 0.1, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "mill",
+                False,
+                750,
+                0.01,
+                0.1,
+                0.02,
+                0.2,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(
+                self,
+                "workshop",
+                False,
+                350,
+                0.05,
+                0.05,
+                0.02,
+                0.2,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(
+                self,
+                "sme",
+                False,
+                200,
+                0.05,
+                0.03,
+                0.25,
+                0.25,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(self, "streetlight", True, 25, 0.2, 0.2, 0, 0, DeviceType.PUBLIC),
+            Device(self, "light", True, 3, 2, 4, 0.04, 0.5, DeviceType.DOMESTIC),
+            Device(self, "phone", True, 5, 2.2, 3, 0.02, 0.2, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "radio",
+                True,
+                10,
+                0.28,
+                0.35,
+                0.01,
+                0.2,
+                DeviceType.DOMESTIC,
+            ),
+            Device(self, "tv", True, 20, 0.08, 0.9, 0.03, 0.25, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "laptop",
+                True,
+                40,
+                0.01,
+                0.5,
+                0.02,
+                0.2,
+                DeviceType.DOMESTIC,
+            ),
+            Device(self, "fridge", True, 50, 0, 0.5, 0.02, 0.2, DeviceType.DOMESTIC),
+            Device(self, "fan", True, 10, 0.1, 2, 0.04, 0.3, DeviceType.DOMESTIC),
+            Device(self, "kerosene", True, 1, 3.4, 2, 0.02, 0.1, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "mill",
+                False,
+                750,
+                0.01,
+                0.1,
+                0.02,
+                0.2,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(
+                self,
+                "workshop",
+                False,
+                350,
+                0.05,
+                0.05,
+                0.02,
+                0.2,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(
+                self,
+                "sme",
+                False,
+                200,
+                0.05,
+                0.03,
+                0.25,
+                0.25,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(self, "streetlight", True, 25, 0.2, 0.2, 0, 0, DeviceType.PUBLIC),
+            Device(self, "light", True, 3, 2, 4, 0.04, 0.5, DeviceType.DOMESTIC),
+            Device(self, "phone", True, 5, 2.2, 3, 0.02, 0.2, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "radio",
+                True,
+                10,
+                0.28,
+                0.35,
+                0.01,
+                0.2,
+                DeviceType.DOMESTIC,
+            ),
+            Device(self, "tv", True, 20, 0.08, 0.9, 0.03, 0.25, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "laptop",
+                True,
+                40,
+                0.01,
+                0.5,
+                0.02,
+                0.2,
+                DeviceType.DOMESTIC,
+            ),
+            Device(self, "fridge", True, 50, 0, 0.5, 0.02, 0.2, DeviceType.DOMESTIC),
+            Device(self, "fan", True, 10, 0.1, 2, 0.04, 0.3, DeviceType.DOMESTIC),
+            Device(self, "kerosene", True, 1, 3.4, 2, 0.02, 0.1, DeviceType.DOMESTIC),
+            Device(
+                self,
+                "mill",
+                False,
+                750,
+                0.01,
+                0.1,
+                0.02,
+                0.2,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(
+                self,
+                "workshop",
+                False,
+                350,
+                0.05,
+                0.05,
+                0.02,
+                0.2,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(
+                self,
+                "sme",
+                False,
+                200,
+                0.05,
+                0.03,
+                0.25,
+                0.25,
+                DeviceType.COMMERCIAL,
+            ),
+            Device(self, "streetlight", True, 25, 0.2, 0.2, 0, 0, DeviceType.PUBLIC),
+        ]
+
+        self.active_device: Device = self.devices[0]
+
+        # Create the right-hand frame for adjusting device settings
+        self.settings_frame = DeviceSettingsFrame(self)
+        self.settings_frame.grid(row=0, column=1, padx=20, pady=10, sticky="news")
+
+        # Create the left-hand frame for selecting the devices
+        self.devices_frame = DevicesFrame(
+            self, self.select_device, self.update_device_settings_frame
+        )
+        self.devices_frame.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+
+        for device, button in self.devices_frame.device_selected_buttons.items():
+            button.configure(command=lambda device=device: self.select_device(device))
+
+        self.select_device(self.devices[0])
+
+    def update_device_settings_frame(self, device: Device) -> None:
+        """Updates the information for the device currently being considered."""
+
+        self.settings_frame.name_entry.configure(textvariable=device.name)
+        self.settings_frame.electric_power_entry.configure(
+            textvariable=device.electric_power
+        )
+        self.settings_frame.initial_ownership_entry.configure(
+            textvariable=device.initial_ownership
+        )
+        self.settings_frame.final_ownership_entry.configure(
+            textvariable=device.final_ownership
+        )
+        self.settings_frame.innovation_entry.configure(textvariable=device.innovation)
+        self.settings_frame.imitation_entry.configure(textvariable=device.imitation)
+        self.settings_frame.clean_water_consumption_entry.configure(
+            textvariable=device.clean_water_consumption
+        )
+
+    def select_device(self, device: Device) -> None:
+        """Called to select a device in the left-hand devices pane."""
+        self.devices_frame.device_selected_buttons[self.active_device].configure(
+            style="success.Outline.TButton"
+        )
+        self.active_device = device
+        self.devices_frame.device_selected_buttons[self.active_device].configure(
+            style="success.TButton"
+        )
+        self.update_device_settings_frame(device)
+
+    def update_button_label(self, _) -> None:
+        """Updates the button label of the active device."""
+
+        self.devices_frame.device_selected_buttons[self.active_device].configure(
+            text=self.active_device.name.get().capitalize()
+        )
+        self.active_device.name.set(self.active_device.name.get().replace(" ", "_"))

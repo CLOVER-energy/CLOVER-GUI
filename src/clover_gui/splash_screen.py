@@ -19,10 +19,10 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY
 
-__all__ = ("SplashScreen",)
+__all__ = ("SplashScreenWindow",)
 
 # Screens
-class SplashScreen(tk.Toplevel):
+class SplashScreenWindow(tk.Toplevel):
     """
     Represents a splash screen.
 
@@ -75,4 +75,4 @@ class SplashScreen(tk.Toplevel):
         """
 
         self.progress_bar["value"] = value
-        self.update()
+        self.progress_bar.update()

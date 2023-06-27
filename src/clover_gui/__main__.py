@@ -9,11 +9,8 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
-import os
-import tkinter as tk
-
-from typing import Callable
-
+import threading
+import time
 import ttkbootstrap as ttk
 
 from ttkbootstrap.constants import *
@@ -23,9 +20,11 @@ from .__utils__ import (
     MAIN_WINDOW_GEOMETRY,
 )
 from .configuration import ConfigurationScreen
+from .details.details import DetailsWindow
+from .load_location import LoadLocationWindow
 from .main_menu import MainMenuScreen
 from .new_location import NewLocationScreen
-from .splash_screen import SplashScreen
+from .splash_screen import SplashScreenWindow
 
 
 # All-purpose callback commands
@@ -73,17 +72,17 @@ class App(ttk.Window):
         """Instantiate the CLOVER-GUI main app window."""
 
         # Set the theme and styles
-        ttk.Window.__init__(self)
+        super().__init__()
         self.theme = "journal"
 
         # Set attributes
         self._data_directory: str | None = None
 
-        # Display the splash screen whilst loading
-        self.withdraw()
-        self.splash = SplashScreen(self, self.data_directory)
-
         # Setup the CLOVER-GUI application.
+        self.withdraw()
+        self.splash = SplashScreenWindow(self, self.data_directory)
+
+        # Display the splash screen whilst loading
         self.title("CLOVER")
 
         # Setup the menubar
@@ -108,7 +107,7 @@ class App(ttk.Window):
         self.menu_bar.add_cascade(label="Help", menu=self.help_menu)
 
         self.config(menu=self.menu_bar)
-        self.splash.set_progress_bar_progerss(25)
+        self.splash.set_progress_bar_progerss(20)
 
         self.setup()
 
@@ -149,11 +148,53 @@ class App(ttk.Window):
 
         return self._data_directory
 
+    def load_location(self) -> None:
+        """
+        Called when the load-location button is deptressed in the load-location window.
+
+        """
+
+        self.load_location_window.display_progress_bar()
+
+        time.sleep(0.5)
+        self.load_location_window.set_progress_bar_progerss(25)
+        time.sleep(0.5)
+        self.load_location_window.set_progress_bar_progerss(50)
+        time.sleep(0.5)
+        self.load_location_window.set_progress_bar_progerss(75)
+        time.sleep(0.5)
+        self.load_location_window.set_progress_bar_progerss(100)
+
+        self.load_location_window.withdraw()
+        self.load_location_window.load_location_frame.pack_forget()
+        self.main_menu_frame.pack_forget()
+        self.configuration_screen.pack(fill="both", expand=True)
+
+    def open_details_window(self) -> None:
+        """Opens the details window."""
+
+        if self.details_window is None:
+            self.details_window: DetailsWindow | None = DetailsWindow()
+        else:
+            self.details_window.deiconify()
+        self.details_window.mainloop()
+
     def open_new_location_frame(self) -> None:
         """Opens the new-location frame."""
 
         self.main_menu_frame.pack_forget()
         self.new_location_frame.pack(fill="both", expand=True)
+
+    def open_load_location_window(self) -> None:
+        """Open the load-location window."""
+
+        if self.load_location_window is None:
+            self.load_location_window: LoadLocationWindow | None = LoadLocationWindow(
+                self.load_location
+            )
+        else:
+            self.load_location_window.deiconify()
+        self.load_location_window.mainloop()
 
     def setup(self) -> None:
         """
@@ -161,25 +202,33 @@ class App(ttk.Window):
 
         """
 
-        # Menu-bar
-
         # Main-menu
         self.main_menu_frame = MainMenuScreen(
-            self.splash, self.open_new_location_frame, self.data_directory
+            self.data_directory,
+            self.open_load_location_window,
+            self.open_new_location_frame,
         )
-        self.splash.set_progress_bar_progerss(50)
+        self.splash.set_progress_bar_progerss(40)
 
         # New-location
         self.new_location_frame = NewLocationScreen(
             self.splash, self.create_new_location
         )
         self.new_location_frame.pack_forget()
-        self.splash.set_progress_bar_progerss(75)
+        self.splash.set_progress_bar_progerss(60)
+
+        # Load-location
+        self.load_location_window = None
 
         # Configuration
-        self.configuration_screen = ConfigurationScreen()
-        self.splash.set_progress_bar_progerss(100)
+        self.configuration_screen = ConfigurationScreen(self.open_details_window)
+        self.splash.set_progress_bar_progerss(80)
         self.configuration_screen.pack_forget()
+
+        # Details
+        self.details_window: DetailsWindow | None = DetailsWindow()
+        self.details_window.withdraw()
+        self.splash.set_progress_bar_progerss(100)
 
     def destroy_splash(self):
         self.splash.destroy()
