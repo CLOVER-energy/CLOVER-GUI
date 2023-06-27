@@ -162,27 +162,17 @@ class SolarFrame(ttk.Frame):
         )
         self.panel_orientation_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
-        # Panel present in the system
-        self.panel_present_label = ttk.Label(self, text="Panel present")
-        self.panel_present_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
-
-        self.panel_present = ttk.BooleanVar(self, True, "panel_present")
-        self.panel_present_toggle = ttk.Checkbutton(
-            self, variable=self.panel_present, bootstyle=f"round-toggle-{WARNING}"
-        )
-        self.panel_present_toggle.grid(row=5, column=1, padx=160, sticky="ew")
-
         # Reference efficiency
         self.reference_efficiency_label = ttk.Label(self, text="Reference efficiency")
         self.reference_efficiency_label.grid(
-            row=6, column=0, padx=10, pady=5, sticky="w"
+            row=5, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.reference_efficiency = ttk.DoubleVar(self, 15, "reference_efficiency")
 
         self.reference_efficiency_unit = ttk.Label(self, text=f" 15%")
         self.reference_efficiency_unit.grid(
-            row=6, column=2, padx=10, pady=5, sticky="ew"
+            row=5, column=2, padx=10, pady=5, sticky="ew"
         )
 
         def scalar_reference_efficiency(_):
@@ -204,13 +194,13 @@ class SolarFrame(ttk.Frame):
             state=DISABLED,
         )
         self.reference_efficiency_entry.grid(
-            row=6, column=1, padx=10, pady=5, sticky="ew"
+            row=5, column=1, padx=10, pady=5, sticky="ew"
         )
 
         # Reference temperature
         self.reference_temperature_label = ttk.Label(self, text="Reference temperature")
         self.reference_temperature_label.grid(
-            row=7, column=0, padx=10, pady=5, sticky="w"
+            row=6, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.reference_temperature = tk.DoubleVar(value=25)
@@ -221,18 +211,18 @@ class SolarFrame(ttk.Frame):
             state=DISABLED,
         )
         self.reference_temperature_entry.grid(
-            row=7, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+            row=6, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
         self.reference_temperature_unit = ttk.Label(self, text="degrees Celsius")
         self.reference_temperature_unit.grid(
-            row=7, column=2, padx=10, pady=5, sticky="w"
+            row=6, column=2, padx=10, pady=5, sticky="w"
         )
 
         # Thermal coefficient
         self.thermal_coefficient_label = ttk.Label(self, text="Thermal coefficient")
         self.thermal_coefficient_label.grid(
-            row=8, column=0, padx=10, pady=5, sticky="w"
+            row=7, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.thermal_coefficient = tk.DoubleVar(value=0.0056)
@@ -243,11 +233,11 @@ class SolarFrame(ttk.Frame):
             state=DISABLED,
         )
         self.thermal_coefficient_entry.grid(
-            row=8, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+            row=7, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
         self.thermal_coefficient_unit = ttk.Label(self, text="% / degree Celsius")
-        self.thermal_coefficient_unit.grid(row=8, column=2, padx=10, pady=5, sticky="w")
+        self.thermal_coefficient_unit.grid(row=7, column=2, padx=10, pady=5, sticky="w")
 
     def populate_available_panels(self) -> None:
         """Populate the combo box with the set of avialable panels."""
@@ -286,9 +276,10 @@ class BatteryFrame(ttk.Frame):
         self.rowconfigure(15, weight=1)
         self.rowconfigure(16, weight=1)
 
-        self.columnconfigure(0, weight=2)  # First row has the header
-        self.columnconfigure(1, weight=2)  # These rows have entries
+        self.columnconfigure(0, weight=10)  # First row has the header
+        self.columnconfigure(1, weight=10)  # These rows have entries
         self.columnconfigure(2, weight=1)  # These rows have entries
+        self.columnconfigure(3, weight=1)  # These rows have entries
 
         # Battery being selected
         self.battery_selected_label = ttk.Label(self, text="Battery to model")
@@ -336,29 +327,11 @@ class BatteryFrame(ttk.Frame):
 
         self.maximum_charge = ttk.DoubleVar(self, 90, "maximum_charge")
 
-        self.maximum_charge_unit = ttk.Label(self, text=f" 90%")
-        self.maximum_charge_unit.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
-
-        def update_charge_labels():
-            """Updates the maximum and minimum charge labels."""
-            self.maximum_charge_unit.config(
-                text=f"{' ' * (int(self.maximum_charge.get()) < 100)}"
-                f"{' ' * (int(self.maximum_charge.get()) < 10)}"
-                f"{abs(round(self.maximum_charge.get(), 2))}%"
-            )
-            self.minimum_charge_unit.config(
-                text=f"{' ' * (int(self.minimum_charge.get()) < 100)}"
-                f"{' ' * (int(self.minimum_charge.get()) < 10)}"
-                f"{abs(round(self.minimum_charge.get(), 2))}%"
-            )
-
         def scalar_maximum_charge(_):
-            self.minimum_charge.set(
-                min(self.minimum_charge.get(), self.maximum_charge.get())
-            )
-            update_charge_labels()
+            self.minimum_charge.set(min(self.maximum_charge.get(), self.minimum_charge.get()))
+            self.maximum_charge_entry.update()
 
-        self.maximum_charge_entry = ttk.Scale(
+        self.maximum_charge_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
@@ -369,24 +342,38 @@ class BatteryFrame(ttk.Frame):
             variable=self.maximum_charge,
             # state=DISABLED
         )
-        self.maximum_charge_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+        self.maximum_charge_slider.grid(
+            row=3, column=1, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_maximum_charge(_):
+            self.minimum_charge.set(min(self.maximum_charge.get(), self.minimum_charge.get()))
+            self.maximum_charge.set(self.maximum_charge_entry.get())
+            self.maximum_charge_slider.set(self.maximum_charge.get())
+
+        self.maximum_charge_entry = ttk.Entry(
+            self, bootstyle=WARNING, textvariable=self.maximum_charge
+        )
+        self.maximum_charge_entry.grid(
+            row=3, column=2, padx=10, pady=5, sticky="ew"
+        )
+        self.maximum_charge_entry.bind("<Return>", enter_maximum_charge)
+
+        self.maximum_charge_unit = ttk.Label(self, text=f"%")
+        self.maximum_charge_unit.grid(row=3, column=3, padx=10, pady=5, sticky="ew")
+
 
         # Minimum charge
-        self.minimum_charge_label = ttk.Label(self, text="Minimum charge")
+        self.minimum_charge_label = ttk.Label(self, text="Minimum state of charge")
         self.minimum_charge_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
-        self.minimum_charge = ttk.DoubleVar(self, 40, "minimum_charge")
-
-        self.minimum_charge_unit = ttk.Label(self, text=f" 20%")
-        self.minimum_charge_unit.grid(row=4, column=2, padx=10, pady=5, sticky="ew")
+        self.minimum_charge = ttk.DoubleVar(self, 20, "minimum_charge")
 
         def scalar_minimum_charge(_):
-            self.maximum_charge.set(
-                max(self.minimum_charge.get(), self.maximum_charge.get())
-            )
-            update_charge_labels()
+            self.maximum_charge.set(max(self.maximum_charge.get(), self.minimum_charge.get()))
+            self.minimum_charge_entry.update()
 
-        self.minimum_charge_entry = ttk.Scale(
+        self.minimum_charge_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
@@ -397,7 +384,25 @@ class BatteryFrame(ttk.Frame):
             variable=self.minimum_charge,
             # state=DISABLED
         )
-        self.minimum_charge_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
+        self.minimum_charge_slider.grid(
+            row=4, column=1, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_minimum_charge(_):
+            self.minimum_charge.set(self.minimum_charge_entry.get())
+            self.maximum_charge.set(max(self.maximum_charge.get(), self.minimum_charge.get()))
+            self.minimum_charge_slider.set(self.minimum_charge.get())
+
+        self.minimum_charge_entry = ttk.Entry(
+            self, bootstyle=WARNING, textvariable=self.minimum_charge
+        )
+        self.minimum_charge_entry.grid(
+            row=4, column=2, padx=10, pady=5, sticky="ew"
+        )
+        self.minimum_charge_entry.bind("<Return>", enter_minimum_charge)
+
+        self.minimum_charge_unit = ttk.Label(self, text=f"%")
+        self.minimum_charge_unit.grid(row=4, column=3, padx=10, pady=5, sticky="ew")
 
         # Leakage
         self.leakage_label = ttk.Label(self, text="Leakage")
@@ -413,30 +418,16 @@ class BatteryFrame(ttk.Frame):
         self.leakage_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
 
         # Conversion efficiency in
-        self.conversion_efficiency_in_label = ttk.Label(
-            self, text="Conversion efficiency in"
-        )
-        self.conversion_efficiency_in_label.grid(
-            row=6, column=0, padx=10, pady=5, sticky="w"
-        )
+        self.conversion_efficiency_in_label = ttk.Label(self, text="Conversion efficiency in")
+        self.conversion_efficiency_in_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
-        self.conversion_efficiency_in = ttk.DoubleVar(
-            self, 95, "conversion_efficiency_in"
-        )
-
-        self.conversion_efficiency_in_unit = ttk.Label(self, text=f" 95%")
-        self.conversion_efficiency_in_unit.grid(
-            row=6, column=2, padx=10, pady=5, sticky="ew"
-        )
+        self.conversion_efficiency_in = ttk.DoubleVar(self, 97, "conversion_efficiency_in")
 
         def scalar_conversion_efficiency_in(_):
-            self.conversion_efficiency_in_unit.config(
-                text=f"{' ' * (int(self.conversion_efficiency_in.get()) < 100)}"
-                f"{' ' * (int(self.conversion_efficiency_in.get()) < 10)}"
-                f"{abs(round(self.conversion_efficiency_in.get(), 2))}%"
-            )
+            self.conversion_efficiency_in.set(self.conversion_efficiency_in_slider.get())
+            self.conversion_efficiency_in_entry.update()
 
-        self.conversion_efficiency_in_entry = ttk.Scale(
+        self.conversion_efficiency_in_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
@@ -445,37 +436,33 @@ class BatteryFrame(ttk.Frame):
             command=scalar_conversion_efficiency_in,
             bootstyle=WARNING,
             variable=self.conversion_efficiency_in,
-            # state=DISABLED
         )
-        self.conversion_efficiency_in_entry.grid(
-            row=6, column=1, padx=10, pady=5, sticky="ew"
-        )
+        self.conversion_efficiency_in_slider.grid(row=6, column=1, padx=10, pady=5, sticky="ew")
 
-        # Conversion efficiency out
-        self.conversion_efficiency_out_label = ttk.Label(
-            self, text="Conversion efficiency out"
-        )
-        self.conversion_efficiency_out_label.grid(
-            row=7, column=0, padx=10, pady=5, sticky="w"
-        )
+        def enter_conversion_efficiency_in(_):
+            self.conversion_efficiency_in.set(self.conversion_efficiency_in_entry.get())
+            self.conversion_efficiency_in_slider.set(self.conversion_efficiency_in.get())
 
-        self.conversion_efficiency_out = ttk.DoubleVar(
-            self, 90, "conversion_efficiency_out"
+        self.conversion_efficiency_in_entry = ttk.Entry(
+            self, bootstyle=WARNING, textvariable=self.conversion_efficiency_in
         )
+        self.conversion_efficiency_in_entry.grid(row=6, column=2, padx=10, pady=5, sticky="ew")
+        self.conversion_efficiency_in_entry.bind("<Return>", enter_conversion_efficiency_in)
 
-        self.conversion_efficiency_out_unit = ttk.Label(self, text=f" 90%")
-        self.conversion_efficiency_out_unit.grid(
-            row=7, column=2, padx=10, pady=5, sticky="ew"
-        )
+        self.conversion_efficiency_in_unit = ttk.Label(self, text=f"%")
+        self.conversion_efficiency_in_unit.grid(row=6, column=3, padx=10, pady=5, sticky="ew")
+
+        # Conversion Efficiency (Output)
+        self.conversion_efficiency_out_label = ttk.Label(self, text="Conversion efficiency out")
+        self.conversion_efficiency_out_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+
+        self.conversion_efficiency_out = ttk.DoubleVar(self, 95, "conversion_efficiency_out")
 
         def scalar_conversion_efficiency_out(_):
-            self.conversion_efficiency_out_unit.config(
-                text=f"{' ' * (int(self.conversion_efficiency_out.get()) < 100)}"
-                f"{' ' * (int(self.conversion_efficiency_out.get()) < 10)}"
-                f"{abs(round(self.conversion_efficiency_out.get(), 2))}%"
-            )
+            self.conversion_efficiency_out.set(self.conversion_efficiency_out_slider.get())
+            self.conversion_efficiency_out_entry.update()
 
-        self.conversion_efficiency_out_entry = ttk.Scale(
+        self.conversion_efficiency_out_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
@@ -484,11 +471,21 @@ class BatteryFrame(ttk.Frame):
             command=scalar_conversion_efficiency_out,
             bootstyle=WARNING,
             variable=self.conversion_efficiency_out,
-            # state=DISABLED
         )
-        self.conversion_efficiency_out_entry.grid(
-            row=7, column=1, padx=10, pady=5, sticky="ew"
+        self.conversion_efficiency_out_slider.grid(row=7, column=1, padx=10, pady=5, sticky="ew")
+
+        def enter_conversion_efficiency_out(_):
+            self.conversion_efficiency_out.set(self.conversion_efficiency_out_entry.get())
+            self.conversion_efficiency_out_slider.set(self.conversion_efficiency_out.get())
+
+        self.conversion_efficiency_out_entry = ttk.Entry(
+            self, bootstyle=WARNING, textvariable=self.conversion_efficiency_out
         )
+        self.conversion_efficiency_out_entry.grid(row=7, column=2, padx=10, pady=5, sticky="ew")
+        self.conversion_efficiency_out_entry.bind("<Return>", enter_conversion_efficiency_out)
+
+        self.conversion_efficiency_out_unit = ttk.Label(self, text=f"%")
+        self.conversion_efficiency_out_unit.grid(row=7, column=3, padx=10, pady=5, sticky="ew")
 
         # Cycle lifetime
         self.cycle_lifetime_label = ttk.Label(self, text="Cycle lifetime")
@@ -515,19 +512,12 @@ class BatteryFrame(ttk.Frame):
 
         self.lifetime_capacity_loss = ttk.DoubleVar(self, 0, "lifetime_capacity_loss")
 
-        self.lifetime_capacity_loss_unit = ttk.Label(self, text=f"  0%")
-        self.lifetime_capacity_loss_unit.grid(
-            row=9, column=2, padx=10, pady=5, sticky="ew"
-        )
-
         def scalar_lifetime_capacity_loss(_):
-            self.lifetime_capacity_loss_unit.config(
-                text=f"{' ' * (int(self.lifetime_capacity_loss.get()) < 100)}"
-                f"{' ' * (int(self.lifetime_capacity_loss.get()) < 10)}"
-                f"{abs(round(self.lifetime_capacity_loss.get(), 2))}%"
-            )
+            self.lifetime_capacity_loss.set(self.lifetime_capacity_loss_slider.get())
+            # self.lifetime_capacity_loss_entry.configure(str(self.lifetime_capacity_loss.get()))
+            self.lifetime_capacity_loss_entry.update()
 
-        self.lifetime_capacity_loss_entry = ttk.Scale(
+        self.lifetime_capacity_loss_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
@@ -538,8 +528,25 @@ class BatteryFrame(ttk.Frame):
             variable=self.lifetime_capacity_loss,
             # state=DISABLED
         )
-        self.lifetime_capacity_loss_entry.grid(
+        self.lifetime_capacity_loss_slider.grid(
             row=9, column=1, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_lifetime_capacity_loss(_):
+            self.lifetime_capacity_loss.set(self.lifetime_capacity_loss_entry.get())
+            self.lifetime_capacity_loss_slider.set(self.lifetime_capacity_loss.get())
+
+        self.lifetime_capacity_loss_entry = ttk.Entry(
+            self, bootstyle=WARNING, textvariable=self.lifetime_capacity_loss
+        )
+        self.lifetime_capacity_loss_entry.grid(
+            row=9, column=2, padx=10, pady=5, sticky="ew"
+        )
+        self.lifetime_capacity_loss_entry.bind("<Return>", enter_lifetime_capacity_loss)
+
+        self.lifetime_capacity_loss_unit = ttk.Label(self, text=f"%")
+        self.lifetime_capacity_loss_unit.grid(
+            row=9, column=3, padx=10, pady=5, sticky="ew"
         )
 
         # C-rate discharging
