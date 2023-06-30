@@ -62,12 +62,19 @@ class BatteryFrame(ttk.Frame):
         self.battery_selected_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.battery_selected = ttk.StringVar(self, "Li-Ion", "battery_selected")
-        self.battery_selected_entry = ttk.Combobox(
+        self.battery_name_values = {
+            (battery_name := "Li-Ion"): self.battery_selected,
+            (battery_name := "Pb-Acid"): ttk.StringVar(self, battery_name),
+            (battery_name := "New Pb-Acid"): ttk.StringVar(self, battery_name),
+        }
+
+        self.battery_selected_combobox = ttk.Combobox(
             self, bootstyle=WARNING, textvariable=self.battery_selected
         )
-        self.battery_selected_entry.grid(
+        self.battery_selected_combobox.grid(
             row=0, column=1, padx=10, pady=5, sticky="w", ipadx=60
         )
+        self.battery_selected_combobox.bind("<<ComboboxSelected>>", self.select_battery)
         self.populate_available_batteries()
 
         # Battery name
@@ -80,15 +87,21 @@ class BatteryFrame(ttk.Frame):
         self.battery_name_entry.grid(
             row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
+        self.battery_name_entry.bind("<Return>", self.enter_battery_name)
 
         # Battery capacity
         self.battery_capacity_label = ttk.Label(self, text="Capacity")
         self.battery_capacity_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
-        self.battery_capacity = ttk.DoubleVar()
+        self.battery_capacities: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 1, f"{battery_name}_battery_capacity")
+            for battery_name in self.battery_name_values
+        }
 
         self.battery_capacity_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.battery_capacity
+            self,
+            bootstyle=WARNING,
+            textvariable=self.battery_capacities[self.battery_selected.get()],
         )
         self.battery_capacity_entry.grid(
             row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -101,11 +114,17 @@ class BatteryFrame(ttk.Frame):
         self.maximum_charge_label = ttk.Label(self, text="Maximum state of charge")
         self.maximum_charge_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
-        self.maximum_charge = ttk.DoubleVar(self, 90, "maximum_charge")
+        self.maximum_charge: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 90, f"{battery_name}_maximum_charge")
+            for battery_name in self.battery_name_values
+        }
 
         def scalar_maximum_charge(_):
-            self.minimum_charge.set(
-                min(self.maximum_charge.get(), self.minimum_charge.get())
+            self.minimum_charge[self.battery_selected.get()].set(
+                min(
+                    self.maximum_charge[self.battery_selected.get()].get(),
+                    self.minimum_charge[self.battery_selected.get()].get(),
+                )
             )
             self.maximum_charge_entry.update()
 
@@ -117,20 +136,29 @@ class BatteryFrame(ttk.Frame):
             length=320,
             command=scalar_maximum_charge,
             bootstyle=WARNING,
-            variable=self.maximum_charge,
+            variable=self.maximum_charge[self.battery_selected.get()],
             # state=DISABLED
         )
         self.maximum_charge_slider.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
         def enter_maximum_charge(_):
-            self.minimum_charge.set(
-                min(self.maximum_charge.get(), self.minimum_charge.get())
+            self.minimum_charge[self.battery_selected.get()].set(
+                min(
+                    self.maximum_charge[self.battery_selected.get()].get(),
+                    self.minimum_charge[self.battery_selected.get()].get(),
+                )
             )
-            self.maximum_charge.set(self.maximum_charge_entry.get())
-            self.maximum_charge_slider.set(self.maximum_charge.get())
+            self.maximum_charge[self.battery_selected.get()].set(
+                self.maximum_charge_entry.get()
+            )
+            self.maximum_charge_slider.set(
+                self.maximum_charge[self.battery_selected.get()].get()
+            )
 
         self.maximum_charge_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.maximum_charge
+            self,
+            bootstyle=WARNING,
+            textvariable=self.maximum_charge[self.battery_selected.get()],
         )
         self.maximum_charge_entry.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
         self.maximum_charge_entry.bind("<Return>", enter_maximum_charge)
@@ -142,11 +170,17 @@ class BatteryFrame(ttk.Frame):
         self.minimum_charge_label = ttk.Label(self, text="Minimum state of charge")
         self.minimum_charge_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
-        self.minimum_charge = ttk.DoubleVar(self, 20, "minimum_charge")
+        self.minimum_charge: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 20, f"{battery_name}_minimum_charge")
+            for battery_name in self.battery_name_values
+        }
 
         def scalar_minimum_charge(_):
-            self.maximum_charge.set(
-                max(self.maximum_charge.get(), self.minimum_charge.get())
+            self.maximum_charge[self.battery_selected.get()].set(
+                max(
+                    self.maximum_charge[self.battery_selected.get()].get(),
+                    self.minimum_charge[self.battery_selected.get()].get(),
+                )
             )
             self.minimum_charge_entry.update()
 
@@ -158,20 +192,29 @@ class BatteryFrame(ttk.Frame):
             length=320,
             command=scalar_minimum_charge,
             bootstyle=WARNING,
-            variable=self.minimum_charge,
+            variable=self.minimum_charge[self.battery_selected.get()],
             # state=DISABLED
         )
         self.minimum_charge_slider.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
         def enter_minimum_charge(_):
-            self.minimum_charge.set(self.minimum_charge_entry.get())
-            self.maximum_charge.set(
-                max(self.maximum_charge.get(), self.minimum_charge.get())
+            self.minimum_charge[self.battery_selected.get()].set(
+                self.minimum_charge_entry.get()
             )
-            self.minimum_charge_slider.set(self.minimum_charge.get())
+            self.maximum_charge.set(
+                max(
+                    self.maximum_charge[self.battery_selected.get()].get(),
+                    self.minimum_charge[self.battery_selected.get()].get(),
+                )
+            )
+            self.minimum_charge_slider.set(
+                self.minimum_charge[self.battery_selected.get()].get()
+            )
 
         self.minimum_charge_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.minimum_charge
+            self,
+            bootstyle=WARNING,
+            textvariable=self.minimum_charge[self.battery_selected.get()],
         )
         self.minimum_charge_entry.grid(row=4, column=2, padx=10, pady=5, sticky="ew")
         self.minimum_charge_entry.bind("<Return>", enter_minimum_charge)
@@ -183,9 +226,14 @@ class BatteryFrame(ttk.Frame):
         self.leakage_label = ttk.Label(self, text="Leakage")
         self.leakage_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
-        self.leakage = ttk.DoubleVar(self, 30, "leakage")
+        self.leakage: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 30, f"{battery_name}_leakage")
+            for battery_name in self.battery_name_values
+        }
         self.leakage_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.leakage
+            self,
+            bootstyle=WARNING,
+            textvariable=self.leakage[self.battery_selected.get()],
         )
         self.leakage_entry.grid(row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
@@ -200,12 +248,15 @@ class BatteryFrame(ttk.Frame):
             row=6, column=0, padx=10, pady=5, sticky="w"
         )
 
-        self.conversion_efficiency_in = ttk.DoubleVar(
-            self, 97, "conversion_efficiency_in"
-        )
+        self.conversion_efficiency_in: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(
+                self, 97, f"{battery_name}_conversion_efficiency_in"
+            )
+            for battery_name in self.battery_name_values
+        }
 
         def scalar_conversion_efficiency_in(_):
-            self.conversion_efficiency_in.set(
+            self.conversion_efficiency_in[self.battery_selected.get()].set(
                 self.conversion_efficiency_in_slider.get()
             )
             self.conversion_efficiency_in_entry.update()
@@ -218,20 +269,24 @@ class BatteryFrame(ttk.Frame):
             length=320,
             command=scalar_conversion_efficiency_in,
             bootstyle=WARNING,
-            variable=self.conversion_efficiency_in,
+            variable=self.conversion_efficiency_in[self.battery_selected.get()],
         )
         self.conversion_efficiency_in_slider.grid(
             row=6, column=1, padx=10, pady=5, sticky="ew"
         )
 
         def enter_conversion_efficiency_in(_):
-            self.conversion_efficiency_in.set(self.conversion_efficiency_in_entry.get())
+            self.conversion_efficiency_in[self.battery_selected.get()].set(
+                self.conversion_efficiency_in_entry.get()
+            )
             self.conversion_efficiency_in_slider.set(
-                self.conversion_efficiency_in.get()
+                self.conversion_efficiency_in[self.battery_selected.get()].get()
             )
 
         self.conversion_efficiency_in_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.conversion_efficiency_in
+            self,
+            bootstyle=WARNING,
+            textvariable=self.conversion_efficiency_in[self.battery_selected.get()],
         )
         self.conversion_efficiency_in_entry.grid(
             row=6, column=2, padx=10, pady=5, sticky="ew"
@@ -253,12 +308,15 @@ class BatteryFrame(ttk.Frame):
             row=7, column=0, padx=10, pady=5, sticky="w"
         )
 
-        self.conversion_efficiency_out = ttk.DoubleVar(
-            self, 95, "conversion_efficiency_out"
-        )
+        self.conversion_efficiency_out: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(
+                self, 95, f"{battery_name}_conversion_efficiency_out"
+            )
+            for battery_name in self.battery_name_values
+        }
 
         def scalar_conversion_efficiency_out(_):
-            self.conversion_efficiency_out.set(
+            self.conversion_efficiency_out[self.battery_selected.get()].set(
                 self.conversion_efficiency_out_slider.get()
             )
             self.conversion_efficiency_out_entry.update()
@@ -271,22 +329,24 @@ class BatteryFrame(ttk.Frame):
             length=320,
             command=scalar_conversion_efficiency_out,
             bootstyle=WARNING,
-            variable=self.conversion_efficiency_out,
+            variable=self.conversion_efficiency_out[self.battery_selected.get()],
         )
         self.conversion_efficiency_out_slider.grid(
             row=7, column=1, padx=10, pady=5, sticky="ew"
         )
 
         def enter_conversion_efficiency_out(_):
-            self.conversion_efficiency_out.set(
+            self.conversion_efficiency_out[self.battery_selected.get()].set(
                 self.conversion_efficiency_out_entry.get()
             )
             self.conversion_efficiency_out_slider.set(
-                self.conversion_efficiency_out.get()
+                self.conversion_efficiency_out[self.battery_selected.get()].get()
             )
 
         self.conversion_efficiency_out_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.conversion_efficiency_out
+            self,
+            bootstyle=WARNING,
+            textvariable=self.conversion_efficiency_out[self.battery_selected.get()],
         )
         self.conversion_efficiency_out_entry.grid(
             row=7, column=2, padx=10, pady=5, sticky="ew"
@@ -304,9 +364,14 @@ class BatteryFrame(ttk.Frame):
         self.cycle_lifetime_label = ttk.Label(self, text="Cycle lifetime")
         self.cycle_lifetime_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
 
-        self.cycle_lifetime = ttk.IntVar(self, 2000, "cycle_lifetime")
+        self.cycle_lifetime: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 2000, f"{battery_name}_cycle_lifetime")
+            for battery_name in self.battery_name_values
+        }
         self.cycle_lifetime_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.cycle_lifetime
+            self,
+            bootstyle=WARNING,
+            textvariable=self.cycle_lifetime[self.battery_selected.get()],
         )
         self.cycle_lifetime_entry.grid(
             row=8, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -323,10 +388,17 @@ class BatteryFrame(ttk.Frame):
             row=9, column=0, padx=10, pady=5, sticky="w"
         )
 
-        self.lifetime_capacity_loss = ttk.DoubleVar(self, 0, "lifetime_capacity_loss")
+        self.lifetime_capacity_loss: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(
+                self, 0, f"{battery_name}_lifetime_capacity_loss"
+            )
+            for battery_name in self.battery_name_values
+        }
 
         def scalar_lifetime_capacity_loss(_):
-            self.lifetime_capacity_loss.set(self.lifetime_capacity_loss_slider.get())
+            self.lifetime_capacity_loss[self.battery_selected.get()].set(
+                self.lifetime_capacity_loss_slider.get()
+            )
             # self.lifetime_capacity_loss_entry.configure(str(self.lifetime_capacity_loss.get()))
             self.lifetime_capacity_loss_entry.update()
 
@@ -338,7 +410,7 @@ class BatteryFrame(ttk.Frame):
             length=320,
             command=scalar_lifetime_capacity_loss,
             bootstyle=WARNING,
-            variable=self.lifetime_capacity_loss,
+            variable=self.lifetime_capacity_loss[self.battery_selected.get()],
             # state=DISABLED
         )
         self.lifetime_capacity_loss_slider.grid(
@@ -346,11 +418,17 @@ class BatteryFrame(ttk.Frame):
         )
 
         def enter_lifetime_capacity_loss(_):
-            self.lifetime_capacity_loss.set(self.lifetime_capacity_loss_entry.get())
-            self.lifetime_capacity_loss_slider.set(self.lifetime_capacity_loss.get())
+            self.lifetime_capacity_loss[self.battery_selected.get()].set(
+                self.lifetime_capacity_loss_entry.get()
+            )
+            self.lifetime_capacity_loss_slider.set(
+                self.lifetime_capacity_loss[self.battery_selected.get()].get()
+            )
 
         self.lifetime_capacity_loss_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.lifetime_capacity_loss
+            self,
+            bootstyle=WARNING,
+            textvariable=self.lifetime_capacity_loss[self.battery_selected.get()],
         )
         self.lifetime_capacity_loss_entry.grid(
             row=9, column=2, padx=10, pady=5, sticky="ew"
@@ -368,9 +446,16 @@ class BatteryFrame(ttk.Frame):
             row=10, column=0, padx=10, pady=5, sticky="w"
         )
 
-        self.c_rate_discharging = ttk.DoubleVar(self, 0, "c_rate_discharging")
+        self.c_rate_discharging: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(
+                self, 0.33, f"{battery_name}_c_rate_discharging"
+            )
+            for battery_name in self.battery_name_values
+        }
         self.c_rate_discharging_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.c_rate_discharging
+            self,
+            bootstyle=WARNING,
+            textvariable=self.c_rate_discharging[self.battery_selected.get()],
         )
         self.c_rate_discharging_entry.grid(
             row=10, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -383,9 +468,14 @@ class BatteryFrame(ttk.Frame):
         self.c_rate_charging_label = ttk.Label(self, text="C-rate charging")
         self.c_rate_charging_label.grid(row=11, column=0, padx=10, pady=5, sticky="w")
 
-        self.c_rate_charging = ttk.DoubleVar(self, 0, "c_rate_charging")
+        self.c_rate_charging: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 0.33, f"{battery_name}_c_rate_charging")
+            for battery_name in self.battery_name_values
+        }
         self.c_rate_charging_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.c_rate_charging
+            self,
+            bootstyle=WARNING,
+            textvariable=self.c_rate_charging[self.battery_selected.get()],
         )
         self.c_rate_charging_entry.grid(
             row=11, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -398,8 +488,15 @@ class BatteryFrame(ttk.Frame):
         self.cost_label = ttk.Label(self, text="Cost")
         self.cost_label.grid(row=12, column=0, padx=10, pady=5, sticky="w")
 
-        self.cost = ttk.DoubleVar(self, 0, "cost")
-        self.cost_entry = ttk.Entry(self, bootstyle=WARNING, textvariable=self.cost)
+        self.costs: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 0, f"{battery_name}_cost")
+            for battery_name in self.battery_name_values
+        }
+        self.cost_entry = ttk.Entry(
+            self,
+            bootstyle=WARNING,
+            textvariable=self.costs[self.battery_selected.get()],
+        )
         self.cost_entry.grid(row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
         self.cost_unit = ttk.Label(self, text="USD ($)")
@@ -409,9 +506,14 @@ class BatteryFrame(ttk.Frame):
         self.cost_decrease_label = ttk.Label(self, text="Cost decrease")
         self.cost_decrease_label.grid(row=13, column=0, padx=10, pady=5, sticky="w")
 
-        self.cost_decrease = ttk.DoubleVar(self, 0, "cost_decrease")
+        self.cost_decrease: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 0, f"{battery_name}_cost_decrease")
+            for battery_name in self.battery_name_values
+        }
         self.cost_decrease_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.cost_decrease
+            self,
+            bootstyle=WARNING,
+            textvariable=self.cost_decrease[self.battery_selected.get()],
         )
         self.cost_decrease_entry.grid(
             row=13, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -424,9 +526,14 @@ class BatteryFrame(ttk.Frame):
         self.opex_costs_label = ttk.Label(self, text="OPEX (O&M) costs")
         self.opex_costs_label.grid(row=14, column=0, padx=10, pady=5, sticky="w")
 
-        self.o_and_m_costs = ttk.DoubleVar(self, 0, "o_and_m_costs")
+        self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 0, f"{battery_name}_o_and_m_costs")
+            for battery_name in self.battery_name_values
+        }
         self.o_and_m_costs_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.o_and_m_costs
+            self,
+            bootstyle=WARNING,
+            textvariable=self.o_and_m_costs[self.battery_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
             row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -441,9 +548,14 @@ class BatteryFrame(ttk.Frame):
             row=15, column=0, padx=10, pady=5, sticky="w"
         )
 
-        self.embedded_emissions = ttk.DoubleVar(self, 0, "ghgs")
+        self.embedded_emissions: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 0, f"{battery_name}_ghgs")
+            for battery_name in self.battery_name_values
+        }
         self.embedded_emissions_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.embedded_emissions
+            self,
+            bootstyle=WARNING,
+            textvariable=self.embedded_emissions[self.battery_selected.get()],
         )
         self.embedded_emissions_entry.grid(
             row=15, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -456,9 +568,14 @@ class BatteryFrame(ttk.Frame):
         self.om_emissions_label = ttk.Label(self, text="O&M emissions")
         self.om_emissions_label.grid(row=16, column=0, padx=10, pady=5, sticky="w")
 
-        self.om_emissions = ttk.DoubleVar(self, 0, "o_and_m_ghgs")
+        self.om_emissions: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 0, f"{battery_name}_o_and_m_ghgs")
+            for battery_name in self.battery_name_values
+        }
         self.om_emissions_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.om_emissions
+            self,
+            bootstyle=WARNING,
+            textvariable=self.om_emissions[self.battery_selected.get()],
         )
         self.om_emissions_entry.grid(
             row=16, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -475,9 +592,14 @@ class BatteryFrame(ttk.Frame):
             row=17, column=0, padx=10, pady=5, sticky="w"
         )
 
-        self.annual_emissions_decrease = ttk.DoubleVar(self, 0, "ghgs_decrease")
+        self.annual_emissions_decrease: dict[str, ttk.DoubleVar] = {
+            battery_name: ttk.DoubleVar(self, 0, f"{battery_name}_ghgs_decrease")
+            for battery_name in self.battery_name_values
+        }
         self.annual_emissions_decrease_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.annual_emissions_decrease
+            self,
+            bootstyle=WARNING,
+            textvariable=self.annual_emissions_decrease[self.battery_selected.get()],
         )
         self.annual_emissions_decrease_entry.grid(
             row=17, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -490,10 +612,194 @@ class BatteryFrame(ttk.Frame):
 
         # TODO: Add configuration frame widgets and layout
 
+    def enter_battery_name(self, _) -> None:
+        """Called when someone enters a new battery name."""
+        self.populate_available_batteries()
+
+        # Update all the mappings stored
+        self.battery_capacities = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.battery_capacities.items()
+        }
+        self.maximum_charge = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.maximum_charge.items()
+        }
+        self.minimum_charge = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.minimum_charge.items()
+        }
+        self.leakage = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.leakage.items()
+        }
+        self.conversion_efficiency_in = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.conversion_efficiency_in.items()
+        }
+        self.conversion_efficiency_out = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.conversion_efficiency_out.items()
+        }
+        self.cycle_lifetime = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.cycle_lifetime.items()
+        }
+        self.lifetime_capacity_loss = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.lifetime_capacity_loss.items()
+        }
+        self.c_rate_discharging = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.c_rate_discharging.items()
+        }
+        self.c_rate_charging = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.c_rate_charging.items()
+        }
+        self.costs = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.costs.items()
+        }
+        self.cost_decrease = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.cost_decrease.items()
+        }
+        self.o_and_m_costs = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.o_and_m_costs.items()
+        }
+        self.embedded_emissions = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.embedded_emissions.items()
+        }
+        self.om_emissions = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.om_emissions.items()
+        }
+        self.annual_emissions_decrease = {
+            self.battery_name_values[key].get(): value
+            for key, value in self.annual_emissions_decrease.items()
+        }
+
+        # Update the battery-name values.
+        self.battery_name_values = {
+            entry.get(): entry for entry in self.battery_name_values.values()
+        }
+
+    def select_battery(self, _) -> None:
+        # Determine the battery name pre- and post-selection
+        previous_battery_name: str = {
+            (entry == self.battery_selected): key
+            for key, entry in self.battery_name_values.items()
+        }[True]
+        selected_battery_name: str = self.battery_selected_combobox.get()
+
+        # Reset the value of the old variable
+        self.battery_name_values[previous_battery_name].set(previous_battery_name)
+
+        # Set the variable to be the new selected variable
+        self.battery_selected = self.battery_name_values[selected_battery_name]
+        self.battery_selected_combobox.configure(textvariable=self.battery_selected)
+        self.battery_name_entry.configure(textvariable=self.battery_selected)
+
+        # Update the variables being displayed.
+        self.update_battery_frame()
+
     def populate_available_batteries(self) -> None:
         """Populate the combo box with the set of avialable batteries."""
 
-        self.battery_selected_entry["values"] = ["Li-Ion", "Pb-Acid", "New Pb-Acid"]
+        self.battery_selected_combobox["values"] = [
+            entry.get() for entry in self.battery_name_values.values()
+        ]
+
+    def update_battery_frame(self) -> None:
+        """Updates the entries so that the correct variables are displayed on the screen."""
+
+        self.battery_capacity_entry.configure(
+            textvariable=self.battery_capacities[self.battery_selected.get()]
+        )
+        self.maximum_charge_entry.configure(
+            textvariable=self.maximum_charge[self.battery_selected.get()]
+        )
+        self.maximum_charge_slider.configure(
+            variable=self.maximum_charge[self.battery_selected.get()]
+        )
+        self.minimum_charge_entry.configure(
+            textvariable=self.minimum_charge[self.battery_selected.get()]
+        )
+        self.minimum_charge_slider.configure(
+            variable=self.minimum_charge[self.battery_selected.get()]
+        )
+        self.leakage_entry.configure(
+            textvariable=self.leakage[self.battery_selected.get()]
+        )
+        self.conversion_efficiency_in_slider.configure(
+            variable=self.conversion_efficiency_in[self.battery_selected.get()]
+        )
+        self.conversion_efficiency_in_entry.configure(
+            textvariable=self.conversion_efficiency_in[self.battery_selected.get()]
+        )
+        self.conversion_efficiency_out_slider.configure(
+            variable=self.conversion_efficiency_out[self.battery_selected.get()]
+        )
+        self.conversion_efficiency_out_entry.configure(
+            textvariable=self.conversion_efficiency_out[self.battery_selected.get()]
+        )
+        self.cycle_lifetime_entry.configure(
+            textvariable=self.cycle_lifetime[self.battery_selected.get()]
+        )
+        self.lifetime_capacity_loss_slider.configure(
+            variable=self.lifetime_capacity_loss[self.battery_selected.get()]
+        )
+        self.lifetime_capacity_loss_entry.configure(
+            textvariable=self.lifetime_capacity_loss[self.battery_selected.get()]
+        )
+        self.c_rate_discharging_entry.configure(
+            textvariable=self.c_rate_discharging[self.battery_selected.get()]
+        )
+        self.c_rate_charging_entry.configure(
+            textvariable=self.c_rate_charging[self.battery_selected.get()]
+        )
+        self.cost_entry.configure(textvariable=self.costs[self.battery_selected.get()])
+        self.cost_decrease_entry.configure(
+            textvariable=self.cost_decrease[self.battery_selected.get()]
+        )
+        self.o_and_m_costs_entry.configure(
+            textvariable=self.o_and_m_costs[self.battery_selected.get()]
+        )
+        self.embedded_emissions_entry.configure(
+            textvariable=self.embedded_emissions[self.battery_selected.get()]
+        )
+        self.annual_emissions_decrease_entry.configure(
+            textvariable=self.annual_emissions_decrease[self.battery_selected.get()]
+        )
+        self.om_emissions_entry.configure(
+            textvariable=self.om_emissions[self.battery_selected.get()]
+        )
+
+        # Update the entries
+        self.battery_capacity_entry.update()
+        self.maximum_charge_entry.update()
+        self.minimum_charge_entry.update()
+        self.maximum_charge_slider.update()
+        self.minimum_charge_slider.update()
+        self.leakage_entry.update()
+        self.conversion_efficiency_in_slider.update()
+        self.conversion_efficiency_in_entry.update()
+        self.conversion_efficiency_out_slider.update()
+        self.conversion_efficiency_out_entry.update()
+        self.cycle_lifetime_entry.update()
+        self.lifetime_capacity_loss_slider.update()
+        self.lifetime_capacity_loss_entry.update()
+        self.c_rate_discharging_entry.update()
+        self.c_rate_charging_entry.update()
+        self.cost_entry.update()
+        self.cost_decrease_entry.update()
+        self.o_and_m_costs_entry.update()
+        self.embedded_emissions_entry.update()
+        self.annual_emissions_decrease_entry.update()
+        self.om_emissions_entry.update()
 
 
 class TankFrame(ttk.Frame):

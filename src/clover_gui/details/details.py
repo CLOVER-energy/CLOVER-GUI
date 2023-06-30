@@ -20,29 +20,11 @@ from ..__utils__ import DETAILS_GEOMETRY
 
 __all__ = ("DetailsWindow",)
 
+from .diesel import DieselFrame
 from .grid import GridFrame
 from .load import LoadFrame
 from .storage import StorageFrame
 from .solar import SolarFrame
-
-
-class DieselFrame(ttk.Frame):
-    """
-    Represents the Diesel frame.
-
-    Contains settings for diesel generators.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.label = ttk.Label(self, text="Diesel frame")
-        self.label.grid(row=0, column=0)
-
-        # TODO: Add configuration frame widgets and layout
 
 
 class FinanceFrame(ttk.Frame):
