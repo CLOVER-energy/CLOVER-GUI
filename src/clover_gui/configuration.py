@@ -182,11 +182,12 @@ class OptimisationFrame(ttk.Frame):
         self.columnconfigure(2, weight=1)
         self.columnconfigure(3, weight=3)
         self.columnconfigure(4, weight=1)
-    
 
         # Optimisation Min/Max set
         self.optimisation_minmax_label = ttk.Label(self, text="the")
-        self.optimisation_minmax_label.grid(row=2, column=1, padx=10, pady=5, sticky="nw")
+        self.optimisation_minmax_label.grid(
+            row=2, column=1, padx=10, pady=5, sticky="nw"
+        )
 
         self.optimisation_minmax = ttk.StringVar(self, "Minimise", "Minimum/Maximum")
         self.optimisation_minmax_entry = ttk.Combobox(
@@ -198,10 +199,16 @@ class OptimisationFrame(ttk.Frame):
         self.populate_minmax()
 
         # Optimisation criterion set
-        self.optimisation_criterion_label = ttk.Label(self, text="Optimisation Criterion")
-        self.optimisation_criterion_label.grid(row=1, column=0, padx=10, pady=5, sticky="nw")
+        self.optimisation_criterion_label = ttk.Label(
+            self, text="Optimisation Criterion"
+        )
+        self.optimisation_criterion_label.grid(
+            row=1, column=0, padx=10, pady=5, sticky="nw"
+        )
 
-        self.optimisation_criterion = ttk.StringVar(self, "LCUE", "Optimisation Criterion")
+        self.optimisation_criterion = ttk.StringVar(
+            self, "LCUE", "Optimisation Criterion"
+        )
         self.optimisation_criterion_entry = ttk.Combobox(
             self, bootstyle=INFO, textvariable=self.optimisation_criterion
         )
@@ -212,37 +219,42 @@ class OptimisationFrame(ttk.Frame):
 
         # Threshold criterion set
         self.threshold_criterion_label = ttk.Label(self, text="Threshold Criteria")
-        self.threshold_criterion_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.threshold_criterion_label.grid(
+            row=4, column=0, padx=10, pady=5, sticky="w"
+        )
 
         self.add_threshold_var = tk.BooleanVar()
-        self.add_threshold = ttk.Checkbutton(self, bootstyle="info-toolbutton", 
-                                                 variable=self.add_threshold_var,
-                                                   text='Add')
+        self.add_threshold = ttk.Checkbutton(
+            self,
+            bootstyle="info-toolbutton",
+            variable=self.add_threshold_var,
+            text="Add",
+        )
 
-        self.add_threshold.grid(row=4, column=4, padx=10, pady=5, 
-                                           sticky="w", ipadx=80)
-        
-        
-        self.threshold_criterion = ttk.StringVar(self, "Unmet energy fraction", "Threshold Criterion")
+        self.add_threshold.grid(row=4, column=4, padx=10, pady=5, sticky="w", ipadx=80)
+
+        self.threshold_criterion = ttk.StringVar(
+            self, "Unmet energy fraction", "Threshold Criterion"
+        )
         self.threshold_criterion_entry = ttk.Combobox(
             self, bootstyle=INFO, textvariable=self.threshold_criterion
         )
-        self.threshold_criterion_entry.grid(
-        row=5, column=0, padx=10, pady=5, ipadx=60
-        )
+        self.threshold_criterion_entry.grid(row=5, column=0, padx=10, pady=5, ipadx=60)
 
         self.populate_threshold_criteria()
 
         self.chevrons = ttk.StringVar(self, ">", ">/<")
         self.chevrons_entry = ttk.Combobox(
             self, bootstyle=INFO, textvariable=self.chevrons
-        )        
-        self.chevrons_entry.grid(row=5, column=1, padx=10, pady=5, sticky='w', ipadx=60)
+        )
+        self.chevrons_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w", ipadx=60)
 
         self.populate_chevrons()
-        
+
         self.threshold_value = ttk.IntVar(self, 0.05, "threshold_value")
-        self.threshold_entry = ttk.Entry(self, bootstyle=INFO, textvariable=self.threshold_value)
+        self.threshold_entry = ttk.Entry(
+            self, bootstyle=INFO, textvariable=self.threshold_value
+        )
         self.threshold_entry.grid(
             row=5, column=2, padx=10, pady=5, sticky="w", ipadx=80
         )
@@ -253,7 +265,7 @@ class OptimisationFrame(ttk.Frame):
             self, bootstyle=INFO, textvariable=self.threshold_criterion_2
         )
         self.threshold_criterion_entry_2.grid(
-        row=6, column=0, padx=10, pady=5, ipadx=60
+            row=6, column=0, padx=10, pady=5, ipadx=60
         )
 
         self.populate_threshold_criteria_2()
@@ -261,112 +273,112 @@ class OptimisationFrame(ttk.Frame):
         self.chevrons_2 = ttk.StringVar(self, ">", ">/<_2")
         self.chevrons_entry_2 = ttk.Combobox(
             self, bootstyle=INFO, textvariable=self.chevrons
-        )        
-        self.chevrons_entry_2.grid(row=6, column=1, padx=10, pady=5, sticky='w', ipadx=60)
+        )
+        self.chevrons_entry_2.grid(
+            row=6, column=1, padx=10, pady=5, sticky="w", ipadx=60
+        )
         self.populate_chevrons_2()
 
         self.threshold_value_2 = ttk.IntVar(self, "", "threshold_value_2")
-        self.threshold_entry_2 = ttk.Entry(self, bootstyle=INFO, textvariable=self.threshold_value_2)
+        self.threshold_entry_2 = ttk.Entry(
+            self, bootstyle=INFO, textvariable=self.threshold_value_2
+        )
         self.threshold_entry_2.grid(
             row=6, column=2, padx=10, pady=5, sticky="w", ipadx=80
         )
         self.threshold_2_click_var = tk.BooleanVar()
-        self.threshold_2_click = ttk.Checkbutton(self, bootstyle="danger-toolbutton", 
-                                                 variable=self.threshold_2_click_var,
-                                                   text='Remove')
+        self.threshold_2_click = ttk.Checkbutton(
+            self,
+            bootstyle="danger-toolbutton",
+            variable=self.threshold_2_click_var,
+            text="Remove",
+        )
 
-        self.threshold_2_click.grid(row=6, column=4, padx=10, pady=5, 
-                                           sticky="w", ipadx=80)
-
-
+        self.threshold_2_click.grid(
+            row=6, column=4, padx=10, pady=5, sticky="w", ipadx=80
+        )
 
     def populate_available_optimisation_criterion(self) -> None:
         """Populate the combo box with the set of avialable batteries."""
-        
+
         self.optimisation_criterion_entry["values"] = [
-        "LCUE ($/kWh)",
-        "Emissions intensity (gCO2/kWh)",
-        "Unmet energy fraction",
-        "Blackouts",
-        "Clean water blackouts",
-        "Cumulative cost ($)",
-        "Cumulative ghgs (kgCO2eq)",
-        "Cumulative system cost ($)",
-        "Cumulative system ghgs (kgCO2eq)",
-        "Total_cost ($)",
-        "Total system cost ($)",
-        "Total ghgs (kgCO2eq)",
-        "Total system ghgs (kgCO2eq)",
-        "Kerosene cost mitigated ($)",
-        "Kerosene ghgsm mitigated (kgCO2eq)",
-        "Renewables fraction"
+            "LCUE ($/kWh)",
+            "Emissions intensity (gCO2/kWh)",
+            "Unmet energy fraction",
+            "Blackouts",
+            "Clean water blackouts",
+            "Cumulative cost ($)",
+            "Cumulative ghgs (kgCO2eq)",
+            "Cumulative system cost ($)",
+            "Cumulative system ghgs (kgCO2eq)",
+            "Total_cost ($)",
+            "Total system cost ($)",
+            "Total ghgs (kgCO2eq)",
+            "Total system ghgs (kgCO2eq)",
+            "Kerosene cost mitigated ($)",
+            "Kerosene ghgsm mitigated (kgCO2eq)",
+            "Renewables fraction",
         ]
-    
+
     def populate_minmax(self) -> None:
         """Populate the combo box with minmax."""
-    
+
         self.optimisation_minmax_entry["values"] = [
-        "Minimise",
-        "Maximise",
-    ]
+            "Minimise",
+            "Maximise",
+        ]
 
     def populate_threshold_criteria(self) -> None:
         """Populate the combo box with threshold criteria."""
 
         self.threshold_criterion_entry["values"] = [
-        "LCUE ($/kWh)",
-        "Emissions intensity (gCO2/kWh) (Max)",
-        "Unmet energy fraction",
-        "Blackouts (Max)",
-        "Clean water blackouts (Max)",
-        "Cumulative cost ($) (Max)",
-        "Cumulative ghgs (kgCO2eq) (Max)",
-        "Cumulative system cost ($) (Max)",
-        "Cumulative system ghgs (kgCO2eq)",
-        "Total_cost ($) (Max)",
-        "Total system cost ($) (Max)",
-        "Total ghgs (kgCO2eq) (Max)",
-        "Total system ghgs (kgCO2eq) (Max)",
-        "Kerosene cost mitigated ($) (Min)",
-        "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
-        "Renewables fraction (Min)"
+            "LCUE ($/kWh)",
+            "Emissions intensity (gCO2/kWh) (Max)",
+            "Unmet energy fraction",
+            "Blackouts (Max)",
+            "Clean water blackouts (Max)",
+            "Cumulative cost ($) (Max)",
+            "Cumulative ghgs (kgCO2eq) (Max)",
+            "Cumulative system cost ($) (Max)",
+            "Cumulative system ghgs (kgCO2eq)",
+            "Total_cost ($) (Max)",
+            "Total system cost ($) (Max)",
+            "Total ghgs (kgCO2eq) (Max)",
+            "Total system ghgs (kgCO2eq) (Max)",
+            "Kerosene cost mitigated ($) (Min)",
+            "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
+            "Renewables fraction (Min)",
         ]
-    
+
     def populate_threshold_criteria_2(self) -> None:
         """Populate the combo box with threshold criteria."""
 
         self.threshold_criterion_entry_2["values"] = [
-        "LCUE ($/kWh)",
-        "Emissions intensity (gCO2/kWh) (Max)",
-        "Unmet energy fraction",
-        "Blackouts (Max)",
-        "Clean water blackouts (Max)",
-        "Cumulative cost ($) (Max)",
-        "Cumulative ghgs (kgCO2eq) (Max)",
-        "Cumulative system cost ($) (Max)",
-        "Cumulative system ghgs (kgCO2eq)",
-        "Total_cost ($) (Max)",
-        "Total system cost ($) (Max)",
-        "Total ghgs (kgCO2eq) (Max)",
-        "Total system ghgs (kgCO2eq) (Max)",
-        "Kerosene cost mitigated ($) (Min)",
-        "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
-        "Renewables fraction (Min)"
+            "LCUE ($/kWh)",
+            "Emissions intensity (gCO2/kWh) (Max)",
+            "Unmet energy fraction",
+            "Blackouts (Max)",
+            "Clean water blackouts (Max)",
+            "Cumulative cost ($) (Max)",
+            "Cumulative ghgs (kgCO2eq) (Max)",
+            "Cumulative system cost ($) (Max)",
+            "Cumulative system ghgs (kgCO2eq)",
+            "Total_cost ($) (Max)",
+            "Total system cost ($) (Max)",
+            "Total ghgs (kgCO2eq) (Max)",
+            "Total system ghgs (kgCO2eq) (Max)",
+            "Kerosene cost mitigated ($) (Min)",
+            "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
+            "Renewables fraction (Min)",
         ]
-    
+
     def populate_chevrons(self) -> None:
         """Populate the combo box with less than more than chevrons."""
-        self.chevrons_entry["values"] = [
-        ">",
-        "<"
-        ]
-    
+        self.chevrons_entry["values"] = [">", "<"]
+
     def populate_chevrons_2(self) -> None:
         """Populate the combo box with less than more than chevrons."""
-        self.chevrons_entry_2["values"] = [
-        ">",
-        "<"
-        ]
+        self.chevrons_entry_2["values"] = [">", "<"]
 
 
 class ConfigurationScreen(BaseScreen, show_navigation=True):

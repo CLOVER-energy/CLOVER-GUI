@@ -41,12 +41,12 @@ class GridFrame(ttk.Frame):
             self.columnconfigure(index, weight=1)
 
         # Grid-profile combobox
-        self.grid_profile_name = tk.StringVar(value="all")
+        self.grid_profile_name = tk.StringVar(value="FIRST")
 
         self.grid_profile_values = {
-            "all": self.grid_profile_name,
-            "none": tk.StringVar(value="none"),
-            "eight-hours": tk.StringVar(value="eight-hours"),
+            "FIRST": self.grid_profile_name,
+            "SECOND": tk.StringVar(value="SECOND"),
+            "THIRD": tk.StringVar(value="THIRD"),
         }
 
         self.grid_profile_combobox = ttk.Combobox(
@@ -143,29 +143,37 @@ class GridFrame(ttk.Frame):
         # TODO: Add configuration frame widgets and layout
 
     def enter_grid_profile_name(self, _) -> None:
-        old_profile_name: str = (
-            inverse_map := {
-                value.get(): key for key, value in self.grid_profile_values.items()
-            }
-        )[self.grid_profile_name.get()]
-        old_combobox_variable = self.grid_profile_values.pop(old_profile_name)
-        old_combobox_variable.set(self.grid_profile_name.get())
-        self.grid_profile_name = old_combobox_variable
-        self.grid_profile_values[self.grid_profile_name.get()] = self.grid_profile_name
-
+        """Called when someone enters a new grid profile name."""
         self.populate_available_profiles()
         self.update_graph_frame_label()
+        self.grid_profile_values = {
+            entry.get(): entry for entry in self.grid_profile_values.values()
+        }
         # FIXME - This code isn't updating the combobox correctly.
 
     def populate_available_profiles(self) -> None:
         self.grid_profile_combobox["values"] = [
-            entry for entry in self.grid_profile_values
+            entry.get() for entry in self.grid_profile_values.values()
         ]
 
     def select_grid_profile(self, _) -> None:
-        self.grid_profile_name = self.grid_profile_values[
-            self.grid_profile_combobox.get()
-        ]
+        # Determine the grid profile name pre- and post-selection
+        previous_grid_profile_name: str = {
+            (entry == self.grid_profile_name): key
+            for key, entry in self.grid_profile_values.items()
+        }[True]
+        selected_grid_profile_name: str = self.grid_profile_combobox.get()
+
+        # Reset the value of the old variable
+        self.grid_profile_values[previous_grid_profile_name].set(
+            previous_grid_profile_name
+        )
+
+        # Set the variable to be the new selected variable
+        self.grid_profile_name = self.grid_profile_values[selected_grid_profile_name]
+        self.grid_profile_combobox.configure(textvariable=self.grid_profile_name)
+        self.grid_profile_entry.configure(textvariable=self.grid_profile_name)
+        self.update_graph_frame_label()
 
     def update_graph_frame_label(self) -> None:
         self.graph_frame.configure(
