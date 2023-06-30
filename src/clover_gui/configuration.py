@@ -13,6 +13,8 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from dataclasses import dataclass
+
 from typing import Callable
 
 from ttkbootstrap.constants import *
@@ -149,6 +151,28 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         # TODO: Add configuration frame widgets and layout
 
 
+@dataclass
+class ThresholdCriterion:
+    """
+    Represents a threshold criterion.
+
+    .. attribute:: criterion_name
+        The name of the criterion.
+
+    .. attribute:: less_than
+        Whether to use a less-than (True) or greater-than (False) condition for the
+        criterion.
+
+    .. attribute:: value
+        The threshold value for the criterion.
+
+    """
+
+    criterion_name: ttk.StringVar
+    less_than: ttk.BooleanVar
+    value: ttk.DoubleVar
+
+
 class OptimisationFrame(ttk.Frame):
     """
     Represents the optimisation frame.
@@ -168,135 +192,172 @@ class OptimisationFrame(ttk.Frame):
 
         # Set the physical distance weights of the rows and columns
         self.rowconfigure(0, weight=1)  # First row has the header
-        self.rowconfigure(1, weight=1)  # These rows have entries
-        self.rowconfigure(2, weight=1)
-        self.rowconfigure(3, weight=1)
-        self.rowconfigure(4, weight=1)
-        self.rowconfigure(5, weight=1)
-        self.rowconfigure(6, weight=1)
-        self.rowconfigure(7, weight=1)
-        self.rowconfigure(8, weight=1)
+        self.rowconfigure(1, weight=4)  # These rows have entries
 
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
-        self.columnconfigure(3, weight=3)
-        self.columnconfigure(4, weight=1)
+
+        # Optimisation criterion frame
+        self.optimisation_criterion_frame = ttk.Labelframe(
+            self, style="info.TLabelframe", text="Optimisation criterion"
+        )
+        self.optimisation_criterion_frame.grid(
+            row=0,
+            column=0,
+            padx=5,
+            pady=10,
+            ipady=40,
+            ipadx=20,
+            sticky="news",
+        )
+
+        self.optimisation_criterion_frame.rowconfigure(0, weight=1)
+
+        self.optimisation_criterion_frame.columnconfigure(0, weight=3)
+        self.optimisation_criterion_frame.columnconfigure(1, weight=1)
+        self.optimisation_criterion_frame.columnconfigure(2, weight=3)
 
         # Optimisation Min/Max set
-        self.optimisation_minmax_label = ttk.Label(self, text="the")
-        self.optimisation_minmax_label.grid(
-            row=2, column=1, padx=10, pady=5, sticky="nw"
-        )
-
         self.optimisation_minmax = ttk.StringVar(self, "Minimise", "Minimum/Maximum")
         self.optimisation_minmax_entry = ttk.Combobox(
-            self, bootstyle=INFO, textvariable=self.optimisation_minmax
+            self.optimisation_criterion_frame,
+            bootstyle=INFO,
+            textvariable=self.optimisation_minmax,
         )
         self.optimisation_minmax_entry.grid(
-            row=2, column=0, padx=10, pady=5, sticky="nw", ipadx=60
+            row=0, column=0, padx=10, pady=5, sticky="ew", ipadx=100
         )
         self.populate_minmax()
 
-        # Optimisation criterion set
-        self.optimisation_criterion_label = ttk.Label(
-            self, text="Optimisation Criterion"
+        # the
+        self.optimisation_minmax_label = ttk.Label(
+            self.optimisation_criterion_frame, text="the"
         )
-        self.optimisation_criterion_label.grid(
-            row=1, column=0, padx=10, pady=5, sticky="nw"
+        self.optimisation_minmax_label.grid(
+            row=0, column=1, padx=10, pady=5, sticky="ew"
         )
 
+        # Optimisation criterion set
         self.optimisation_criterion = ttk.StringVar(
             self, "LCUE", "Optimisation Criterion"
         )
         self.optimisation_criterion_entry = ttk.Combobox(
-            self, bootstyle=INFO, textvariable=self.optimisation_criterion
+            self.optimisation_criterion_frame,
+            bootstyle=INFO,
+            textvariable=self.optimisation_criterion,
         )
         self.optimisation_criterion_entry.grid(
-            row=2, column=2, padx=10, pady=5, sticky="nw", ipadx=60
+            row=0, column=2, padx=10, pady=5, sticky="ew", ipadx=100
         )
         self.populate_available_optimisation_criterion()
 
-        # Threshold criterion set
-        self.threshold_criterion_label = ttk.Label(self, text="Threshold Criteria")
-        self.threshold_criterion_label.grid(
-            row=4, column=0, padx=10, pady=5, sticky="w"
+        # Threshold criteria frame
+        self.threshold_criteria_frame = ttk.Labelframe(
+            self, style="info.TLabelframe", text="Threshold criteria"
+        )
+        self.threshold_criteria_frame.grid(
+            row=1,
+            column=0,
+            padx=5,
+            pady=10,
+            ipady=200,
+            ipadx=20,
+            sticky="news",
         )
 
-        self.add_threshold_var = tk.BooleanVar()
-        self.add_threshold = ttk.Checkbutton(
-            self,
-            bootstyle="info-toolbutton",
-            variable=self.add_threshold_var,
-            text="Add",
+        self.threshold_criteria_frame.columnconfigure(0, weight=1)
+        self.threshold_criteria_frame.columnconfigure(1, weight=1)
+        self.threshold_criteria_frame.columnconfigure(2, weight=1)
+        self.threshold_criteria_frame.columnconfigure(3, weight=1)
+
+        self.threshold_criteria_frame.rowconfigure(0, weight=1)
+        self.threshold_criteria_frame.rowconfigure(1, weight=8)
+
+        threshold_criteria: list[ThresholdCriterion] = []
+
+        def add_threshold_criterion() -> None:
+            """Add a new threshold criterion to the list."""
+            pass
+
+        self.add_threshold_criterion_button = ttk.Button(
+            self.threshold_criteria_frame,
+            bootstyle=INFO,
+            command=add_threshold_criterion,
+            text="Add threshold criterion",
+        )
+        self.add_threshold_criterion_button.grid(
+            row=0, column=0, padx=10, pady=5, sticky="w", ipadx=40
         )
 
-        self.add_threshold.grid(row=4, column=4, padx=10, pady=5, sticky="w", ipadx=80)
-
-        self.threshold_criterion = ttk.StringVar(
-            self, "Unmet energy fraction", "Threshold Criterion"
-        )
-        self.threshold_criterion_entry = ttk.Combobox(
-            self, bootstyle=INFO, textvariable=self.threshold_criterion
-        )
-        self.threshold_criterion_entry.grid(row=5, column=0, padx=10, pady=5, ipadx=60)
-
-        self.populate_threshold_criteria()
-
-        self.chevrons = ttk.StringVar(self, ">", ">/<")
-        self.chevrons_entry = ttk.Combobox(
-            self, bootstyle=INFO, textvariable=self.chevrons
-        )
-        self.chevrons_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w", ipadx=60)
-
-        self.populate_chevrons()
-
-        self.threshold_value = ttk.IntVar(self, 0.05, "threshold_value")
-        self.threshold_entry = ttk.Entry(
-            self, bootstyle=INFO, textvariable=self.threshold_value
-        )
-        self.threshold_entry.grid(
-            row=5, column=2, padx=10, pady=5, sticky="w", ipadx=80
+        # Create the scrollable frame for threshold criteria
+        self.scrollable_frame = ScrolledFrame(self.threshold_criteria_frame)
+        self.scrollable_frame.grid(
+            row=1, column=0, columnspan = 4, padx=10, pady=5, sticky="ew", ipadx=10, ipady=80
         )
 
-        # Second threshold criteria
-        self.threshold_criterion_2 = ttk.StringVar(self, "", "Threshold Criterion 2")
-        self.threshold_criterion_entry_2 = ttk.Combobox(
-            self, bootstyle=INFO, textvariable=self.threshold_criterion_2
-        )
-        self.threshold_criterion_entry_2.grid(
-            row=6, column=0, padx=10, pady=5, ipadx=60
-        )
+        # self.threshold_criterion = ttk.StringVar(
+        #     self, "Unmet energy fraction", "Threshold Criterion"
+        # )
+        # self.threshold_criterion_entry = ttk.Combobox(
+        #     self, bootstyle=INFO, textvariable=self.threshold_criterion
+        # )
+        # self.threshold_criterion_entry.grid(row=5, column=0, padx=10, pady=5, ipadx=60)
 
-        self.populate_threshold_criteria_2()
+        # self.populate_threshold_criteria()
 
-        self.chevrons_2 = ttk.StringVar(self, ">", ">/<_2")
-        self.chevrons_entry_2 = ttk.Combobox(
-            self, bootstyle=INFO, textvariable=self.chevrons
-        )
-        self.chevrons_entry_2.grid(
-            row=6, column=1, padx=10, pady=5, sticky="w", ipadx=60
-        )
-        self.populate_chevrons_2()
+        # self.chevrons = ttk.StringVar(self, ">", ">/<")
+        # self.chevrons_entry = ttk.Combobox(
+        #     self, bootstyle=INFO, textvariable=self.chevrons
+        # )
+        # self.chevrons_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w", ipadx=60)
 
-        self.threshold_value_2 = ttk.IntVar(self, "", "threshold_value_2")
-        self.threshold_entry_2 = ttk.Entry(
-            self, bootstyle=INFO, textvariable=self.threshold_value_2
-        )
-        self.threshold_entry_2.grid(
-            row=6, column=2, padx=10, pady=5, sticky="w", ipadx=80
-        )
-        self.threshold_2_click_var = tk.BooleanVar()
-        self.threshold_2_click = ttk.Checkbutton(
-            self,
-            bootstyle="danger-toolbutton",
-            variable=self.threshold_2_click_var,
-            text="Remove",
-        )
+        # self.populate_chevrons()
 
-        self.threshold_2_click.grid(
-            row=6, column=4, padx=10, pady=5, sticky="w", ipadx=80
-        )
+        # self.threshold_value = ttk.IntVar(self, 0.05, "threshold_value")
+        # self.threshold_entry = ttk.Entry(
+        #     self, bootstyle=INFO, textvariable=self.threshold_value
+        # )
+        # self.threshold_entry.grid(
+        #     row=5, column=2, padx=10, pady=5, sticky="w", ipadx=80
+        # )
+
+        # # Second threshold criteria
+        # self.threshold_criterion_2 = ttk.StringVar(self, "", "Threshold Criterion 2")
+        # self.threshold_criterion_entry_2 = ttk.Combobox(
+        #     self, bootstyle=INFO, textvariable=self.threshold_criterion_2
+        # )
+        # self.threshold_criterion_entry_2.grid(
+        #     row=6, column=0, padx=10, pady=5, ipadx=60
+        # )
+
+        # self.populate_threshold_criteria_2()
+
+        # self.chevrons_2 = ttk.StringVar(self, ">", ">/<_2")
+        # self.chevrons_entry_2 = ttk.Combobox(
+        #     self, bootstyle=INFO, textvariable=self.chevrons
+        # )
+        # self.chevrons_entry_2.grid(
+        #     row=6, column=1, padx=10, pady=5, sticky="w", ipadx=60
+        # )
+        # self.populate_chevrons_2()
+
+        # self.threshold_value_2 = ttk.IntVar(self, "", "threshold_value_2")
+        # self.threshold_entry_2 = ttk.Entry(
+        #     self, bootstyle=INFO, textvariable=self.threshold_value_2
+        # )
+        # self.threshold_entry_2.grid(
+        #     row=6, column=2, padx=10, pady=5, sticky="w", ipadx=80
+        # )
+        # self.threshold_2_click_var = tk.BooleanVar()
+        # self.threshold_2_click = ttk.Checkbutton(
+        #     self,
+        #     bootstyle="danger-toolbutton",
+        #     variable=self.threshold_2_click_var,
+        #     text="Remove",
+        # )
+
+        # self.threshold_2_click.grid(
+        #     row=6, column=4, padx=10, pady=5, sticky="w", ipadx=80
+        # )
 
     def populate_available_optimisation_criterion(self) -> None:
         """Populate the combo box with the set of avialable batteries."""
