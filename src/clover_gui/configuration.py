@@ -291,7 +291,14 @@ class OptimisationFrame(ttk.Frame):
         # Create the scrollable frame for threshold criteria
         self.scrollable_frame = ScrolledFrame(self.threshold_criteria_frame)
         self.scrollable_frame.grid(
-            row=1, column=0, columnspan = 4, padx=10, pady=5, sticky="ew", ipadx=10, ipady=80
+            row=1,
+            column=0,
+            columnspan=4,
+            padx=10,
+            pady=5,
+            sticky="ew",
+            ipadx=10,
+            ipady=80,
         )
 
         # self.threshold_criterion = ttk.StringVar(
