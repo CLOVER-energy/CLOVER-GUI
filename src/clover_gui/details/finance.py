@@ -56,6 +56,7 @@ class FinanceFrame(ttk.Frame):
         self.rowconfigure(20, weight=1)
         self.rowconfigure(21, weight=1)
         self.rowconfigure(22, weight=1)
+        self.rowconfigure(23, weight=1)
 
         # self.columnconfigure(0, weight=10)  # First row has the header
         # self.columnconfigure(1, weight=10)  # These rows have entries
@@ -65,9 +66,12 @@ class FinanceFrame(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
-        self.columnconfigure(3, weight=3)
+        self.columnconfigure(3, weight=1)
         self.columnconfigure(4, weight=1)
 
+        # Header
+        self.header = ttk.Label(self, text="")
+       
         # Discount Rate
         self.discount_rate_label = ttk.Label(self, text="Discount Rate")
         self.discount_rate_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
@@ -290,30 +294,3 @@ class FinanceFrame(ttk.Frame):
 
 
 
-
-        """
-        discount_rate: 0.1 # Fraction between 0 and 1.
-        general_o&m: 500 # [$ p.a.]
-        misc:
-        capacity_cost: 0  # [$/kWp]
-        fixed_cost: 0  # [$]
-        bos:
-        cost: 200 # [$/kW]
-        cost_decrease: 2 # [% p.a.]
-        diesel_fuel:
-        cost: 0.9 # [$/litre]
-        cost_decrease: -1 # [% p.a.]
-        grid:
-        cost: 0.01 # [$/kWh]
-        extension cost: 5000 # [$/km]
-        infrastructure_cost: 2000 # [$]
-        households:
-        connection_cost: 100 # [$/household]
-        inverter:
-        cost: 200 # [$/kW]
-        cost_decrease: 2 # [% p.a.]
-        lifetime: 4 # [years]
-        size_increment: 1 # [kW]
-        kerosene:
-        cost: 0.008 # [$/hour]
-        """
