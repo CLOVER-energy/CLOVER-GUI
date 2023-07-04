@@ -24,7 +24,7 @@ from .grid import GridFrame
 from .load import LoadFrame
 from .storage import StorageFrame
 from .solar import SolarFrame
-
+from .finance import FinanceFrame
 
 class DieselFrame(ttk.Frame):
     """
@@ -40,25 +40,6 @@ class DieselFrame(ttk.Frame):
         super().__init__(parent)
 
         self.label = ttk.Label(self, text="Diesel frame")
-        self.label.grid(row=0, column=0)
-
-        # TODO: Add configuration frame widgets and layout
-
-
-class FinanceFrame(ttk.Frame):
-    """
-    Represents the Finance frame.
-
-    Contains settings for financial analysis.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.label = ttk.Label(self, text="Finance frame")
         self.label.grid(row=0, column=0)
 
         # TODO: Add configuration frame widgets and layout
