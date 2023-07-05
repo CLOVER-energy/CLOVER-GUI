@@ -275,7 +275,6 @@ class FinanceFrame(ttk.Frame):
         self.inverter_size_increment_units_label = ttk.Label(self, text='kW')
         self.inverter_size_increment_units_label.grid(row=21, column=3, padx=10, pady=5, sticky="w")
 
-        
         # Kerosene
         # self.kerosene_label = ttk.Label(self, text="Kerosene:")
         # self.kerosene_label.grid(row=20, column=1, padx=10, pady=5, sticky="w")
@@ -292,5 +291,5 @@ class FinanceFrame(ttk.Frame):
         self.kerosene_cost_units_label = ttk.Label(self, text='$/hour')
         self.kerosene_cost_units_label.grid(row=22, column=3, padx=10, pady=5, sticky="w")
 
-
+        
 

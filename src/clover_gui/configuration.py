@@ -71,7 +71,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
-        self.columnconfigure(3, weight=3)
+        self.columnconfigure(3, weight=1)
         self.columnconfigure(4, weight=1)
 
         self.start_year = tk.DoubleVar()
@@ -83,26 +83,28 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         # PV size
         self.pv_size_label = ttk.Label(self, text="PV System Size")
-        self.pv_size_label.grid(row=1, column=0, columnspan=3, sticky="e")
+        self.pv_size_label.grid(row=1, column=1, sticky="e")
 
         self.pv_size_entry = ttk.Entry(self, bootstyle=INFO)
-        self.pv_size_entry.grid(row=1, column=3, padx=10, pady=5, sticky="e", ipadx=80)
+        self.pv_size_entry.grid(row=1, column=2, padx=10, pady=5, sticky="e", ipadx=80)
 
         self.pv_size_info = ttk.Label(self, text="kWp")
-        self.pv_size_info.grid(row=1, column=4, sticky="w")
+        self.pv_size_info.grid(row=1, column=3, sticky="w")
 
         # Storage size
         self.storage_size_label = ttk.Label(self, text="Storage Size")
-        self.storage_size_label.grid(row=2, column=0, columnspan=3, sticky="e")
+        self.storage_size_label.grid(row=2, column=1, sticky="e")
 
         self.storage_size_entry = ttk.Entry(self, bootstyle=INFO)
         self.storage_size_entry.grid(
-            row=2, column=3, padx=10, pady=5, sticky="e", ipadx=80
+            row=2, column=2, padx=10, pady=5, sticky="e", ipadx=80
         )
+        self.storage_size_info = ttk.Label(self, text="kWh")
+        self.storage_size_info.grid(row=2, column=3, sticky="w")
 
         # Simulation period
         self.simulation_period_label = ttk.Label(self, text="Simulation period")
-        self.simulation_period_label.grid(row=3, column=0, columnspan=3, sticky="e")
+        self.simulation_period_label.grid(row=3, column=1, sticky="e")
         self.simulation_period = ttk.IntVar(self, 20, "simulation_period")
 
         # self.simulation_period_info = ttk.Label(self, text="Years")
@@ -111,7 +113,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.scaler_number = ttk.Label(
             self, text=f"{int(self.simulation_period.get())} years"
         )
-        self.scaler_number.grid(row=3, column=4, sticky="w")
+        self.scaler_number.grid(row=3, column=3, sticky="w")
 
         def scaler(e):
             self.scaler_number.config(
@@ -128,16 +130,16 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             bootstyle=INFO,
             variable=self.simulation_period,
         )
-        self.years_slider.grid(row=3, column=3, padx=10, pady=5, sticky="e")
+        self.years_slider.grid(row=3, column=2, padx=10, pady=5, sticky="e")
 
         # Generate plots
         self.do_plots_label = ttk.Label(self, text="Generate plots")
-        self.do_plots_label.grid(row=4, column=0, columnspan=3, sticky="e")
+        self.do_plots_label.grid(row=4, column=1, sticky="e")
 
         self.checkbox = ttk.Checkbutton(
             self, variable=self.checkbox_var, bootstyle=f"round-toggle-{INFO}"
         )
-        self.checkbox.grid(row=4, column=3, padx=50)
+        self.checkbox.grid(row=4, column=2, padx=50, sticky="e")
 
         self.load_location_button = ttk.Button(
             self, text="Run Simulation", bootstyle=f"{INFO}-outline"
@@ -377,24 +379,6 @@ class OptimisationFrame(ttk.Frame):
         self.storage_step_num_entry.grid(row=12, column=3, padx=10, pady=5, sticky="w")
         
 
-        """
-        iteration_length: 4 # [years]
-        number_of_iterations: 3 # number of iterations to carry out
-        pv_size:
-        min: 5 # [PV units], [kWp] by default
-        max: 20 # [PV units], [kWp] by default
-        step: 5 # [PV units], [kWp] by default
-        storage_size:
-        min: 5 # [storage units], [kWh] by default
-        max: 30 # [storage units], [kWh] by default
-        step: 5 # [storage units], [kWh] by default
-        optimisations:
-        - optimisation_criteria:
-            - lcue: minimise # Name of the column and whether to maximise/minimise.
-            threshold_criteria:
-            - blackouts: 0.1 # Max/min value permitted (see guidance)
-        
-        """
 
 
     def populate_available_optimisation_criterion(self) -> None:
