@@ -176,11 +176,15 @@ class OptimisationFrame(ttk.Frame):
         self.rowconfigure(6, weight=1)
         self.rowconfigure(7, weight=1)
         self.rowconfigure(8, weight=1)
+        self.rowconfigure(9, weight=1)
+        self.rowconfigure(10, weight=1)
+        self.rowconfigure(11, weight=1)
+        self.rowconfigure(12, weight=1)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
-        self.columnconfigure(3, weight=3)
+        self.columnconfigure(3, weight=1)
         self.columnconfigure(4, weight=1)
     
 
@@ -278,6 +282,119 @@ class OptimisationFrame(ttk.Frame):
         self.threshold_2_click.grid(row=6, column=4, padx=10, pady=5, 
                                            sticky="w", ipadx=80)
 
+
+        # Iterations
+        self.iterations_label = ttk.Label(self, text="")
+        self.iterations_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+
+        # Iteration length
+        self.iteration_length_label = ttk.Label(self, text='Iteration Length')
+        self.iteration_length_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
+
+        self.iteration_length = ttk.DoubleVar(self, "5.0")
+        self.iteration_length_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.iteration_length
+        )
+        self.iteration_length_entry.grid(row=8, column=1, padx=10, pady=5, sticky="w")
+        self.iteration_length_units = ttk.Label(self, text="Years")
+        self.iteration_length_units.grid(row=8, column=2, padx=10, pady=5, sticky="w")
+
+        # Number iterations
+        self.no_iterations_label = ttk.Label(self, text="Number of iterations")
+        self.no_iterations_label.grid(row=9, column=0, padx=10, pady=5, sticky="w")
+
+        self.no_iteration = ttk.IntVar(self, 1)
+        self.no_iteration_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.no_iteration
+        )
+        self.no_iteration_entry.grid(row=9, column=1, padx=10, pady=5, sticky="w")
+
+        #Step sizes
+        self.steps_label = ttk.Label(self, text="")
+        self.steps_label.grid(row=10, column=0, padx=10, pady=5, sticky="w")
+
+        # PV step size
+        self.pv_step_label = ttk.Label(self, text="PV step size")
+        self.pv_step_label.grid(row=11, column=0, padx=10, pady=5, sticky="w")
+
+        self.pv_min_label = ttk.Label(self, text="min")
+        self.pv_min_label.grid(row=11, column=0, padx=10, pady=5, sticky="e")
+        
+        self.pv_min = ttk.IntVar(self, 5)
+        self.pv_min_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.pv_min
+        )
+        self.pv_min_entry.grid(row=11, column=1, padx=10, pady=5, sticky="w")
+
+        self.pv_max_label = ttk.Label(self, text="max")
+        self.pv_max_label.grid(row=11, column=1, padx=10, pady=5, sticky="e")
+        
+        self.pv_max = ttk.IntVar(self, 20)
+        self.pv_max_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.pv_max
+        )
+        self.pv_max_entry.grid(row=11, column=2, padx=10, pady=5, sticky="w")
+        
+        self.pv_step_num_label = ttk.Label(self, text="step")
+        self.pv_step_num_label.grid(row=11, column=2, padx=10, pady=5, sticky="e")
+        self.pv_step_num = ttk.IntVar(self, 5)
+
+        self.pv_step_num_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.pv_step_num
+        )
+        self.pv_step_num_entry.grid(row=11, column=3, padx=10, pady=5, sticky="w")
+
+
+        # Storage step size
+        self.storage_step_label = ttk.Label(self, text="Storage step size")
+        self.storage_step_label.grid(row=12, column=0, padx=10, pady=5, sticky="w")
+
+        self.storage_min_label = ttk.Label(self, text="min")
+        self.storage_min_label.grid(row=12, column=0, padx=10, pady=5, sticky="e")
+        
+        self.storage_min = ttk.IntVar(self, 5)
+        self.storage_min_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.storage_min
+        )
+        self.storage_min_entry.grid(row=12, column=1, padx=10, pady=5, sticky="w")
+
+        self.storage_max_label = ttk.Label(self, text="max")
+        self.storage_max_label.grid(row=12, column=1, padx=10, pady=5, sticky="e")
+        
+        self.storage_max = ttk.IntVar(self, 30)
+        self.storage_max_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.storage_max
+        )
+        self.storage_max_entry.grid(row=12, column=2, padx=10, pady=5, sticky="w")
+        
+        self.storage_step_num_label = ttk.Label(self, text="step")
+        self.storage_step_num_label.grid(row=12, column=2, padx=10, pady=5, sticky="e")
+        self.storage_step_num = ttk.IntVar(self, 5)
+
+        self.storage_step_num_entry = ttk.Entry(
+            self,bootstyle=INFO, textvariable=self.pv_step_num
+        )
+        self.storage_step_num_entry.grid(row=12, column=3, padx=10, pady=5, sticky="w")
+        
+
+        """
+        iteration_length: 4 # [years]
+        number_of_iterations: 3 # number of iterations to carry out
+        pv_size:
+        min: 5 # [PV units], [kWp] by default
+        max: 20 # [PV units], [kWp] by default
+        step: 5 # [PV units], [kWp] by default
+        storage_size:
+        min: 5 # [storage units], [kWh] by default
+        max: 30 # [storage units], [kWh] by default
+        step: 5 # [storage units], [kWh] by default
+        optimisations:
+        - optimisation_criteria:
+            - lcue: minimise # Name of the column and whether to maximise/minimise.
+            threshold_criteria:
+            - blackouts: 0.1 # Max/min value permitted (see guidance)
+        
+        """
 
 
     def populate_available_optimisation_criterion(self) -> None:
