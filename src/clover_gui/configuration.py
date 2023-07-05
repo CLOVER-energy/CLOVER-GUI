@@ -182,6 +182,8 @@ class OptimisationFrame(ttk.Frame):
         self.rowconfigure(10, weight=1)
         self.rowconfigure(11, weight=1)
         self.rowconfigure(12, weight=1)
+        self.rowconfigure(13, weight=1)
+        self.rowconfigure(14, weight=1)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -378,7 +380,12 @@ class OptimisationFrame(ttk.Frame):
         )
         self.storage_step_num_entry.grid(row=12, column=3, padx=10, pady=5, sticky="w")
         
-
+        self.load_location_button = ttk.Button(
+        self, text="Run Optimisation", bootstyle=f"{INFO}-outline"
+        )
+        self.load_location_button.grid(
+            row=14, column=3, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
+        )
 
 
     def populate_available_optimisation_criterion(self) -> None:

@@ -26,6 +26,7 @@ from .storage import StorageFrame
 from .solar import SolarFrame
 from .finance import FinanceFrame
 from .ghgs import GHGFrame
+from .system import SystemFrame
 
 class DieselFrame(ttk.Frame):
     """
@@ -65,23 +66,23 @@ class DieselFrame(ttk.Frame):
 #         # TODO: Add configuration frame widgets and layout
 
 
-class SystemFrame(ttk.Frame):
-    """
-    Represents the System frame.
+# class SystemFrame(ttk.Frame):
+#     """
+#     Represents the System frame.
 
-    Contains settings for system configuration.
+#     Contains settings for system configuration.
 
-    TODO: Update attributes.
+#     TODO: Update attributes.
 
-    """
+#     """
 
-    def __init__(self, parent):
-        super().__init__(parent)
+#     def __init__(self, parent):
+#         super().__init__(parent)
 
-        self.label = ttk.Label(self, text="System frame")
-        self.label.grid(row=0, column=0)
+#         self.label = ttk.Label(self, text="System frame")
+#         self.label.grid(row=0, column=0)
 
-        # TODO: Add configuration frame widgets and layout
+#         # TODO: Add configuration frame widgets and layout
 
 
 class DetailsWindow(tk.Toplevel):
