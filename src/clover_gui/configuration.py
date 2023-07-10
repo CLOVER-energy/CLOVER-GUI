@@ -9,12 +9,9 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
-import math
 import tkinter as tk
 
 import ttkbootstrap as ttk
-
-from dataclasses import dataclass
 
 from typing import Callable
 
@@ -154,7 +151,6 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         # TODO: Add configuration frame widgets and layout
 
 
-@dataclass
 class ThresholdCriterion:
     """
     Represents a threshold criterion.
@@ -169,11 +165,161 @@ class ThresholdCriterion:
     .. attribute:: value
         The threshold value for the criterion.
 
+    .. attribute:: index
+        The index of the criteria as being created.
+
     """
 
-    criterion_name: ttk.StringVar
-    less_than: ttk.BooleanVar
-    value: ttk.DoubleVar
+    # Private attributes:
+    #
+    # .. attribute:: _permissable_chevrons
+    #   The `list` of permissable chevrons.
+    #
+    # .. attribute:: _permissable_threshold_criteria
+    #   The `list` of permissable threshold criteria.
+
+    _permissable_chevrons: list[str] = sorted(["<", ">"])
+
+    _permissable_threshold_criteria: list[str] = sorted(
+        [
+            "Blackouts fraction",
+            "Clean water blackouts fraction",
+            "Cumulative cost / $",
+            "Cumulative ghgs / kgCO2eq",
+            "Cumulative system cost / $",
+            "Cumulative system ghgs / kgCO2eq",
+            "Emissions intensity / gCO2/kWh",
+            "Kerosene cost mitigated / $",
+            "Kerosene ghgsm mitigated / kgCO2eq",
+            "LCUE / $/kWh",
+            "Renewables fraction",
+            "Total ghgs / kgCO2eq",
+            "Total system cost / $",
+            "Total system ghgs / kgCO2eq",
+            "Total_cost / $",
+            "Unmet energy fraction",
+        ]
+    )
+
+    def __init__(
+        self,
+        parent,
+        criterion_name: ttk.StringVar,
+        less_than: ttk.BooleanVar,
+        value: ttk.DoubleVar,
+        delete_criterion: Callable,
+        index: int = 0,
+    ) -> None:
+        """
+        Instnatiate a :class:`ThresholdCriterion` instance.
+
+        :param: parent
+            The parent :class:`ttk.Frame` in which the class is being created.
+
+        :param: criterion_name
+            The name of the criterion.
+
+        :param: less_than
+            Whether to use a less-than (True) or greater-than (False) condition for the
+            criterion.
+
+        :param: value
+            The threshold value for the criterion.
+
+        :param: delete_criterion
+            `Callable` to delete the criterion.
+
+        :param: index
+            The index of the criteria as being created.
+
+        """
+
+        # Criterion name and entry
+        self.criterion_name: ttk.StringVar = criterion_name
+        self.criterion_name_combobox = ttk.Combobox(
+            parent, bootstyle=INFO, textvariable=self.criterion_name
+        )
+        self.criterion_name_combobox["values"] = self._permissable_threshold_criteria
+
+        self.less_than: ttk.BooleanVar = less_than
+        self.less_than_string: ttk.StringVar = ttk.StringVar(
+            parent, "<" if self.less_than else ">"
+        )
+        self.less_than_combobox = ttk.Combobox(
+            parent, bootstyle=INFO, textvariable=self.less_than_string
+        )
+        self.less_than_combobox["values"] = self._permissable_chevrons
+
+        self.value: ttk.DoubleVar = value
+        self.value_entry = ttk.Entry(parent, bootstyle=INFO, textvariable=self.value)
+
+        self.delete_criterion_button: ttk.Button = ttk.Button(
+            parent,
+            bootstyle=f"{DANGER}-{OUTLINE}",
+            text="Delete",
+            command=lambda criterion=self: delete_criterion(criterion),
+        )
+
+        self.index: int = index
+
+    def __hash__(self) -> int:
+        """Return a `str` based on the information in the threshold criteria."""
+
+        return self.index
+
+    def __str__(self) -> str:
+        """Return a nice-looking string."""
+
+        return (
+            f"ThresholdCriterion('{self.criterion_name.get()}' "
+            + ("less than" if self.less_than.get() else "greater than")
+            + f" {self.value.get()}"
+        )
+
+    def __repr__(self) -> str:
+        """Return the default representation of the class."""
+
+        return self.__str__()
+
+    @classmethod
+    @property
+    def default_threshold_criterion(cls) -> str:
+        """Return the default threshold criterion."""
+
+        return cls._permissable_threshold_criteria[0]
+
+    def display(self) -> None:
+        """Display the criterion on the screen."""
+
+        self.criterion_name_combobox.grid(
+            row=self.index, column=0, padx=10, pady=5, sticky="w"
+        )
+        self.less_than_combobox.grid(
+            row=self.index, column=1, padx=10, pady=5, sticky="ew"
+        )
+        self.value_entry.grid(row=self.index, column=2, padx=10, pady=5, sticky="ew")
+        self.delete_criterion_button.grid(
+            row=self.index, column=3, padx=10, pady=5, sticky="ew", ipadx=20
+        )
+
+    def grid_forget(self) -> None:
+        """Remove the varoius items from the screen."""
+
+        self.criterion_name_combobox.grid_forget()
+        self.less_than_combobox.grid_forget()
+        self.value_entry.grid_forget()
+        self.delete_criterion_button.grid_forget()
+
+    def set_index(self, index: int) -> None:
+        """
+        Sets the index attribute.
+
+        :param: index
+            The index to set.
+
+        """
+
+        self.index = index
 
 
 class OptimisationFrame(ttk.Frame):
@@ -196,10 +342,10 @@ class OptimisationFrame(ttk.Frame):
         self.pack(fill="both", expand=True)
 
         # Set the physical distance weights of the rows and columns
-        self.rowconfigure(0, weight=20)  # Row has iteration settings
+        self.rowconfigure(0, weight=4, pad=60)  # Row has iteration settings
         self.rowconfigure(1, weight=1)  # Row has step settings
-        self.rowconfigure(2, weight=10)  # Row has optimisation criteria
-        self.rowconfigure(3, weight=40)  # Row has threshold criteria
+        self.rowconfigure(2, weight=1)  # Row has optimisation criteria
+        self.rowconfigure(3, weight=8, pad=120)  # Row has threshold criteria
         # self.rowconfigure(3, weight=1)
         # self.rowconfigure(4, weight=1)
         # self.rowconfigure(5, weight=1)
@@ -297,8 +443,13 @@ class OptimisationFrame(ttk.Frame):
             if self.warning_text_displayed.get():
                 self.warning_text.configure(
                     text="The length and number of iterations specified amounts to "
-                    f"{optimisation_length} years which is less than the system "
-                    f"lifetime of {self.system_lifetime.get()} years.",
+                    f"{optimisation_length} years which is "
+                    + (
+                        "less than "
+                        if optimisation_length < self.system_lifetime.get()
+                        else "equal to "
+                    )
+                    + f"the system lifetime of {self.system_lifetime.get()} years.",
                     bootstyle=SECONDARY,
                 )
 
@@ -416,6 +567,8 @@ class OptimisationFrame(ttk.Frame):
             column=0,
             padx=10,
             pady=5,
+            ipady=0,
+            ipadx=0,
             sticky="news",
         )
 
@@ -686,6 +839,7 @@ class OptimisationFrame(ttk.Frame):
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
             textvariable=self.hot_water_tanks_max,
+            state=DISABLED,
         )
         self.hot_water_tanks_max_entry.grid(
             row=4, column=3, padx=10, pady=5, sticky="ew"
@@ -784,7 +938,7 @@ class OptimisationFrame(ttk.Frame):
             column=0,
             padx=5,
             pady=10,
-            ipady=40,
+            ipady=60,
             ipadx=20,
             sticky="news",
         )
@@ -794,39 +948,12 @@ class OptimisationFrame(ttk.Frame):
         self.threshold_criteria_frame.columnconfigure(2, weight=1)
         self.threshold_criteria_frame.columnconfigure(3, weight=1)
 
-        self.threshold_criteria_frame.rowconfigure(0, weight=1)
-        self.threshold_criteria_frame.rowconfigure(1, weight=8)
-
-        threshold_criteria: list[ThresholdCriterion] = [
-            ThresholdCriterion(
-                ttk.StringVar(self, "LCUE ($/kWh)"),
-                ttk.BooleanVar(self, True),
-                ttk.DoubleVar(self, 3.15),
-            ),
-            ThresholdCriterion(
-                ttk.StringVar(self, "Total cost ($)"),
-                ttk.BooleanVar(self, True),
-                ttk.DoubleVar(self, 10000),
-            ),
-        ]
-
-        def add_threshold_criterion() -> None:
-            """Add a new threshold criterion to the list."""
-            pass
-
-        self.add_threshold_criterion_button = ttk.Button(
-            self.threshold_criteria_frame,
-            bootstyle=INFO,
-            command=add_threshold_criterion,
-            text="Add threshold criterion",
-        )
-        self.add_threshold_criterion_button.grid(
-            row=0, column=0, padx=10, pady=5, sticky="w", ipadx=40
-        )
+        self.threshold_criteria_frame.rowconfigure(0, weight=1, pad=40)
+        self.threshold_criteria_frame.rowconfigure(1, weight=4)
 
         # Create the scrollable frame for threshold criteria
-        self.scrollable_frame = ScrolledFrame(self.threshold_criteria_frame)
-        self.scrollable_frame.grid(
+        self.scrollable_threshold_frame = ScrolledFrame(self.threshold_criteria_frame)
+        self.scrollable_threshold_frame.grid(
             row=1,
             column=0,
             columnspan=4,
@@ -834,8 +961,71 @@ class OptimisationFrame(ttk.Frame):
             pady=5,
             sticky="ew",
             ipadx=10,
-            ipady=40,
+            ipady=30,
         )
+
+        self.threshold_criteria: list[ThresholdCriterion] = [
+            ThresholdCriterion(
+                self.scrollable_threshold_frame,
+                ttk.StringVar(self, "LCUE ($/kWh)"),
+                ttk.BooleanVar(self, True),
+                ttk.DoubleVar(self, 3.15),
+                self.delete_criterion,
+                1,
+            ),
+            ThresholdCriterion(
+                self.scrollable_threshold_frame,
+                ttk.StringVar(self, "Total cost ($)"),
+                ttk.BooleanVar(self, True),
+                ttk.DoubleVar(self, 10000),
+                self.delete_criterion,
+                2,
+            ),
+        ]
+
+        def add_threshold_criterion() -> None:
+            """Add a new threshold criterion to the list."""
+            self.threshold_criteria.append(
+                ThresholdCriterion(
+                    self.scrollable_threshold_frame,
+                    ttk.StringVar(self, ThresholdCriterion.default_threshold_criterion),
+                    ttk.BooleanVar(self, True),
+                    ttk.DoubleVar(self, 0),
+                    self.delete_criterion,
+                    len(self.threshold_criteria) + 1,
+                )
+            )
+            self.update_threshold_criteria()
+
+        self.add_threshold_criterion_button = ttk.Button(
+            self.threshold_criteria_frame,
+            bootstyle=f"{INFO}-{OUTLINE}",
+            command=add_threshold_criterion,
+            text="Add threshold criterion",
+        )
+        self.add_threshold_criterion_button.grid(
+            row=0, column=0, padx=10, pady=5, sticky="w", ipadx=40
+        )
+
+        self.update_threshold_criteria()
+
+    def delete_criterion(self, criterion: ThresholdCriterion) -> None:
+        """
+        Remove a threshold criterion from the `list` and the screen.
+
+        :param: criterion
+            The :class:`ThresholdCriterion` to delete.
+
+        """
+
+        for criterion in self.threshold_criteria:
+            criterion.grid_forget()
+
+        self.threshold_criteria = [
+            entry for entry in self.threshold_criteria if entry is not criterion
+        ]
+        del criterion
+        self.update_threshold_criteria()
 
     def populate_available_optimisation_criterion(self) -> None:
         """Populate the combo box with the set of avialable batteries."""
@@ -867,57 +1057,42 @@ class OptimisationFrame(ttk.Frame):
             "Maximise",
         ]
 
-    def populate_threshold_criteria(self) -> None:
-        """Populate the combo box with threshold criteria."""
+    # def populate_threshold_criteria_2(self) -> None:
+    #     """Populate the combo box with threshold criteria."""
 
-        self.threshold_criterion_entry["values"] = [
-            "LCUE ($/kWh)",
-            "Emissions intensity (gCO2/kWh) (Max)",
-            "Unmet energy fraction",
-            "Blackouts (Max)",
-            "Clean water blackouts (Max)",
-            "Cumulative cost ($) (Max)",
-            "Cumulative ghgs (kgCO2eq) (Max)",
-            "Cumulative system cost ($) (Max)",
-            "Cumulative system ghgs (kgCO2eq)",
-            "Total_cost ($) (Max)",
-            "Total system cost ($) (Max)",
-            "Total ghgs (kgCO2eq) (Max)",
-            "Total system ghgs (kgCO2eq) (Max)",
-            "Kerosene cost mitigated ($) (Min)",
-            "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
-            "Renewables fraction (Min)",
-        ]
+    #     self.threshold_criterion_entry_2["values"] = [
+    #         "LCUE ($/kWh)",
+    #         "Emissions intensity (gCO2/kWh) (Max)",
+    #         "Unmet energy fraction",
+    #         "Blackouts (Max)",
+    #         "Clean water blackouts (Max)",
+    #         "Cumulative cost ($) (Max)",
+    #         "Cumulative ghgs (kgCO2eq) (Max)",
+    #         "Cumulative system cost ($) (Max)",
+    #         "Cumulative system ghgs (kgCO2eq)",
+    #         "Total_cost ($) (Max)",
+    #         "Total system cost ($) (Max)",
+    #         "Total ghgs (kgCO2eq) (Max)",
+    #         "Total system ghgs (kgCO2eq) (Max)",
+    #         "Kerosene cost mitigated ($) (Min)",
+    #         "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
+    #         "Renewables fraction (Min)",
+    #     ]
 
-    def populate_threshold_criteria_2(self) -> None:
-        """Populate the combo box with threshold criteria."""
+    # def populate_chevrons(self) -> None:
+    #     """Populate the combo box with less than more than chevrons."""
+    #     self.chevrons_entry["values"] = [">", "<"]
 
-        self.threshold_criterion_entry_2["values"] = [
-            "LCUE ($/kWh)",
-            "Emissions intensity (gCO2/kWh) (Max)",
-            "Unmet energy fraction",
-            "Blackouts (Max)",
-            "Clean water blackouts (Max)",
-            "Cumulative cost ($) (Max)",
-            "Cumulative ghgs (kgCO2eq) (Max)",
-            "Cumulative system cost ($) (Max)",
-            "Cumulative system ghgs (kgCO2eq)",
-            "Total_cost ($) (Max)",
-            "Total system cost ($) (Max)",
-            "Total ghgs (kgCO2eq) (Max)",
-            "Total system ghgs (kgCO2eq) (Max)",
-            "Kerosene cost mitigated ($) (Min)",
-            "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
-            "Renewables fraction (Min)",
-        ]
+    # def populate_chevrons_2(self) -> None:
+    #     """Populate the combo box with less than more than chevrons."""
+    #     self.chevrons_entry_2["values"] = [">", "<"]
 
-    def populate_chevrons(self) -> None:
-        """Populate the combo box with less than more than chevrons."""
-        self.chevrons_entry["values"] = [">", "<"]
+    def update_threshold_criteria(self) -> None:
+        """Updates the threshold criteria being displayed."""
 
-    def populate_chevrons_2(self) -> None:
-        """Populate the combo box with less than more than chevrons."""
-        self.chevrons_entry_2["values"] = [">", "<"]
+        for index, criterion in enumerate(self.threshold_criteria):
+            criterion.set_index(index + 1)
+            criterion.display()
 
 
 class ConfigurationScreen(BaseScreen, show_navigation=True):
@@ -953,7 +1128,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=10)
-        self.rowconfigure(2, weight=1)
+        self.rowconfigure(2, weight=1, pad=80)
 
         self.location_label = ttk.Label(
             self, bootstyle=INFO, text="LOCATION NAME", font="80"

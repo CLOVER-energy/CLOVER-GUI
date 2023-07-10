@@ -84,7 +84,7 @@ class GeneratorFrame(ttk.Frame):
         self.diesel_generator_selected_combobox.bind(
             "<<ComboboxSelected>>", self.select_diesel_generator
         )
-        self.populate_available_batteries()
+        self.populate_available_generators()
 
         # Diesel generator name
         self.diesel_generator_name_label = ttk.Label(self, text="Diesel generator name")
@@ -338,7 +338,7 @@ class GeneratorFrame(ttk.Frame):
 
     def enter_diesel_generator_name(self, _) -> None:
         """Called when someone enters a new diesel_generator name."""
-        self.populate_available_batteries()
+        self.populate_available_generators()
 
         # Update all the mappings stored
         self.diesel_generator_capacities = {
@@ -412,7 +412,7 @@ class GeneratorFrame(ttk.Frame):
         # Update the variables being displayed.
         self.update_diesel_generator_frame()
 
-    def populate_available_batteries(self) -> None:
+    def populate_available_generators(self) -> None:
         """Populate the combo box with the set of avialable batteries."""
 
         self.diesel_generator_selected_combobox["values"] = [
