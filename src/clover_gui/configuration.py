@@ -79,7 +79,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         # self.end_year_slider = ttk.Scale(self, bootstyle="danger")
         # self.end_year_slider.grid(row=3, column=1, padx=20)
-        self.checkbox_var = tk.BooleanVar()
+        self.generate_plots = tk.BooleanVar()
 
         # PV size
         self.pv_size_label = ttk.Label(self, text="PV System Size")
@@ -133,13 +133,15 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.years_slider.grid(row=3, column=2, padx=10, pady=5, sticky="e")
 
         # Generate plots
-        self.do_plots_label = ttk.Label(self, text="Generate plots")
-        self.do_plots_label.grid(row=4, column=1, sticky="e")
-
-        self.checkbox = ttk.Checkbutton(
-            self, variable=self.checkbox_var, bootstyle=f"round-toggle-{INFO}"
+        self.do_plots_button = ttk.Checkbutton(
+            self,
+            variable=self.generate_plots,
+            bootstyle=f"{INFO}-{TOOLBUTTON}",
+            text="Generate plots",
         )
-        self.checkbox.grid(row=4, column=2, padx=50, sticky="e")
+        self.do_plots_button.grid(
+            row=4, column=2, padx=10, pady=5, ipadx=95, sticky="e"
+        )
 
         self.load_location_button = ttk.Button(
             self, text="Run Simulation", bootstyle=f"{INFO}-outline"
