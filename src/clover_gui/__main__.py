@@ -77,6 +77,7 @@ class App(ttk.Window):
 
         # Set attributes
         self._data_directory: str | None = None
+        self.system_lifetime: ttk.IntVar = ttk.IntVar(self, 30, "system_lifetime")
 
         # Setup the CLOVER-GUI application.
         self.withdraw()
@@ -221,12 +222,14 @@ class App(ttk.Window):
         self.load_location_window = None
 
         # Configuration
-        self.configuration_screen = ConfigurationScreen(self.open_details_window)
+        self.configuration_screen = ConfigurationScreen(
+            self.open_details_window, self.system_lifetime
+        )
         self.splash.set_progress_bar_progerss(80)
         self.configuration_screen.pack_forget()
 
         # Details
-        self.details_window: DetailsWindow | None = DetailsWindow()
+        self.details_window: DetailsWindow | None = DetailsWindow(self.system_lifetime)
         self.details_window.withdraw()
         self.splash.set_progress_bar_progerss(100)
 

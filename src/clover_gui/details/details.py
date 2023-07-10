@@ -28,6 +28,7 @@ from .solar import SolarFrame
 from .finance import FinanceFrame
 from .ghgs import GHGFrame
 
+
 class FinanceFrame(ttk.Frame):
     """
     Represents the Finance frame.
@@ -37,6 +38,7 @@ class FinanceFrame(ttk.Frame):
     TODO: Update attributes.
 
     """
+
 
 #     Contains settings for greenhouse gas emissions.
 
@@ -83,17 +85,20 @@ class DetailsWindow(tk.Toplevel):
 
     """
 
-    def __init__(
-        self,
-    ) -> None:
+    def __init__(self, system_lifetime: ttk.IntVar) -> None:
         """
         Instantiate a :class:`DetailsWindow` instance.
+
+        :param: system_lifetime
+            The lifetime of the system.
 
         """
 
         super().__init__()
 
         self.title("CLOVER-GUI Details")
+
+        self.system_lifetime = system_lifetime
 
         self.geometry(DETAILS_GEOMETRY)
 
