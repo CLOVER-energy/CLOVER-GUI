@@ -41,12 +41,12 @@ class GridFrame(ttk.Frame):
             self.columnconfigure(index, weight=1)
 
         # Grid-profile combobox
-        self.grid_profile_name = tk.StringVar(value="all")
+        self.grid_profile_name = ttk.StringVar(value="default")
 
-        self.grid_profile_values = {
-            "all": self.grid_profile_name,
-            "none": tk.StringVar(value="none"),
-            "eight-hours": tk.StringVar(value="eight-hours"),
+        self.grid_profile_values: dict[str, ttk.StringVar] = {
+            "default": self.grid_profile_name,
+            "all": ttk.StringVar(value="all"),
+            "none": ttk.StringVar(value="none"),
         }
 
         self.grid_profile_combobox = ttk.Combobox(
@@ -97,45 +97,50 @@ class GridFrame(ttk.Frame):
 
         self.update_graph_frame_label()
 
-        self.probabilities: dict[int, ttk.DoubleVar] = {
-            hour: ttk.DoubleVar(self.graph_frame, 0.3) for hour in range(24)
+        self.probabilities: dict[str, dict[int, ttk.DoubleVar]] = {
+            key: {hour: ttk.DoubleVar(self.graph_frame, 0.3) for hour in range(24)}
+            for key in self.grid_profile_values
         }
-        self.probability_sliders: dict[int, ttk.Scale] = {}
-        self.probabilitiy_entries: dict[int, ttk.Entry] = {}
+        self.probability_sliders: dict[str, dict[int, ttk.Scale]] = {
+            key: {} for key in self.grid_profile_values
+        }
+        self.probabilitiy_entries: dict[str, dict[int, ttk.Entry]] = {
+            key: {} for key in self.grid_profile_values
+        }
 
-        def enter_probability(hour):
-            self.probabilities[hour].set(
+        def enter_probability(grid_profile, hour):
+            self.probabilities[grid_profile][hour].set(
                 max(min(float(self.probabilitiy_entries[hour].get()), 1), 0)
             )
             self.probability_sliders[hour].set(self.probabilities[hour].get())
 
-        for hour in range(24):
-            self.probability_sliders[hour] = ttk.Scale(
-                self.graph_frame,
-                from_=1,
-                to=0,
-                value=self.probabilities[hour].get(),
-                variable=self.probabilities[hour],
-                style=SUCCESS,
-                orient=VERTICAL,
-                length=300,
-            )
-            self.probability_sliders[hour].grid(
-                row=0, column=hour, padx=0, pady=5, sticky="ns"
-            )
+        for grid_profile in self.grid_profile_values:
+            for hour in range(24):
+                self.probability_sliders[grid_profile][hour] = ttk.Scale(
+                    self.graph_frame,
+                    from_=1,
+                    to=0,
+                    value=self.probabilities[grid_profile][hour].get(),
+                    variable=self.probabilities[grid_profile][hour],
+                    style=SUCCESS,
+                    orient=VERTICAL,
+                    length=300,
+                )
 
-            self.probabilitiy_entries[hour] = ttk.Entry(
-                self.graph_frame,
-                bootstyle=SUCCESS,
-                textvariable=self.probabilities[hour],
-                width=4,
-            )
-            self.probabilitiy_entries[hour].grid(
-                row=1, column=hour, padx=0, pady=5, sticky="ew"
-            )
-            self.probabilitiy_entries[hour].bind(
-                "<Return>", lambda _, hour=hour: enter_probability(hour)
-            )
+                self.probabilitiy_entries[grid_profile][hour] = ttk.Entry(
+                    self.graph_frame,
+                    bootstyle=SUCCESS,
+                    textvariable=self.probabilities[grid_profile][hour],
+                    width=4,
+                )
+                self.probabilitiy_entries[grid_profile][hour].bind(
+                    "<Return>",
+                    lambda _, grid_profile=grid_profile, hour=hour: enter_probability(
+                        grid_profile, hour
+                    ),
+                )
+
+        self.update_sliders()
 
         self.x_axis_label = ttk.Label(self.graph_frame, text="Hour of the day")
         self.x_axis_label.grid(row=2, column=11, columnspan=3, sticky="ew")
@@ -143,32 +148,61 @@ class GridFrame(ttk.Frame):
         # TODO: Add configuration frame widgets and layout
 
     def enter_grid_profile_name(self, _) -> None:
-        old_profile_name: str = (
-            inverse_map := {
-                value.get(): key for key, value in self.grid_profile_values.items()
-            }
-        )[self.grid_profile_name.get()]
-        old_combobox_variable = self.grid_profile_values.pop(old_profile_name)
-        old_combobox_variable.set(self.grid_profile_name.get())
-        self.grid_profile_name = old_combobox_variable
-        self.grid_profile_values[self.grid_profile_name.get()] = self.grid_profile_name
-
+        """Called when someone enters a new grid profile name."""
         self.populate_available_profiles()
         self.update_graph_frame_label()
+        self.grid_profile_values = {
+            entry.get(): entry for entry in self.grid_profile_values.values()
+        }
         # FIXME - This code isn't updating the combobox correctly.
 
     def populate_available_profiles(self) -> None:
         self.grid_profile_combobox["values"] = [
-            entry for entry in self.grid_profile_values
+            entry.get() for entry in self.grid_profile_values.values()
         ]
 
     def select_grid_profile(self, _) -> None:
-        self.grid_profile_name = self.grid_profile_values[
-            self.grid_profile_combobox.get()
-        ]
+        # Determine the grid profile name pre- and post-selection
+        previous_grid_profile_name: str = {
+            (entry == self.grid_profile_name): key
+            for key, entry in self.grid_profile_values.items()
+        }[True]
+        selected_grid_profile_name: str = self.grid_profile_combobox.get()
+
+        # Reset the value of the old variable
+        self.grid_profile_values[previous_grid_profile_name].set(
+            previous_grid_profile_name
+        )
+
+        # Set the variable to be the new selected variable
+        self.grid_profile_name = self.grid_profile_values[selected_grid_profile_name]
+        self.grid_profile_combobox.configure(textvariable=self.grid_profile_name)
+        self.grid_profile_entry.configure(textvariable=self.grid_profile_name)
+        self.update_graph_frame_label()
+
+        # Update the sliders
+        self.update_sliders()
 
     def update_graph_frame_label(self) -> None:
         self.graph_frame.configure(
             text="Hourly probability of grid availability for grid "
             f"'{self.grid_profile_name.get().capitalize()}'."
         )
+
+    def update_sliders(self) -> None:
+        """Updates the sliders to display those for the current grid profile."""
+        # Clear the previous sliders
+        for profile in self.grid_profile_values:
+            for slider in self.probability_sliders[profile].values():
+                slider.grid_forget()
+            for entry in self.probabilitiy_entries[profile].values():
+                entry.grid_forget()
+
+        # Display the probabilitiy sliders for the current grid profile
+        for hour in range(24):
+            self.probability_sliders[self.grid_profile_name.get()][hour].grid(
+                row=0, column=hour, padx=0, pady=5, sticky="ns"
+            )
+            self.probabilitiy_entries[self.grid_profile_name.get()][hour].grid(
+                row=1, column=hour, padx=0, pady=5, sticky="ew"
+            )
