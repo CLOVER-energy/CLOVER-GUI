@@ -25,7 +25,8 @@ from .grid import GridFrame
 from .load import LoadFrame
 from .storage import StorageFrame
 from .solar import SolarFrame
-
+from .finance import FinanceFrame
+from .ghgs import GHGFrame
 
 class FinanceFrame(ttk.Frame):
     """
@@ -37,32 +38,19 @@ class FinanceFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent):
-        super().__init__(parent)
+#     Contains settings for greenhouse gas emissions.
 
-        self.label = ttk.Label(self, text="Finance frame")
-        self.label.grid(row=0, column=0)
+#     TODO: Update attributes.
 
-        # TODO: Add configuration frame widgets and layout
+#     """
 
+#     def __init__(self, parent):
+#         super().__init__(parent)
 
-class GHGFrame(ttk.Frame):
-    """
-    Represents the GHG frame.
+#         self.label = ttk.Label(self, text="GHGs frame")
+#         self.label.grid(row=0, column=0)
 
-    Contains settings for greenhouse gas emissions.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.label = ttk.Label(self, text="GHGs frame")
-        self.label.grid(row=0, column=0)
-
-        # TODO: Add configuration frame widgets and layout
+#         # TODO: Add configuration frame widgets and layout
 
 
 class SystemFrame(ttk.Frame):
