@@ -29,32 +29,6 @@ from .finance import FinanceFrame
 from .ghgs import GHGFrame
 
 
-class FinanceFrame(ttk.Frame):
-    """
-    Represents the Finance frame.
-
-    Contains settings for financial analysis.
-
-    TODO: Update attributes.
-
-    """
-
-
-#     Contains settings for greenhouse gas emissions.
-
-#     TODO: Update attributes.
-
-#     """
-
-#     def __init__(self, parent):
-#         super().__init__(parent)
-
-#         self.label = ttk.Label(self, text="GHGs frame")
-#         self.label.grid(row=0, column=0)
-
-#         # TODO: Add configuration frame widgets and layout
-
-
 class SystemFrame(ttk.Frame):
     """
     Represents the System frame.
