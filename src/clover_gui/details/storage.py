@@ -58,7 +58,7 @@ class BatteryFrame(ttk.Frame):
         self.columnconfigure(3, weight=1)  # These rows have entries
 
         # Battery being selected
-        self.battery_selected_label = ttk.Label(self, text="Battery to model")
+        self.battery_selected_label = ttk.Label(self, text="Battery to configure")
         self.battery_selected_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.battery_selected = ttk.StringVar(self, "Li-Ion", "battery_selected")
@@ -76,6 +76,15 @@ class BatteryFrame(ttk.Frame):
         )
         self.battery_selected_combobox.bind("<<ComboboxSelected>>", self.select_battery)
         self.populate_available_batteries()
+
+        # New battery
+        self.new_battery_button = ttk.Button(
+            self,
+            bootstyle=f"{WARNING}-{OUTLINE}",
+            command=self.add_battery,
+            text="New battery",
+        )
+        self.new_battery_button.grid(row=0, column=2, padx=10, pady=5, ipadx=80)
 
         # Battery name
         self.battery_name_label = ttk.Label(self, text="Battery name")
@@ -461,7 +470,9 @@ class BatteryFrame(ttk.Frame):
             row=10, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.c_rate_discharging_unit = ttk.Label(self, text="% of capacity / hour")
+        self.c_rate_discharging_unit = ttk.Label(
+            self, text="fraction of capacity / hour"
+        )
         self.c_rate_discharging_unit.grid(row=10, column=2, padx=10, pady=5, sticky="w")
 
         # C-rate charging
@@ -481,7 +492,7 @@ class BatteryFrame(ttk.Frame):
             row=11, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.c_rate_charging_unit = ttk.Label(self, text="% of  capacity / hour")
+        self.c_rate_charging_unit = ttk.Label(self, text="fraction of  capacity / hour")
         self.c_rate_charging_unit.grid(row=11, column=2, padx=10, pady=5, sticky="w")
 
         # Cost
@@ -612,6 +623,34 @@ class BatteryFrame(ttk.Frame):
 
         # TODO: Add configuration frame widgets and layout
 
+    def add_battery(self) -> None:
+        """Called when a user presses the new battery button."""
+        self.battery_name_values[(new_name := "New")] = ttk.StringVar(self, "New")
+        self.populate_available_batteries()
+
+        # Update all the mappings stored
+        self.battery_capacities[new_name] = ttk.DoubleVar(self, 0)
+        self.maximum_charge[new_name] = ttk.DoubleVar(self, 100)
+        self.minimum_charge[new_name] = ttk.DoubleVar(self, 0)
+        self.leakage[new_name] = ttk.DoubleVar(self, 0)
+        self.conversion_efficiency_in[new_name] = ttk.DoubleVar(self, 100)
+        self.conversion_efficiency_out[new_name] = ttk.DoubleVar(self, 100)
+        self.cycle_lifetime[new_name] = ttk.DoubleVar(self, 0)
+        self.lifetime_capacity_loss[new_name] = ttk.DoubleVar(self, 100)
+        self.c_rate_discharging[new_name] = ttk.DoubleVar(self, 1)
+        self.c_rate_charging[new_name] = ttk.DoubleVar(self, 1)
+        self.costs[new_name] = ttk.DoubleVar(self, 0)
+        self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
+        self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+
+        # Select the new battery and update the screen
+        self.battery_selected = self.battery_name_values[new_name]
+        self.battery_selected_combobox.set(new_name)
+        self.update_battery_frame()
+
     def enter_battery_name(self, _) -> None:
         """Called when someone enters a new battery name."""
         self.populate_available_batteries()
@@ -687,6 +726,13 @@ class BatteryFrame(ttk.Frame):
             entry.get(): entry for entry in self.battery_name_values.values()
         }
 
+    def populate_available_batteries(self) -> None:
+        """Populate the combo box with the set of avialable batteries."""
+
+        self.battery_selected_combobox["values"] = [
+            entry.get() for entry in self.battery_name_values.values()
+        ]
+
     def select_battery(self, _) -> None:
         # Determine the battery name pre- and post-selection
         previous_battery_name: str = {
@@ -705,13 +751,6 @@ class BatteryFrame(ttk.Frame):
 
         # Update the variables being displayed.
         self.update_battery_frame()
-
-    def populate_available_batteries(self) -> None:
-        """Populate the combo box with the set of avialable batteries."""
-
-        self.battery_selected_combobox["values"] = [
-            entry.get() for entry in self.battery_name_values.values()
-        ]
 
     def update_battery_frame(self) -> None:
         """Updates the entries so that the correct variables are displayed on the screen."""

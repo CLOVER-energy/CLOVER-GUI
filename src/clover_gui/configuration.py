@@ -284,7 +284,6 @@ class ThresholdCriterion:
         return self.__str__()
 
     @classmethod
-    @property
     def default_threshold_criterion(cls) -> str:
         """Return the default threshold criterion."""
 
@@ -294,14 +293,14 @@ class ThresholdCriterion:
         """Display the criterion on the screen."""
 
         self.criterion_name_combobox.grid(
-            row=self.index, column=0, padx=10, pady=5, sticky="w"
+            row=self.index, column=0, padx=10, pady=5, sticky="ew"
         )
         self.less_than_combobox.grid(
             row=self.index, column=1, padx=10, pady=5, sticky="ew"
         )
         self.value_entry.grid(row=self.index, column=2, padx=10, pady=5, sticky="ew")
         self.delete_criterion_button.grid(
-            row=self.index, column=3, padx=10, pady=5, sticky="ew", ipadx=20
+            row=self.index, column=3, padx=10, pady=5, sticky="w", ipadx=20
         )
 
     def grid_forget(self) -> None:
@@ -399,7 +398,7 @@ class OptimisationFrame(ttk.Frame):
             self, False, "warning_text_displayed"
         )
         self.warning_text.grid(
-            row=2, column=0, columnspan=3, padx=10, pady=5, sticky="w"
+            row=2, column=0, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def update_optimisation_time_warning() -> None:
@@ -693,7 +692,7 @@ class OptimisationFrame(ttk.Frame):
         self.pv_t_min_label = ttk.Label(self.scrollable_steps_frame, text="min")
         self.pv_t_min_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
 
-        self.pv_t_min = ttk.IntVar(self, 5)
+        self.pv_t_min = ttk.IntVar(self, 0)
         self.pv_t_min_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
@@ -708,7 +707,7 @@ class OptimisationFrame(ttk.Frame):
         self.pv_t_max_label = ttk.Label(self.scrollable_steps_frame, text="max")
         self.pv_t_max_label.grid(row=2, column=2, padx=10, pady=5, sticky="e")
 
-        self.pv_t_max = ttk.IntVar(self, 20)
+        self.pv_t_max = ttk.IntVar(self, 0)
         self.pv_t_max_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
@@ -722,7 +721,7 @@ class OptimisationFrame(ttk.Frame):
 
         self.pv_t_step_label = ttk.Label(self.scrollable_steps_frame, text="step")
         self.pv_t_step_label.grid(row=2, column=4, padx=10, pady=5, sticky="e")
-        self.pv_t_step = ttk.IntVar(self, 5)
+        self.pv_t_step = ttk.IntVar(self, 0)
 
         self.pv_t_step_entry = ttk.Entry(
             self.scrollable_steps_frame,
@@ -746,7 +745,7 @@ class OptimisationFrame(ttk.Frame):
         )
         self.solar_thermal_min_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
 
-        self.solar_thermal_min = ttk.IntVar(self, 5)
+        self.solar_thermal_min = ttk.IntVar(self, 0)
         self.solar_thermal_min_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
@@ -765,7 +764,7 @@ class OptimisationFrame(ttk.Frame):
         )
         self.solar_thermal_max_label.grid(row=3, column=2, padx=10, pady=5, sticky="e")
 
-        self.solar_thermal_max = ttk.IntVar(self, 20)
+        self.solar_thermal_max = ttk.IntVar(self, 0)
         self.solar_thermal_max_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
@@ -783,7 +782,7 @@ class OptimisationFrame(ttk.Frame):
             self.scrollable_steps_frame, text="step"
         )
         self.solar_thermal_step_label.grid(row=3, column=4, padx=10, pady=5, sticky="e")
-        self.solar_thermal_step = ttk.IntVar(self, 5)
+        self.solar_thermal_step = ttk.IntVar(self, 0)
 
         self.solar_thermal_step_entry = ttk.Entry(
             self.scrollable_steps_frame,
@@ -813,7 +812,7 @@ class OptimisationFrame(ttk.Frame):
             row=4, column=0, padx=10, pady=5, sticky="e"
         )
 
-        self.hot_water_tanks_min = ttk.IntVar(self, 5)
+        self.hot_water_tanks_min = ttk.IntVar(self, 0)
         self.hot_water_tanks_min_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
@@ -836,7 +835,7 @@ class OptimisationFrame(ttk.Frame):
             row=4, column=2, padx=10, pady=5, sticky="e"
         )
 
-        self.hot_water_tanks_max = ttk.IntVar(self, 20)
+        self.hot_water_tanks_max = ttk.IntVar(self, 0)
         self.hot_water_tanks_max_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
@@ -858,7 +857,7 @@ class OptimisationFrame(ttk.Frame):
         self.hot_water_tanks_step_label.grid(
             row=4, column=4, padx=10, pady=5, sticky="e"
         )
-        self.hot_water_tanks_step = ttk.IntVar(self, 5)
+        self.hot_water_tanks_step = ttk.IntVar(self, 0)
 
         self.hot_water_tanks_step_entry = ttk.Entry(
             self.scrollable_steps_frame,
@@ -945,13 +944,13 @@ class OptimisationFrame(ttk.Frame):
             sticky="news",
         )
 
+        self.threshold_criteria_frame.rowconfigure(0, weight=1, pad=40)
+        self.threshold_criteria_frame.rowconfigure(1, weight=4)
+
         self.threshold_criteria_frame.columnconfigure(0, weight=1)
         self.threshold_criteria_frame.columnconfigure(1, weight=1)
         self.threshold_criteria_frame.columnconfigure(2, weight=1)
         self.threshold_criteria_frame.columnconfigure(3, weight=1)
-
-        self.threshold_criteria_frame.rowconfigure(0, weight=1, pad=40)
-        self.threshold_criteria_frame.rowconfigure(1, weight=4)
 
         # Create the scrollable frame for threshold criteria
         self.scrollable_threshold_frame = ScrolledFrame(self.threshold_criteria_frame)
@@ -965,6 +964,11 @@ class OptimisationFrame(ttk.Frame):
             ipadx=10,
             ipady=30,
         )
+
+        self.scrollable_threshold_frame.columnconfigure(0, weight=1)
+        self.scrollable_threshold_frame.columnconfigure(1, weight=1)
+        self.scrollable_threshold_frame.columnconfigure(2, weight=1)
+        self.scrollable_threshold_frame.columnconfigure(3, weight=1)
 
         self.threshold_criteria: list[ThresholdCriterion] = [
             ThresholdCriterion(
