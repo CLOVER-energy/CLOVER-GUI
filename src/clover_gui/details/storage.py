@@ -648,7 +648,8 @@ class BatteryFrame(ttk.Frame):
 
         # Select the new battery and update the screen
         self.battery_selected = self.battery_name_values[new_name]
-        self.battery_selected_combobox.set(new_name)
+        self.battery_selected_combobox.configure(textvariable=self.battery_selected)
+        self.battery_name_entry.configure(textvariable=self.battery_selected)
         self.update_battery_frame()
 
     def enter_battery_name(self, _) -> None:
