@@ -20,11 +20,11 @@ from ttkbootstrap.scrolled import *
 __all__ = ("SolarFrame",)
 
 
-class SolarFrame(ttk.Frame):
+class PVFrame(ttk.Frame):
     """
-    Represents the Solar frame.
+    Represents the Solar PV frame.
 
-    Contains settings for solar collectors.
+    Contains settings for PV collectors.
 
     TODO: Update attributes.
 
@@ -668,3 +668,79 @@ class SolarFrame(ttk.Frame):
         self.embedded_emissions_entry.update()
         self.annual_emissions_decrease_entry.update()
         self.om_emissions_entry.update()
+
+
+class PVTFrame(ttk.Frame):
+    """
+    Represents the PV-T frame.
+
+    Contains settings for the PV-T units.
+
+    TODO: Update attributes.
+
+    """
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.label = ttk.Label(self, text="PV-T frame")
+        self.label.grid(row=0, column=0)
+
+        # TODO: Add configuration frame widgets and layout
+
+
+class SolarThermalFrame(ttk.Frame):
+    """
+    Represents the solar-thermal frame.
+
+    Contains settings for the solar-thermal units.
+
+    TODO: Update attributes.
+
+    """
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.label = ttk.Label(self, text="Solar-thermal frame")
+        self.label.grid(row=0, column=0)
+
+        # TODO: Add configuration frame widgets and layout
+
+
+class SolarFrame(ttk.Frame):
+    """
+    Represents the Solar frame.
+
+    Contains settings for solar units.
+
+    TODO: Update attributes.
+
+    """
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self.solar_notebook = ttk.Notebook(self, bootstyle=WARNING)
+        self.solar_notebook.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+
+        self.pv_frame = PVFrame(self)
+        self.solar_notebook.add(self.pv_frame, text="PV panels", sticky="news")
+
+        self.pv_t_frame = PVTFrame(self)
+        self.solar_notebook.add(
+            self.pv_t_frame, text="PV-T collectors", sticky="news", state=DISABLED
+        )
+
+        self.solar_thermal_frame = SolarThermalFrame(self)
+        self.solar_notebook.add(
+            self.solar_thermal_frame,
+            text="Solar-thermal collectors",
+            sticky="news",
+            state=DISABLED,
+        )
+
+        # TODO: Add configuration frame widgets and layout
