@@ -52,10 +52,10 @@ class BatteryFrame(ttk.Frame):
         self.rowconfigure(15, weight=1)
         self.rowconfigure(16, weight=1)
 
-        self.columnconfigure(0, weight=10)  # First row has the header
-        self.columnconfigure(1, weight=10)  # These rows have entries
-        self.columnconfigure(2, weight=1)  # These rows have entries
-        self.columnconfigure(3, weight=1)  # These rows have entries
+        self.columnconfigure(0, weight=10)
+        self.columnconfigure(1, weight=10)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
 
         # Battery being selected
         self.battery_selected_label = ttk.Label(self, text="Battery to configure")
@@ -63,7 +63,7 @@ class BatteryFrame(ttk.Frame):
 
         self.battery_selected = ttk.StringVar(self, "Li-Ion", "battery_selected")
         self.battery_name_values = {
-            (battery_name := "Li-Ion"): self.battery_selected,
+            "Li-Ion": self.battery_selected,
             (battery_name := "Pb-Acid"): ttk.StringVar(self, battery_name),
             (battery_name := "New Pb-Acid"): ttk.StringVar(self, battery_name),
         }
@@ -625,7 +625,18 @@ class BatteryFrame(ttk.Frame):
 
     def add_battery(self) -> None:
         """Called when a user presses the new battery button."""
-        self.battery_name_values[(new_name := "New")] = ttk.StringVar(self, "New")
+
+        # Determine the new name
+        new_name = "New{suffix}"
+        index = 0
+        suffix = ""
+        while new_name.format(suffix=suffix) in self.battery_name_values:
+            index += 1
+            suffix = f"_{index}"
+
+        new_name = new_name.format(suffix=suffix)
+
+        self.battery_name_values[new_name] = ttk.StringVar(self, new_name)
         self.populate_available_batteries()
 
         # Update all the mappings stored
@@ -754,7 +765,10 @@ class BatteryFrame(ttk.Frame):
         self.update_battery_frame()
 
     def update_battery_frame(self) -> None:
-        """Updates the entries so that the correct variables are displayed on the screen."""
+        """
+        Updates the entries so that the correct variables are displayed on the screen.
+
+        """
 
         self.battery_capacity_entry.configure(
             textvariable=self.battery_capacities[self.battery_selected.get()]

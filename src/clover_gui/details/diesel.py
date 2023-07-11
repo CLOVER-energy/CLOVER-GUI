@@ -347,9 +347,18 @@ class GeneratorFrame(ttk.Frame):
 
     def add_diesel_generator(self) -> None:
         """Called when a user presses the new diesel generator button."""
-        self.diesel_generator_name_values[
-            (new_name := "New generator")
-        ] = ttk.StringVar(self, "New generator")
+
+        # Determine the new name
+        new_name = "New generator {suffix}"
+        index = 0
+        suffix = ""
+        while new_name.format(suffix=suffix) in self.diesel_generator_name_values:
+            index += 1
+            suffix = f"({index})"
+
+        new_name = new_name.format(suffix=suffix)
+
+        self.diesel_generator_name_values[new_name] = ttk.StringVar(self, new_name)
         self.populate_available_generators()
 
         # Update all the mappings stored

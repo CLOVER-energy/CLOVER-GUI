@@ -37,7 +37,12 @@ class GridFrame(ttk.Frame):
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=6)
 
-        for index in range(3):
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
+
+        for index in range(4):
             self.columnconfigure(index, weight=1)
 
         # Grid-profile combobox
@@ -52,25 +57,30 @@ class GridFrame(ttk.Frame):
         self.grid_profile_combobox = ttk.Combobox(
             self, bootstyle=SUCCESS, textvariable=self.grid_profile_name
         )
-        self.grid_profile_combobox.grid(
-            row=0, column=0, padx=10, pady=5, sticky="w", ipadx=60
-        )
+        self.grid_profile_combobox.grid(row=0, column=0, padx=10, pady=5, sticky="w")
         self.populate_available_profiles()
 
         # Grid profile name
         self.grid_profile_label = ttk.Label(self, text="Profile name")
-        self.grid_profile_label.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+        self.grid_profile_label.grid(row=0, column=1, padx=10, pady=5, sticky="e")
 
         self.grid_profile_entry = ttk.Entry(
             self, bootstyle=SUCCESS, textvariable=self.grid_profile_name
         )
-        self.grid_profile_entry.grid(
-            row=0, column=2, padx=10, pady=5, sticky="ew", ipadx=80
-        )
+        self.grid_profile_entry.grid(row=0, column=2, padx=10, pady=5, sticky="ew")
         self.grid_profile_entry.bind("<Return>", self.enter_grid_profile_name)
         self.grid_profile_combobox.bind(
             "<<ComboboxSelected>>", self.select_grid_profile
         )
+
+        # New profile
+        self.new_profile_button = ttk.Button(
+            self,
+            bootstyle=f"{SUCCESS}-{OUTLINE}",
+            command=self.add_profile,
+            text="New grid profile",
+        )
+        self.new_profile_button.grid(row=0, column=3, padx=10, pady=5)
 
         # Graph
         self.graph_frame = ttk.Labelframe(
@@ -80,7 +90,7 @@ class GridFrame(ttk.Frame):
         self.graph_frame.grid(
             row=1,
             column=0,
-            columnspan=3,
+            columnspan=4,
             padx=5,
             pady=10,
             ipady=100,
@@ -108,12 +118,6 @@ class GridFrame(ttk.Frame):
             key: {} for key in self.grid_profile_values
         }
 
-        def enter_probability(grid_profile, hour):
-            self.probabilities[grid_profile][hour].set(
-                max(min(float(self.probability_entries[hour].get()), 1), 0)
-            )
-            self.probability_sliders[hour].set(self.probabilities[hour].get())
-
         for grid_profile in self.grid_profile_values:
             for hour in range(24):
                 self.probability_sliders[grid_profile][hour] = ttk.Scale(
@@ -135,7 +139,7 @@ class GridFrame(ttk.Frame):
                 )
                 self.probability_entries[grid_profile][hour].bind(
                     "<Return>",
-                    lambda _, grid_profile=grid_profile, hour=hour: enter_probability(
+                    lambda _, grid_profile=grid_profile, hour=hour: self.enter_probability(
                         grid_profile, hour
                     ),
                 )
@@ -147,10 +151,64 @@ class GridFrame(ttk.Frame):
 
         # TODO: Add configuration frame widgets and layout
 
+    def add_profile(self) -> None:
+        """Called when a user presses the new grid-profile button."""
+
+        # Determine the new name
+        new_name = "new{suffix}"
+        index = 0
+        suffix = ""
+        while new_name.format(suffix=suffix) in self.grid_profile_values:
+            index += 1
+            suffix = f"_{index}"
+
+        new_name = new_name.format(suffix=suffix)
+
+        self.grid_profile_values[new_name] = ttk.StringVar(self, new_name)
+
+        # Create new probabilities and sliders
+        self.probabilities[new_name] = {
+            hour: ttk.DoubleVar(self.graph_frame, 0.3) for hour in range(24)
+        }
+        self.probability_sliders[new_name] = {}
+        self.probability_entries[new_name] = {}
+        for hour in range(24):
+            self.probability_sliders[new_name][hour] = ttk.Scale(
+                self.graph_frame,
+                from_=1,
+                to=0,
+                value=self.probabilities[new_name][hour].get(),
+                variable=self.probabilities[new_name][hour],
+                style=SUCCESS,
+                orient=VERTICAL,
+                length=300,
+            )
+
+            self.probability_entries[new_name][hour] = ttk.Entry(
+                self.graph_frame,
+                bootstyle=SUCCESS,
+                textvariable=self.probabilities[new_name][hour],
+                width=4,
+            )
+            self.probability_entries[new_name][hour].bind(
+                "<Return>",
+                lambda _, grid_profile=new_name, hour=hour: self.enter_probability(
+                    new_name, hour
+                ),
+            )
+
+        # Update the probability sliders on the screen
+        self.grid_profile_name = self.grid_profile_values[new_name]
+        self.populate_available_profiles()
+        self.grid_profile_combobox.configure(textvariable=self.grid_profile_name)
+        self.grid_profile_entry.configure(textvariable=self.grid_profile_name)
+        self.update_graph_frame_label()
+
+        # Update the sliders
+        self.update_sliders()
+
     def enter_grid_profile_name(self, _) -> None:
         """Called when someone enters a new grid profile name."""
-        self.populate_available_profiles()
-        self.update_graph_frame_label()
         self.probability_sliders = {
             self.grid_profile_values[key].get(): value
             for key, value in self.probability_sliders.items()
@@ -159,9 +217,21 @@ class GridFrame(ttk.Frame):
             self.grid_profile_values[key].get(): value
             for key, value in self.probability_entries.items()
         }
+        self.probabilities = {
+            self.grid_profile_values[key].get(): value
+            for key, value in self.probabilities.items()
+        }
         self.grid_profile_values = {
             entry.get(): entry for entry in self.grid_profile_values.values()
         }
+        self.populate_available_profiles()
+        self.update_graph_frame_label()
+
+    def enter_probability(self, grid_profile, hour):
+        self.probabilities[grid_profile][hour].set(
+            max(min(float(self.probability_entries[hour].get()), 1), 0)
+        )
+        self.probability_sliders[hour].set(self.probabilities[hour].get())
 
     def populate_available_profiles(self) -> None:
         self.grid_profile_combobox["values"] = [
