@@ -86,6 +86,15 @@ class GeneratorFrame(ttk.Frame):
         )
         self.populate_available_generators()
 
+        # New generator
+        self.new_generator_button = ttk.Button(
+            self,
+            bootstyle=f"{DANGER}-{OUTLINE}",
+            command=self.add_diesel_generator,
+            text="New generator",
+        )
+        self.new_generator_button.grid(row=0, column=2, padx=10, pady=5, ipadx=80)
+
         # Diesel generator name
         self.diesel_generator_name_label = ttk.Label(self, text="Diesel generator name")
         self.diesel_generator_name_label.grid(
@@ -336,6 +345,34 @@ class GeneratorFrame(ttk.Frame):
             row=10, column=2, padx=10, pady=5, sticky="w"
         )
 
+    def add_diesel_generator(self) -> None:
+        """Called when a user presses the new diesel generator button."""
+        self.diesel_generator_name_values[
+            (new_name := "New generator")
+        ] = ttk.StringVar(self, "New generator")
+        self.populate_available_generators()
+
+        # Update all the mappings stored
+        self.diesel_generator_capacities[new_name] = ttk.DoubleVar(self, 0)
+        self.fuel_consumption[new_name] = ttk.DoubleVar(self, 0)
+        self.minimum_load[new_name] = ttk.DoubleVar(self, 50)
+        self.costs[new_name] = ttk.DoubleVar(self, 0)
+        self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
+        self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+
+        # Select the new battery and update the screen
+        self.diesel_generator_selected = self.diesel_generator_name_values[new_name]
+        self.diesel_generator_selected_combobox.configure(
+            textvariable=self.diesel_generator_selected
+        )
+        self.diesel_generator_name_entry.configure(
+            textvariable=self.diesel_generator_selected
+        )
+        self.update_diesel_generator_frame()
+
     def enter_diesel_generator_name(self, _) -> None:
         """Called when someone enters a new diesel_generator name."""
         self.populate_available_generators()
@@ -383,6 +420,13 @@ class GeneratorFrame(ttk.Frame):
             entry.get(): entry for entry in self.diesel_generator_name_values.values()
         }
 
+    def populate_available_generators(self) -> None:
+        """Populate the combo box with the set of avialable batteries."""
+
+        self.diesel_generator_selected_combobox["values"] = [
+            entry.get() for entry in self.diesel_generator_name_values.values()
+        ]
+
     def select_diesel_generator(self, _) -> None:
         # Determine the diesel_generator name pre- and post-selection
         previous_diesel_generator_name: str = {
@@ -411,13 +455,6 @@ class GeneratorFrame(ttk.Frame):
 
         # Update the variables being displayed.
         self.update_diesel_generator_frame()
-
-    def populate_available_generators(self) -> None:
-        """Populate the combo box with the set of avialable batteries."""
-
-        self.diesel_generator_selected_combobox["values"] = [
-            entry.get() for entry in self.diesel_generator_name_values.values()
-        ]
 
     def update_diesel_generator_frame(self) -> None:
         """Updates the entries so that the correct variables are displayed on the screen."""
