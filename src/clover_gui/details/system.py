@@ -1,4 +1,13 @@
-import tkinter as tk
+#!/usr/bin/python3.10
+########################################################################################
+# system.py - The system module for CLOVER-GUI application.                            #
+#                                                                                      #
+# Author: Ben Winchester, Hamish Beath                                                 #
+# Copyright: Ben Winchester, 2022                                                      #
+# Date created: 11/07/2023                                                             #
+# License: MIT, Open-source                                                            #
+# For more information, contact: benedict.winchester@gmail.com                         #
+########################################################################################
 
 import ttkbootstrap as ttk
 
@@ -6,7 +15,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 
-__all__ = ("FinanceFrame",)
+__all__ = ("SystemFrame",)
 
 
 class SystemFrame(ttk.Frame):

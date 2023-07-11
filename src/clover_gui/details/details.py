@@ -20,32 +20,17 @@ from ..__utils__ import DETAILS_GEOMETRY
 
 __all__ = ("DetailsWindow",)
 
+from .conversion import ConversionFrame
 from .diesel import DieselFrame
+from .finance import FinanceFrame
+from .ghgs import GHGFrame
 from .grid import GridFrame
 from .load import LoadFrame
 from .storage import StorageFrame
 from .solar import SolarFrame
-from .finance import FinanceFrame
-from .ghgs import GHGFrame
-
-
-class SystemFrame(ttk.Frame):
-    """
-    Represents the System frame.
-
-    Contains settings for system configuration.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.label = ttk.Label(self, text="System frame")
-        self.label.grid(row=0, column=0)
-
-        # TODO: Add configuration frame widgets and layout
+from .system import SystemFrame
+from .transmission import TransmissionFrame
+from .wind import WindFrame
 
 
 class DetailsWindow(tk.Toplevel):
@@ -98,23 +83,38 @@ class DetailsWindow(tk.Toplevel):
         self.solar_frame = SolarFrame(self.details_notebook)
         self.details_notebook.add(self.solar_frame, text="Solar", sticky="news")
 
-        self.solar_frame = StorageFrame(self.details_notebook)
-        self.details_notebook.add(self.solar_frame, text="Storage", sticky="news")
+        self.wind_frame = WindFrame(self.details_notebook)
+        self.details_notebook.add(
+            self.wind_frame, text="Wind", sticky="news", state=DISABLED
+        )
 
-        self.solar_frame = LoadFrame(self.details_notebook)
-        self.details_notebook.add(self.solar_frame, text="Load", sticky="news")
+        self.storage_frame = StorageFrame(self.details_notebook)
+        self.details_notebook.add(self.storage_frame, text="Storage", sticky="news")
 
-        self.solar_frame = DieselFrame(self.details_notebook)
-        self.details_notebook.add(self.solar_frame, text="Diesel", sticky="news")
+        self.load_frame = LoadFrame(self.details_notebook)
+        self.details_notebook.add(self.load_frame, text="Load", sticky="news")
 
-        self.solar_frame = GridFrame(self.details_notebook)
-        self.details_notebook.add(self.solar_frame, text="Grid", sticky="news")
+        self.conversion_frame = ConversionFrame(self.details_notebook)
+        self.details_notebook.add(
+            self.conversion_frame, text="Convert", sticky="news", state=DISABLED
+        )
 
-        self.solar_frame = FinanceFrame(self.details_notebook)
-        self.details_notebook.add(self.solar_frame, text="Finance", sticky="news")
+        self.transmission_frame = TransmissionFrame(self.details_notebook)
+        self.details_notebook.add(
+            self.transmission_frame, text="Transmit.", sticky="news", state=DISABLED
+        )
 
-        self.solar_frame = GHGFrame(self.details_notebook)
-        self.details_notebook.add(self.solar_frame, text="GHGs", sticky="news")
+        self.diesel_frame = DieselFrame(self.details_notebook)
+        self.details_notebook.add(self.diesel_frame, text="Diesel", sticky="news")
 
-        self.solar_frame = SystemFrame(self.details_notebook)
-        self.details_notebook.add(self.solar_frame, text="System", sticky="news")
+        self.grid_frame = GridFrame(self.details_notebook)
+        self.details_notebook.add(self.grid_frame, text="Grid", sticky="news")
+
+        self.finance_frame = FinanceFrame(self.details_notebook)
+        self.details_notebook.add(self.finance_frame, text="Finance", sticky="news")
+
+        self.ghgs_frame = GHGFrame(self.details_notebook)
+        self.details_notebook.add(self.ghgs_frame, text="GHGs", sticky="news")
+
+        self.system_frame = SystemFrame(self.details_notebook)
+        self.details_notebook.add(self.system_frame, text="System", sticky="news")
