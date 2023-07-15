@@ -61,7 +61,7 @@ class DetailsWindow(tk.Toplevel):
 
         self.geometry(DETAILS_GEOMETRY)
 
-        self.protocol("WM_DELETE_WINDOW", self.withdraw)
+        self.protocol("WM_DELETE_WINDOW", self.save_and_close)
 
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -118,3 +118,10 @@ class DetailsWindow(tk.Toplevel):
 
         self.system_frame = SystemFrame(self.details_notebook)
         self.details_notebook.add(self.system_frame, text="System", sticky="news")
+
+    def save_and_close(self) -> None:
+        """Actioned when closed."""
+
+        # Save all of the variables from the details screen.
+
+        self.withdraw()
