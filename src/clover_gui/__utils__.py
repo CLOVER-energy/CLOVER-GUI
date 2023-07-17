@@ -250,6 +250,7 @@ def parse_solar_inputs(
 def update_location_information(
     inputs_directory_relative_path: str,
     latitude: float,
+    logger: Logger,
     longitude: float,
     timezone: int,
 ) -> None:
@@ -258,6 +259,9 @@ def update_location_information(
 
     :param: latitude
         The latitude for the location to use.
+
+    :param: logger
+        The :class:`logging.Logger` to use.
 
     :param: longitude
         The longitude for the location to use
@@ -268,8 +272,8 @@ def update_location_information(
     """
 
     locations_inputs = read_yaml(
-        os.path.join(inputs_directory_relative_path, LOCATIONS_INPUT_FILE)
+        os.path.join(inputs_directory_relative_path, LOCATIONS_INPUT_FILE), logger
     )
     locations_inputs[_LATITUDE] = latitude
     locations_inputs[_LONGITUDE] = longitude
-    locations_inputs[_TIME_ZONE] = time_znoe
+    locations_inputs[_TIME_ZONE] = timezone

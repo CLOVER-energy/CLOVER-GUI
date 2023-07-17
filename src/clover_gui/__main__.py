@@ -166,7 +166,15 @@ class App(ttk.Window):
             return
 
         # Create the new location.
-        create_new_location(None, new_location_name, self.logger, False)
+        try:
+            create_new_location(None, new_location_name, self.logger, False)
+        except SystemExit:
+            self.logger.error("New location name already used.")
+            self.new_location_frame.warning_text_label.configure(
+                text=f"Failed to create '{new_location_name}'. Check that the location "
+                "does not already exist."
+            )
+            return
 
         self.inputs_directory_relative_path = os.path.join(
             LOCATIONS_FOLDER_NAME,
@@ -176,7 +184,11 @@ class App(ttk.Window):
 
         # Update the entries in the files wrt latitude, longitude and time zone.
         update_location_information(
-            self.inputs_directory_relative_path, latitude, longitude, time_zone
+            self.inputs_directory_relative_path,
+            latitude,
+            self.logger,
+            longitude,
+            time_zone,
         )
 
         self.new_location_frame.pack_forget()
