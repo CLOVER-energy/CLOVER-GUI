@@ -66,11 +66,15 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         self.location_name_label = ttk.Label(self, text="Location name")
         self.location_name_label.grid(row=1, column=0, sticky="e")
 
-        self.load_location_entry = ttk.Combobox(self, bootstyle="primary")
-        self.load_location_entry.grid(
+        self.load_location_name: ttk.StringVar = ttk.StringVar(self)
+
+        self.load_location_combobox = ttk.Combobox(
+            self, bootstyle="primary", textvariable=self.load_location_name
+        )
+        self.load_location_combobox.grid(
             row=1, column=1, padx=10, pady=5, sticky="w", ipadx=80
         )
-
+        self.load_location_combobox.bind("<<ComboboxSelected>>", self.select_location)
         self.populate_available_locations()
 
         self.load_button = ttk.Button(
@@ -94,7 +98,13 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         if not os.path.isdir(LOCATIONS_DIRECTORY):
             return
 
-        self.load_location_entry["values"] = os.listdir(LOCATIONS_DIRECTORY)
+        self.load_location_combobox["values"] = os.listdir(LOCATIONS_DIRECTORY)
+        self.load_location_name.set(self.load_location_combobox["values"][0])
+
+    def select_location(self, _) -> None:
+        """Selects the location specified."""
+
+        self.load_location_name.set(self.load_location_combobox.get())
 
 
 class LoadLocationWindow(tk.Toplevel):

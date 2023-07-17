@@ -60,6 +60,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(4, weight=1)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(6, weight=1)
+        self.rowconfigure(7, weight=1)
 
         self.columnconfigure(0, weight=1)  # First three have forward, home, back
         self.columnconfigure(1, weight=1)
@@ -195,6 +196,11 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.time_zone_unit = ttk.Label(self, text="hours from UTC")
         self.time_zone_unit.grid(row=4, column=5, padx=10, pady=5, sticky="w")
 
+        self.warning_text_label = ttk.Label(
+            self, text="", bootstyle=DANGER, state=DISABLED
+        )
+        self.warning_text_label.grid(row=5, column=4, columnspan=2, sticky="w")
+
         self.create_location_button = ttk.Button(
             self,
             text="Create",
@@ -202,7 +208,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             command=create_location_callback,
         )
         self.create_location_button.grid(
-            row=5,
+            row=6,
             column=5,
             columnspan=2,
             padx=5,
