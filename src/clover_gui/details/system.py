@@ -1,4 +1,13 @@
-import tkinter as tk
+#!/usr/bin/python3.10
+########################################################################################
+# system.py - The system module for CLOVER-GUI application.                            #
+#                                                                                      #
+# Author: Ben Winchester, Hamish Beath                                                 #
+# Copyright: Ben Winchester, 2022                                                      #
+# Date created: 11/07/2023                                                             #
+# License: MIT, Open-source                                                            #
+# For more information, contact: benedict.winchester@gmail.com                         #
+########################################################################################
 
 import ttkbootstrap as ttk
 
@@ -6,7 +15,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 
-__all__ = ("FinanceFrame",)
+__all__ = ("SystemFrame",)
 
 
 class SystemFrame(ttk.Frame):
@@ -18,6 +27,7 @@ class SystemFrame(ttk.Frame):
     TODO: Update attributes.
 
     """
+
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -68,44 +78,3 @@ class SystemFrame(ttk.Frame):
         """
 
         # AC transmission efficiency
-        self.ac_transmission_label = ttk.Label(self, text="AC transmission efficiency")
-        self.ac_transmission_label.grid(row=1, column=1, sticky="w")
-
-        self.ac_transmission = ttk.DoubleVar(self, 0, "ac_transmission")
-
-        def scalar_ac_transmission(_):
-            self.ac_tranmission.set(self.ac_tranmission_slider.get())
-            # self.lifetime_capacity_loss_entry.configure(str(self.lifetime_capacity_loss.get()))
-            self.ac_transmission_entry.update()
-
-        self.ac_transmission_slider = ttk.Scale(
-            self,
-            from_=0,
-            to=100,
-            orient=tk.HORIZONTAL,
-            length=320,
-            command=scalar_ac_transmission,
-            bootstyle=INFO,
-            variable=self.ac_transmission,
-            # state=DISABLED
-        )
-        self.ac_transmission_slider.grid(
-            row=1, column=2, padx=10, pady=5, sticky="ew"
-        )
-
-        def enter_ac_transmission(_):
-            self.ac_transmission.set(self.ac_transmission_entry.get())
-            self.ac_transmission_slider.set(self.ac_transmission.get())
-
-        self.ac_transmission_entry = ttk.Entry(
-            self, bootstyle=INFO, textvariable=self.ac_transmission
-        )
-        self.ac_transmission_entry.grid(
-            row=1, column=3, padx=10, pady=5, sticky="ew"
-        )
-        self.ac_transmission_entry.bind("<Return>", enter_ac_transmission)
-
-        self.ac_transmission_unit = ttk.Label(self, text=f"%")
-        self.ac_transmission_unit.grid(
-            row=1, column=4, padx=10, pady=5, sticky="ew"
-        )

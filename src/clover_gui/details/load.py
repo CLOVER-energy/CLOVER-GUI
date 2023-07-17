@@ -67,7 +67,7 @@ class Device:
         )
 
 
-class DeviceSettingsFrame(ttk.Frame):
+class DeviceSettingsFrame(ttk.Labelframe):
     """
     Represents the device-settings frame.
 
@@ -78,7 +78,7 @@ class DeviceSettingsFrame(ttk.Frame):
     """
 
     def __init__(self, parent: Any):
-        super().__init__(parent)
+        super().__init__(parent, text="Device settings", style=SUCCESS)
 
         self.columnconfigure(0, weight=4)
         self.columnconfigure(1, weight=4)
@@ -195,7 +195,7 @@ class DeviceSettingsFrame(ttk.Frame):
         )
 
 
-class DevicesFrame(ttk.Frame):
+class DevicesFrame(ScrolledFrame):
     """
     Represents the scrollable frame where devices can be selected.
 
@@ -208,18 +208,12 @@ class DevicesFrame(ttk.Frame):
     ):
         super().__init__(parent)
 
-        # Create the scrollable frame
-        scrollable_frame = ScrolledFrame(self)
-        scrollable_frame.grid(
-            row=0, column=0, padx=10, pady=5, sticky="news", ipadx=10, ipady=200
-        )
-
         # Duplicate functional call
         self.update_device_settings_frame = update_device_settings_frame
 
         self.device_active_buttons: dict[Device, ttk.Button] = {
             device: ttk.Checkbutton(
-                scrollable_frame,
+                self,
                 style=f"{SUCCESS}.{OUTLINE}.{TOOLBUTTON}",
                 variable=device.active,
             )
@@ -228,7 +222,7 @@ class DevicesFrame(ttk.Frame):
 
         self.device_selected_buttons: dict[Device, ttk.Button] = {
             device: ttk.Button(
-                scrollable_frame,
+                self,
                 text=device.name.get().capitalize(),
                 style=f"{SUCCESS}.{OUTLINE}",
             )
@@ -257,9 +251,10 @@ class LoadFrame(ttk.Frame):
         super().__init__(parent)
 
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=4)
+        self.columnconfigure(1, weight=2)
 
         self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=8)
 
         self.devices = [
             Device(self, "light", True, 3, 2, 4, 0.04, 0.5, DeviceType.DOMESTIC),
@@ -454,18 +449,81 @@ class LoadFrame(ttk.Frame):
 
         # Create the right-hand frame for adjusting device settings
         self.settings_frame = DeviceSettingsFrame(self)
-        self.settings_frame.grid(row=0, column=1, padx=20, pady=10, sticky="news")
+        self.settings_frame.grid(
+            row=0, column=1, padx=20, pady=10, sticky="news", rowspan=2
+        )
+
+        # Create the button for creating devices
+        self.add_device_button = ttk.Button(
+            self,
+            bootstyle=f"{SUCCESS}-{OUTLINE}",
+            command=self.add_device,
+            text="New device",
+        )
+        self.add_device_button.grid(row=0, column=0, padx=10, pady=5, ipadx=80)
 
         # Create the left-hand frame for selecting the devices
         self.devices_frame = DevicesFrame(
             self, self.select_device, self.update_device_settings_frame
         )
-        self.devices_frame.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+        self.devices_frame.grid(row=1, column=0, padx=20, pady=10, sticky="news")
 
         for device, button in self.devices_frame.device_selected_buttons.items():
             button.configure(command=lambda device=device: self.select_device(device))
 
         self.select_device(self.devices[0])
+
+    def add_device(self) -> None:
+        """Creates a new device when called."""
+
+        # Determine the name of the new device
+        new_name = "New_device{suffix}"
+        index = 0
+        suffix = ""
+        while new_name.format(suffix=suffix) in {
+            entry.name.get() for entry in self.devices
+        }:
+            index += 1
+            suffix = f"_{index}"
+
+        new_name = new_name.format(suffix=suffix)
+
+        # Create the new device and select it.
+        self.devices.append(
+            (device := Device(self, new_name, True, 0, 0, 0, 0, 0, DeviceType.DOMESTIC))
+        )
+        self.active_device = device
+
+        # Add a new set of buttons for the device
+        self.devices_frame.device_active_buttons[device] = ttk.Checkbutton(
+            self.devices_frame,
+            style=f"{SUCCESS}.{OUTLINE}.{TOOLBUTTON}",
+            variable=device.active,
+        )
+        self.devices_frame.device_active_buttons[device].grid(
+            row=len(self.devices_frame.device_active_buttons), column=0, padx=10, pady=5
+        )
+
+        self.devices_frame.device_selected_buttons[device] = ttk.Button(
+            self.devices_frame,
+            text=device.name.get().capitalize(),
+            style=f"{SUCCESS}",
+            command=lambda device=device: self.select_device(device),
+        )
+        self.devices_frame.device_selected_buttons[device].grid(
+            row=len(self.devices_frame.device_selected_buttons),
+            column=1,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+
+        # Set the other device-selected buttons to look disabled.
+        self.select_device(device)
+
+        # Update the screen
+        self.devices_frame.update()
+        self.update_device_settings_frame(device)
 
     def update_device_settings_frame(self, device: Device) -> None:
         """Updates the information for the device currently being considered."""

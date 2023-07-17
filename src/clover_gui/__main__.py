@@ -9,15 +9,24 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
-import threading
-import time
+import os
 import ttkbootstrap as ttk
 
+from clover import (
+    get_logger,
+    LOCATIONS_FOLDER_NAME,
+    INPUTS_DIRECTORY,
+    parse_input_files,
+)
+from clover.scripts.new_location import create_new_location
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
     MAIN_WINDOW_GEOMETRY,
+    parse_battery_inputs,
+    parse_solar_inputs,
+    update_location_information,
 )
 from .configuration import ConfigurationScreen
 from .details.details import DetailsWindow
@@ -77,6 +86,8 @@ class App(ttk.Window):
 
         # Set attributes
         self._data_directory: str | None = None
+        self.logger = get_logger("clover_gui", False)
+        self.system_lifetime: ttk.IntVar = ttk.IntVar(self, 30, "system_lifetime")
 
         # Setup the CLOVER-GUI application.
         self.withdraw()
@@ -135,6 +146,39 @@ class App(ttk.Window):
     def create_new_location(self) -> None:
         """Called when the create-location button is depressed."""
 
+        # Return if not all the inputs have been provided.
+        warning_messages: list[str] = []
+        if (
+            new_location_name := self.new_location_frame.new_location_entry.get()
+        ) == "":
+            warning_messages.append("name")
+        if (latitude := self.new_location_frame.latitude_entry.get()) == "":
+            warning_messages.append("latitude")
+        if (longitude := self.new_location_frame.longitude_entry.get()) == "":
+            warning_messages.append("longitude")
+        if (time_zone := self.new_location_frame.time_zone_entry.get()) == "":
+            warning_messages.append("time zone")
+
+        if len(warning_messages) > 0:
+            self.new_location_frame.warning_text_label.configure(
+                text=f"Missing new-location {', '.join(warning_messages)}."
+            )
+            return
+
+        # Create the new location.
+        create_new_location(None, new_location_name, self.logger, False)
+
+        self.inputs_directory_relative_path = os.path.join(
+            LOCATIONS_FOLDER_NAME,
+            new_location_name,
+            INPUTS_DIRECTORY,
+        )
+
+        # Update the entries in the files wrt latitude, longitude and time zone.
+        update_location_information(
+            self.inputs_directory_relative_path, latitude, longitude, time_zone
+        )
+
         self.new_location_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
 
@@ -154,17 +198,97 @@ class App(ttk.Window):
 
         """
 
+        self.inputs_directory_relative_path = os.path.join(
+            LOCATIONS_FOLDER_NAME,
+            self.load_location_window.load_location_frame.load_location_name.get(),
+            INPUTS_DIRECTORY,
+        )
         self.load_location_window.display_progress_bar()
 
-        time.sleep(0.5)
-        self.load_location_window.set_progress_bar_progerss(25)
-        time.sleep(0.5)
-        self.load_location_window.set_progress_bar_progerss(50)
-        time.sleep(0.5)
-        self.load_location_window.set_progress_bar_progerss(75)
-        time.sleep(0.5)
-        self.load_location_window.set_progress_bar_progerss(100)
+        # Parse input files
+        (
+            converters,
+            device_utilisations,
+            minigrid,
+            finance_inputs,
+            generation_inputs,
+            ghg_inputs,
+            grid_times,
+            location,
+            optimisation_inputs,
+            optimisations,
+            scenarios,
+            simulations,
+            electric_load_profile,
+            water_source_times,
+            input_file_info,
+        ) = parse_input_files(
+            False,
+            None,
+            self.load_location_window.load_location_frame.load_location_name.get(),
+            self.logger,
+            None,
+        )
+        self.load_location_window.set_progress_bar_progerss(
+            10 * (percent_fraction := 1 / 12)
+        )
 
+        pv_panels, pv_panel_costs, pv_panel_emissions = parse_solar_inputs(
+            self.inputs_directory_relative_path,
+            self.logger,
+        )
+
+        batteries, battery_costs, battery_emissions = parse_battery_inputs(
+            self.inputs_directory_relative_path, self.logger
+        )
+
+        # Set all inputs accordingly
+        self.configuration_screen.configuration_frame.set_scenarios(scenarios)
+        self.load_location_window.set_progress_bar_progerss(20 * percent_fraction)
+
+        self.configuration_screen.simulation_frame.set_simulation(simulations[0])
+        self.load_location_window.set_progress_bar_progerss(30 * percent_fraction)
+
+        self.configuration_screen.optimisation_frame.set_optimisation(
+            optimisations[0], optimisation_inputs
+        )
+        self.load_location_window.set_progress_bar_progerss(40 * percent_fraction)
+
+        self.details_window.solar_frame.set_solar(
+            pv_panels, pv_panel_costs, pv_panel_emissions
+        )
+        self.load_location_window.set_progress_bar_progerss(40 * percent_fraction)
+
+        self.details_window.solar_frame.set_solar(
+            pv_panels, pv_panel_costs, pv_panel_emissions
+        )
+        self.load_location_window.set_progress_bar_progerss(50 * percent_fraction)
+
+        self.details_window.storage_frame.set_batteries(
+            batteries, battery_costs, battery_emissions
+        )
+        self.load_location_window.set_progress_bar_progerss(60 * percent_fraction)
+
+        self.details_window.load_frame.set_loads(device_utilisations)
+        self.load_location_window.set_progress_bar_progerss(70 * percent_fraction)
+
+        self.details_window.diesel_frame.set_generators(minigrid.diesel_generator)
+        self.details_window.diesel_frame.set_water_heaters(minigrid.diesel_water_heater)
+        self.load_location_window.set_progress_bar_progerss(80 * percent_fraction)
+
+        self.details_window.grid_frame.set_profiles(grid_times)
+        self.load_location_window.set_progress_bar_progerss(90 * percent_fraction)
+
+        self.details_window.finance_frame.set_finance_inputs(finance_inputs)
+        self.load_location_window.set_progress_bar_progerss(100 * percent_fraction)
+
+        self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs)
+        self.load_location_window.set_progress_bar_progerss(110 * percent_fraction)
+
+        self.details_window.system_frame.set_profiles(minigrid, scenarios)
+        self.load_location_window.set_progress_bar_progerss(120 * percent_fraction)
+
+        # Close the load-location window once completed
         self.load_location_window.withdraw()
         self.load_location_window.load_location_frame.pack_forget()
         self.main_menu_frame.pack_forget()
@@ -221,12 +345,14 @@ class App(ttk.Window):
         self.load_location_window = None
 
         # Configuration
-        self.configuration_screen = ConfigurationScreen(self.open_details_window)
+        self.configuration_screen = ConfigurationScreen(
+            self.open_details_window, self.system_lifetime
+        )
         self.splash.set_progress_bar_progerss(80)
         self.configuration_screen.pack_forget()
 
         # Details
-        self.details_window: DetailsWindow | None = DetailsWindow()
+        self.details_window: DetailsWindow | None = DetailsWindow(self.system_lifetime)
         self.details_window.withdraw()
         self.splash.set_progress_bar_progerss(100)
 

@@ -161,3 +161,6 @@ cython_debug/
 
 # Apple Mac files
 .DS_Store
+
+# CLOVER development files
+locations/
