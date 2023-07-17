@@ -133,13 +133,12 @@ def parse_battery_inputs(
     """
     Parses the battery inputs file.
 
-    Inputs:
-        - inputs_directory_relative_path:
-            The relative path to the inputs folder directory.
-        - logger:
+    :param: inputs_directory_relative_path
+        The relative path to the inputs folder directory.
+    :param: logger
             The :class:`logging.Logger` to use for the run.
 
-    Outputs:
+    :returns:
         A `tuple` containing:
         - The `list` of :class:`storage_utils.Battery` instances defined;
         - The battery cost information;
@@ -174,13 +173,12 @@ def parse_solar_inputs(
     """
     Parses the solar inputs file.
 
-    Inputs:
-        - inputs_directory_relative_path:
-            The relative path to the inputs folder directory.
-        - logger:
+    :param: inputs_directory_relative_path:
+        The relative path to the inputs folder directory.
+    :param: logger
             The :class:`logging.Logger` to use for the run.
 
-    Outputs:
+    :return:
         A `tuple` containing:
         - The `list` of :class:`solar.PVPanel` instances defined;
         - The pv-panel cost information;

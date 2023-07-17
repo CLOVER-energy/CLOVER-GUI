@@ -15,6 +15,9 @@ import ttkbootstrap as ttk
 
 from typing import Callable
 
+from clover import Scenario, Simulation
+from clover.optimisation import Optimisation, OptimisationParameters, ThresholdMode
+from clover.optimisation.__utils__ import Criterion, THRESHOLD_CRITERION_TO_MODE
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -41,6 +44,14 @@ class ConfigurationFrame(ttk.Frame):
         self.label.grid(row=0, column=0)
 
         # TODO: Add configuration frame widgets and layout
+
+    def set_scenarios(self, scenarios: list[Scenario]) -> None:
+        """
+        Sets the scenarios on the configuration frame.
+
+        """
+
+        pass
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
@@ -85,7 +96,8 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.pv_size_label = ttk.Label(self, text="PV System Size")
         self.pv_size_label.grid(row=1, column=1, sticky="e")
 
-        self.pv_size_entry = ttk.Entry(self, bootstyle=INFO)
+        self.pv_size: ttk.DoubleVar = ttk.DoubleVar(self, value=0)
+        self.pv_size_entry = ttk.Entry(self, bootstyle=INFO, textvariable=self.pv_size)
         self.pv_size_entry.grid(row=1, column=2, padx=10, pady=5, sticky="e", ipadx=80)
 
         self.pv_size_info = ttk.Label(self, text="kWp")
@@ -95,6 +107,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.storage_size_label = ttk.Label(self, text="Storage Size")
         self.storage_size_label.grid(row=2, column=1, sticky="e")
 
+        self.storage_size: ttk.DoubleVar = ttk.DoubleVar(self, value=0)
         self.storage_size_entry = ttk.Entry(self, bootstyle=INFO)
         self.storage_size_entry.grid(
             row=2, column=2, padx=10, pady=5, sticky="e", ipadx=80
@@ -143,14 +156,30 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             row=4, column=2, padx=10, pady=5, ipadx=95, sticky="e"
         )
 
-        self.load_location_button = ttk.Button(
+        self.run_simulation_button = ttk.Button(
             self, text="Run Simulation", bootstyle=f"{INFO}-outline"
         )
-        self.load_location_button.grid(
+        self.run_simulation_button.grid(
             row=5, column=3, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
         )
 
         # TODO: Add configuration frame widgets and layout
+
+    def set_simulation(self, simulation: Simulation) -> None:
+        """
+        Set the information from the simulation loaded.
+
+        :param: simulation
+            The simulation to set.
+
+        """
+
+        # Update the simulation period from the simulations file.
+        self.start_year.set(simulation.start_year)
+        self.end_year.set(simulation.end_year)
+        self.simulation_period.set(self.end_year.get() - self.start_year.get())
+
+        self.years_slider.set(self.simulation_period.get())
 
 
 class ThresholdCriterion:
@@ -685,65 +714,118 @@ class OptimisationFrame(ttk.Frame):
         )
         self.storage_step_unit.grid(row=1, column=6, padx=10, pady=5, sticky="w")
 
-        # PV-T step size
-        self.pv_t_label = ttk.Label(self.scrollable_steps_frame, text="PV-T")
-        self.pv_t_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        # Hot-water PV-T step size
+        self.hw_pv_t_label = ttk.Label(
+            self.scrollable_steps_frame, text="Hot-water PV-T"
+        )
+        self.hw_pv_t_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
-        self.pv_t_min_label = ttk.Label(self.scrollable_steps_frame, text="min")
-        self.pv_t_min_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+        self.hw_pv_t_min_label = ttk.Label(self.scrollable_steps_frame, text="min")
+        self.hw_pv_t_min_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
 
-        self.pv_t_min = ttk.IntVar(self, 0)
-        self.pv_t_min_entry = ttk.Entry(
+        self.hw_pv_t_min = ttk.IntVar(self, 0)
+        self.hw_pv_t_min_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
-            textvariable=self.pv_t_min,
+            textvariable=self.hw_pv_t_min,
             state=DISABLED,
         )
-        self.pv_t_min_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        self.hw_pv_t_min_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
-        self.pv_t_min_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
-        self.pv_t_min_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
+        self.hw_pv_t_min_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
+        self.hw_pv_t_min_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
 
-        self.pv_t_max_label = ttk.Label(self.scrollable_steps_frame, text="max")
-        self.pv_t_max_label.grid(row=2, column=2, padx=10, pady=5, sticky="e")
+        self.hw_pv_t_max_label = ttk.Label(self.scrollable_steps_frame, text="max")
+        self.hw_pv_t_max_label.grid(row=2, column=2, padx=10, pady=5, sticky="e")
 
-        self.pv_t_max = ttk.IntVar(self, 0)
-        self.pv_t_max_entry = ttk.Entry(
+        self.hw_pv_t_max = ttk.IntVar(self, 0)
+        self.hw_pv_t_max_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
-            textvariable=self.pv_t_max,
+            textvariable=self.hw_pv_t_max,
             state=DISABLED,
         )
-        self.pv_t_max_entry.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
+        self.hw_pv_t_max_entry.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
 
-        self.pv_t_max_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
-        self.pv_t_max_unit.grid(row=2, column=4, padx=10, pady=5, sticky="w")
+        self.hw_pv_t_max_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
+        self.hw_pv_t_max_unit.grid(row=2, column=4, padx=10, pady=5, sticky="w")
 
-        self.pv_t_step_label = ttk.Label(self.scrollable_steps_frame, text="step")
-        self.pv_t_step_label.grid(row=2, column=4, padx=10, pady=5, sticky="e")
-        self.pv_t_step = ttk.IntVar(self, 0)
+        self.hw_pv_t_step_label = ttk.Label(self.scrollable_steps_frame, text="step")
+        self.hw_pv_t_step_label.grid(row=2, column=4, padx=10, pady=5, sticky="e")
+        self.hw_pv_t_step = ttk.IntVar(self, 0)
 
-        self.pv_t_step_entry = ttk.Entry(
+        self.hw_pv_t_step_entry = ttk.Entry(
             self.scrollable_steps_frame,
             bootstyle=SECONDARY,
-            textvariable=self.pv_t_step,
+            textvariable=self.hw_pv_t_step,
             state=DISABLED,
         )
-        self.pv_t_step_entry.grid(row=2, column=5, padx=10, pady=5, sticky="ew")
+        self.hw_pv_t_step_entry.grid(row=2, column=5, padx=10, pady=5, sticky="ew")
 
-        self.pv_t_step_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
-        self.pv_t_step_unit.grid(row=2, column=6, padx=10, pady=5, sticky="w")
+        self.hw_pv_t_step_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
+        self.hw_pv_t_step_unit.grid(row=2, column=6, padx=10, pady=5, sticky="w")
+
+        # Clean-water PV-T step size
+        self.cw_pv_t_label = ttk.Label(
+            self.scrollable_steps_frame, text="Clean-water PV-T"
+        )
+        self.cw_pv_t_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        self.cw_pv_t_min_label = ttk.Label(self.scrollable_steps_frame, text="min")
+        self.cw_pv_t_min_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
+
+        self.cw_pv_t_min = ttk.IntVar(self, 0)
+        self.cw_pv_t_min_entry = ttk.Entry(
+            self.scrollable_steps_frame,
+            bootstyle=SECONDARY,
+            textvariable=self.cw_pv_t_min,
+            state=DISABLED,
+        )
+        self.cw_pv_t_min_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+        self.cw_pv_t_min_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
+        self.cw_pv_t_min_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
+
+        self.cw_pv_t_max_label = ttk.Label(self.scrollable_steps_frame, text="max")
+        self.cw_pv_t_max_label.grid(row=3, column=2, padx=10, pady=5, sticky="e")
+
+        self.cw_pv_t_max = ttk.IntVar(self, 0)
+        self.cw_pv_t_max_entry = ttk.Entry(
+            self.scrollable_steps_frame,
+            bootstyle=SECONDARY,
+            textvariable=self.cw_pv_t_max,
+            state=DISABLED,
+        )
+        self.cw_pv_t_max_entry.grid(row=3, column=3, padx=10, pady=5, sticky="ew")
+
+        self.cw_pv_t_max_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
+        self.cw_pv_t_max_unit.grid(row=3, column=4, padx=10, pady=5, sticky="w")
+
+        self.cw_pv_t_step_label = ttk.Label(self.scrollable_steps_frame, text="step")
+        self.cw_pv_t_step_label.grid(row=3, column=4, padx=10, pady=5, sticky="e")
+        self.cw_pv_t_step = ttk.IntVar(self, 0)
+
+        self.cw_pv_t_step_entry = ttk.Entry(
+            self.scrollable_steps_frame,
+            bootstyle=SECONDARY,
+            textvariable=self.cw_pv_t_step,
+            state=DISABLED,
+        )
+        self.cw_pv_t_step_entry.grid(row=3, column=5, padx=10, pady=5, sticky="ew")
+
+        self.cw_pv_t_step_unit = ttk.Label(self.scrollable_steps_frame, text="panels")
+        self.cw_pv_t_step_unit.grid(row=3, column=6, padx=10, pady=5, sticky="w")
 
         # Solar Thermal step size
         self.solar_thermal_label = ttk.Label(
             self.scrollable_steps_frame, text="Solar-thermal"
         )
-        self.solar_thermal_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        self.solar_thermal_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
         self.solar_thermal_min_label = ttk.Label(
             self.scrollable_steps_frame, text="min"
         )
-        self.solar_thermal_min_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
+        self.solar_thermal_min_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
 
         self.solar_thermal_min = ttk.IntVar(self, 0)
         self.solar_thermal_min_entry = ttk.Entry(
@@ -752,17 +834,17 @@ class OptimisationFrame(ttk.Frame):
             textvariable=self.solar_thermal_min,
             state=DISABLED,
         )
-        self.solar_thermal_min_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+        self.solar_thermal_min_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
         self.solar_thermal_min_unit = ttk.Label(
             self.scrollable_steps_frame, text="panels"
         )
-        self.solar_thermal_min_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
+        self.solar_thermal_min_unit.grid(row=4, column=2, padx=10, pady=5, sticky="w")
 
         self.solar_thermal_max_label = ttk.Label(
             self.scrollable_steps_frame, text="max"
         )
-        self.solar_thermal_max_label.grid(row=3, column=2, padx=10, pady=5, sticky="e")
+        self.solar_thermal_max_label.grid(row=4, column=2, padx=10, pady=5, sticky="e")
 
         self.solar_thermal_max = ttk.IntVar(self, 0)
         self.solar_thermal_max_entry = ttk.Entry(
@@ -771,17 +853,17 @@ class OptimisationFrame(ttk.Frame):
             textvariable=self.solar_thermal_max,
             state=DISABLED,
         )
-        self.solar_thermal_max_entry.grid(row=3, column=3, padx=10, pady=5, sticky="ew")
+        self.solar_thermal_max_entry.grid(row=4, column=3, padx=10, pady=5, sticky="ew")
 
         self.solar_thermal_max_unit = ttk.Label(
             self.scrollable_steps_frame, text="panels"
         )
-        self.solar_thermal_max_unit.grid(row=3, column=4, padx=10, pady=5, sticky="w")
+        self.solar_thermal_max_unit.grid(row=4, column=4, padx=10, pady=5, sticky="w")
 
         self.solar_thermal_step_label = ttk.Label(
             self.scrollable_steps_frame, text="step"
         )
-        self.solar_thermal_step_label.grid(row=3, column=4, padx=10, pady=5, sticky="e")
+        self.solar_thermal_step_label.grid(row=4, column=4, padx=10, pady=5, sticky="e")
         self.solar_thermal_step = ttk.IntVar(self, 0)
 
         self.solar_thermal_step_entry = ttk.Entry(
@@ -791,25 +873,25 @@ class OptimisationFrame(ttk.Frame):
             state=DISABLED,
         )
         self.solar_thermal_step_entry.grid(
-            row=3, column=5, padx=10, pady=5, sticky="ew"
+            row=4, column=5, padx=10, pady=5, sticky="ew"
         )
 
         self.solar_thermal_step_unit = ttk.Label(
             self.scrollable_steps_frame, text="panels"
         )
-        self.solar_thermal_step_unit.grid(row=3, column=6, padx=10, pady=5, sticky="w")
+        self.solar_thermal_step_unit.grid(row=4, column=6, padx=10, pady=5, sticky="w")
 
         # Hot Water Tanks step size
         self.hot_water_tanks_label = ttk.Label(
             self.scrollable_steps_frame, text="Hot-water tanks"
         )
-        self.hot_water_tanks_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.hot_water_tanks_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.hot_water_tanks_min_label = ttk.Label(
             self.scrollable_steps_frame, text="min"
         )
         self.hot_water_tanks_min_label.grid(
-            row=4, column=0, padx=10, pady=5, sticky="e"
+            row=5, column=0, padx=10, pady=5, sticky="e"
         )
 
         self.hot_water_tanks_min = ttk.IntVar(self, 0)
@@ -820,19 +902,19 @@ class OptimisationFrame(ttk.Frame):
             state=DISABLED,
         )
         self.hot_water_tanks_min_entry.grid(
-            row=4, column=1, padx=10, pady=5, sticky="ew"
+            row=5, column=1, padx=10, pady=5, sticky="ew"
         )
 
         self.hot_water_tanks_min_unit = ttk.Label(
             self.scrollable_steps_frame, text="tanks"
         )
-        self.hot_water_tanks_min_unit.grid(row=4, column=2, padx=10, pady=5, sticky="w")
+        self.hot_water_tanks_min_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
 
         self.hot_water_tanks_max_label = ttk.Label(
             self.scrollable_steps_frame, text="max"
         )
         self.hot_water_tanks_max_label.grid(
-            row=4, column=2, padx=10, pady=5, sticky="e"
+            row=5, column=2, padx=10, pady=5, sticky="e"
         )
 
         self.hot_water_tanks_max = ttk.IntVar(self, 0)
@@ -843,19 +925,19 @@ class OptimisationFrame(ttk.Frame):
             state=DISABLED,
         )
         self.hot_water_tanks_max_entry.grid(
-            row=4, column=3, padx=10, pady=5, sticky="ew"
+            row=5, column=3, padx=10, pady=5, sticky="ew"
         )
 
         self.hot_water_tanks_max_unit = ttk.Label(
             self.scrollable_steps_frame, text="tanks"
         )
-        self.hot_water_tanks_max_unit.grid(row=4, column=4, padx=10, pady=5, sticky="w")
+        self.hot_water_tanks_max_unit.grid(row=5, column=4, padx=10, pady=5, sticky="w")
 
         self.hot_water_tanks_step_label = ttk.Label(
             self.scrollable_steps_frame, text="step"
         )
         self.hot_water_tanks_step_label.grid(
-            row=4, column=4, padx=10, pady=5, sticky="e"
+            row=5, column=4, padx=10, pady=5, sticky="e"
         )
         self.hot_water_tanks_step = ttk.IntVar(self, 0)
 
@@ -866,14 +948,95 @@ class OptimisationFrame(ttk.Frame):
             state=DISABLED,
         )
         self.hot_water_tanks_step_entry.grid(
-            row=4, column=5, padx=10, pady=5, sticky="ew"
+            row=5, column=5, padx=10, pady=5, sticky="ew"
         )
 
         self.hot_water_tanks_step_unit = ttk.Label(
             self.scrollable_steps_frame, text="tanks"
         )
         self.hot_water_tanks_step_unit.grid(
-            row=4, column=6, padx=10, pady=5, sticky="w"
+            row=5, column=6, padx=10, pady=5, sticky="w"
+        )
+
+        # Clean-water Tanks step size
+        self.clean_water_tanks_label = ttk.Label(
+            self.scrollable_steps_frame, text="Clean-water tanks"
+        )
+        self.clean_water_tanks_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
+
+        self.clean_water_tanks_min_label = ttk.Label(
+            self.scrollable_steps_frame, text="min"
+        )
+        self.clean_water_tanks_min_label.grid(
+            row=6, column=0, padx=10, pady=5, sticky="e"
+        )
+
+        self.clean_water_tanks_min = ttk.IntVar(self, 0)
+        self.clean_water_tanks_min_entry = ttk.Entry(
+            self.scrollable_steps_frame,
+            bootstyle=SECONDARY,
+            textvariable=self.clean_water_tanks_min,
+            state=DISABLED,
+        )
+        self.clean_water_tanks_min_entry.grid(
+            row=6, column=1, padx=10, pady=5, sticky="ew"
+        )
+
+        self.clean_water_tanks_min_unit = ttk.Label(
+            self.scrollable_steps_frame, text="tanks"
+        )
+        self.clean_water_tanks_min_unit.grid(
+            row=6, column=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.clean_water_tanks_max_label = ttk.Label(
+            self.scrollable_steps_frame, text="max"
+        )
+        self.clean_water_tanks_max_label.grid(
+            row=6, column=2, padx=10, pady=5, sticky="e"
+        )
+
+        self.clean_water_tanks_max = ttk.IntVar(self, 0)
+        self.clean_water_tanks_max_entry = ttk.Entry(
+            self.scrollable_steps_frame,
+            bootstyle=SECONDARY,
+            textvariable=self.clean_water_tanks_max,
+            state=DISABLED,
+        )
+        self.clean_water_tanks_max_entry.grid(
+            row=6, column=3, padx=10, pady=5, sticky="ew"
+        )
+
+        self.clean_water_tanks_max_unit = ttk.Label(
+            self.scrollable_steps_frame, text="tanks"
+        )
+        self.clean_water_tanks_max_unit.grid(
+            row=6, column=4, padx=10, pady=5, sticky="w"
+        )
+
+        self.clean_water_tanks_step_label = ttk.Label(
+            self.scrollable_steps_frame, text="step"
+        )
+        self.clean_water_tanks_step_label.grid(
+            row=6, column=4, padx=10, pady=5, sticky="e"
+        )
+        self.clean_water_tanks_step = ttk.IntVar(self, 0)
+
+        self.clean_water_tanks_step_entry = ttk.Entry(
+            self.scrollable_steps_frame,
+            bootstyle=SECONDARY,
+            textvariable=self.clean_water_tanks_step,
+            state=DISABLED,
+        )
+        self.clean_water_tanks_step_entry.grid(
+            row=6, column=5, padx=10, pady=5, sticky="ew"
+        )
+
+        self.clean_water_tanks_step_unit = ttk.Label(
+            self.scrollable_steps_frame, text="tanks"
+        )
+        self.clean_water_tanks_step_unit.grid(
+            row=6, column=6, padx=10, pady=5, sticky="w"
         )
 
         # Optimisation criterion frame
@@ -1063,35 +1226,111 @@ class OptimisationFrame(ttk.Frame):
             "Maximise",
         ]
 
-    # def populate_threshold_criteria_2(self) -> None:
-    #     """Populate the combo box with threshold criteria."""
+    def set_optimisation(
+        self, optimisation: Optimisation, optimisation_inputs: OptimisationParameters
+    ) -> None:
+        """
+        Set the optimisation information based on the inputs.
 
-    #     self.threshold_criterion_entry_2["values"] = [
-    #         "LCUE ($/kWh)",
-    #         "Emissions intensity (gCO2/kWh) (Max)",
-    #         "Unmet energy fraction",
-    #         "Blackouts (Max)",
-    #         "Clean water blackouts (Max)",
-    #         "Cumulative cost ($) (Max)",
-    #         "Cumulative ghgs (kgCO2eq) (Max)",
-    #         "Cumulative system cost ($) (Max)",
-    #         "Cumulative system ghgs (kgCO2eq)",
-    #         "Total_cost ($) (Max)",
-    #         "Total system cost ($) (Max)",
-    #         "Total ghgs (kgCO2eq) (Max)",
-    #         "Total system ghgs (kgCO2eq) (Max)",
-    #         "Kerosene cost mitigated ($) (Min)",
-    #         "Kerosene ghgsm mitigated (kgCO2eq) (Min)",
-    #         "Renewables fraction (Min)",
-    #     ]
+        :param: optimisation
+            The optimisation to use.
 
-    # def populate_chevrons(self) -> None:
-    #     """Populate the combo box with less than more than chevrons."""
-    #     self.chevrons_entry["values"] = [">", "<"]
+        :param: optimisation_inputs
+            The optimisation inputs to use.
 
-    # def populate_chevrons_2(self) -> None:
-    #     """Populate the combo box with less than more than chevrons."""
-    #     self.chevrons_entry_2["values"] = [">", "<"]
+        """
+
+        # Iteration parameters
+        self.iteration_length.set(optimisation_inputs.iteration_length)
+        self.iteration_length_entry.update()
+        self.iteration_length_slider.set(self.iteration_length.get())
+
+        self.number_of_iterations.set(optimisation_inputs.number_of_iterations)
+        self.number_of_iterations_entry.update()
+        self.number_of_iterations_slider.set(self.number_of_iterations.get())
+
+        # Steps
+        # PV steps
+        self.pv_min.set(optimisation_inputs.pv_size.min)
+        self.pv_min_entry.update()
+        self.pv_max.set(optimisation_inputs.pv_size.max)
+        self.pv_max_entry.update()
+        self.pv_step.set(optimisation_inputs.pv_size.step)
+        self.pv_step_entry.update()
+
+        # Storage steps
+        self.storage_min.set(optimisation_inputs.storage_size.min)
+        self.storage_min_entry.update()
+        self.storage_max.set(optimisation_inputs.storage_size.max)
+        self.storage_max_entry.update()
+        self.storage_step.set(optimisation_inputs.storage_size.step)
+        self.storage_step_entry.update()
+
+        # PV-T steps
+        self.hw_pv_t_min.set(optimisation_inputs.hw_pvt_size.min)
+        self.hw_pv_t_min_entry.update()
+        self.hw_pv_t_max.set(optimisation_inputs.hw_pvt_size.max)
+        self.hw_pv_t_max_entry.update()
+        self.hw_pv_t_step.set(optimisation_inputs.hw_pvt_size.step)
+        self.hw_pv_t_step_entry.update()
+
+        self.cw_pv_t_min.set(optimisation_inputs.cw_pvt_size.min)
+        self.cw_pv_t_min_entry.update()
+        self.cw_pv_t_max.set(optimisation_inputs.cw_pvt_size.max)
+        self.cw_pv_t_max_entry.update()
+        self.cw_pv_t_step.set(optimisation_inputs.cw_pvt_size.step)
+        self.cw_pv_t_step_entry.update()
+
+        # Solar-thermal steps
+        # self.solar_thermal_min.set(optimisation_inputs.hw_st_size.min)
+        # self.solar_thermal_min_entry.update()
+        # self.solar_thermal_max.set(optimisation_inputs.hw_st_size.max)
+        # self.solar_thermal_max_entry.update()
+        # self.solar_thermal_step.set(optimisation_inputs.hw_st_size.step)
+        # self.solar_thermal_step_entry.update()
+
+        # Clean water tanks steps
+        self.clean_water_tanks_min.set(optimisation_inputs.clean_water_tanks.min)
+        self.clean_water_tanks_min_entry.update()
+        self.clean_water_tanks_max.set(optimisation_inputs.clean_water_tanks.max)
+        self.clean_water_tanks_max_entry.update()
+        self.clean_water_tanks_step.set(optimisation_inputs.clean_water_tanks.step)
+        self.clean_water_tanks_step_entry.update()
+
+        # Hot-water tanks steps
+        self.hot_water_tanks_min.set(optimisation_inputs.hot_water_tanks.min)
+        self.hot_water_tanks_min_entry.update()
+        self.hot_water_tanks_max.set(optimisation_inputs.hot_water_tanks.max)
+        self.hot_water_tanks_max_entry.update()
+        self.hot_water_tanks_step.set(optimisation_inputs.hot_water_tanks.step)
+        self.hot_water_tanks_step_entry.update()
+
+        # Update optimisation criteria
+        for criterion, criterion_mode in optimisation.optimisation_criteria:
+            self.optimisation_criterion.set(criterion.value)
+            self.optimisation_criterion_entry.update()
+
+            self.optimisation_minmax.set(criterion_mode.value.capitalize())
+            self.optimisation_minmax_entry.update()
+
+        # Update threshold criteria
+        self.threshold_criteria = []
+        for index, criterion in enumerate(optimisation.threshold_criteria):
+            self.threshold_criteria.append(
+                ThresholdCriterion(
+                    self.scrollable_threshold_frame,
+                    ttk.StringVar(self, criterion.name),
+                    ttk.BooleanVar(
+                        self,
+                        THRESHOLD_CRITERION_TO_MODE[criterion] == ThresholdMode.MAXIMUM,
+                    ),
+                    ttk.DoubleVar(self, optimisation.threshold_criteria[criterion]),
+                    self.delete_criterion,
+                    index + 1,
+                )
+            )
+
+        self.update_threshold_criteria()
 
     def update_threshold_criteria(self) -> None:
         """Updates the threshold criteria being displayed."""

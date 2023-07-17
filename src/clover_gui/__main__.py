@@ -191,6 +191,9 @@ class App(ttk.Window):
             time_zone,
         )
 
+        # Open the location being considered.
+        self.load_location(new_location_name)
+
         self.new_location_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
 
@@ -204,17 +207,17 @@ class App(ttk.Window):
 
         return self._data_directory
 
-    def load_location(self) -> None:
+    def load_location(self, load_location_name: str | None = None) -> None:
         """
         Called when the load-location button is deptressed in the load-location window.
 
         """
 
-        self.inputs_directory_relative_path = os.path.join(
-            LOCATIONS_FOLDER_NAME,
-            self.load_location_window.load_location_frame.load_location_name.get(),
-            INPUTS_DIRECTORY,
-        )
+        if load_location_name is None:
+            load_location_name = (
+                self.load_location_window.load_location_frame.load_location_name.get()
+            )
+
         self.load_location_window.display_progress_bar()
 
         # Parse input files
@@ -237,7 +240,7 @@ class App(ttk.Window):
         ) = parse_input_files(
             False,
             None,
-            self.load_location_window.load_location_frame.load_location_name.get(),
+            load_location_name,
             self.logger,
             None,
         )
@@ -245,6 +248,12 @@ class App(ttk.Window):
             10 * (percent_fraction := 1 / 12)
         )
 
+        # Load the PV and battery input files as these are not returned in CLOVER as a whole
+        self.inputs_directory_relative_path = os.path.join(
+            LOCATIONS_FOLDER_NAME,
+            load_location_name,
+            INPUTS_DIRECTORY,
+        )
         pv_panels, pv_panel_costs, pv_panel_emissions = parse_solar_inputs(
             self.inputs_directory_relative_path,
             self.logger,
@@ -271,10 +280,10 @@ class App(ttk.Window):
         )
         self.load_location_window.set_progress_bar_progerss(40 * percent_fraction)
 
-        self.details_window.solar_frame.set_solar(
-            pv_panels, pv_panel_costs, pv_panel_emissions
-        )
-        self.load_location_window.set_progress_bar_progerss(50 * percent_fraction)
+        # self.details_window.solar_frame.set_solar(
+        #     pv_panels, pv_panel_costs, pv_panel_emissions
+        # )
+        # self.load_location_window.set_progress_bar_progerss(50 * percent_fraction)
 
         self.details_window.storage_frame.set_batteries(
             batteries, battery_costs, battery_emissions

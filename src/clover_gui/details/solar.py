@@ -13,6 +13,9 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from clover.generation.solar import PVPanel, Tracking
+from clover.impact.finance import COST, COST_DECREASE, OM
+from clover.impact.ghgs import GHGS, GHG_DECREASE, OM_GHGS
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -599,6 +602,88 @@ class PVFrame(ttk.Frame):
 
         # Update the variables being displayed.
         self.update_panel_frame()
+
+    def set_solar(
+        self,
+        pv_panels: list[PVPanel],
+        pv_panel_costs: dict[str, dict[str, float]],
+        pv_panel_emissions: dict[str, dict[str, float]],
+    ) -> None:
+        """
+        Set the solar panel information for the frame based on the inputs provided.
+
+        :param: pv_panels
+            The `list` of :class:`solar.PVPanel` instances defined;
+
+        :param: pv_panel_costs
+            The pv-panel cost information
+
+        :param: pv_panel_emissions
+            The pv-panel emissions information;
+
+        """
+
+        for pv_panel in pv_panels:
+            self.panel_name_values[pv_panel.name] = ttk.StringVar(self, pv_panel.name)
+            self.panel_lifetimes[pv_panel.name] = ttk.DoubleVar(self, pv_panel.lifetime)
+
+            # Panel orientation
+            self.panel_tilt[pv_panel.name] = ttk.DoubleVar(
+                self, pv_panel.tilt if pv_panel.tilt is not None else 0
+            )
+            if pv_panel.tracking == Tracking.DUAL_AXIS or Tracking.SINGLE_AXIS:
+                self.tilt_entry.configure(state=DISABLED)
+                self.tilt_slider.configure(state=DISABLED)
+
+            self.panel_orientation[pv_panel.name] == ttk.DoubleVar(
+                self,
+                pv_panel.azimuthal_orientation
+                if pv_panel.azimuthal_orientation is not None
+                else 0,
+            )
+            if pv_panel.tracking == Tracking.SINGLE_AXIS:
+                self.azimuthal_orientation_entry.configure(state=DISABLED)
+                self.azimuthal_orientation_slider.configure(state=DISABLED)
+
+            # Tracking
+            # TODO - Add tracking
+
+            # Performance characteristics
+            self.reference_efficiencies[pv_panel.name] == ttk.DoubleVar(
+                self, pv_panel.reference_efficiency
+            )
+            self.reference_temperature[pv_panel.name] == ttk.DoubleVar(
+                self, pv_panel.reference_temperature
+            )
+            self.thermal_coefficient[pv_panel.name] == ttk.DoubleVar(
+                self, pv_panel.thermal_coefficient
+            )
+
+            # Costs
+            self.costs[pv_panel.name] = ttk.DoubleVar(
+                self, (this_pv_panel_costs := pv_panel_costs[pv_panel_costs])[COST]
+            )
+            self.cost_decrease[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_costs[COST_DECREASE]
+            )
+            self.o_and_m_costs[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_costs[OM]
+            )
+
+            # Emissions
+            self.embedded_emissions[pv_panel.name] = ttk.DoubleVar(
+                self, (this_pv_panel_emissions := pv_panel_costs[pv_panel_costs])[GHGS]
+            )
+            self.om_emissions[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_emissions[GHG_DECREASE]
+            )
+            self.annual_emissions_decrease[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_emissions[OM_GHGS]
+            )
+
+        self.panel_selected = self.panel_name_values[pv_panels[0].name]
+        self.pv_panel_combobox.set(self.panel_selected)
+        self.select_pv_panel()
 
     def update_panel_frame(self) -> None:
         """
