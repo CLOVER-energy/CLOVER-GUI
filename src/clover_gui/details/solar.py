@@ -635,7 +635,7 @@ class PVFrame(ttk.Frame):
                 self.tilt_entry.configure(state=DISABLED)
                 self.tilt_slider.configure(state=DISABLED)
 
-            self.panel_orientation[pv_panel.name] == ttk.DoubleVar(
+            self.panel_orientation[pv_panel.name] = ttk.DoubleVar(
                 self,
                 pv_panel.azimuthal_orientation
                 if pv_panel.azimuthal_orientation is not None
@@ -649,19 +649,19 @@ class PVFrame(ttk.Frame):
             # TODO - Add tracking
 
             # Performance characteristics
-            self.reference_efficiencies[pv_panel.name] == ttk.DoubleVar(
+            self.reference_efficiencies[pv_panel.name] = ttk.DoubleVar(
                 self, pv_panel.reference_efficiency
             )
-            self.reference_temperature[pv_panel.name] == ttk.DoubleVar(
+            self.reference_temperature[pv_panel.name] = ttk.DoubleVar(
                 self, pv_panel.reference_temperature
             )
-            self.thermal_coefficient[pv_panel.name] == ttk.DoubleVar(
+            self.thermal_coefficient[pv_panel.name] = ttk.DoubleVar(
                 self, pv_panel.thermal_coefficient
             )
 
             # Costs
             self.costs[pv_panel.name] = ttk.DoubleVar(
-                self, (this_pv_panel_costs := pv_panel_costs[pv_panel_costs])[COST]
+                self, (this_pv_panel_costs := pv_panel_costs[pv_panel.name])[COST]
             )
             self.cost_decrease[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_costs[COST_DECREASE]
@@ -672,7 +672,8 @@ class PVFrame(ttk.Frame):
 
             # Emissions
             self.embedded_emissions[pv_panel.name] = ttk.DoubleVar(
-                self, (this_pv_panel_emissions := pv_panel_costs[pv_panel_costs])[GHGS]
+                self,
+                (this_pv_panel_emissions := pv_panel_emissions[pv_panel.name])[GHGS],
             )
             self.om_emissions[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_emissions[GHG_DECREASE]
@@ -682,8 +683,8 @@ class PVFrame(ttk.Frame):
             )
 
         self.panel_selected = self.panel_name_values[pv_panels[0].name]
-        self.pv_panel_combobox.set(self.panel_selected)
-        self.select_pv_panel()
+        self.pv_panel_combobox.set(self.panel_selected.get())
+        self.select_pv_panel(self.panel_selected.get())
 
     def update_panel_frame(self) -> None:
         """
@@ -829,3 +830,25 @@ class SolarFrame(ttk.Frame):
         )
 
         # TODO: Add configuration frame widgets and layout
+
+    def set_solar(
+        self,
+        pv_panels: list[PVPanel],
+        pv_panel_costs: dict[str, dict[str, float]],
+        pv_panel_emissions: dict[str, dict[str, float]],
+    ) -> None:
+        """
+        Set the solar panel information for the frame based on the inputs provided.
+
+        :param: pv_panels
+            The `list` of :class:`solar.PVPanel` instances defined;
+
+        :param: pv_panel_costs
+            The pv-panel cost information
+
+        :param: pv_panel_emissions
+            The pv-panel emissions information;
+
+        """
+
+        self.pv_frame.set_solar(pv_panels, pv_panel_costs, pv_panel_emissions)

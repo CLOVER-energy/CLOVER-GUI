@@ -1306,7 +1306,7 @@ class OptimisationFrame(ttk.Frame):
         self.hot_water_tanks_step_entry.update()
 
         # Update optimisation criteria
-        for criterion, criterion_mode in optimisation.optimisation_criteria:
+        for criterion, criterion_mode in optimisation.optimisation_criteria.items():
             self.optimisation_criterion.set(criterion.value)
             self.optimisation_criterion_entry.update()
 
