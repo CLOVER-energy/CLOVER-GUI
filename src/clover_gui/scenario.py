@@ -16,7 +16,7 @@ import tkinter as tk
 import customtkinter as ctk
 import ttkbootstrap as ttk
 
-from clover import ResourceType, Scenario
+from clover import DieselMode, ResourceType, Scenario
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -46,10 +46,26 @@ class ConfigurationFrame(ttk.Frame):
         self.label = ttk.Label(self, text="Configuration frame")
         self.label.grid(row=0, column=0)
 
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=4)
+        self.columnconfigure(1, weight=1)
 
         self.rowconfigure(0, weight=1)
         # self.pack(fill="both", expand=True)
+
+        # Scenario details information
+        self.hover_information_frame: ttk.Labelframe = ttk.Labelframe(
+            self, style="info.TLabelframe", text="Information"
+        )
+        self.hover_information_frame.grid(
+            row=0, column=1, padx=10, pady=5, sticky="news"
+        )
+
+        self.hover_text: ttk.StringVar = ttk.StringVar(self, "")
+
+        self.hover_label = ttk.Label(
+            self.hover_information_frame, textvariable=self.hover_text
+        )
+        self.hover_label.grid(row=0, column=0, sticky="news")
 
         self.scrollable_scenario_frame = ScrolledFrame(self)
         self.scrollable_scenario_frame.grid(
@@ -98,9 +114,10 @@ class ConfigurationFrame(ttk.Frame):
         )
         self.pv_button.grid(row=1, column=1, pady=5, padx=10)
 
-        self.pv_settings_button = ctk.CTkButton(
+        self.pv_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="PV settings",
+            bootstyle=INFO,
             command=self.open_pv_settings,
         )
         self.pv_settings_button.grid(row=2, column=1, padx=20)
@@ -127,9 +144,10 @@ class ConfigurationFrame(ttk.Frame):
         )
         self.battery_button.grid(row=1, column=2, pady=5, padx=10, sticky="")
 
-        self.battery_settings_button = ctk.CTkButton(
+        self.battery_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="Battery settings",
+            bootstyle=INFO,
             command=self.open_battery_settings,
         )
         self.battery_settings_button.grid(row=2, column=2, padx=20)
@@ -155,9 +173,10 @@ class ConfigurationFrame(ttk.Frame):
             text="",
         )
         self.diesel_button.grid(row=1, column=3, pady=5, padx=10)
-        self.diesel_settings_button = ctk.CTkButton(
+        self.diesel_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="Diesel settings",
+            bootstyle=INFO,
             command=self.open_diesel_settings,
         )
         self.diesel_settings_button.grid(row=2, column=3, padx=20)
@@ -183,9 +202,10 @@ class ConfigurationFrame(ttk.Frame):
             text="",
         )
         self.grid_button.grid(row=1, column=4, pady=5, padx=10)
-        self.grid_settings_button = ctk.CTkButton(
+        self.grid_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="Grid settings",
+            bootstyle=INFO,
             command=self.open_grid_settings,
         )
         self.grid_settings_button.grid(row=2, column=4, padx=20)
@@ -597,4 +617,141 @@ class ConfigurationFrame(ttk.Frame):
 
         """
 
-        pass
+        # FIXME: Decide on multiple scenarios approach
+        scenario: Scenario = scenarios[0]
+
+        # Power-generation sources
+        self.solar_pv_selected.set(scenario.pv)
+        self.pv_button.configure(image=self.solar_images[self.solar_pv_selected.get()])
+
+        self.battery_selected.set(scenario.battery)
+        self.battery_button.configure(
+            image=self.battery_images[self.battery_selected.get()]
+        )
+
+        self.diesel_selected.set(scenario.diesel_scenario.mode != DieselMode.DISABLED)
+        self.diesel_button.configure(
+            image=self.diesel_images[self.diesel_selected.get()]
+        )
+
+        self.grid_selected.set(scenario.grid)
+        self.grid_button.configure(image=self.grid_images[self.grid_selected.get()])
+
+        # Resource types
+        self.resource_selected[ResourceType.ELECTRIC].set(
+            ResourceType.ELECTRIC in scenario.resource_types
+        )
+        self.electric_button.configure(
+            image=self.resource_images[ResourceType.ELECTRIC][
+                self.resource_selected[ResourceType.ELECTRIC].get()
+            ]
+        )
+
+        self.resource_selected[ResourceType.HOT_CLEAN_WATER].set(
+            ResourceType.HOT_CLEAN_WATER in scenario.resource_types
+        )
+        self.hot_water_button.configure(
+            image=self.resource_images[ResourceType.HOT_CLEAN_WATER][
+                self.resource_selected[ResourceType.HOT_CLEAN_WATER].get()
+            ]
+        )
+
+        self.resource_selected[ResourceType.CLEAN_WATER].set(
+            ResourceType.CLEAN_WATER in scenario.resource_types
+        )
+        self.clean_water_button.configure(
+            image=self.resource_images[ResourceType.CLEAN_WATER][
+                self.resource_selected[ResourceType.CLEAN_WATER].get()
+            ]
+        )
+
+        # Demands
+        for domestic_selected_variable in self.domestic_selected.values():
+            domestic_selected_variable.set(scenario.demands.domestic)
+
+        for commercial_selected_variable in self.commercial_selected.values():
+            commercial_selected_variable.set(scenario.demands.commercial)
+
+        for public_selected_variable in self.public_selected.values():
+            public_selected_variable.set(scenario.demands.public)
+
+        # Set the buttons
+        self.electric_domestic_button.configure(
+            image=(
+                self.domestic_images[
+                    self.domestic_selected[ResourceType.ELECTRIC].get()
+                ]
+                if self.resource_selected[ResourceType.ELECTRIC].get()
+                else self.domestic_button_disabled_image
+            ),
+        )
+        self.electric_commercial_button.configure(
+            image=(
+                self.commercial_images[
+                    self.commercial_selected[ResourceType.ELECTRIC].get()
+                ]
+                if self.resource_selected[ResourceType.ELECTRIC].get()
+                else self.commercial_button_disabled_image
+            ),
+        )
+        self.electric_public_button.configure(
+            image=(
+                self.public_images[self.public_selected[ResourceType.ELECTRIC].get()]
+                if self.resource_selected[ResourceType.ELECTRIC].get()
+                else self.public_button_disabled_image
+            ),
+        )
+
+        self.hot_water_domestic_button.configure(
+            image=(
+                self.domestic_images[
+                    self.domestic_selected[ResourceType.HOT_CLEAN_WATER].get()
+                ]
+                if self.resource_selected[ResourceType.HOT_CLEAN_WATER].get()
+                else self.domestic_button_disabled_image
+            ),
+        )
+        self.hot_water_commercial_button.configure(
+            image=(
+                self.commercial_images[
+                    self.commercial_selected[ResourceType.HOT_CLEAN_WATER].get()
+                ]
+                if self.resource_selected[ResourceType.HOT_CLEAN_WATER].get()
+                else self.commercial_button_disabled_image
+            ),
+        )
+        self.hot_water_public_button.configure(
+            image=(
+                self.public_images[
+                    self.public_selected[ResourceType.HOT_CLEAN_WATER].get()
+                ]
+                if self.resource_selected[ResourceType.HOT_CLEAN_WATER].get()
+                else self.public_button_disabled_image
+            ),
+        )
+
+        self.clean_water_domestic_button.configure(
+            image=(
+                self.domestic_images[
+                    self.domestic_selected[ResourceType.CLEAN_WATER].get()
+                ]
+                if self.resource_selected[ResourceType.CLEAN_WATER].get()
+                else self.domestic_button_disabled_image
+            ),
+        )
+        self.clean_water_commercial_button.configure(
+            image=(
+                self.commercial_images[
+                    self.commercial_selected[ResourceType.CLEAN_WATER].get()
+                ]
+                if self.resource_selected[ResourceType.CLEAN_WATER].get()
+                else self.commercial_button_disabled_image
+            ),
+        )
+        self.clean_water_public_button.configure(
+            image=(
+                self.public_images[self.public_selected[ResourceType.CLEAN_WATER].get()]
+                if self.resource_selected[ResourceType.CLEAN_WATER].get()
+                else self.public_button_disabled_image
+            ),
+        )

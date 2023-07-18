@@ -170,7 +170,9 @@ class App(ttk.Window):
         self.new_location_progress_bar: ttk.Progressbar = ttk.Progressbar(
             self.new_location_frame, bootstyle=f"{SUCCESS}-striped", mode="determinate"
         )
-        self.new_location_progress_bar.grid(row=7, column=0, columnspan=7, pady=5, padx=10, sticky="ew")
+        self.new_location_progress_bar.grid(
+            row=7, column=0, columnspan=7, pady=5, padx=10, sticky="ew"
+        )
         self.new_location_progress_bar.start()
         self.new_location_progress_bar["value"] = 0
 
@@ -221,7 +223,11 @@ class App(ttk.Window):
 
         return self._data_directory
 
-    def load_location(self, load_location_name: str | None = None, progress_bar: ttk.Progressbar | None = None) -> None:
+    def load_location(
+        self,
+        load_location_name: str | None = None,
+        progress_bar: ttk.Progressbar | None = None,
+    ) -> None:
         """
         Called when the load-location button is deptressed in the load-location window.
 
@@ -235,7 +241,6 @@ class App(ttk.Window):
         if progress_bar is None:
             progress_bar = self.load_location_window.load_location_frame.progress_bar
             self.load_location_window.display_progress_bar()
-
 
         def set_progress_bar_progress(value) -> None:
             """
@@ -276,9 +281,7 @@ class App(ttk.Window):
             self.logger,
             None,
         )
-        set_progress_bar_progress(
-            10 * (percent_fraction := 1 / 12)
-        )
+        set_progress_bar_progress(10 * (percent_fraction := 1 / 12))
 
         # Load the PV and battery input files as these are not returned in CLOVER as a whole
         self.inputs_directory_relative_path = os.path.join(
