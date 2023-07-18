@@ -11,6 +11,8 @@
 
 import tkinter as tk
 
+import pandas as pd
+
 import ttkbootstrap as ttk
 
 from ttkbootstrap.constants import *
@@ -151,25 +153,49 @@ class GridFrame(ttk.Frame):
 
         # TODO: Add configuration frame widgets and layout
 
-    def add_profile(self) -> None:
-        """Called when a user presses the new grid-profile button."""
+    def add_profile(
+        self,
+        seed_profile_name: str | None = None,
+        seed_profile_probabilities: dict[int, float] | None = None,
+    ) -> None:
+        """
+        Called when a user presses the new grid-profile button.
 
-        # Determine the new name
-        new_name = "new{suffix}"
-        index = 0
-        suffix = ""
-        while new_name.format(suffix=suffix) in self.grid_profile_values:
-            index += 1
-            suffix = f"_{index}"
+        :param: seed_profile_name
+            The name to use for the profile.
 
-        new_name = new_name.format(suffix=suffix)
+        :param: seed_profile_proababilities
+            The grid profile probabilities, as a map between the hour and the
+            probabilities at each hour, to use.
+
+        """
+
+        if seed_profile_name is None:
+            # Determine the new name
+            new_name = "new{suffix}"
+            index = 0
+            suffix = ""
+            while new_name.format(suffix=suffix) in self.grid_profile_values:
+                index += 1
+                suffix = f"_{index}"
+
+            new_name = new_name.format(suffix=suffix)
+        else:
+            new_name = seed_profile_name
 
         self.grid_profile_values[new_name] = ttk.StringVar(self, new_name)
 
         # Create new probabilities and sliders
-        self.probabilities[new_name] = {
-            hour: ttk.DoubleVar(self.graph_frame, 0.3) for hour in range(24)
-        }
+        if seed_profile_probabilities is None:
+            self.probabilities[new_name] = {
+                hour: ttk.DoubleVar(self.graph_frame, 0.3) for hour in range(24)
+            }
+        else:
+            self.probabilities[new_name] = {
+                hour: ttk.DoubleVar(self.graph_frame, probability)
+                for hour, probability in seed_profile_probabilities.items()
+            }
+
         self.probability_sliders[new_name] = {}
         self.probability_entries[new_name] = {}
         for hour in range(24):
@@ -259,6 +285,21 @@ class GridFrame(ttk.Frame):
 
         # Update the sliders
         self.update_sliders()
+
+    def set_profiles(self, grid_times: pd.DataFrame) -> None:
+        """
+        Set the grid profile times based on the inputs.
+
+        :param: grid_times
+            A :class:`pd.DataFrame` containing the grid-times frame.
+
+        """
+
+        for profile_name, profile_probabilities in grid_times.to_dict().items():
+            self.add_profile(
+                seed_profile_name=profile_name,
+                seed_profile_probabilities=profile_probabilities,
+            )
 
     def update_graph_frame_label(self) -> None:
         self.graph_frame.configure(

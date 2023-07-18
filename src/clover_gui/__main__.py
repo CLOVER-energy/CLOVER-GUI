@@ -25,6 +25,7 @@ from ttkbootstrap.scrolled import *
 from .__utils__ import (
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
+    parse_diesel_inputs,
     parse_solar_inputs,
     update_location_information,
 )
@@ -166,7 +167,15 @@ class App(ttk.Window):
             return
 
         # Create the new location.
-        create_new_location(None, new_location_name, self.logger, False)
+        try:
+            create_new_location(None, new_location_name, self.logger, False)
+        except SystemExit:
+            self.logger.error("New location name already used.")
+            self.new_location_frame.warning_text_label.configure(
+                text=f"Failed to create '{new_location_name}'. Check that the location "
+                "does not already exist."
+            )
+            return
 
         self.inputs_directory_relative_path = os.path.join(
             LOCATIONS_FOLDER_NAME,
@@ -176,8 +185,15 @@ class App(ttk.Window):
 
         # Update the entries in the files wrt latitude, longitude and time zone.
         update_location_information(
-            self.inputs_directory_relative_path, latitude, longitude, time_zone
+            self.inputs_directory_relative_path,
+            latitude,
+            self.logger,
+            longitude,
+            time_zone,
         )
+
+        # Open the location being considered.
+        self.load_location(new_location_name)
 
         self.new_location_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
@@ -192,17 +208,17 @@ class App(ttk.Window):
 
         return self._data_directory
 
-    def load_location(self) -> None:
+    def load_location(self, load_location_name: str | None = None) -> None:
         """
         Called when the load-location button is deptressed in the load-location window.
 
         """
 
-        self.inputs_directory_relative_path = os.path.join(
-            LOCATIONS_FOLDER_NAME,
-            self.load_location_window.load_location_frame.load_location_name.get(),
-            INPUTS_DIRECTORY,
-        )
+        if load_location_name is None:
+            load_location_name = (
+                self.load_location_window.load_location_frame.load_location_name.get()
+            )
+
         self.load_location_window.display_progress_bar()
 
         # Parse input files
@@ -225,7 +241,7 @@ class App(ttk.Window):
         ) = parse_input_files(
             False,
             None,
-            self.load_location_window.load_location_frame.load_location_name.get(),
+            load_location_name,
             self.logger,
             None,
         )
@@ -233,12 +249,22 @@ class App(ttk.Window):
             10 * (percent_fraction := 1 / 12)
         )
 
+        # Load the PV and battery input files as these are not returned in CLOVER as a whole
+        self.inputs_directory_relative_path = os.path.join(
+            LOCATIONS_FOLDER_NAME,
+            load_location_name,
+            INPUTS_DIRECTORY,
+        )
         pv_panels, pv_panel_costs, pv_panel_emissions = parse_solar_inputs(
             self.inputs_directory_relative_path,
             self.logger,
         )
 
         batteries, battery_costs, battery_emissions = parse_battery_inputs(
+            self.inputs_directory_relative_path, self.logger
+        )
+
+        diesel_generators, diesel_costs, diesel_emissions = parse_diesel_inputs(
             self.inputs_directory_relative_path, self.logger
         )
 
@@ -259,12 +285,12 @@ class App(ttk.Window):
         )
         self.load_location_window.set_progress_bar_progerss(40 * percent_fraction)
 
-        self.details_window.solar_frame.set_solar(
-            pv_panels, pv_panel_costs, pv_panel_emissions
-        )
-        self.load_location_window.set_progress_bar_progerss(50 * percent_fraction)
+        # self.details_window.solar_frame.set_solar(
+        #     pv_panels, pv_panel_costs, pv_panel_emissions
+        # )
+        # self.load_location_window.set_progress_bar_progerss(50 * percent_fraction)
 
-        self.details_window.storage_frame.set_batteries(
+        self.details_window.storage_frame.battery_frame.set_batteries(
             batteries, battery_costs, battery_emissions
         )
         self.load_location_window.set_progress_bar_progerss(60 * percent_fraction)
@@ -272,20 +298,24 @@ class App(ttk.Window):
         self.details_window.load_frame.set_loads(device_utilisations)
         self.load_location_window.set_progress_bar_progerss(70 * percent_fraction)
 
-        self.details_window.diesel_frame.set_generators(minigrid.diesel_generator)
-        self.details_window.diesel_frame.set_water_heaters(minigrid.diesel_water_heater)
+        self.details_window.diesel_frame.generator_frame.set_generators(
+            minigrid.diesel_generator, diesel_generators, diesel_costs, diesel_emissions
+        )
+        # self.details_window.diesel_frame.heater_frame.set_water_heaters(minigrid.diesel_water_heater)
         self.load_location_window.set_progress_bar_progerss(80 * percent_fraction)
 
         self.details_window.grid_frame.set_profiles(grid_times)
         self.load_location_window.set_progress_bar_progerss(90 * percent_fraction)
 
-        self.details_window.finance_frame.set_finance_inputs(finance_inputs)
+        self.details_window.finance_frame.set_finance_inputs(
+            finance_inputs, self.logger
+        )
         self.load_location_window.set_progress_bar_progerss(100 * percent_fraction)
 
-        self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs)
+        self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs, self.logger)
         self.load_location_window.set_progress_bar_progerss(110 * percent_fraction)
 
-        self.details_window.system_frame.set_profiles(minigrid, scenarios)
+        self.details_window.system_frame.set_system(minigrid, scenarios)
         self.load_location_window.set_progress_bar_progerss(120 * percent_fraction)
 
         # Close the load-location window once completed

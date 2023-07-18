@@ -14,6 +14,9 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from clover.impact.finance import COST, COST_DECREASE, OM
+from clover.impact.ghgs import GHGS, GHG_DECREASE, OM_GHGS
+from clover.simulation.storage_utils import Battery
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -763,6 +766,91 @@ class BatteryFrame(ttk.Frame):
 
         # Update the variables being displayed.
         self.update_battery_frame()
+
+    def set_batteries(
+        self,
+        batteries: list[Battery],
+        battery_costs: dict[str, dict[str, float]],
+        battery_emissions: dict[str, dict[str, float]],
+    ) -> None:
+        """
+        Set the battery information for the frame based on the inputs provided.
+
+        :param: batteries
+            The `list` of :class:`storage_utils.Battery` instances defined;
+
+        :param: battery_costs
+            The battery cost information
+
+        :param: battery_emissions
+            The battery emissions information;
+
+        """
+
+        for battery in batteries:
+            self.battery_name_values[battery.name] = ttk.StringVar(self, battery.name)
+
+            # Performance characteristics
+            self.battery_capacities[battery.name] = ttk.DoubleVar(
+                self, battery.capacity
+            )
+            self.maximum_charge[battery.name] = ttk.DoubleVar(
+                self, 100 * battery.maximum_charge
+            )
+            self.minimum_charge[battery.name] = ttk.DoubleVar(
+                self, 100 * battery.minimum_charge
+            )
+            self.leakage[battery.name] = ttk.DoubleVar(self, 100 * battery.leakage)
+            self.conversion_efficiency_in[battery.name] = ttk.DoubleVar(
+                self, 100 * battery.conversion_in
+            )
+            self.conversion_efficiency_out[battery.name] = ttk.DoubleVar(
+                self, 100 * battery.conversion_out
+            )
+            self.cycle_lifetime[battery.name] = ttk.DoubleVar(
+                self, battery.cycle_lifetime
+            )
+            self.lifetime_capacity_loss[battery.name] = ttk.DoubleVar(
+                self, 100 * battery.lifetime_loss
+            )
+            self.c_rate_discharging[battery.name] = ttk.DoubleVar(
+                self, battery.discharge_rate
+            )
+            self.c_rate_charging[battery.name] = ttk.DoubleVar(
+                self, battery.charge_rate
+            )
+
+            # Costs
+            self.costs[battery.name] = ttk.DoubleVar(
+                self, (this_battery_costs := battery_costs[battery.name]).get(COST, 0)
+            )
+            self.cost_decrease[battery.name] = ttk.DoubleVar(
+                self, this_battery_costs.get(COST_DECREASE, 0)
+            )
+            self.o_and_m_costs[battery.name] = ttk.DoubleVar(
+                self, this_battery_costs.get(OM, 0)
+            )
+
+            # Emissions
+            self.embedded_emissions[battery.name] = ttk.DoubleVar(
+                self,
+                (this_battery_emissions := battery_emissions[battery.name]).get(
+                    GHGS, 0
+                ),
+            )
+            self.om_emissions[battery.name] = ttk.DoubleVar(
+                self, this_battery_emissions.get(GHG_DECREASE, 0)
+            )
+            self.annual_emissions_decrease[battery.name] = ttk.DoubleVar(
+                self, this_battery_emissions.get(OM_GHGS, 0)
+            )
+
+        self.battery_selected = self.battery_name_values[batteries[0].name]
+        self.battery_selected_combobox["values"] = [
+            battery.name for battery in batteries
+        ]
+        self.battery_selected_combobox.set(self.battery_selected.get())
+        self.select_battery(self.battery_selected.get())
 
     def update_battery_frame(self) -> None:
         """

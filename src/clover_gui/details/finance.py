@@ -1,6 +1,6 @@
 #!/usr/bin/python3.10
 ########################################################################################
-# storage.py - The storage module for CLOVER-GUI application.                          #
+# finance.py - The finance module for CLOVER-GUI application.                          #
 #                                                                                      #
 # Author: Ben Winchester, Hamish Beath                                                 #
 # Copyright: Ben Winchester, 2022                                                      #
@@ -14,11 +14,16 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from clover.impact.finance import *
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 
 __all__ = ("FinanceFrame",)
+
+# Infrastructure costs:
+#   Keyword for the infrastructure costs.
+_INFRASTRUCTURE_COSTS: str = "infrastructure_costs"
 
 
 class FinanceFrame(ttk.Frame):
@@ -93,20 +98,20 @@ class FinanceFrame(ttk.Frame):
         )
 
         # General O&M
-        self.general_OM_label = ttk.Label(self, text="General O&M")
-        self.general_OM_label.grid(row=2, column=1, padx=10, pady=5, sticky="w")
-        self.general_OM = ttk.DoubleVar(self, "0.0")
+        self.general_om_label = ttk.Label(self, text="General O&M")
+        self.general_om_label.grid(row=2, column=1, padx=10, pady=5, sticky="w")
+        self.general_om = ttk.DoubleVar(self, "0.0")
 
-        self.general_OM_entry = ttk.Entry(
+        self.general_om_entry = ttk.Entry(
             self,
             # bootstyle=DANGER,
-            textvariable=self.general_OM,
+            textvariable=self.general_om,
         )
-        self.general_OM_entry.grid(
+        self.general_om_entry.grid(
             row=2, column=2, padx=10, pady=5, ipadx=80, sticky="e"
         )
-        self.general_OM_units_label = ttk.Label(self, text="$/year")
-        self.general_OM_units_label.grid(row=2, column=3, padx=10, pady=5, sticky="w")
+        self.general_om_units_label = ttk.Label(self, text="$/year")
+        self.general_om_units_label.grid(row=2, column=3, padx=10, pady=5, sticky="w")
 
         # Misc
         self.misc_frame = ttk.Labelframe(self, text="Misc. Costs", bootstyle=PRIMARY)
@@ -283,6 +288,7 @@ class FinanceFrame(ttk.Frame):
             self.grid_label_frame,
             bootstyle=SUCCESS,
             textvariable=self.distribution_network_infrastructure_cost,
+            state=DISABLED,
         )
         self.distribution_network_infrastructure_cost_entry.grid(
             row=1, column=1, padx=10, pady=5, ipadx=80, sticky="e"
@@ -452,3 +458,97 @@ class FinanceFrame(ttk.Frame):
         self.kerosene_cost_units_label.grid(
             row=0, column=2, padx=10, pady=5, sticky="w"
         )
+
+    def set_finance_inputs(
+        self, finance_inputs: dict[str, float | dict[str, float]], logger: Logger
+    ) -> None:
+        """
+        Sets the finance inputs.
+
+        :param: finance_inputs
+            The finance inputs information.
+
+        """
+
+        self.discount_rate.set(finance_inputs[DISCOUNT_RATE])
+        self.discount_rate_entry.update()
+
+        self.general_om.set(finance_inputs[OM][COST])
+        self.general_om_entry.update()
+
+        # Misc.
+        try:
+            self.capacity_cost.set(
+                finance_inputs[ImpactingComponent.MISC.value][CAPACITY_COST]
+            )
+        except KeyError:
+            logger.error(
+                "Using misc cost without capacity or fixed keywords will be deprecated."
+            )
+            self.capacity_cost.set(
+                finance_inputs[ImpactingComponent.MISC.value].get(COST, 0)
+            )
+
+        self.capacity_cost_entry.update()
+
+        try:
+            self.fixed_cost.set(
+                finance_inputs[ImpactingComponent.MISC.value][FIXED_COST]
+            )
+        except KeyError:
+            logger.error(
+                "Using misc cost without capacity or fixed keywords will be deprecated."
+            )
+            self.fixed_cost.set(
+                finance_inputs[ImpactingComponent.MISC.value].get(COST, 0)
+            )
+
+        self.fixed_cost_entry.update()
+
+        # BOS
+        self.bos_cost.set(finance_inputs[ImpactingComponent.BOS.value][COST])
+        self.bos_cost_entry.update()
+
+        self.bos_cost_decrease.set(
+            finance_inputs[ImpactingComponent.BOS.value][COST_DECREASE]
+        )
+        self.bos_cost_decrease_entry.update()
+
+        # Diesel
+        self.diesel_fuel_cost.set(
+            finance_inputs[ImpactingComponent.DIESEL_FUEL.value][COST]
+        )
+        self.diesel_fuel_cost_entry.update()
+
+        self.diesel_fuel_cost_decrease.set(
+            finance_inputs[ImpactingComponent.DIESEL_FUEL.value][COST_DECREASE]
+        )
+        self.diesel_fuel_cost_decrease_entry.update()
+
+        # Grid
+        self.grid_cost.set(finance_inputs[ImpactingComponent.GRID.value][COST])
+        self.grid_cost_entry.update()
+
+        self.distribution_network_infrastructure_cost.set(
+            finance_inputs[ImpactingComponent.GRID.value].get(_INFRASTRUCTURE_COSTS, 0)
+        )
+        self.distribution_network_infrastructure_cost_entry.update()
+
+        # Household
+        self.connection_cost.set(
+            finance_inputs[ImpactingComponent.HOUSEHOLDS.value][CONNECTION_COST]
+        )
+        self.connection_cost_entry.update()
+
+        # Inverter
+        self.inverter_cost.set(finance_inputs[ImpactingComponent.INVERTER.value][COST])
+        self.inverter_cost_entry.update()
+
+        self.inverter_cost_decrease.set(
+            finance_inputs[ImpactingComponent.INVERTER.value][COST_DECREASE]
+        )
+        self.inverter_cost_decrease_entry.update()
+
+        # Kerosene
+        self.kerosene_cost.set(finance_inputs[ImpactingComponent.KEROSENE.value][COST])
+        self.kerosene_cost_entry.update()

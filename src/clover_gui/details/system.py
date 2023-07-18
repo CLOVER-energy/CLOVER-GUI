@@ -11,6 +11,7 @@
 
 import ttkbootstrap as ttk
 
+from clover.simulation.energy_system import Minigrid, Scenario
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -59,22 +60,10 @@ class SystemFrame(ttk.Frame):
         self.columnconfigure(3, weight=1)
         self.columnconfigure(4, weight=1)
 
+    def set_system(self, minigrid: Minigrid, scenarios: list[Scenario]) -> None:
         """
-        ac_transmission_efficiency: 0.95 # Efficiency of AC distribution network
-        dc_transmission_efficiency: 0.95 # Efficiency of DC distribution network
-        battery: default_battery
-        # clean_water_tank: cold_water_tank
-        conversion:
-        dc_to_ac: 0.95 # Conversion efficiency (0.0-1.0)
-        dc_to_dc: 0.95 # Conversion efficiency (0.0-1.0)
-        ac_to_dc: 0.8 # Conversion efficiency (0.0-1.0)
-        ac_to_ac: 0.98 # Conversion efficiency (0.0-1.0)
-        diesel_generator: default_diesel
-        # heat_exchanger: default_heat_exchanger
-        # hot_water_tank: hot_water_tank
-        pv_panel: default_pv
-        # pvt_panel: default_pvt
-        
+        Sets the scenarios on the system frame.
+
         """
 
-        # AC transmission efficiency
+        pass

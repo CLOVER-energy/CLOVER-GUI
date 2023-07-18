@@ -14,6 +14,9 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from clover.impact.finance import COST, COST_DECREASE, OM
+from clover.impact.ghgs import GHGS, GHG_DECREASE, OM_GHGS
+from clover.simulation.diesel import DieselGenerator
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -130,6 +133,7 @@ class GeneratorFrame(ttk.Frame):
             textvariable=self.diesel_generator_capacities[
                 self.diesel_generator_selected.get()
             ],
+            style=DANGER,
         )
         self.diesel_generator_capacity_entry.grid(
             row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -156,12 +160,10 @@ class GeneratorFrame(ttk.Frame):
             bootstyle=DANGER,
             textvariable=self.fuel_consumption[self.diesel_generator_selected.get()],
         )
-        self.fuel_consumption_entry.grid(
-            row=3, column=1, columnspan=2, padx=10, pady=5, sticky="ew"
-        )
+        self.fuel_consumption_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
         self.fuel_consumption_unit = ttk.Label(self, text=f"litres / kW-hour")
-        self.fuel_consumption_unit.grid(row=3, column=3, padx=10, pady=5, sticky="ew")
+        self.fuel_consumption_unit.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
 
         # Minimum load
         self.minimum_load_label = ttk.Label(self, text="Minimum capacity factor")
@@ -464,6 +466,85 @@ class GeneratorFrame(ttk.Frame):
 
         # Update the variables being displayed.
         self.update_diesel_generator_frame()
+
+    def set_generators(
+        self,
+        diesel_generator_selected: DieselGenerator,
+        diesel_generators: list[DieselGenerator],
+        diesel_generator_costs: dict[str, dict[str, float]],
+        diesel_generator_emissions: dict[str, dict[str, float]],
+    ) -> None:
+        """
+        Sets the diesel generator information.
+
+        :param: diesel_generator_selected
+            The selected diesel generator for the run.
+
+        :param: diesel_generators
+            The `list` of :class:`clover.simulation.diesel.DieselGenerator` instances
+            defined.
+
+        :param: diesel_generator_costs
+            The costs associated with the diesel generators.
+
+        :param: diesel_generator_emissions
+            The emissions associated with the diesel generators.
+
+        """
+
+        for diesel_generator in diesel_generators:
+            self.diesel_generator_name_values[diesel_generator.name] = ttk.StringVar(
+                self, diesel_generator.name
+            )
+
+            # Performance characteristics
+            self.diesel_generator_capacities[diesel_generator.name] = ttk.DoubleVar(
+                self, 1
+            )
+            self.fuel_consumption[diesel_generator.name] = ttk.DoubleVar(
+                self, diesel_generator.diesel_consumption
+            )
+            self.minimum_load[diesel_generator.name] = ttk.DoubleVar(
+                self, 100 * diesel_generator.minimum_load
+            )
+
+            # Costs
+            self.costs[diesel_generator.name] = ttk.DoubleVar(
+                self,
+                (this_generator_costs := diesel_generator_costs[diesel_generator.name])[
+                    COST
+                ],
+            )
+            self.cost_decrease[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_costs.get(COST_DECREASE, 0)
+            )
+            self.o_and_m_costs[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_costs.get(OM, 0)
+            )
+
+            # Emissions
+            self.embedded_emissions[diesel_generator.name] = ttk.DoubleVar(
+                self,
+                (
+                    this_generator_emissions := diesel_generator_emissions[
+                        diesel_generator.name
+                    ]
+                ).get(GHGS, 0),
+            )
+            self.om_emissions[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_emissions.get(GHG_DECREASE, 0)
+            )
+            self.annual_emissions_decrease[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_emissions.get(OM_GHGS, 0)
+            )
+
+        self.diesel_generator_selected = self.diesel_generator_name_values[
+            diesel_generator_selected.name
+        ]
+        self.diesel_generator_selected_combobox.set(
+            self.diesel_generator_selected.get()
+        )
+        self.select_diesel_generator(self.diesel_generator_selected.get())
 
     def update_diesel_generator_frame(self) -> None:
         """Updates the entries so that the correct variables are displayed on the screen."""
