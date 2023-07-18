@@ -133,6 +133,7 @@ class GeneratorFrame(ttk.Frame):
             textvariable=self.diesel_generator_capacities[
                 self.diesel_generator_selected.get()
             ],
+            style=DANGER,
         )
         self.diesel_generator_capacity_entry.grid(
             row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -159,12 +160,10 @@ class GeneratorFrame(ttk.Frame):
             bootstyle=DANGER,
             textvariable=self.fuel_consumption[self.diesel_generator_selected.get()],
         )
-        self.fuel_consumption_entry.grid(
-            row=3, column=1, columnspan=2, padx=10, pady=5, sticky="ew"
-        )
+        self.fuel_consumption_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
         self.fuel_consumption_unit = ttk.Label(self, text=f"litres / kW-hour")
-        self.fuel_consumption_unit.grid(row=3, column=3, padx=10, pady=5, sticky="ew")
+        self.fuel_consumption_unit.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
 
         # Minimum load
         self.minimum_load_label = ttk.Label(self, text="Minimum capacity factor")
@@ -506,7 +505,7 @@ class GeneratorFrame(ttk.Frame):
                 self, diesel_generator.diesel_consumption
             )
             self.minimum_load[diesel_generator.name] = ttk.DoubleVar(
-                self, diesel_generator.minimum_load
+                self, 100 * diesel_generator.minimum_load
             )
 
             # Costs

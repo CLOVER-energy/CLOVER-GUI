@@ -814,10 +814,10 @@ class BatteryFrame(ttk.Frame):
                 self, 100 * battery.lifetime_loss
             )
             self.c_rate_discharging[battery.name] = ttk.DoubleVar(
-                self, 100 * battery.discharge_rate
+                self, battery.discharge_rate
             )
             self.c_rate_charging[battery.name] = ttk.DoubleVar(
-                self, 100 * battery.charge_rate
+                self, battery.charge_rate
             )
 
             # Costs
@@ -846,6 +846,9 @@ class BatteryFrame(ttk.Frame):
             )
 
         self.battery_selected = self.battery_name_values[batteries[0].name]
+        self.battery_selected_combobox["values"] = [
+            battery.name for battery in batteries
+        ]
         self.battery_selected_combobox.set(self.battery_selected.get())
         self.select_battery(self.battery_selected.get())
 

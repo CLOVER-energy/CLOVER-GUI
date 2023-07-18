@@ -307,13 +307,15 @@ class App(ttk.Window):
         self.details_window.grid_frame.set_profiles(grid_times)
         self.load_location_window.set_progress_bar_progerss(90 * percent_fraction)
 
-        self.details_window.finance_frame.set_finance_inputs(finance_inputs)
+        self.details_window.finance_frame.set_finance_inputs(
+            finance_inputs, self.logger
+        )
         self.load_location_window.set_progress_bar_progerss(100 * percent_fraction)
 
-        self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs)
+        self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs, self.logger)
         self.load_location_window.set_progress_bar_progerss(110 * percent_fraction)
 
-        self.details_window.system_frame.set_profiles(minigrid, scenarios)
+        self.details_window.system_frame.set_system(minigrid, scenarios)
         self.load_location_window.set_progress_bar_progerss(120 * percent_fraction)
 
         # Close the load-location window once completed

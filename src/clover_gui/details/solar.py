@@ -631,7 +631,7 @@ class PVFrame(ttk.Frame):
             self.panel_tilt[pv_panel.name] = ttk.DoubleVar(
                 self, pv_panel.tilt if pv_panel.tilt is not None else 0
             )
-            if pv_panel.tracking == Tracking.DUAL_AXIS or Tracking.SINGLE_AXIS:
+            if pv_panel.tracking in (Tracking.DUAL_AXIS, Tracking.SINGLE_AXIS):
                 self.tilt_entry.configure(state=DISABLED)
                 self.tilt_slider.configure(state=DISABLED)
 
@@ -686,6 +686,7 @@ class PVFrame(ttk.Frame):
             )
 
         self.panel_selected = self.panel_name_values[pv_panels[0].name]
+        self.pv_panel_combobox["values"] = [panel.name for panel in pv_panels]
         self.pv_panel_combobox.set(self.panel_selected.get())
         self.select_pv_panel(self.panel_selected.get())
 

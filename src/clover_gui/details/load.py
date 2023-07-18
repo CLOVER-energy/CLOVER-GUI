@@ -385,9 +385,8 @@ class LoadFrame(ttk.Frame):
 
     def select_device(self, device: GUIDevice) -> None:
         """Called to select a device in the left-hand devices pane."""
-        self.devices_frame.device_selected_buttons[self.active_device].configure(
-            style="success.Outline.TButton"
-        )
+        for button in self.devices_frame.device_selected_buttons.values():
+            button.configure(style="success.Outline.TButton")
         self.active_device = device
         self.devices_frame.device_selected_buttons[self.active_device].configure(
             style="success.TButton"
