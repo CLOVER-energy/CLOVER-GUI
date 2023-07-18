@@ -359,13 +359,14 @@ class App(ttk.Window):
         self.main_menu_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
 
-    def open_details_window(self) -> None:
+    def open_details_window(self, tab_id: int = 0) -> None:
         """Opens the details window."""
 
         if self.details_window is None:
             self.details_window: DetailsWindow | None = DetailsWindow()
         else:
             self.details_window.deiconify()
+        self.details_window.details_notebook.select(tab_id)
         self.details_window.mainloop()
 
     def open_new_location_frame(self) -> None:

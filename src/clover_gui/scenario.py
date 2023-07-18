@@ -13,6 +13,8 @@ import functools
 import os
 import tkinter as tk
 
+from typing import Callable
+
 import customtkinter as ctk
 import ttkbootstrap as ttk
 
@@ -40,11 +42,10 @@ class ConfigurationFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent, data_directory: str):
+    def __init__(self, parent, data_directory: str, open_details_window: Callable):
         super().__init__(parent)
 
-        self.label = ttk.Label(self, text="Configuration frame")
-        self.label.grid(row=0, column=0)
+        self.open_details_window = open_details_window
 
         self.columnconfigure(0, weight=4)
         self.columnconfigure(1, weight=1)
@@ -600,16 +601,16 @@ class ConfigurationFrame(ttk.Frame):
         )
 
     def open_pv_settings(self) -> None:
-        pass
+        self.open_details_window(0)
 
     def open_diesel_settings(self) -> None:
-        pass
+        self.open_details_window(6)
 
     def open_battery_settings(self) -> None:
-        pass
+        self.open_details_window(2)
 
     def open_grid_settings(self) -> None:
-        pass
+        self.open_details_window(7)
 
     def set_scenarios(self, scenarios: list[Scenario]) -> None:
         """

@@ -1362,7 +1362,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 4))
 
         self.configuration_frame = ConfigurationFrame(
-            self.configuration_notebook, data_directory
+            self.configuration_notebook, data_directory, open_details_window
         )
         self.configuration_notebook.add(
             self.configuration_frame, text="Configure", sticky="news"
