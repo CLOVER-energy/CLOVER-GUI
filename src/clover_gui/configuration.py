@@ -182,6 +182,176 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.years_slider.set(self.simulation_period.get())
 
 
+class ThresholdCriterion:
+    """
+    Represents a threshold criterion.
+
+    .. attribute:: criterion_name
+        The name of the criterion.
+
+    .. attribute:: less_than
+        Whether to use a less-than (True) or greater-than (False) condition for the
+        criterion.
+
+    .. attribute:: value
+        The threshold value for the criterion.
+
+    .. attribute:: index
+        The index of the criteria as being created.
+
+    """
+
+    # Private attributes:
+    #
+    # .. attribute:: _permissable_chevrons
+    #   The `list` of permissable chevrons.
+    #
+    # .. attribute:: _permissable_threshold_criteria
+    #   The `list` of permissable threshold criteria.
+
+    _permissable_chevrons: list[str] = sorted(["<", ">"])
+
+    _permissable_threshold_criteria: list[str] = sorted(
+        [
+            "Blackouts fraction",
+            "Clean water blackouts fraction",
+            "Cumulative cost / $",
+            "Cumulative ghgs / kgCO2eq",
+            "Cumulative system cost / $",
+            "Cumulative system ghgs / kgCO2eq",
+            "Emissions intensity / gCO2/kWh",
+            "Kerosene cost mitigated / $",
+            "Kerosene ghgsm mitigated / kgCO2eq",
+            "LCUE / $/kWh",
+            "Renewables fraction",
+            "Total ghgs / kgCO2eq",
+            "Total system cost / $",
+            "Total system ghgs / kgCO2eq",
+            "Total_cost / $",
+            "Unmet energy fraction",
+        ]
+    )
+
+    def __init__(
+        self,
+        parent,
+        criterion_name: ttk.StringVar,
+        less_than: ttk.BooleanVar,
+        value: ttk.DoubleVar,
+        delete_criterion: Callable,
+        index: int = 0,
+    ) -> None:
+        """
+        Instnatiate a :class:`ThresholdCriterion` instance.
+
+        :param: parent
+            The parent :class:`ttk.Frame` in which the class is being created.
+
+        :param: criterion_name
+            The name of the criterion.
+
+        :param: less_than
+            Whether to use a less-than (True) or greater-than (False) condition for the
+            criterion.
+
+        :param: value
+            The threshold value for the criterion.
+
+        :param: delete_criterion
+            `Callable` to delete the criterion.
+
+        :param: index
+            The index of the criteria as being created.
+
+        """
+
+        # Criterion name and entry
+        self.criterion_name: ttk.StringVar = criterion_name
+        self.criterion_name_combobox = ttk.Combobox(
+            parent, bootstyle=INFO, textvariable=self.criterion_name
+        )
+        self.criterion_name_combobox["values"] = self._permissable_threshold_criteria
+
+        self.less_than: ttk.BooleanVar = less_than
+        self.less_than_string: ttk.StringVar = ttk.StringVar(
+            parent, "<" if self.less_than else ">"
+        )
+        self.less_than_combobox = ttk.Combobox(
+            parent, bootstyle=INFO, textvariable=self.less_than_string
+        )
+        self.less_than_combobox["values"] = self._permissable_chevrons
+
+        self.value: ttk.DoubleVar = value
+        self.value_entry = ttk.Entry(parent, bootstyle=INFO, textvariable=self.value)
+
+        self.delete_criterion_button: ttk.Button = ttk.Button(
+            parent,
+            bootstyle=f"{DANGER}-{OUTLINE}",
+            text="Delete",
+            command=lambda criterion=self: delete_criterion(criterion),
+        )
+
+        self.index: int = index
+
+    def __hash__(self) -> int:
+        """Return a `str` based on the information in the threshold criteria."""
+
+        return self.index
+
+    def __str__(self) -> str:
+        """Return a nice-looking string."""
+
+        return (
+            f"ThresholdCriterion('{self.criterion_name.get()}' "
+            + ("less than" if self.less_than.get() else "greater than")
+            + f" {self.value.get()}"
+        )
+
+    def __repr__(self) -> str:
+        """Return the default representation of the class."""
+
+        return self.__str__()
+
+    @classmethod
+    def default_threshold_criterion(cls) -> str:
+        """Return the default threshold criterion."""
+
+        return cls._permissable_threshold_criteria[0]
+
+    def display(self) -> None:
+        """Display the criterion on the screen."""
+
+        self.criterion_name_combobox.grid(
+            row=self.index, column=0, padx=10, pady=5, sticky="ew"
+        )
+        self.less_than_combobox.grid(
+            row=self.index, column=1, padx=10, pady=5, sticky="ew"
+        )
+        self.value_entry.grid(row=self.index, column=2, padx=10, pady=5, sticky="ew")
+        self.delete_criterion_button.grid(
+            row=self.index, column=3, padx=10, pady=5, sticky="w", ipadx=20
+        )
+
+    def grid_forget(self) -> None:
+        """Remove the varoius items from the screen."""
+
+        self.criterion_name_combobox.grid_forget()
+        self.less_than_combobox.grid_forget()
+        self.value_entry.grid_forget()
+        self.delete_criterion_button.grid_forget()
+
+    def set_index(self, index: int) -> None:
+        """
+        Sets the index attribute.
+
+        :param: index
+            The index to set.
+
+        """
+
+        self.index = index
+
+
 class OptimisationFrame(ttk.Frame):
     """
     Represents the optimisation frame.
