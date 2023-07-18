@@ -10,6 +10,7 @@
 ########################################################################################
 
 import os
+import pkgutil
 import ttkbootstrap as ttk
 
 from clover import (
@@ -203,8 +204,11 @@ class App(ttk.Window):
         """The path to the data directory."""
 
         if self._data_directory is None:
-            # self._data_directory: str | None = os.path.dirname(sys.executable)
-            self._data_directory = "src"
+            data_directory: str | None = pkgutil.get_data("clovergui", "data")
+            if data_directory is None:
+                data_directory = os.path.join("src", "clover_gui", "data")
+
+            self._data_directory = data_directory
 
         return self._data_directory
 
@@ -376,7 +380,7 @@ class App(ttk.Window):
 
         # Configuration
         self.configuration_screen = ConfigurationScreen(
-            self.open_details_window, self.system_lifetime
+            self.data_directory, self.open_details_window, self.system_lifetime
         )
         self.splash.set_progress_bar_progerss(80)
         self.configuration_screen.pack_forget()

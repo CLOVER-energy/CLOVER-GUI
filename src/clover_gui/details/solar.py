@@ -650,7 +650,7 @@ class PVFrame(ttk.Frame):
 
             # Performance characteristics
             self.reference_efficiencies[pv_panel.name] = ttk.DoubleVar(
-                self, pv_panel.reference_efficiency
+                self, 100 * pv_panel.reference_efficiency
             )
             self.reference_temperature[pv_panel.name] = ttk.DoubleVar(
                 self, pv_panel.reference_temperature

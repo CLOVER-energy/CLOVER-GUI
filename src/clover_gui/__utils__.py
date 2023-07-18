@@ -50,7 +50,7 @@ DIESEL_INPUTS_FILE: str = os.path.join("generation", "diesel_inputs.yaml")
 
 # Images directory:
 #   The directory containing the images to display.
-IMAGES_DIRECTORY: str = os.path.join("clover_gui", "images")
+IMAGES_DIRECTORY: str = os.path.join("images")
 
 # Load-location geometry:
 #   The geometry to use for the load-location window, specified in width and height.
