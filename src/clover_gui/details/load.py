@@ -13,24 +13,17 @@ import enum
 
 from typing import Any, Callable
 
+import pandas as pd
 import ttkbootstrap as ttk
 
+from clover.load.load import DemandType, Device
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 __all__ = ("LoadFrame",)
 
 
-class DeviceType(enum.Enum):
-    """
-    Denotes the type of device."""
-
-    DOMESTIC: str = "domestic"
-    COMMERCIAL: str = "commercial"
-    PUBLIC: str = "public"
-
-
-class Device:
+class GUIDevice:
     """
     Contains settings for a device.
 
@@ -48,7 +41,7 @@ class Device:
         final_ownership: float,
         innovation: float,
         imitation: float,
-        device_type: DeviceType,
+        device_type: DemandType,
         clean_water_consumption: float = 0,
     ) -> None:
 
@@ -211,7 +204,7 @@ class DevicesFrame(ScrolledFrame):
         # Duplicate functional call
         self.update_device_settings_frame = update_device_settings_frame
 
-        self.device_active_buttons: dict[Device, ttk.Button] = {
+        self.device_active_buttons: dict[GUIDevice, ttk.Button] = {
             device: ttk.Checkbutton(
                 self,
                 style=f"{SUCCESS}.{OUTLINE}.{TOOLBUTTON}",
@@ -220,7 +213,7 @@ class DevicesFrame(ScrolledFrame):
             for device in parent.devices
         }
 
-        self.device_selected_buttons: dict[Device, ttk.Button] = {
+        self.device_selected_buttons: dict[GUIDevice, ttk.Button] = {
             device: ttk.Button(
                 self,
                 text=device.name.get().capitalize(),
@@ -257,195 +250,10 @@ class LoadFrame(ttk.Frame):
         self.rowconfigure(1, weight=8)
 
         self.devices = [
-            Device(self, "light", True, 3, 2, 4, 0.04, 0.5, DeviceType.DOMESTIC),
-            Device(self, "phone", True, 5, 2.2, 3, 0.02, 0.2, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "radio",
-                True,
-                10,
-                0.28,
-                0.35,
-                0.01,
-                0.2,
-                DeviceType.DOMESTIC,
-            ),
-            Device(self, "tv", True, 20, 0.08, 0.9, 0.03, 0.25, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "laptop",
-                True,
-                40,
-                0.01,
-                0.5,
-                0.02,
-                0.2,
-                DeviceType.DOMESTIC,
-            ),
-            Device(self, "fridge", True, 50, 0, 0.5, 0.02, 0.2, DeviceType.DOMESTIC),
-            Device(self, "fan", True, 10, 0.1, 2, 0.04, 0.3, DeviceType.DOMESTIC),
-            Device(self, "kerosene", True, 1, 3.4, 2, 0.02, 0.1, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "mill",
-                False,
-                750,
-                0.01,
-                0.1,
-                0.02,
-                0.2,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(
-                self,
-                "workshop",
-                False,
-                350,
-                0.05,
-                0.05,
-                0.02,
-                0.2,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(
-                self,
-                "sme",
-                False,
-                200,
-                0.05,
-                0.03,
-                0.25,
-                0.25,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(self, "streetlight", True, 25, 0.2, 0.2, 0, 0, DeviceType.PUBLIC),
-            Device(self, "light", True, 3, 2, 4, 0.04, 0.5, DeviceType.DOMESTIC),
-            Device(self, "phone", True, 5, 2.2, 3, 0.02, 0.2, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "radio",
-                True,
-                10,
-                0.28,
-                0.35,
-                0.01,
-                0.2,
-                DeviceType.DOMESTIC,
-            ),
-            Device(self, "tv", True, 20, 0.08, 0.9, 0.03, 0.25, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "laptop",
-                True,
-                40,
-                0.01,
-                0.5,
-                0.02,
-                0.2,
-                DeviceType.DOMESTIC,
-            ),
-            Device(self, "fridge", True, 50, 0, 0.5, 0.02, 0.2, DeviceType.DOMESTIC),
-            Device(self, "fan", True, 10, 0.1, 2, 0.04, 0.3, DeviceType.DOMESTIC),
-            Device(self, "kerosene", True, 1, 3.4, 2, 0.02, 0.1, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "mill",
-                False,
-                750,
-                0.01,
-                0.1,
-                0.02,
-                0.2,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(
-                self,
-                "workshop",
-                False,
-                350,
-                0.05,
-                0.05,
-                0.02,
-                0.2,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(
-                self,
-                "sme",
-                False,
-                200,
-                0.05,
-                0.03,
-                0.25,
-                0.25,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(self, "streetlight", True, 25, 0.2, 0.2, 0, 0, DeviceType.PUBLIC),
-            Device(self, "light", True, 3, 2, 4, 0.04, 0.5, DeviceType.DOMESTIC),
-            Device(self, "phone", True, 5, 2.2, 3, 0.02, 0.2, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "radio",
-                True,
-                10,
-                0.28,
-                0.35,
-                0.01,
-                0.2,
-                DeviceType.DOMESTIC,
-            ),
-            Device(self, "tv", True, 20, 0.08, 0.9, 0.03, 0.25, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "laptop",
-                True,
-                40,
-                0.01,
-                0.5,
-                0.02,
-                0.2,
-                DeviceType.DOMESTIC,
-            ),
-            Device(self, "fridge", True, 50, 0, 0.5, 0.02, 0.2, DeviceType.DOMESTIC),
-            Device(self, "fan", True, 10, 0.1, 2, 0.04, 0.3, DeviceType.DOMESTIC),
-            Device(self, "kerosene", True, 1, 3.4, 2, 0.02, 0.1, DeviceType.DOMESTIC),
-            Device(
-                self,
-                "mill",
-                False,
-                750,
-                0.01,
-                0.1,
-                0.02,
-                0.2,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(
-                self,
-                "workshop",
-                False,
-                350,
-                0.05,
-                0.05,
-                0.02,
-                0.2,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(
-                self,
-                "sme",
-                False,
-                200,
-                0.05,
-                0.03,
-                0.25,
-                0.25,
-                DeviceType.COMMERCIAL,
-            ),
-            Device(self, "streetlight", True, 25, 0.2, 0.2, 0, 0, DeviceType.PUBLIC),
+            GUIDevice(self, "light", True, 3, 2, 4, 0.04, 0.5, DemandType.DOMESTIC),
         ]
 
-        self.active_device: Device = self.devices[0]
+        self.active_device: GUIDevice = self.devices[0]
 
         # Create the right-hand frame for adjusting device settings
         self.settings_frame = DeviceSettingsFrame(self)
@@ -473,25 +281,56 @@ class LoadFrame(ttk.Frame):
 
         self.select_device(self.devices[0])
 
-    def add_device(self) -> None:
-        """Creates a new device when called."""
+    def add_device(self, seed_device: Device | None = None) -> None:
+        """
+        Creates a new device when called.
 
-        # Determine the name of the new device
-        new_name = "New_device{suffix}"
-        index = 0
-        suffix = ""
-        while new_name.format(suffix=suffix) in {
-            entry.name.get() for entry in self.devices
-        }:
-            index += 1
-            suffix = f"_{index}"
+        :param: seed_device
+            If specified, the :class:`clover.load.load.Device` to use to determine
+            parameters for the device.
 
-        new_name = new_name.format(suffix=suffix)
+        """
 
-        # Create the new device and select it.
-        self.devices.append(
-            (device := Device(self, new_name, True, 0, 0, 0, 0, 0, DeviceType.DOMESTIC))
-        )
+        if seed_device is None:
+            # Determine the name of the new device
+            new_name = "New_device{suffix}"
+            index = 0
+            suffix = ""
+            while new_name.format(suffix=suffix) in {
+                entry.name.get() for entry in self.devices
+            }:
+                index += 1
+                suffix = f"_{index}"
+
+            new_name = new_name.format(suffix=suffix)
+
+            # Create the new device and select it.
+            self.devices.append(
+                (
+                    device := GUIDevice(
+                        self, new_name, True, 0, 0, 0, 0, 0, DemandType.DOMESTIC
+                    )
+                )
+            )
+
+        else:
+            self.devices.append(
+                (
+                    device := GUIDevice(
+                        self,
+                        seed_device.name,
+                        seed_device.available,
+                        seed_device.electric_power,
+                        seed_device.initial_ownership,
+                        seed_device.final_ownership,
+                        seed_device.innovation,
+                        seed_device.imitation,
+                        seed_device.demand_type,
+                        seed_device.clean_water_usage,
+                    )
+                )
+            )
+
         self.active_device = device
 
         # Add a new set of buttons for the device
@@ -525,7 +364,7 @@ class LoadFrame(ttk.Frame):
         self.devices_frame.update()
         self.update_device_settings_frame(device)
 
-    def update_device_settings_frame(self, device: Device) -> None:
+    def update_device_settings_frame(self, device: GUIDevice) -> None:
         """Updates the information for the device currently being considered."""
 
         self.settings_frame.name_entry.configure(textvariable=device.name)
@@ -544,7 +383,7 @@ class LoadFrame(ttk.Frame):
             textvariable=device.clean_water_consumption
         )
 
-    def select_device(self, device: Device) -> None:
+    def select_device(self, device: GUIDevice) -> None:
         """Called to select a device in the left-hand devices pane."""
         self.devices_frame.device_selected_buttons[self.active_device].configure(
             style="success.Outline.TButton"
@@ -554,6 +393,27 @@ class LoadFrame(ttk.Frame):
             style="success.TButton"
         )
         self.update_device_settings_frame(device)
+
+    def set_loads(
+        self,
+        device_utilisations: dict[Device, pd.DataFrame],
+    ) -> None:
+        """
+        Set the load information for the frame based on the inputs provided.
+
+        :param: device_utilisations
+            A mapping between the devices and the device utilisations.
+
+        """
+
+        self.devices = []
+
+        for device, utilisations in device_utilisations.items():
+            # Create a GUI for the device
+            self.add_device(device)
+
+        self.active_device = self.devices[0]
+        self.select_device(self.active_device)
 
     def update_button_label(self, _) -> None:
         """Updates the button label of the active device."""

@@ -18,6 +18,8 @@ from typing import DefaultDict
 import ttkbootstrap as ttk
 
 from clover import read_yaml
+from clover.fileparser import DIESEL_CONSUMPTION, DIESEL_GENERATORS, MINIMUM_LOAD
+from clover.simulation.diesel import DieselGenerator
 from clover.generation.solar import PVPanel, SolarPanelType
 from clover.simulation.storage_utils import Battery
 
@@ -41,6 +43,10 @@ CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
 # Details geometry:
 #   The geometry to use for the details window.
 DETAILS_GEOMETRY: str = "1080x720"
+
+# Diesel inputs file:
+#   The diesel inputs file.
+DIESEL_INPUTS_FILE: str = os.path.join("generation", "diesel_inputs.yaml")
 
 # Images directory:
 #   The directory containing the images to display.
@@ -164,6 +170,49 @@ def parse_battery_inputs(
     }
 
     return batteries, battery_costs, battery_emissions
+
+
+def parse_diesel_inputs(
+    inputs_directory_relative_path: str,
+    logger: Logger,
+) -> tuple[list[DieselGenerator, dict[str, dict[str, float], dict[str, float]]]]:
+    """
+    Parses the battery inputs file.
+
+    :param: inputs_directory_relative_path
+        The relative path to the inputs folder directory.
+    :param: logger
+            The :class:`logging.Logger` to use for the run.
+
+    :returns:
+        A `tuple` containing:
+        - The `list` of :class:`generation.diesel.DieselGenerator` instances defined;
+        - The diesel cost information;
+        - The diesel emissions information;
+
+    """
+
+    # Parse the diesel inputs file.
+    diesel_inputs_filepath = os.path.join(
+        inputs_directory_relative_path, DIESEL_INPUTS_FILE
+    )
+    diesel_inputs = read_yaml(diesel_inputs_filepath, logger)
+    if not isinstance(diesel_inputs, dict):
+        raise Exception("Diesel input file is not of type `dict`.")
+    logger.info("Diesel inputs successfully parsed.")
+
+    diesel_generators: list[DieselGenerator] = [
+        DieselGenerator(entry[DIESEL_CONSUMPTION], entry[MINIMUM_LOAD], entry[_NAME])
+        for entry in diesel_inputs[DIESEL_GENERATORS]
+    ]
+    diesel_generator_costs: dict[str, dict[str, float]] = {
+        entry[_NAME]: entry[_COSTS] for entry in diesel_inputs[DIESEL_GENERATORS]
+    }
+    diesel_generator_emissions: dict[str, dict[str, float]] = {
+        entry[_NAME]: entry[_EMISSIONS] for entry in diesel_inputs[DIESEL_GENERATORS]
+    }
+
+    return diesel_generators, diesel_generator_costs, diesel_generator_emissions
 
 
 def parse_solar_inputs(

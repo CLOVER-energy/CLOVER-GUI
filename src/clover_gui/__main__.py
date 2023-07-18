@@ -25,6 +25,7 @@ from ttkbootstrap.scrolled import *
 from .__utils__ import (
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
+    parse_diesel_inputs,
     parse_solar_inputs,
     update_location_information,
 )
@@ -263,6 +264,10 @@ class App(ttk.Window):
             self.inputs_directory_relative_path, self.logger
         )
 
+        diesel_generators, diesel_costs, diesel_emissions = parse_diesel_inputs(
+            self.inputs_directory_relative_path, self.logger
+        )
+
         # Set all inputs accordingly
         self.configuration_screen.configuration_frame.set_scenarios(scenarios)
         self.load_location_window.set_progress_bar_progerss(20 * percent_fraction)
@@ -285,7 +290,7 @@ class App(ttk.Window):
         # )
         # self.load_location_window.set_progress_bar_progerss(50 * percent_fraction)
 
-        self.details_window.storage_frame.set_batteries(
+        self.details_window.storage_frame.battery_frame.set_batteries(
             batteries, battery_costs, battery_emissions
         )
         self.load_location_window.set_progress_bar_progerss(60 * percent_fraction)
@@ -293,8 +298,10 @@ class App(ttk.Window):
         self.details_window.load_frame.set_loads(device_utilisations)
         self.load_location_window.set_progress_bar_progerss(70 * percent_fraction)
 
-        self.details_window.diesel_frame.set_generators(minigrid.diesel_generator)
-        self.details_window.diesel_frame.set_water_heaters(minigrid.diesel_water_heater)
+        self.details_window.diesel_frame.generator_frame.set_generators(
+            minigrid.diesel_generator, diesel_generators, diesel_costs, diesel_emissions
+        )
+        # self.details_window.diesel_frame.heater_frame.set_water_heaters(minigrid.diesel_water_heater)
         self.load_location_window.set_progress_bar_progerss(80 * percent_fraction)
 
         self.details_window.grid_frame.set_profiles(grid_times)

@@ -661,25 +661,28 @@ class PVFrame(ttk.Frame):
 
             # Costs
             self.costs[pv_panel.name] = ttk.DoubleVar(
-                self, (this_pv_panel_costs := pv_panel_costs[pv_panel.name])[COST]
+                self,
+                (this_pv_panel_costs := pv_panel_costs[pv_panel.name]).get(COST, 0),
             )
             self.cost_decrease[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_costs[COST_DECREASE]
+                self, this_pv_panel_costs.get(COST_DECREASE, 0)
             )
             self.o_and_m_costs[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_costs[OM]
+                self, this_pv_panel_costs.get(OM, 0)
             )
 
             # Emissions
             self.embedded_emissions[pv_panel.name] = ttk.DoubleVar(
                 self,
-                (this_pv_panel_emissions := pv_panel_emissions[pv_panel.name])[GHGS],
+                (this_pv_panel_emissions := pv_panel_emissions[pv_panel.name]).get(
+                    GHGS, 0
+                ),
             )
             self.om_emissions[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_emissions[GHG_DECREASE]
+                self, this_pv_panel_emissions.get(GHG_DECREASE, 0)
             )
             self.annual_emissions_decrease[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_emissions[OM_GHGS]
+                self, this_pv_panel_emissions.get(OM_GHGS, 0)
             )
 
         self.panel_selected = self.panel_name_values[pv_panels[0].name]
