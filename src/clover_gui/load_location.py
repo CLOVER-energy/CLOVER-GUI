@@ -145,15 +145,3 @@ class LoadLocationWindow(tk.Toplevel):
         """
 
         self.load_location_frame.progress_bar.start()
-
-    def set_progress_bar_progerss(self, value) -> None:
-        """
-        Sets the value of the progress bar.
-
-        :param: value
-            The value to use for setting the progress bar position.
-
-        """
-
-        self.load_location_frame.progress_bar["value"] = value
-        self.update()

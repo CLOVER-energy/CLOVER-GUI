@@ -65,7 +65,7 @@ class SplashScreenWindow(tk.Toplevel):
         # Required to make the splash screen visible.
         self.update()
 
-    def set_progress_bar_progerss(self, value) -> None:
+    def set_progress_bar_progress(self, value) -> None:
         """
         Sets the value of the progress bar.
 

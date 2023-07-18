@@ -61,6 +61,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(5, weight=1)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(7, weight=1)
+        self.rowconfigure(8, weight=1)
 
         self.columnconfigure(0, weight=1)  # First three have forward, home, back
         self.columnconfigure(1, weight=1)

@@ -120,7 +120,7 @@ class App(ttk.Window):
         self.menu_bar.add_cascade(label="Help", menu=self.help_menu)
 
         self.config(menu=self.menu_bar)
-        self.splash.set_progress_bar_progerss(20)
+        self.splash.set_progress_bar_progress(20)
 
         self.setup()
 
@@ -167,6 +167,13 @@ class App(ttk.Window):
             )
             return
 
+        self.new_location_progress_bar: ttk.Progressbar = ttk.Progressbar(
+            self.new_location_frame, bootstyle=f"{SUCCESS}-striped", mode="determinate"
+        )
+        self.new_location_progress_bar.grid(row=7, column=0, columnspan=7, pady=5, padx=10, sticky="ew")
+        self.new_location_progress_bar.start()
+        self.new_location_progress_bar["value"] = 0
+
         # Create the new location.
         try:
             create_new_location(None, new_location_name, self.logger, False)
@@ -177,6 +184,8 @@ class App(ttk.Window):
                 "does not already exist."
             )
             return
+
+        self.new_location_progress_bar["value"] = 50
 
         self.inputs_directory_relative_path = os.path.join(
             LOCATIONS_FOLDER_NAME,
@@ -194,7 +203,7 @@ class App(ttk.Window):
         )
 
         # Open the location being considered.
-        self.load_location(new_location_name)
+        self.load_location(new_location_name, self.new_location_progress_bar)
 
         self.new_location_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
@@ -212,7 +221,7 @@ class App(ttk.Window):
 
         return self._data_directory
 
-    def load_location(self, load_location_name: str | None = None) -> None:
+    def load_location(self, load_location_name: str | None = None, progress_bar: ttk.Progressbar | None = None) -> None:
         """
         Called when the load-location button is deptressed in the load-location window.
 
@@ -223,7 +232,25 @@ class App(ttk.Window):
                 self.load_location_window.load_location_frame.load_location_name.get()
             )
 
-        self.load_location_window.display_progress_bar()
+        if progress_bar is None:
+            progress_bar = self.load_location_window.load_location_frame.progress_bar
+            self.load_location_window.display_progress_bar()
+
+
+        def set_progress_bar_progress(value) -> None:
+            """
+            Sets the value of the progress bar.
+
+            :param: value
+                The value to use for setting the progress bar position.
+
+            """
+
+            progress_bar["value"] = value
+            self.update()
+            if self.load_location_window is not None:
+                self.load_location_window.update()
+            self.new_location_frame.update()
 
         # Parse input files
         (
@@ -249,7 +276,7 @@ class App(ttk.Window):
             self.logger,
             None,
         )
-        self.load_location_window.set_progress_bar_progerss(
+        set_progress_bar_progress(
             10 * (percent_fraction := 1 / 12)
         )
 
@@ -274,57 +301,58 @@ class App(ttk.Window):
 
         # Set all inputs accordingly
         self.configuration_screen.configuration_frame.set_scenarios(scenarios)
-        self.load_location_window.set_progress_bar_progerss(20 * percent_fraction)
+        set_progress_bar_progress(20 * percent_fraction)
 
         self.configuration_screen.simulation_frame.set_simulation(simulations[0])
-        self.load_location_window.set_progress_bar_progerss(30 * percent_fraction)
+        set_progress_bar_progress(30 * percent_fraction)
 
         self.configuration_screen.optimisation_frame.set_optimisation(
             optimisations[0], optimisation_inputs
         )
-        self.load_location_window.set_progress_bar_progerss(40 * percent_fraction)
+        set_progress_bar_progress(40 * percent_fraction)
 
         self.details_window.solar_frame.set_solar(
             pv_panels, pv_panel_costs, pv_panel_emissions
         )
-        self.load_location_window.set_progress_bar_progerss(40 * percent_fraction)
+        set_progress_bar_progress(40 * percent_fraction)
 
         # self.details_window.solar_frame.set_solar(
         #     pv_panels, pv_panel_costs, pv_panel_emissions
         # )
-        # self.load_location_window.set_progress_bar_progerss(50 * percent_fraction)
+        # set_progress_bar_progress(50 * percent_fraction)
 
         self.details_window.storage_frame.battery_frame.set_batteries(
             batteries, battery_costs, battery_emissions
         )
-        self.load_location_window.set_progress_bar_progerss(60 * percent_fraction)
+        set_progress_bar_progress(60 * percent_fraction)
 
         self.details_window.load_frame.set_loads(device_utilisations)
-        self.load_location_window.set_progress_bar_progerss(70 * percent_fraction)
+        set_progress_bar_progress(70 * percent_fraction)
 
         self.details_window.diesel_frame.generator_frame.set_generators(
             minigrid.diesel_generator, diesel_generators, diesel_costs, diesel_emissions
         )
         # self.details_window.diesel_frame.heater_frame.set_water_heaters(minigrid.diesel_water_heater)
-        self.load_location_window.set_progress_bar_progerss(80 * percent_fraction)
+        set_progress_bar_progress(80 * percent_fraction)
 
         self.details_window.grid_frame.set_profiles(grid_times)
-        self.load_location_window.set_progress_bar_progerss(90 * percent_fraction)
+        set_progress_bar_progress(90 * percent_fraction)
 
         self.details_window.finance_frame.set_finance_inputs(
             finance_inputs, self.logger
         )
-        self.load_location_window.set_progress_bar_progerss(100 * percent_fraction)
+        set_progress_bar_progress(100 * percent_fraction)
 
         self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs, self.logger)
-        self.load_location_window.set_progress_bar_progerss(110 * percent_fraction)
+        set_progress_bar_progress(110 * percent_fraction)
 
         self.details_window.system_frame.set_system(minigrid, scenarios)
-        self.load_location_window.set_progress_bar_progerss(120 * percent_fraction)
+        set_progress_bar_progress(120 * percent_fraction)
 
         # Close the load-location window once completed
-        self.load_location_window.withdraw()
-        self.load_location_window.load_location_frame.pack_forget()
+        if self.load_location_window is not None:
+            self.load_location_window.withdraw()
+            self.load_location_window.load_location_frame.pack_forget()
         self.main_menu_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
 
@@ -366,29 +394,29 @@ class App(ttk.Window):
             self.open_load_location_window,
             self.open_new_location_frame,
         )
-        self.splash.set_progress_bar_progerss(40)
+        self.splash.set_progress_bar_progress(40)
 
         # New-location
         self.new_location_frame = NewLocationScreen(
             self.splash, self.create_new_location
         )
         self.new_location_frame.pack_forget()
-        self.splash.set_progress_bar_progerss(60)
+        self.splash.set_progress_bar_progress(60)
 
         # Load-location
-        self.load_location_window = None
+        self.load_location_window: LoadLocationWindow | None = None
 
         # Configuration
         self.configuration_screen = ConfigurationScreen(
             self.data_directory, self.open_details_window, self.system_lifetime
         )
-        self.splash.set_progress_bar_progerss(80)
+        self.splash.set_progress_bar_progress(80)
         self.configuration_screen.pack_forget()
 
         # Details
         self.details_window: DetailsWindow | None = DetailsWindow(self.system_lifetime)
         self.details_window.withdraw()
-        self.splash.set_progress_bar_progerss(100)
+        self.splash.set_progress_bar_progress(100)
 
     def destroy_splash(self):
         self.splash.destroy()
