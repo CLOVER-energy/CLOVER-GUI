@@ -226,3 +226,19 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             command=lambda self=self: BaseScreen.go_back(self),
         )
         self.back_button.grid(row=7, column=0, padx=10, pady=5)
+
+        self.home_button = ttk.Button(
+            self,
+            text="Home",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_home(self),
+        )
+        self.home_button.grid(row=7, column=1, padx=10, pady=5)
+
+        self.forward_button = ttk.Button(
+            self,
+            text="Forward",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_forward(self),
+        )
+        self.forward_button.grid(row=7, column=2, padx=10, pady=5)

@@ -178,6 +178,33 @@ class BaseScreen(ttk.Frame):
         cls._forward_journey.append(self)
         previous_frame.pack(fill="both", expand=True)
 
+    @classmethod
+    def go_forward(cls, self) -> None:
+        """Go forward a screen."""
+
+        # Return if there is no frame to go towards.
+        try:
+            next_frame = cls._forward_journey.pop()
+        except IndexError:
+            return
+
+        self.pack_forget()
+
+        cls._backward_journey.append(self)
+        next_frame.pack(fill="both", expand=True)
+
+    @classmethod
+    def go_home(cls, self) -> None:
+        """Go to the home screen."""
+
+        # Assume that the home frame is the first frame in the journey.
+        home_frame = cls._backward_journey[0]
+
+        self.pack_forget()
+        cls._backward_journey.append(self)
+
+        home_frame.pack(fill="both", expand=True)
+
 
 def parse_battery_inputs(
     inputs_directory_relative_path: str,
