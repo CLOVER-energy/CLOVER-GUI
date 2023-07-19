@@ -61,6 +61,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(5, weight=1)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(7, weight=1)
+        self.rowconfigure(8, weight=1)
 
         self.columnconfigure(0, weight=1)  # First three have forward, home, back
         self.columnconfigure(1, weight=1)
@@ -217,3 +218,11 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             ipady=20,
             sticky="w",
         )
+
+        self.back_button = ttk.Button(
+            self,
+            text="Back",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_back(self),
+        )
+        self.back_button.grid(row=7, column=0, padx=10, pady=5)

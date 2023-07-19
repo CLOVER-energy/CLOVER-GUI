@@ -13,7 +13,7 @@ import collections
 import os
 
 from logging import Logger
-from typing import DefaultDict
+from typing import Any, DefaultDict
 
 import ttkbootstrap as ttk
 
@@ -50,7 +50,7 @@ DIESEL_INPUTS_FILE: str = os.path.join("generation", "diesel_inputs.yaml")
 
 # Images directory:
 #   The directory containing the images to display.
-IMAGES_DIRECTORY: str = os.path.join("clover_gui", "images")
+IMAGES_DIRECTORY: str = os.path.join("images")
 
 # Load-location geometry:
 #   The geometry to use for the load-location window, specified in width and height.
@@ -130,6 +130,53 @@ class BaseScreen(ttk.Frame):
         cls.show_navigation = show_navigation
 
         return super().__init_subclass__()
+
+    @classmethod
+    def add_screen_moving_forward(cls, screen: Any) -> None:
+        """
+        Add a screen to the backward journey.
+
+        :param: screen
+            The screen to add.
+
+        """
+
+        cls._backward_journey.append(screen)
+        try:
+            cls._forward_journey.pop()
+        except IndexError:
+            pass
+
+    @classmethod
+    def add_screen_moving_back(cls, screen: Any) -> None:
+        """
+        Add a screen to the backward journey.
+
+        :param: screen
+            The screen to add.
+
+        """
+
+        cls._forward_journey.append(screen)
+        try:
+            cls._backward_journey.pop()
+        except IndexError:
+            pass
+
+    @classmethod
+    def go_back(cls, self) -> None:
+        """Go back a screen."""
+
+        # Return if there is no frame to go back to.
+        try:
+            previous_frame = cls._backward_journey.pop()
+        except IndexError:
+            return
+
+        self.pack_forget()
+
+        cls._forward_journey.append(self)
+        previous_frame.pack(fill="both", expand=True)
 
 
 def parse_battery_inputs(

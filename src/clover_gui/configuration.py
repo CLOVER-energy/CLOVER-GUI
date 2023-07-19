@@ -15,43 +15,17 @@ import ttkbootstrap as ttk
 
 from typing import Callable
 
-from clover import Scenario, Simulation
+from clover import Simulation
 from clover.optimisation import Optimisation, OptimisationParameters, ThresholdMode
 from clover.optimisation.__utils__ import Criterion, THRESHOLD_CRITERION_TO_MODE
+from clover.scripts.clover import clover_main
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 from .__utils__ import BaseScreen
+from .scenario import ConfigurationFrame
 
 __all__ = ("ConfigurationScreen",)
-
-
-class ConfigurationFrame(ttk.Frame):
-    """
-    Represents the configuration frame.
-
-    The configure frame contains toggles for configuration top-level settings for each
-    run.
-
-    TODO: Update attributes.
-
-    """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.label = ttk.Label(self, text="Configuration frame")
-        self.label.grid(row=0, column=0)
-
-        # TODO: Add configuration frame widgets and layout
-
-    def set_scenarios(self, scenarios: list[Scenario]) -> None:
-        """
-        Sets the scenarios on the configuration frame.
-
-        """
-
-        pass
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
@@ -65,10 +39,11 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, location_name: ttk.StringVar):
         super().__init__(parent)
 
         self.pack(fill="both", expand=True)
+        self.location_name = location_name
 
         # Set the physical distance weights of the rows and columns
         self.rowconfigure(0, weight=2)  # First row has the header
@@ -157,13 +132,37 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         )
 
         self.run_simulation_button = ttk.Button(
-            self, text="Run Simulation", bootstyle=f"{INFO}-outline"
+            self,
+            text="Run Simulation",
+            bootstyle=f"{INFO}-outline",
+            command=self.launch_simulation,
         )
         self.run_simulation_button.grid(
             row=5, column=3, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
         )
 
         # TODO: Add configuration frame widgets and layout
+
+    def launch_simulation(self) -> None:
+        """Launch a CLOVER simulation."""
+
+        BaseScreen.add_screen_moving_forward(self)
+
+        # Assemble arguments and call to CLOVER.
+        clover_args: list[str] = [
+            "-l",
+            str(self.location_name.get()),
+            "-sim",
+            "-pv",
+            str(self.pv_size.get()),
+            "-b",
+            str(self.storage_size.get()),
+            "-a",
+        ]
+        if not self.generate_plots.get():
+            clover_args.append("-sp")
+
+        clover_main(clover_args, True)
 
     def set_simulation(self, simulation: Simulation) -> None:
         """
@@ -203,34 +202,37 @@ class ThresholdCriterion:
 
     # Private attributes:
     #
+    # .. attribute:: _criterion_to_name_map
+    #   Map between the name of the criteria and the nice names.
+    #
     # .. attribute:: _permissable_chevrons
     #   The `list` of permissable chevrons.
     #
     # .. attribute:: _permissable_threshold_criteria
     #   The `list` of permissable threshold criteria.
 
+    criterion_to_name_map: dict[str, str] = {
+        Criterion.BLACKOUTS: "Blackouts fraction",
+        Criterion.CLEAN_WATER_BLACKOUTS: "Clean water blackouts fraction",
+        Criterion.CUMULATIVE_COST: "Cumulative cost / $",
+        Criterion.CUMULATIVE_GHGS: "Cumulative ghgs / kgCO2eq",
+        Criterion.CUMULATIVE_SYSTEM_COST: "Cumulative system cost / $",
+        Criterion.CUMULATIVE_SYSTEM_GHGS: "Cumulative system ghgs / kgCO2eq",
+        Criterion.EMISSIONS_INTENSITY: "Emissions intensity / gCO2/kWh",
+        Criterion.KEROSENE_COST_MITIGATED: "Kerosene cost mitigated / $",
+        Criterion.KEROSENE_GHGS_MITIGATED: "Kerosene ghgs mitigated / kgCO2eq",
+        Criterion.LCUE: "LCUE / $/kWh",
+        Criterion.RENEWABLES_FRACTION: "Renewables fraction",
+        Criterion.TOTAL_GHGS: "Total ghgs / kgCO2eq",
+        Criterion.TOTAL_SYSTEM_COST: "Total system cost / $",
+        Criterion.TOTAL_SYSTEM_GHGS: "Total system ghgs / kgCO2eq",
+        Criterion.TOTAL_COST: "Total_cost / $",
+        Criterion.UNMET_ENERGY_FRACTION: "Unmet energy fraction",
+    }
+
     _permissable_chevrons: list[str] = sorted(["<", ">"])
 
-    _permissable_threshold_criteria: list[str] = sorted(
-        [
-            "Blackouts fraction",
-            "Clean water blackouts fraction",
-            "Cumulative cost / $",
-            "Cumulative ghgs / kgCO2eq",
-            "Cumulative system cost / $",
-            "Cumulative system ghgs / kgCO2eq",
-            "Emissions intensity / gCO2/kWh",
-            "Kerosene cost mitigated / $",
-            "Kerosene ghgsm mitigated / kgCO2eq",
-            "LCUE / $/kWh",
-            "Renewables fraction",
-            "Total ghgs / kgCO2eq",
-            "Total system cost / $",
-            "Total system ghgs / kgCO2eq",
-            "Total_cost / $",
-            "Unmet energy fraction",
-        ]
-    )
+    _permissable_threshold_criteria: list[str] = sorted(criterion_to_name_map.values())
 
     def __init__(
         self,
@@ -1133,31 +1135,16 @@ class OptimisationFrame(ttk.Frame):
         self.scrollable_threshold_frame.columnconfigure(2, weight=1)
         self.scrollable_threshold_frame.columnconfigure(3, weight=1)
 
-        self.threshold_criteria: list[ThresholdCriterion] = [
-            ThresholdCriterion(
-                self.scrollable_threshold_frame,
-                ttk.StringVar(self, "LCUE ($/kWh)"),
-                ttk.BooleanVar(self, True),
-                ttk.DoubleVar(self, 3.15),
-                self.delete_criterion,
-                1,
-            ),
-            ThresholdCriterion(
-                self.scrollable_threshold_frame,
-                ttk.StringVar(self, "Total cost ($)"),
-                ttk.BooleanVar(self, True),
-                ttk.DoubleVar(self, 10000),
-                self.delete_criterion,
-                2,
-            ),
-        ]
+        self.threshold_criteria: list[ThresholdCriterion] = []
 
         def add_threshold_criterion() -> None:
             """Add a new threshold criterion to the list."""
             self.threshold_criteria.append(
                 ThresholdCriterion(
                     self.scrollable_threshold_frame,
-                    ttk.StringVar(self, ThresholdCriterion.default_threshold_criterion),
+                    ttk.StringVar(
+                        self, ThresholdCriterion.default_threshold_criterion()
+                    ),
                     ttk.BooleanVar(self, True),
                     ttk.DoubleVar(self, 0),
                     self.delete_criterion,
@@ -1307,7 +1294,9 @@ class OptimisationFrame(ttk.Frame):
 
         # Update optimisation criteria
         for criterion, criterion_mode in optimisation.optimisation_criteria.items():
-            self.optimisation_criterion.set(criterion.value)
+            self.optimisation_criterion.set(
+                ThresholdCriterion.criterion_to_name_map[criterion]
+            )
             self.optimisation_criterion_entry.update()
 
             self.optimisation_minmax.set(criterion_mode.value.capitalize())
@@ -1319,7 +1308,9 @@ class OptimisationFrame(ttk.Frame):
             self.threshold_criteria.append(
                 ThresholdCriterion(
                     self.scrollable_threshold_frame,
-                    ttk.StringVar(self, criterion.name),
+                    ttk.StringVar(
+                        self, ThresholdCriterion.criterion_to_name_map[criterion]
+                    ),
                     ttk.BooleanVar(
                         self,
                         THRESHOLD_CRITERION_TO_MODE[criterion] == ThresholdMode.MAXIMUM,
@@ -1351,10 +1342,20 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
     """
 
     def __init__(
-        self, open_details_window: Callable, system_lifetime: ttk.IntVar
+        self,
+        data_directory: str,
+        location_name: ttk.StringVar,
+        open_details_window: Callable,
+        system_lifetime: ttk.IntVar,
     ) -> None:
         """
         Instantiate a :class:`ConfigureFrame` instance.
+
+        :param: data_directory
+            The path to the data directory.
+
+        :param: location_name
+            The name of the location being considered.
 
         :param: open_details_window
             A callable function to open the details screen.
@@ -1390,12 +1391,16 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         style = ttk.Style()
         style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 4))
 
-        self.configuration_frame = ConfigurationFrame(self.configuration_notebook)
+        self.configuration_frame = ConfigurationFrame(
+            self.configuration_notebook, data_directory, open_details_window
+        )
         self.configuration_notebook.add(
             self.configuration_frame, text="Configure", sticky="news"
         )
 
-        self.simulation_frame = SimulationFrame(self.configuration_notebook)
+        self.simulation_frame = SimulationFrame(
+            self.configuration_notebook, location_name
+        )
         self.configuration_notebook.add(self.simulation_frame, text="Simulate")
 
         self.optimisation_frame = OptimisationFrame(
