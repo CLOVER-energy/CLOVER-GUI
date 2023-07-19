@@ -25,10 +25,12 @@ from ttkbootstrap.scrolled import *
 from .__utils__ import BaseScreen
 from .scenario import ConfigurationFrame
 
+
 __all__ = ("ConfigurationScreen",)
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
+    
     """
     Represents the simulation frame.
 
@@ -39,8 +41,24 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
     """
 
-    def __init__(self, parent, location_name: ttk.StringVar):
+    def __init__(
+            self, 
+            parent, 
+            location_name: ttk.StringVar,
+            open_run_screen: Callable,
+        ) -> None:
         super().__init__(parent)
+
+        """
+        Instantiate a :class:`ConfigureFrame` instance.
+
+        :param: location_name
+            The name of the location being considered.
+
+        :param: open_run_screen
+            A callable function to open the run screen.
+
+        """
 
         self.pack(fill="both", expand=True)
         self.location_name = location_name
@@ -131,11 +149,16 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             row=4, column=2, padx=10, pady=5, ipadx=95, sticky="e"
         )
 
+        # Combines the functions to open the run screen and launch the simulation.
+        def combine_funcs(evt=None):
+            open_run_screen()
+            self.launch_simulation()
+            
         self.run_simulation_button = ttk.Button(
             self,
             text="Run Simulation",
             bootstyle=f"{INFO}-outline",
-            command=self.launch_simulation,
+            command=combine_funcs,
         )
         self.run_simulation_button.grid(
             row=5, column=3, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
@@ -1347,6 +1370,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         location_name: ttk.StringVar,
         open_details_window: Callable,
         system_lifetime: ttk.IntVar,
+        open_run_screen: Callable,
     ) -> None:
         """
         Instantiate a :class:`ConfigureFrame` instance.
@@ -1399,7 +1423,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         )
 
         self.simulation_frame = SimulationFrame(
-            self.configuration_notebook, location_name
+            self.configuration_notebook, location_name, open_run_screen
         )
         self.configuration_notebook.add(self.simulation_frame, text="Simulate")
 

@@ -37,7 +37,7 @@ from .load_location import LoadLocationWindow
 from .main_menu import MainMenuScreen
 from .new_location import NewLocationScreen
 from .splash_screen import SplashScreenWindow
-
+from .running import RunScreen
 
 # All-purpose callback commands
 def open_configuration() -> None:
@@ -226,6 +226,11 @@ class App(ttk.Window):
 
         return self._data_directory
 
+    
+
+    
+    
+    
     def load_location(
         self,
         load_location_name: str | None = None,
@@ -391,6 +396,15 @@ class App(ttk.Window):
             self.load_location_window.deiconify()
         self.load_location_window.mainloop()
 
+    # Move to run screen 
+    def open_run_screen(self) -> None:
+        """moves to the run page"""
+            
+        self.configuration_screen.pack_forget()
+        BaseScreen.add_screen_moving_forward(self.configuration_screen)
+        self.run_screen.pack(fill="both", expand=True)
+
+    
     def setup(self) -> None:
         """
         Setup the window.
@@ -421,6 +435,7 @@ class App(ttk.Window):
             self.location_name,
             self.open_details_window,
             self.system_lifetime,
+            self.open_run_screen,
         )
         self.splash.set_progress_bar_progress(80)
         self.configuration_screen.pack_forget()
@@ -429,6 +444,11 @@ class App(ttk.Window):
         self.details_window: DetailsWindow | None = DetailsWindow(self.system_lifetime)
         self.details_window.withdraw()
         self.splash.set_progress_bar_progress(100)
+
+        
+        
+        # Run
+        self.run_screen = RunScreen(self.data_directory)
 
     def destroy_splash(self):
         self.splash.destroy()
