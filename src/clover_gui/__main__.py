@@ -24,6 +24,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
+    BaseScreen,
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
     parse_diesel_inputs,
@@ -88,6 +89,7 @@ class App(ttk.Window):
 
         # Set attributes
         self._data_directory: str | None = None
+        self.location_name: ttk.StringVar = ttk.StringVar(self, "")
         self.logger = get_logger("clover_gui", False)
         self.system_lifetime: ttk.IntVar = ttk.IntVar(self, 30, "system_lifetime")
 
@@ -208,6 +210,7 @@ class App(ttk.Window):
         self.load_location(new_location_name, self.new_location_progress_bar)
 
         self.new_location_frame.pack_forget()
+        BaseScreen.add_screen_moving_forward(self.new_location_frame)
         self.configuration_screen.pack(fill="both", expand=True)
 
     @property
@@ -358,6 +361,7 @@ class App(ttk.Window):
             self.load_location_window.load_location_frame.pack_forget()
         self.main_menu_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
+        self.location_name.set(load_location_name)
 
     def open_details_window(self, tab_id: int = 0) -> None:
         """Opens the details window."""
@@ -373,6 +377,7 @@ class App(ttk.Window):
         """Opens the new-location frame."""
 
         self.main_menu_frame.pack_forget()
+        BaseScreen.add_screen_moving_forward(self.main_menu_frame)
         self.new_location_frame.pack(fill="both", expand=True)
 
     def open_load_location_window(self) -> None:
@@ -412,7 +417,10 @@ class App(ttk.Window):
 
         # Configuration
         self.configuration_screen = ConfigurationScreen(
-            self.data_directory, self.open_details_window, self.system_lifetime
+            self.data_directory,
+            self.location_name,
+            self.open_details_window,
+            self.system_lifetime,
         )
         self.splash.set_progress_bar_progress(80)
         self.configuration_screen.pack_forget()

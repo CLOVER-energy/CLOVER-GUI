@@ -21,6 +21,7 @@ import ttkbootstrap as ttk
 from clover import DieselMode, ResourceType, Scenario
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
+from ttkbootstrap.tooltip import ToolTip
 
 
 __all__ = ("ConfigurationFrame",)
@@ -115,6 +116,12 @@ class ConfigurationFrame(ttk.Frame):
         )
         self.pv_button.grid(row=1, column=1, pady=5, padx=10)
 
+        self.pv_tooltip = ToolTip(
+            self.pv_button,
+            text="Toggle whether PV collectors are present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
         self.pv_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="PV settings",
@@ -122,6 +129,11 @@ class ConfigurationFrame(ttk.Frame):
             command=self.open_pv_settings,
         )
         self.pv_settings_button.grid(row=2, column=1, padx=20)
+
+        self.pv_settings_tooltip = ToolTip(
+            self.pv_settings_button,
+            text="Opens the detailed settings for configuring PV collectors",
+        )
 
         self.battery_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
@@ -145,6 +157,12 @@ class ConfigurationFrame(ttk.Frame):
         )
         self.battery_button.grid(row=1, column=2, pady=5, padx=10, sticky="")
 
+        self.battery_tooltip = ToolTip(
+            self.battery_button,
+            text="Toggle whether electric batteries are present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
         self.battery_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="Battery settings",
@@ -152,6 +170,11 @@ class ConfigurationFrame(ttk.Frame):
             command=self.open_battery_settings,
         )
         self.battery_settings_button.grid(row=2, column=2, padx=20)
+
+        self.battery_settings_tooltip = ToolTip(
+            self.battery_settings_button,
+            text="Opens the detailed settings for configuring batteries",
+        )
 
         self.diesel_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
@@ -174,6 +197,13 @@ class ConfigurationFrame(ttk.Frame):
             text="",
         )
         self.diesel_button.grid(row=1, column=3, pady=5, padx=10)
+
+        self.diesel_tooltip = ToolTip(
+            self.diesel_button,
+            text="Toggle whether backup diesel power is present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
         self.diesel_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="Diesel settings",
@@ -181,6 +211,10 @@ class ConfigurationFrame(ttk.Frame):
             command=self.open_diesel_settings,
         )
         self.diesel_settings_button.grid(row=2, column=3, padx=20)
+        self.diesel_settings_tooltip = ToolTip(
+            self.diesel_settings_button,
+            text="Opens the detailed settings for configuring diesel generators",
+        )
 
         self.grid_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
@@ -203,6 +237,13 @@ class ConfigurationFrame(ttk.Frame):
             text="",
         )
         self.grid_button.grid(row=1, column=4, pady=5, padx=10)
+
+        self.grid_tooltip = ToolTip(
+            self.grid_button,
+            text="Toggle whether backup a grid connection is present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
         self.grid_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
             text="Grid settings",
@@ -210,6 +251,11 @@ class ConfigurationFrame(ttk.Frame):
             command=self.open_grid_settings,
         )
         self.grid_settings_button.grid(row=2, column=4, padx=20)
+
+        self.grid_settings_tooltip = ToolTip(
+            self.grid_settings_button,
+            text="Opens the detailed settings for configuring the probability of the grid being available.",
+        )
 
         # Resource types selection
         self.resource_images: dict[ResourceType, dict[bool, ttk.PhotoImage]] = {

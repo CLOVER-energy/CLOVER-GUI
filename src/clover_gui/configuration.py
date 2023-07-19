@@ -18,6 +18,7 @@ from typing import Callable
 from clover import Simulation
 from clover.optimisation import Optimisation, OptimisationParameters, ThresholdMode
 from clover.optimisation.__utils__ import Criterion, THRESHOLD_CRITERION_TO_MODE
+from clover.scripts.clover import clover_main
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -38,10 +39,11 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, location_name: ttk.StringVar):
         super().__init__(parent)
 
         self.pack(fill="both", expand=True)
+        self.location_name = location_name
 
         # Set the physical distance weights of the rows and columns
         self.rowconfigure(0, weight=2)  # First row has the header
@@ -130,13 +132,37 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         )
 
         self.run_simulation_button = ttk.Button(
-            self, text="Run Simulation", bootstyle=f"{INFO}-outline"
+            self,
+            text="Run Simulation",
+            bootstyle=f"{INFO}-outline",
+            command=self.launch_simulation,
         )
         self.run_simulation_button.grid(
             row=5, column=3, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
         )
 
         # TODO: Add configuration frame widgets and layout
+
+    def launch_simulation(self) -> None:
+        """Launch a CLOVER simulation."""
+
+        BaseScreen.add_screen_moving_forward(self)
+
+        # Assemble arguments and call to CLOVER.
+        clover_args: list[str] = [
+            "-l",
+            str(self.location_name.get()),
+            "-sim",
+            "-pv",
+            str(self.pv_size.get()),
+            "-b",
+            str(self.storage_size.get()),
+            "-a",
+        ]
+        if not self.generate_plots.get():
+            clover_args.append("-sp")
+
+        clover_main(clover_args, True)
 
     def set_simulation(self, simulation: Simulation) -> None:
         """
@@ -1318,6 +1344,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
     def __init__(
         self,
         data_directory: str,
+        location_name: ttk.StringVar,
         open_details_window: Callable,
         system_lifetime: ttk.IntVar,
     ) -> None:
@@ -1326,6 +1353,9 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         :param: data_directory
             The path to the data directory.
+
+        :param: location_name
+            The name of the location being considered.
 
         :param: open_details_window
             A callable function to open the details screen.
@@ -1368,7 +1398,9 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             self.configuration_frame, text="Configure", sticky="news"
         )
 
-        self.simulation_frame = SimulationFrame(self.configuration_notebook)
+        self.simulation_frame = SimulationFrame(
+            self.configuration_notebook, location_name
+        )
         self.configuration_notebook.add(self.simulation_frame, text="Simulate")
 
         self.optimisation_frame = OptimisationFrame(

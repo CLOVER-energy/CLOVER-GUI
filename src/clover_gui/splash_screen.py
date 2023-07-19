@@ -21,6 +21,7 @@ from .__utils__ import CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY
 
 __all__ = ("SplashScreenWindow",)
 
+
 # Screens
 class SplashScreenWindow(tk.Toplevel):
     """

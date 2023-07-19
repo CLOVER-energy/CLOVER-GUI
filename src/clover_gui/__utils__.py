@@ -13,7 +13,7 @@ import collections
 import os
 
 from logging import Logger
-from typing import DefaultDict
+from typing import Any, DefaultDict
 
 import ttkbootstrap as ttk
 
@@ -130,6 +130,38 @@ class BaseScreen(ttk.Frame):
         cls.show_navigation = show_navigation
 
         return super().__init_subclass__()
+
+    @classmethod
+    def add_screen_moving_forward(cls, screen: Any) -> None:
+        """
+        Add a screen to the backward journey.
+
+        :param: screen
+            The screen to add.
+
+        """
+
+        cls._backward_journey.append(screen)
+        try:
+            cls._forward_journey.pop()
+        except IndexError:
+            pass
+
+    @classmethod
+    def add_screen_moving_back(cls, screen: Any) -> None:
+        """
+        Add a screen to the backward journey.
+
+        :param: screen
+            The screen to add.
+
+        """
+
+        cls._forward_journey.append(screen)
+        try:
+            cls._backward_journey.pop()
+        except IndexError:
+            pass
 
 
 def parse_battery_inputs(
