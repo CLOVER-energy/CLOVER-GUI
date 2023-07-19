@@ -163,6 +163,21 @@ class BaseScreen(ttk.Frame):
         except IndexError:
             pass
 
+    @classmethod
+    def go_back(cls, self) -> None:
+        """Go back a screen."""
+
+        # Return if there is no frame to go back to.
+        try:
+            previous_frame = cls._backward_journey.pop()
+        except IndexError:
+            return
+
+        self.pack_forget()
+
+        cls._forward_journey.append(self)
+        previous_frame.pack(fill="both", expand=True)
+
 
 def parse_battery_inputs(
     inputs_directory_relative_path: str,

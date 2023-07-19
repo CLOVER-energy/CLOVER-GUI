@@ -218,3 +218,11 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             ipady=20,
             sticky="w",
         )
+
+        self.back_button = ttk.Button(
+            self,
+            text="Back",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_back(self),
+        )
+        self.back_button.grid(row=7, column=0, padx=10, pady=5)
