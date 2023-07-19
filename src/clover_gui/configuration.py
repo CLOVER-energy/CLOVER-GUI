@@ -1378,7 +1378,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=10)
-        self.rowconfigure(2, weight=1, pad=80)
+        self.rowconfigure(2, weight=1, pad=100)
 
         self.location_label = ttk.Label(
             self, bootstyle=INFO, text="LOCATION NAME", font="80"
@@ -1412,33 +1412,42 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         )
         self.configuration_notebook.add(self.optimisation_frame, text="Optimise")
 
-        self.advanced_settings_button = ttk.Button(
-            self, bootstyle=INFO, text="Advanced settings", command=open_details_window
-        )
-        self.advanced_settings_button.grid(
-            row=2, column=4, sticky="w", pady=20, ipadx=80, ipady=20
-        )
+        self.bottom_bar_frame = ttk.Frame(self)
+        self.bottom_bar_frame.grid(row=2, column=0, columnspan=5, sticky="news")
+
+        self.bottom_bar_frame.columnconfigure(0, weight=1)
+        self.bottom_bar_frame.columnconfigure(1, weight=1)
+        self.bottom_bar_frame.columnconfigure(2, weight=1)
+        self.bottom_bar_frame.columnconfigure(3, weight=10)
+        self.bottom_bar_frame.columnconfigure(4, weight=1)
 
         self.back_button = ttk.Button(
-            self,
+            self.bottom_bar_frame,
             text="Back",
             bootstyle=f"{PRIMARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_back(self),
         )
-        self.back_button.grid(row=2, column=0, padx=10, pady=5)
+        self.back_button.grid(row=0, column=0, padx=10, pady=5)
 
         self.home_button = ttk.Button(
-            self,
+            self.bottom_bar_frame,
             text="Home",
             bootstyle=f"{PRIMARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_home(self),
         )
-        self.home_button.grid(row=2, column=1, padx=10, pady=5)
+        self.home_button.grid(row=0, column=1, padx=10, pady=5)
 
         self.forward_button = ttk.Button(
-            self,
+            self.bottom_bar_frame,
             text="Forward",
             bootstyle=f"{PRIMARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_forward(self),
         )
-        self.forward_button.grid(row=2, column=2, padx=10, pady=5)
+        self.forward_button.grid(row=0, column=2, padx=10, pady=5)
+
+        self.advanced_settings_button = ttk.Button(
+            self.bottom_bar_frame, bootstyle=INFO, text="Advanced settings", command=open_details_window
+        )
+        self.advanced_settings_button.grid(
+            row=0, column=4, sticky="w", pady=5, ipadx=80, ipady=20
+        )

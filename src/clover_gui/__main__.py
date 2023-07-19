@@ -358,8 +358,9 @@ class App(ttk.Window):
         # Close the load-location window once completed
         if self.load_location_window is not None:
             self.load_location_window.withdraw()
-            self.load_location_window.load_location_frame.pack_forget()
             BaseScreen.add_screen_moving_forward(self.main_menu_frame)
+        progress_bar.stop()
+        progress_bar.grid_forget()
         self.main_menu_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
         self.location_name.set(load_location_name)
