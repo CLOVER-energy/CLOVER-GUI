@@ -338,53 +338,60 @@ class SystemFrame(ttk.Frame):
         self.battery_label = ttk.Label(self, text="Battery")
         self.battery_label.grid(row=7, column=1, padx=10, pady=5, sticky="w")
 
-        self.battery = ttk.Combobox(
+        self.battery = ttk.StringVar(self, "")
+        self.battery_combobox = ttk.Combobox(
             self,
-            values=["default_battery"],
-            state="readonly",
+            values=[],
+            state=READONLY,
             bootstyle=WARNING,
+            textvariable=self.battery,
         )
-        self.battery.current(0)
-        self.battery.grid(row=7, column=2, padx=10, pady=5, sticky="ew")
+        self.battery_combobox.grid(row=7, column=2, padx=10, pady=5, sticky="ew")
 
         # Select diesel generator
         self.diesel_generator_label = ttk.Label(self, text="Diesel generator")
         self.diesel_generator_label.grid(row=8, column=1, padx=10, pady=5, sticky="w")
 
-        self.diesel_generator = ttk.Combobox(
+        self.diesel_generator = ttk.StringVar(self, "")
+        self.diesel_generator_combobox = ttk.Combobox(
             self,
-            values=["default_diesel"],
-            state="readonly",
+            values=[],
+            state=READONLY,
             bootstyle=WARNING,
+            textvariable=self.diesel_generator,
         )
-        self.diesel_generator.current(0)
-        self.diesel_generator.grid(row=8, column=2, padx=10, pady=5, sticky="ew")
+        self.diesel_generator_combobox.grid(
+            row=8, column=2, padx=10, pady=5, sticky="ew"
+        )
 
         # Select PV panel
         self.pv_panel_label = ttk.Label(self, text="PV panel")
         self.pv_panel_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
 
-        self.pv_panel = ttk.Combobox(
+        self.pv_panel = ttk.StringVar(self, "")
+        self.pv_panel_combobox = ttk.Combobox(
             self,
-            values=["default_pv"],
-            state="readonly",
+            values=[],
+            state=READONLY,
+            bootstyle=WARNING,
+            textvariable=self.pv_panel,
+        )
+        self.pv_panel_combobox.grid(row=9, column=2, padx=10, pady=5, sticky="ew")
+
+        # Select heat exchanger
+        self.heat_exchanger_label = ttk.Label(self, text="AC heat exchanger")
+        self.heat_exchanger_label.grid(row=10, column=1, padx=10, pady=5, sticky="w")
+
+        self.heat_exchanger = ttk.StringVar(self, "")
+        self.heat_exchanger_combobox = ttk.Combobox(
+            self,
+            values=[],
+            state=DISABLED,
             bootstyle=WARNING,
         )
-        self.pv_panel.current(0)
-        self.pv_panel.grid(row=9, column=2, padx=10, pady=5, sticky="ew")
-
-        # Select AC heat exchanger
-        self.ac_heat_exchanger_label = ttk.Label(self, text="AC heat exchanger")
-        self.ac_heat_exchanger_label.grid(row=10, column=1, padx=10, pady=5, sticky="w")
-
-        self.ac_heat_exchanger = ttk.Combobox(
-            self,
-            values=["default_heat_exchanger"],
-            state="readonly",
-            bootstyle=WARNING,
+        self.heat_exchanger_combobox.grid(
+            row=10, column=2, padx=10, pady=5, sticky="ew"
         )
-        self.ac_heat_exchanger.current(0)
-        self.ac_heat_exchanger.grid(row=10, column=2, padx=10, pady=5, sticky="ew")
 
     def set_system(self, minigrid: Minigrid, scenarios: list[Scenario]) -> None:
         """
@@ -392,4 +399,58 @@ class SystemFrame(ttk.Frame):
 
         """
 
-        self.ac_transmission
+        # Update the AC transmission efficiency
+        self.ac_transmission.set(minigrid.ac_transmission_efficiency)
+        self.ac_transmission_entry.update()
+        self.ac_transmission_slider.set(self.ac_transmission.get())
+
+        # Update the DC transmission efficiency
+        self.dc_transmission.set(minigrid.dc_transmission_efficiency)
+        self.dc_transmission_entry.update()
+        self.dc_transmission_slider.set(self.dc_transmission.get())
+
+        # Update the conversion efficincies
+        self.ac_to_ac_conversion.set(minigrid.ac_to_ac_conversion_efficiency)
+        self.ac_to_ac_conversion_entry.update()
+        self.ac_to_ac_conversion_slider.set(self.ac_to_ac_conversion.get())
+
+        self.ac_to_dc_conversion.set(minigrid.ac_to_dc_conversion_efficiency)
+        self.ac_to_dc_conversion_entry.update()
+        self.ac_to_dc_conversion_slider.set(self.ac_to_dc_conversion.get())
+
+        self.dc_to_ac_conversion.set(minigrid.dc_to_ac_conversion_efficiency)
+        self.dc_to_ac_conversion_entry.update()
+        self.dc_to_ac_conversion_slider.set(self.dc_to_ac_conversion.get())
+
+        self.dc_to_dc_conversion.set(minigrid.dc_to_dc_conversion_efficiency)
+        self.dc_to_dc_conversion_entry.update()
+        self.dc_to_dc_conversion_slider.set(self.dc_to_dc_conversion.get())
+
+        # Update the battery name
+        if minigrid.battery is not None:
+            self.battery.set(minigrid.battery.name)
+        else:
+            self.battery_combobox.configure(state=DISABLED)
+        self.battery_combobox.set(self.battery.get())
+
+        # Update the PV-panel name
+        if minigrid.pv_panel is not None:
+            self.pv_panel.set(minigrid.pv_panel.name)
+        else:
+            self.pv_panel_combobox.configure(state=DISABLED)
+        self.pv_panel_combobox.set(self.pv_panel.get())
+
+        # Update the diesel-generator name
+        if minigrid.diesel_generator is not None:
+            self.diesel_generator.set(minigrid.diesel_generator.name)
+        else:
+            self.diesel_generator_combobox.configure(state=DISABLED)
+        self.diesel_generator_combobox.set(self.diesel_generator.get())
+
+        # Update the heat-exchanger name
+        if minigrid.heat_exchanger is not None:
+            self.heat_exchanger.set(minigrid.heat_exchanger.name)
+            self.heat_exchanger_combobox.configure(state=READONLY)
+        else:
+            self.heat_exchanger_combobox.configure(state=DISABLED)
+        self.heat_exchanger_combobox.set(self.heat_exchanger.get())
