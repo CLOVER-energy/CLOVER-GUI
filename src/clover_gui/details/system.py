@@ -55,266 +55,282 @@ class SystemFrame(ttk.Frame):
         self.columnconfigure(5, weight=1)
 
         # AC transmission efficiency
-        self.AC_transmission_label = ttk.Label(self, text="AC transmission efficiency")
-        self.AC_transmission_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+        self.ac_transmission_label = ttk.Label(self, text="AC transmission efficiency")
+        self.ac_transmission_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
-        self.AC_transmission = ttk.DoubleVar(self, "92")
+        self.ac_transmission = ttk.DoubleVar(self, "92")
 
-        def scalar_AC_transmission(_):
-            self.AC_transmission.set(
-                text=f"{' ' * (int(self.AC_transmission_slider.get()) < 100)}{self.AC_transmission_slider.get()} %"
+        def scalar_ac_transmission(_):
+            self.ac_transmission.set(
+                text=f"{' ' * (int(self.ac_transmission_slider.get()) < 100)}{self.ac_transmission_slider.get()} %"
             )
 
-        self.AC_transmission_slider = ttk.Scale(
+        self.ac_transmission_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
             orient=ttk.HORIZONTAL,
             length=320,
-            command=scalar_AC_transmission,
+            command=scalar_ac_transmission,
             bootstyle=WARNING,
-            variable=self.AC_transmission
+            variable=self.ac_transmission,
         )
-        self.AC_transmission_slider.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
-        
-        def enter_AC_transmission(_):
-            self.AC_transmission.set(self.AC_transmission_entry.get())
-            self.AC_transmission_slider.set(self.AC_transmission.get())
+        self.ac_transmission_slider.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
 
-        self.AC_transmission_entry = ttk.Entry(
-            self, 
+        def enter_ac_transmission(_):
+            self.ac_transmission.set(self.ac_transmission_entry.get())
+            self.ac_transmission_slider.set(self.ac_transmission.get())
+
+        self.ac_transmission_entry = ttk.Entry(
+            self,
             bootstyle=WARNING,
-            textvariable=self.AC_transmission,
-            )
-        
-        self.AC_transmission_entry.grid(row=1, column=3, padx=10, pady=5, sticky="ew")
-        self.AC_transmission_entry.bind("<Return>", enter_AC_transmission)
+            textvariable=self.ac_transmission,
+        )
 
-        self.AC_transmission_unit = ttk.Label(self, 
-            text=f"%"
-            )
-        self.AC_transmission_unit.grid(
-            row=1, column=4, padx=10, pady=5, sticky="ew"
-        )        
-        
+        self.ac_transmission_entry.grid(row=1, column=3, padx=10, pady=5, sticky="ew")
+        self.ac_transmission_entry.bind("<Return>", enter_ac_transmission)
+
+        self.ac_transmission_unit = ttk.Label(self, text=f"%")
+        self.ac_transmission_unit.grid(row=1, column=4, padx=10, pady=5, sticky="ew")
+
         # DC transmission efficiency
-        self.DC_transmission_label = ttk.Label(self, text="DC transmission efficiency")
-        self.DC_transmission_label.grid(row=2, column=1, padx=10, pady=5, sticky="w")
+        self.dc_transmission_label = ttk.Label(self, text="DC transmission efficiency")
+        self.dc_transmission_label.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
-        self.DC_transmission = ttk.DoubleVar(self, "96")
+        self.dc_transmission = ttk.DoubleVar(self, "96")
 
-        def scalar_DC_transmission(_):
-            self.DC_transmission.set(
-                text=f"{' ' * (int(self.DC_transmission_slider.get()) < 100)}{self.DC_transmission_slider.get()} %"
+        def scalar_dc_transmission(_):
+            self.dc_transmission.set(
+                text=f"{' ' * (int(self.dc_transmission_slider.get()) < 100)}{self.dc_transmission_slider.get()} %"
             )
 
-        self.DC_transmission_slider = ttk.Scale(
+        self.dc_transmission_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
             orient=ttk.HORIZONTAL,
             length=320,
-            command=scalar_DC_transmission,
+            command=scalar_dc_transmission,
             bootstyle=WARNING,
-            variable=self.DC_transmission
+            variable=self.dc_transmission,
         )
 
-        self.DC_transmission_slider.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
+        self.dc_transmission_slider.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
 
-        def enter_DC_transmission(_):
-            self.DC_transmission.set(self.DC_transmission_entry.get())
-            self.DC_transmission_slider.set(self.DC_transmission.get())
+        def enter_dc_transmission(_):
+            self.dc_transmission.set(self.dc_transmission_entry.get())
+            self.dc_transmission_slider.set(self.dc_transmission.get())
 
-        self.DC_transmission_entry = ttk.Entry(
-            self, 
+        self.dc_transmission_entry = ttk.Entry(
+            self,
             bootstyle=WARNING,
-            textvariable=self.DC_transmission,
-            )
-
-        self.DC_transmission_entry.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
-        self.DC_transmission_entry.bind("<Return>", enter_DC_transmission)
-
-        self.DC_transmission_unit = ttk.Label(self,
-            text=f"%"
-            )
-        self.DC_transmission_unit.grid(
-            row=2, column=4, padx=10, pady=5, sticky="ew"
+            textvariable=self.dc_transmission,
         )
-        
+
+        self.dc_transmission_entry.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
+        self.dc_transmission_entry.bind("<Return>", enter_dc_transmission)
+
+        self.dc_transmission_unit = ttk.Label(self, text=f"%")
+        self.dc_transmission_unit.grid(row=2, column=4, padx=10, pady=5, sticky="ew")
+
         # # DC to AC conversion efficiency
-        self.DC_to_AC_conversion_label = ttk.Label(self, text="DC to AC conversion efficiency")
-        self.DC_to_AC_conversion_label.grid(row=3, column=1, padx=10, pady=5, sticky="w")
+        self.dc_to_ac_conversion_label = ttk.Label(
+            self, text="DC to AC conversion efficiency"
+        )
+        self.dc_to_ac_conversion_label.grid(
+            row=3, column=1, padx=10, pady=5, sticky="w"
+        )
 
-        self.DC_to_AC_conversion = ttk.DoubleVar(self, "97")
-        
-        def scalar_DC_to_AC_conversion(_):
-            self.DC_to_AC_conversion.set(
-                text=f"{' ' * (int(self.DC_to_AC_conversion_slider.get()) < 100)}{self.DC_to_AC_conversion_slider.get()} %"
+        self.dc_to_ac_conversion = ttk.DoubleVar(self, "97")
+
+        def scalar_dc_to_ac_conversion(_):
+            self.dc_to_ac_conversion.set(
+                text=f"{' ' * (int(self.dc_to_ac_conversion_slider.get()) < 100)}{self.dc_to_ac_conversion_slider.get()} %"
             )
-        
-        self.DC_to_AC_conversion_slider = ttk.Scale(
+
+        self.dc_to_ac_conversion_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
             orient=ttk.HORIZONTAL,
             length=320,
-            command=scalar_DC_to_AC_conversion,
+            command=scalar_dc_to_ac_conversion,
             bootstyle=WARNING,
-            variable=self.DC_to_AC_conversion
+            variable=self.dc_to_ac_conversion,
         )
 
-        self.DC_to_AC_conversion_slider.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
+        self.dc_to_ac_conversion_slider.grid(
+            row=3, column=2, padx=10, pady=5, sticky="ew"
+        )
 
-        def enter_DC_to_AC_conversion(_):
-            self.DC_to_AC_conversion.set(self.DC_to_AC_conversion_entry.get())
-            self.DC_to_AC_conversion_slider.set(self.DC_to_AC_conversion.get())
+        def enter_dc_to_ac_conversion(_):
+            self.dc_to_ac_conversion.set(self.dc_to_ac_conversion_entry.get())
+            self.dc_to_ac_conversion_slider.set(self.dc_to_ac_conversion.get())
 
-        self.DC_to_AC_conversion_entry = ttk.Entry(
-            self, 
+        self.dc_to_ac_conversion_entry = ttk.Entry(
+            self,
             bootstyle=WARNING,
-            textvariable=self.DC_to_AC_conversion,
-            )
-        
-        self.DC_to_AC_conversion_entry.grid(row=3, column=3, padx=10, pady=5, sticky="ew")
-        self.DC_to_AC_conversion_entry.bind("<Return>", enter_DC_to_AC_conversion)
+            textvariable=self.dc_to_ac_conversion,
+        )
 
-        self.DC_to_AC_conversion_unit = ttk.Label(self,
-            text=f"%"
-            )
-        self.DC_to_AC_conversion_unit.grid(
+        self.dc_to_ac_conversion_entry.grid(
+            row=3, column=3, padx=10, pady=5, sticky="ew"
+        )
+        self.dc_to_ac_conversion_entry.bind("<Return>", enter_dc_to_ac_conversion)
+
+        self.dc_to_ac_conversion_unit = ttk.Label(self, text=f"%")
+        self.dc_to_ac_conversion_unit.grid(
             row=3, column=4, padx=10, pady=5, sticky="ew"
         )
 
         # # DC to DC conversion efficiency
-        self.DC_to_DC_conversion_label = ttk.Label(self, text="DC to DC conversion efficiency")
-        self.DC_to_DC_conversion_label.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+        self.dc_to_dc_conversion_label = ttk.Label(
+            self, text="DC to DC conversion efficiency"
+        )
+        self.dc_to_dc_conversion_label.grid(
+            row=4, column=1, padx=10, pady=5, sticky="w"
+        )
 
-        self.DC_to_DC_conversion = ttk.DoubleVar(self, "95")
+        self.dc_to_dc_conversion = ttk.DoubleVar(self, "95")
 
-        def scalar_DC_to_DC_conversion(_):
-            self.DC_to_DC_conversion.set(
-                text=f"{' ' * (int(self.DC_to_DC_conversion_slider.get()) < 100)}{self.DC_to_DC_conversion_slider.get()} %"
+        def scalar_dc_to_dc_conversion(_):
+            self.dc_to_dc_conversion.set(
+                text=f"{' ' * (int(self.dc_to_dc_conversion_slider.get()) < 100)}{self.dc_to_dc_conversion_slider.get()} %"
             )
 
-        self.DC_to_DC_conversion_slider = ttk.Scale(
+        self.dc_to_dc_conversion_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
             orient=ttk.HORIZONTAL,
             length=320,
-            command=scalar_DC_to_DC_conversion,
+            command=scalar_dc_to_dc_conversion,
             bootstyle=WARNING,
-            variable=self.DC_to_DC_conversion
+            variable=self.dc_to_dc_conversion,
         )
 
-        self.DC_to_DC_conversion_slider.grid(row=4, column=2, padx=10, pady=5, sticky="ew")
+        self.dc_to_dc_conversion_slider.grid(
+            row=4, column=2, padx=10, pady=5, sticky="ew"
+        )
 
-        def enter_DC_to_DC_conversion(_):
-            self.DC_to_DC_conversion.set(self.DC_to_DC_conversion_entry.get())
-            self.DC_to_DC_conversion_slider.set(self.DC_to_DC_conversion.get())
+        def enter_dc_to_dc_conversion(_):
+            self.dc_to_dc_conversion.set(self.dc_to_dc_conversion_entry.get())
+            self.dc_to_dc_conversion_slider.set(self.dc_to_dc_conversion.get())
 
-        self.DC_to_DC_conversion_entry = ttk.Entry(
-            self, 
+        self.dc_to_dc_conversion_entry = ttk.Entry(
+            self,
             bootstyle=WARNING,
-            textvariable=self.DC_to_DC_conversion,
-            )
-        
-        self.DC_to_DC_conversion_entry.grid(row=4, column=3, padx=10, pady=5, sticky="ew")
-        self.DC_to_DC_conversion_entry.bind("<Return>", enter_DC_to_DC_conversion)
+            textvariable=self.dc_to_dc_conversion,
+        )
 
-        self.DC_to_DC_conversion_unit = ttk.Label(self,
-            text=f"%"
-            )
-        self.DC_to_DC_conversion_unit.grid(
+        self.dc_to_dc_conversion_entry.grid(
+            row=4, column=3, padx=10, pady=5, sticky="ew"
+        )
+        self.dc_to_dc_conversion_entry.bind("<Return>", enter_dc_to_dc_conversion)
+
+        self.dc_to_dc_conversion_unit = ttk.Label(self, text=f"%")
+        self.dc_to_dc_conversion_unit.grid(
             row=4, column=4, padx=10, pady=5, sticky="ew"
         )
 
         # # AC to DC conversion efficiency
-        self.AC_to_DC_conversion_label = ttk.Label(self, text="AC to DC conversion efficiency")
-        self.AC_to_DC_conversion_label.grid(row=5, column=1, padx=10, pady=5, sticky="w")
+        self.ac_to_dc_conversion_label = ttk.Label(
+            self, text="AC to DC conversion efficiency"
+        )
+        self.ac_to_dc_conversion_label.grid(
+            row=5, column=1, padx=10, pady=5, sticky="w"
+        )
 
-        self.AC_to_DC_conversion = ttk.DoubleVar(self, "90")
+        self.ac_to_dc_conversion = ttk.DoubleVar(self, "90")
 
-        def scalar_AC_to_DC_conversion(_):
-            self.AC_to_DC_conversion.set(
-                text=f"{' ' * (int(self.AC_to_DC_conversion_slider.get()) < 100)}{self.AC_to_DC_conversion_slider.get()} %"
+        def scalar_ac_to_dc_conversion(_):
+            self.ac_to_dc_conversion.set(
+                text=f"{' ' * (int(self.ac_to_dc_conversion_slider.get()) < 100)}{self.ac_to_dc_conversion_slider.get()} %"
             )
 
-        self.AC_to_DC_conversion_slider = ttk.Scale(
+        self.ac_to_dc_conversion_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
             orient=ttk.HORIZONTAL,
             length=320,
-            command=scalar_AC_to_DC_conversion,
+            command=scalar_ac_to_dc_conversion,
             bootstyle=WARNING,
-            variable=self.AC_to_DC_conversion
+            variable=self.ac_to_dc_conversion,
         )
 
-        self.AC_to_DC_conversion_slider.grid(row=5, column=2, padx=10, pady=5, sticky="ew")
+        self.ac_to_dc_conversion_slider.grid(
+            row=5, column=2, padx=10, pady=5, sticky="ew"
+        )
 
-        def enter_AC_to_DC_conversion(_):
-            self.AC_to_DC_conversion.set(self.AC_to_DC_conversion_entry.get())
-            self.AC_to_DC_conversion_slider.set(self.AC_to_DC_conversion.get())
-        
-        self.AC_to_DC_conversion_entry = ttk.Entry(
-            self, 
+        def enter_ac_to_dc_conversion(_):
+            self.ac_to_dc_conversion.set(self.ac_to_dc_conversion_entry.get())
+            self.ac_to_dc_conversion_slider.set(self.ac_to_dc_conversion.get())
+
+        self.ac_to_dc_conversion_entry = ttk.Entry(
+            self,
             bootstyle=WARNING,
-            textvariable=self.AC_to_DC_conversion,
-            )
-        
-        self.AC_to_DC_conversion_entry.grid(row=5, column=3, padx=10, pady=5, sticky="ew")
-        self.AC_to_DC_conversion_entry.bind("<Return>", enter_AC_to_DC_conversion)
+            textvariable=self.ac_to_dc_conversion,
+        )
 
-        self.AC_to_DC_conversion_unit = ttk.Label(self,
-            text=f"%"
-            )
-        
-        self.AC_to_DC_conversion_unit.grid(
+        self.ac_to_dc_conversion_entry.grid(
+            row=5, column=3, padx=10, pady=5, sticky="ew"
+        )
+        self.ac_to_dc_conversion_entry.bind("<Return>", enter_ac_to_dc_conversion)
+
+        self.ac_to_dc_conversion_unit = ttk.Label(self, text=f"%")
+
+        self.ac_to_dc_conversion_unit.grid(
             row=5, column=4, padx=10, pady=5, sticky="ew"
         )
 
         # # AC to AC conversion efficiency
-        self.AC_to_AC_conversion_label = ttk.Label(self, text="AC to AC conversion efficiency")
-        self.AC_to_AC_conversion_label.grid(row=6, column=1, padx=10, pady=5, sticky="w")
+        self.ac_to_ac_conversion_label = ttk.Label(
+            self, text="AC to AC conversion efficiency"
+        )
+        self.ac_to_ac_conversion_label.grid(
+            row=6, column=1, padx=10, pady=5, sticky="w"
+        )
 
-        self.AC_to_AC_conversion = ttk.DoubleVar(self, "98")
+        self.ac_to_ac_conversion = ttk.DoubleVar(self, "98")
 
-        def scalar_AC_to_AC_conversion(_):
-            self.AC_to_AC_conversion.set(
-                text=f"{' ' * (int(self.AC_to_AC_conversion_slider.get()) < 100)}{self.AC_to_AC_conversion_slider.get()} %"
+        def scalar_ac_to_ac_conversion(_):
+            self.ac_to_ac_conversion.set(
+                text=f"{' ' * (int(self.ac_to_ac_conversion_slider.get()) < 100)}{self.ac_to_ac_conversion_slider.get()} %"
             )
 
-        self.AC_to_AC_conversion_slider = ttk.Scale(
+        self.ac_to_ac_conversion_slider = ttk.Scale(
             self,
             from_=0,
             to=100,
             orient=ttk.HORIZONTAL,
             length=320,
-            command=scalar_AC_to_AC_conversion,
+            command=scalar_ac_to_ac_conversion,
             bootstyle=WARNING,
-            variable=self.AC_to_AC_conversion
+            variable=self.ac_to_ac_conversion,
         )
 
-        self.AC_to_AC_conversion_slider.grid(row=6, column=2, padx=10, pady=5, sticky="ew")
+        self.ac_to_ac_conversion_slider.grid(
+            row=6, column=2, padx=10, pady=5, sticky="ew"
+        )
 
-        def enter_AC_to_AC_conversion(_):
-            self.AC_to_AC_conversion.set(self.AC_to_AC_conversion_entry.get())
-            self.AC_to_AC_conversion_slider.set(self.AC_to_AC_conversion.get())
+        def enter_ac_to_ac_conversion(_):
+            self.ac_to_ac_conversion.set(self.ac_to_ac_conversion_entry.get())
+            self.ac_to_ac_conversion_slider.set(self.ac_to_ac_conversion.get())
 
-        self.AC_to_AC_conversion_entry = ttk.Entry(
-            self, 
+        self.ac_to_ac_conversion_entry = ttk.Entry(
+            self,
             bootstyle=WARNING,
-            textvariable=self.AC_to_AC_conversion,
-            )
-        
-        self.AC_to_AC_conversion_entry.grid(row=6, column=3, padx=10, pady=5, sticky="ew")
-        self.AC_to_AC_conversion_entry.bind("<Return>", enter_AC_to_AC_conversion)
+            textvariable=self.ac_to_ac_conversion,
+        )
 
-        self.AC_to_AC_conversion_unit = ttk.Label(self,
-            text=f"%"
-            )
-        self.AC_to_AC_conversion_unit.grid(
+        self.ac_to_ac_conversion_entry.grid(
+            row=6, column=3, padx=10, pady=5, sticky="ew"
+        )
+        self.ac_to_ac_conversion_entry.bind("<Return>", enter_ac_to_ac_conversion)
+
+        self.ac_to_ac_conversion_unit = ttk.Label(self, text=f"%")
+        self.ac_to_ac_conversion_unit.grid(
             row=6, column=4, padx=10, pady=5, sticky="ew"
         )
 
@@ -345,31 +361,30 @@ class SystemFrame(ttk.Frame):
         self.diesel_generator.grid(row=8, column=2, padx=10, pady=5, sticky="ew")
 
         # Select PV panel
-        self.PV_panel_label = ttk.Label(self, text="PV panel")
-        self.PV_panel_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
+        self.pv_panel_label = ttk.Label(self, text="PV panel")
+        self.pv_panel_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
 
-        self.PV_panel = ttk.Combobox(
+        self.pv_panel = ttk.Combobox(
             self,
             values=["default_pv"],
             state="readonly",
             bootstyle=WARNING,
         )
-        self.PV_panel.current(0)
-        self.PV_panel.grid(row=9, column=2, padx=10, pady=5, sticky="ew")
+        self.pv_panel.current(0)
+        self.pv_panel.grid(row=9, column=2, padx=10, pady=5, sticky="ew")
 
         # Select AC heat exchanger
-        self.AC_heat_exchanger_label = ttk.Label(self, text="AC heat exchanger")
-        self.AC_heat_exchanger_label.grid(row=10, column=1, padx=10, pady=5, sticky="w")
+        self.ac_heat_exchanger_label = ttk.Label(self, text="AC heat exchanger")
+        self.ac_heat_exchanger_label.grid(row=10, column=1, padx=10, pady=5, sticky="w")
 
-        self.AC_heat_exchanger = ttk.Combobox(
+        self.ac_heat_exchanger = ttk.Combobox(
             self,
             values=["default_heat_exchanger"],
             state="readonly",
             bootstyle=WARNING,
         )
-        self.AC_heat_exchanger.current(0)
-        self.AC_heat_exchanger.grid(row=10, column=2, padx=10, pady=5, sticky="ew")
-
+        self.ac_heat_exchanger.current(0)
+        self.ac_heat_exchanger.grid(row=10, column=2, padx=10, pady=5, sticky="ew")
 
     def set_system(self, minigrid: Minigrid, scenarios: list[Scenario]) -> None:
         """
@@ -377,8 +392,4 @@ class SystemFrame(ttk.Frame):
 
         """
 
-        pass
-        
-
-
-
+        self.ac_transmission
