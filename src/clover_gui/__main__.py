@@ -352,7 +352,9 @@ class App(ttk.Window):
         self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs, self.logger)
         set_progress_bar_progress(110 * percent_fraction)
 
-        self.details_window.system_frame.set_system(minigrid, scenarios)
+        self.details_window.system_frame.set_system(
+            batteries, diesel_generators, minigrid, pv_panels
+        )
         set_progress_bar_progress(120 * percent_fraction)
 
         # Close the load-location window once completed

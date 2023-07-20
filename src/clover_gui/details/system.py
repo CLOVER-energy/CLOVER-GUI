@@ -11,7 +11,10 @@
 
 import ttkbootstrap as ttk
 
-from clover.simulation.energy_system import Minigrid, Scenario
+from clover.generation.solar import PVPanel
+from clover.simulation.diesel import DieselGenerator
+from clover.simulation.energy_system import Minigrid
+from clover.simulation.storage_utils import Battery
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -61,9 +64,8 @@ class SystemFrame(ttk.Frame):
         self.ac_transmission = ttk.DoubleVar(self, "92")
 
         def scalar_ac_transmission(_):
-            self.ac_transmission.set(
-                text=f"{' ' * (int(self.ac_transmission_slider.get()) < 100)}{self.ac_transmission_slider.get()} %"
-            )
+            self.ac_transmission.set(max(min(self.ac_transmission.get(), 100), 0))
+            self.ac_transmission_entry.update()
 
         self.ac_transmission_slider = ttk.Scale(
             self,
@@ -100,9 +102,8 @@ class SystemFrame(ttk.Frame):
         self.dc_transmission = ttk.DoubleVar(self, "96")
 
         def scalar_dc_transmission(_):
-            self.dc_transmission.set(
-                text=f"{' ' * (int(self.dc_transmission_slider.get()) < 100)}{self.dc_transmission_slider.get()} %"
-            )
+            self.dc_transmission.set(max(min(self.dc_transmission.get(), 100), 0))
+            self.dc_transmission_entry.update()
 
         self.dc_transmission_slider = ttk.Scale(
             self,
@@ -141,12 +142,13 @@ class SystemFrame(ttk.Frame):
             row=3, column=1, padx=10, pady=5, sticky="w"
         )
 
-        self.dc_to_ac_conversion = ttk.DoubleVar(self, "97")
+        self.dc_to_ac_conversion = ttk.DoubleVar(self, 97)
 
         def scalar_dc_to_ac_conversion(_):
             self.dc_to_ac_conversion.set(
-                text=f"{' ' * (int(self.dc_to_ac_conversion_slider.get()) < 100)}{self.dc_to_ac_conversion_slider.get()} %"
+                max(min(self.dc_to_ac_conversion.get(), 100), 0)
             )
+            self.dc_to_ac_conversion_entry.update()
 
         self.dc_to_ac_conversion_slider = ttk.Scale(
             self,
@@ -195,8 +197,9 @@ class SystemFrame(ttk.Frame):
 
         def scalar_dc_to_dc_conversion(_):
             self.dc_to_dc_conversion.set(
-                text=f"{' ' * (int(self.dc_to_dc_conversion_slider.get()) < 100)}{self.dc_to_dc_conversion_slider.get()} %"
+                max(min(self.dc_to_dc_conversion.get(), 100), 0)
             )
+            self.dc_to_dc_conversion_entry.update()
 
         self.dc_to_dc_conversion_slider = ttk.Scale(
             self,
@@ -245,8 +248,9 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_to_dc_conversion(_):
             self.ac_to_dc_conversion.set(
-                text=f"{' ' * (int(self.ac_to_dc_conversion_slider.get()) < 100)}{self.ac_to_dc_conversion_slider.get()} %"
+                max(min(self.ac_to_dc_conversion.get(), 100), 0)
             )
+            self.ac_to_dc_conversion_entry.update()
 
         self.ac_to_dc_conversion_slider = ttk.Scale(
             self,
@@ -296,8 +300,9 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_to_ac_conversion(_):
             self.ac_to_ac_conversion.set(
-                text=f"{' ' * (int(self.ac_to_ac_conversion_slider.get()) < 100)}{self.ac_to_ac_conversion_slider.get()} %"
+                max(min(self.ac_to_ac_conversion.get(), 100), 0)
             )
+            self.ac_to_ac_conversion_entry.update()
 
         self.ac_to_ac_conversion_slider = ttk.Scale(
             self,
@@ -393,36 +398,50 @@ class SystemFrame(ttk.Frame):
             row=10, column=2, padx=10, pady=5, sticky="ew"
         )
 
-    def set_system(self, minigrid: Minigrid, scenarios: list[Scenario]) -> None:
+    def set_system(
+        self,
+        batteries: list[Battery],
+        diesel_generators: list[DieselGenerator],
+        minigrid: Minigrid,
+        pv_panels: list[PVPanel],
+    ) -> None:
         """
         Sets the scenarios on the system frame.
 
         """
 
         # Update the AC transmission efficiency
-        self.ac_transmission.set(minigrid.ac_transmission_efficiency)
+        self.ac_transmission.set(float(100 * minigrid.ac_transmission_efficiency))
         self.ac_transmission_entry.update()
         self.ac_transmission_slider.set(self.ac_transmission.get())
 
         # Update the DC transmission efficiency
-        self.dc_transmission.set(minigrid.dc_transmission_efficiency)
+        self.dc_transmission.set(float(100 * minigrid.dc_transmission_efficiency))
         self.dc_transmission_entry.update()
         self.dc_transmission_slider.set(self.dc_transmission.get())
 
         # Update the conversion efficincies
-        self.ac_to_ac_conversion.set(minigrid.ac_to_ac_conversion_efficiency)
+        self.ac_to_ac_conversion.set(
+            float(100 * minigrid.ac_to_ac_conversion_efficiency)
+        )
         self.ac_to_ac_conversion_entry.update()
         self.ac_to_ac_conversion_slider.set(self.ac_to_ac_conversion.get())
 
-        self.ac_to_dc_conversion.set(minigrid.ac_to_dc_conversion_efficiency)
+        self.ac_to_dc_conversion.set(
+            float(100 * minigrid.ac_to_dc_conversion_efficiency)
+        )
         self.ac_to_dc_conversion_entry.update()
         self.ac_to_dc_conversion_slider.set(self.ac_to_dc_conversion.get())
 
-        self.dc_to_ac_conversion.set(minigrid.dc_to_ac_conversion_efficiency)
+        self.dc_to_ac_conversion.set(
+            float(100 * minigrid.dc_to_ac_conversion_efficiency)
+        )
         self.dc_to_ac_conversion_entry.update()
         self.dc_to_ac_conversion_slider.set(self.dc_to_ac_conversion.get())
 
-        self.dc_to_dc_conversion.set(minigrid.dc_to_dc_conversion_efficiency)
+        self.dc_to_dc_conversion.set(
+            float(100 * minigrid.dc_to_dc_conversion_efficiency)
+        )
         self.dc_to_dc_conversion_entry.update()
         self.dc_to_dc_conversion_slider.set(self.dc_to_dc_conversion.get())
 
@@ -431,6 +450,9 @@ class SystemFrame(ttk.Frame):
             self.battery.set(minigrid.battery.name)
         else:
             self.battery_combobox.configure(state=DISABLED)
+
+        # Update the combobox
+        self.battery_combobox["values"] = [entry.name for entry in batteries]
         self.battery_combobox.set(self.battery.get())
 
         # Update the PV-panel name
@@ -438,6 +460,9 @@ class SystemFrame(ttk.Frame):
             self.pv_panel.set(minigrid.pv_panel.name)
         else:
             self.pv_panel_combobox.configure(state=DISABLED)
+
+        # Update the combobox
+        self.pv_panel_combobox["values"] = [entry.name for entry in pv_panels]
         self.pv_panel_combobox.set(self.pv_panel.get())
 
         # Update the diesel-generator name
@@ -445,6 +470,11 @@ class SystemFrame(ttk.Frame):
             self.diesel_generator.set(minigrid.diesel_generator.name)
         else:
             self.diesel_generator_combobox.configure(state=DISABLED)
+
+        # Update the combobox
+        self.diesel_generator_combobox["values"] = [
+            entry.name for entry in diesel_generators
+        ]
         self.diesel_generator_combobox.set(self.diesel_generator.get())
 
         # Update the heat-exchanger name
