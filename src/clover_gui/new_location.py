@@ -60,8 +60,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(4, weight=1)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(6, weight=1)
-        self.rowconfigure(7, weight=1)
-        self.rowconfigure(8, weight=1)
+        self.rowconfigure(7, weight=1, pad=20)
 
         self.columnconfigure(0, weight=1)  # First three have forward, home, back
         self.columnconfigure(1, weight=1)
@@ -219,10 +218,35 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             sticky="w",
         )
 
+        self.bottom_bar_frame = ttk.Frame(self)
+        self.bottom_bar_frame.grid(row=7, column=0, columnspan=7, sticky="news")
+
+        self.bottom_bar_frame.columnconfigure(0, weight=1)
+        self.bottom_bar_frame.columnconfigure(1, weight=1)
+        self.bottom_bar_frame.columnconfigure(2, weight=1)
+        self.bottom_bar_frame.columnconfigure(3, weight=10)
+        self.bottom_bar_frame.columnconfigure(4, weight=1)
+
         self.back_button = ttk.Button(
-            self,
+            self.bottom_bar_frame,
             text="Back",
             bootstyle=f"{PRIMARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_back(self),
         )
-        self.back_button.grid(row=7, column=0, padx=10, pady=5)
+        self.back_button.grid(row=0, column=0, padx=10, pady=5)
+
+        self.home_button = ttk.Button(
+            self.bottom_bar_frame,
+            text="Home",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_home(self),
+        )
+        self.home_button.grid(row=0, column=1, padx=10, pady=5)
+
+        self.forward_button = ttk.Button(
+            self.bottom_bar_frame,
+            text="Forward",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_forward(self),
+        )
+        self.forward_button.grid(row=0, column=2, padx=10, pady=5)
