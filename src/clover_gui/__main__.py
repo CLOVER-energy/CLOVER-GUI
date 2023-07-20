@@ -147,7 +147,7 @@ class App(ttk.Window):
         y_coordinate = max((self.winfo_screenheight() // 2) - (height // 2), 0)
         self.geometry(f"+{x_coordinate}+{y_coordinate}")
 
-    def create_new_location(self) -> None:
+    def new_location_callback(self) -> None:
         """Called when the create-location button is depressed."""
 
         # Return if not all the inputs have been provided.
@@ -358,7 +358,9 @@ class App(ttk.Window):
         # Close the load-location window once completed
         if self.load_location_window is not None:
             self.load_location_window.withdraw()
-            self.load_location_window.load_location_frame.pack_forget()
+            BaseScreen.add_screen_moving_forward(self.main_menu_frame)
+        progress_bar.stop()
+        progress_bar.grid_forget()
         self.main_menu_frame.pack_forget()
         self.configuration_screen.pack(fill="both", expand=True)
         self.location_name.set(load_location_name)
@@ -407,7 +409,7 @@ class App(ttk.Window):
 
         # New-location
         self.new_location_frame = NewLocationScreen(
-            self.splash, self.create_new_location
+            self.splash, self.new_location_callback
         )
         self.new_location_frame.pack_forget()
         self.splash.set_progress_bar_progress(60)
