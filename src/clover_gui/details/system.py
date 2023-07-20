@@ -484,3 +484,42 @@ class SystemFrame(ttk.Frame):
         else:
             self.heat_exchanger_combobox.configure(state=DISABLED)
         self.heat_exchanger_combobox.set(self.heat_exchanger.get())
+
+    def add_battery(self, battery_name: str) -> None:
+        """
+        Add a battery to the list of selectable options.
+
+        :param: battery_name
+            The name of the battery to add.
+
+        """
+
+        self.battery_combobox["values"] = self.battery_combobox["values"] + (
+            battery_name,
+        )
+
+    def add_diesel_generator(self, diesel_generator_name: str) -> None:
+        """
+        Add a diesel generator to the list of selectable options.
+
+        :param: diesel_generator_name
+            The name of the diesel generator to add.
+
+        """
+
+        self.diesel_generator_combobox["values"] = self.diesel_generator_combobox[
+            "values"
+        ] + (diesel_generator_name,)
+
+    def add_pv_panel(self, pv_panel_name: str) -> None:
+        """
+        Add a solar panel to the list of selectable options.
+
+        :param: pv_panel_name
+            The name of the PV panel to add.
+
+        """
+
+        self.pv_panel_combobox["values"] = self.pv_panel_combobox["values"] + (
+            pv_panel_name,
+        )

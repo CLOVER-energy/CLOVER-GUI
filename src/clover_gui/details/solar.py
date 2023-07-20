@@ -11,6 +11,8 @@
 
 import tkinter as tk
 
+from typing import Callable
+
 import ttkbootstrap as ttk
 
 from clover.generation.solar import PVPanel, Tracking
@@ -56,6 +58,8 @@ class PVFrame(ttk.Frame):
         self.columnconfigure(1, weight=10)
         self.columnconfigure(2, weight=1)
         self.columnconfigure(3, weight=1)
+
+        self.add_panel_to_system_frame: Callable | None = None
 
         self.renewables_ninja_token = tk.StringVar(value="YOUR API TOKEN")
         self.renewables_ninja_token_entry = ttk.Entry(
@@ -535,6 +539,9 @@ class PVFrame(ttk.Frame):
         self.pv_panel_combobox.configure(textvariable=self.panel_selected)
         self.panel_name_entry.configure(textvariable=self.panel_selected)
         self.update_panel_frame()
+
+        # Add the panel to the system frame's list of panels.
+        self.add_panel_to_system_frame(new_name)
 
     def enter_panel_name(self, _) -> None:
         """Called when someone enters a new panel name."""

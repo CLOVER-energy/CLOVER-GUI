@@ -119,6 +119,17 @@ class DetailsWindow(tk.Toplevel):
         self.system_frame = SystemFrame(self.details_notebook)
         self.details_notebook.add(self.system_frame, text="System", sticky="news")
 
+        # Update the various frames
+        self.solar_frame.pv_frame.add_panel_to_system_frame = (
+            self.system_frame.add_pv_panel
+        )
+        self.storage_frame.battery_frame.add_battery_to_system_frame = (
+            self.system_frame.add_battery
+        )
+        self.diesel_frame.generator_frame.add_generator_to_system_frame = (
+            self.system_frame.add_diesel_generator
+        )
+
     def save_and_close(self) -> None:
         """Actioned when closed."""
 
