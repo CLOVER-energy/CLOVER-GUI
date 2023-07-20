@@ -10,6 +10,7 @@
 ########################################################################################
 
 import tkinter as tk
+
 # from tkinter.messagebox import showwarning
 # import subprocess
 # import xterm
@@ -27,19 +28,19 @@ from .__utils__ import BaseScreen
 
 __all__ = ("RunScreen",)
 
+
 class RunScreen(ttk.Frame):
-    
+
     """
     Represents the Run Screen.
 
     Displays running information when CLOVER is running simulation or optimisation.
 
     """
-    
+
     def __init__(
         self,
         data_directory: str,
-
     ) -> None:
         """
         Instantiate a :class:`RunFrame` instance.
@@ -67,7 +68,7 @@ class RunScreen(ttk.Frame):
         # label.pack(fill=tk.X)
 
         # xterm_frame = tk.Frame(root)
-        # xterm_frame.pack(fill=tk.BOTH, expand=True)         
+        # xterm_frame.pack(fill=tk.BOTH, expand=True)
 
         # xterm_frame_id = xterm_frame.winfo_id()
 

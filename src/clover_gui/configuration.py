@@ -30,7 +30,7 @@ __all__ = ("ConfigurationScreen",)
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
-    
+
     """
     Represents the simulation frame.
 
@@ -42,11 +42,11 @@ class SimulationFrame(BaseScreen, show_navigation=False):
     """
 
     def __init__(
-            self, 
-            parent, 
-            location_name: ttk.StringVar,
-            open_run_screen: Callable,
-        ) -> None:
+        self,
+        parent,
+        location_name: ttk.StringVar,
+        open_run_screen: Callable,
+    ) -> None:
         super().__init__(parent)
 
         """
@@ -153,7 +153,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         def combine_funcs(evt=None):
             open_run_screen()
             self.launch_simulation()
-            
+
         self.run_simulation_button = ttk.Button(
             self,
             text="Run Simulation",

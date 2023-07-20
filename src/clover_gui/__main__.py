@@ -226,11 +226,6 @@ class App(ttk.Window):
 
         return self._data_directory
 
-    
-
-    
-    
-    
     def load_location(
         self,
         load_location_name: str | None = None,
@@ -400,15 +395,14 @@ class App(ttk.Window):
             self.load_location_window.deiconify()
         self.load_location_window.mainloop()
 
-    # Move to run screen 
+    # Move to run screen
     def open_run_screen(self) -> None:
         """moves to the run page"""
-            
+
         self.configuration_screen.pack_forget()
         BaseScreen.add_screen_moving_forward(self.configuration_screen)
         self.run_screen.pack(fill="both", expand=True)
 
-    
     def setup(self) -> None:
         """
         Setup the window.
@@ -449,8 +443,6 @@ class App(ttk.Window):
         self.details_window.withdraw()
         self.splash.set_progress_bar_progress(100)
 
-        
-        
         # Run
         self.run_screen = RunScreen(self.data_directory)
 
