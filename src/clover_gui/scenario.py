@@ -713,13 +713,13 @@ class ConfigurationFrame(ttk.Frame):
         self.open_details_window(0)
 
     def open_diesel_settings(self) -> None:
-        self.open_details_window(6)
+        self.open_details_window(3)
 
     def open_battery_settings(self) -> None:
-        self.open_details_window(2)
+        self.open_details_window(1)
 
     def open_grid_settings(self) -> None:
-        self.open_details_window(7)
+        self.open_details_window(4)
 
     def set_scenarios(self, scenarios: list[Scenario]) -> None:
         """

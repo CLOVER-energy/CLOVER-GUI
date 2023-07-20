@@ -15,14 +15,13 @@ import ttkbootstrap as ttk
 
 from typing import Callable
 
-from clover import Simulation
+from clover import OperatingMode, Simulation
 from clover.optimisation import Optimisation, OptimisationParameters, ThresholdMode
 from clover.optimisation.__utils__ import Criterion, THRESHOLD_CRITERION_TO_MODE
-from clover.scripts.clover import clover_main
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
-from .__utils__ import BaseScreen
+from .__utils__ import BaseScreen, CloverThread
 from .scenario import ConfigurationFrame
 
 
@@ -44,24 +43,19 @@ class SimulationFrame(BaseScreen, show_navigation=False):
     def __init__(
         self,
         parent,
-        location_name: ttk.StringVar,
-        open_run_screen: Callable,
+        launch_simulation: Callable,
     ) -> None:
         super().__init__(parent)
 
         """
         Instantiate a :class:`ConfigureFrame` instance.
 
-        :param: location_name
-            The name of the location being considered.
-
-        :param: open_run_screen
-            A callable function to open the run screen.
+        :param: launch_simulation
+            A callable function to launch a simulation.
 
         """
 
         self.pack(fill="both", expand=True)
-        self.location_name = location_name
 
         # Set the physical distance weights of the rows and columns
         self.rowconfigure(0, weight=2)  # First row has the header
@@ -80,7 +74,6 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         self.start_year = tk.DoubleVar()
         self.end_year = tk.DoubleVar()
-        self.open_run_screen = open_run_screen
 
         # self.end_year_slider = ttk.Scale(self, bootstyle="danger")
         # self.end_year_slider.grid(row=3, column=1, padx=20)
@@ -155,33 +148,15 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             self,
             text="Run Simulation",
             bootstyle=f"{INFO}-outline",
-            command=self.launch_simulation,
+            command=lambda operating_mode=OperatingMode.SIMULATION: launch_simulation(
+                operating_mode
+            ),
         )
         self.run_simulation_button.grid(
             row=5, column=3, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
         )
 
         # TODO: Add configuration frame widgets and layout
-
-    def launch_simulation(self) -> None:
-        """Launch a CLOVER simulation."""
-
-        # Assemble arguments and call to CLOVER.
-        clover_args: list[str] = [
-            "-l",
-            str(self.location_name.get()),
-            "-sim",
-            "-pv",
-            str(self.pv_size.get()),
-            "-b",
-            str(self.storage_size.get()),
-            "-a",
-        ]
-        if not self.generate_plots.get():
-            clover_args.append("-sp")
-
-        clover_main(clover_args, True)
-        self.open_run_screen()
 
     def set_simulation(self, simulation: Simulation) -> None:
         """
@@ -1401,11 +1376,13 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(2, weight=1, pad=100)
 
         self.location_label = ttk.Label(
-            self, bootstyle=INFO, text="LOCATION NAME", font="80"
+            self, bootstyle=INFO, text=location_name.get().capitalize(), font="80"
         )
         self.location_label.grid(
             row=0, column=0, columnspan=2, sticky="ew", padx=60, pady=20
         )
+
+        self.location_name: ttk.Stringvar = location_name
 
         self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
         self.configuration_notebook.grid(
@@ -1423,7 +1400,10 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         )
 
         self.simulation_frame = SimulationFrame(
-            self.configuration_notebook, location_name, open_run_screen
+            self.configuration_notebook,
+            lambda operating_mode=OperatingMode.SIMULATION: self.launch_simulation(
+                operating_mode
+            ),
         )
         self.configuration_notebook.add(self.simulation_frame, text="Simulate")
 
@@ -1474,3 +1454,41 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.advanced_settings_button.grid(
             row=0, column=4, sticky="w", pady=5, ipadx=80, ipady=20
         )
+
+    def launch_simulation(self, operating_mode: OperatingMode) -> None:
+        """Launch a CLOVER simulation."""
+
+        # Assemble arguments and call to CLOVER.
+        clover_args: list[str] = [
+            "-l",
+            str(self.location_name.get()),
+        ]
+
+        # Append simulation arguments:
+        if operating_mode == OperatingMode.SIMULATION:
+            clover_args.extend(["-sim", "-a"])
+
+            # Append the PV size if PV is selected
+            if self.configuration_frame.solar_pv_selected.get():
+                clover_args.extend(
+                    [
+                        "-pv",
+                        str(self.simulation_frame.pv_size.get()),
+                    ]
+                )
+
+            # Append the battery size if batteries are selected
+            if self.configuration_frame.battery_selected.get():
+                clover_args.extend(
+                    [
+                        "-b",
+                        str(self.simulation_frame.storage_size.get()),
+                    ]
+                )
+
+            if not self.simulation_frame.generate_plots.get():
+                clover_args.append("-sp")
+
+        self.clover_thread = CloverThread(clover_args)
+        self.clover_thread.start()
+        self.open_run_screen(self.clover_thread)

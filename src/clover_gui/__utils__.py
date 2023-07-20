@@ -11,6 +11,7 @@
 
 import collections
 import os
+import threading
 
 from logging import Logger
 from typing import Any, DefaultDict
@@ -21,14 +22,18 @@ from clover import read_yaml
 from clover.fileparser import DIESEL_CONSUMPTION, DIESEL_GENERATORS, MINIMUM_LOAD
 from clover.simulation.diesel import DieselGenerator
 from clover.generation.solar import PVPanel, SolarPanelType
+from clover.scripts.clover import clover_main
 from clover.simulation.storage_utils import Battery
 
 __all__ = (
     "BaseScreen",
     "CLOVER_SPLASH_SCREEN_IMAGE",
+    "CloverThread",
     "IMAGES_DIRECTORY",
     "LOAD_LOCATION_GEOMETRY",
     "MAIN_WINDOW_GEOMETRY",
+    "parse_battery_inputs",
+    "parse_diesel_inputs",
     "parse_solar_inputs",
 )
 
@@ -204,6 +209,30 @@ class BaseScreen(ttk.Frame):
         cls._backward_journey.append(self)
 
         home_frame.pack(fill="both", expand=True)
+
+
+class CloverThread(threading.Thread):
+    """
+    Represents a thread to run CLOVER in the background.
+
+    """
+
+    def __init__(self, clover_args: list[str]) -> None:
+        """
+        Instantiate a :class:`CloverThread`.
+
+        :param: clover_args
+            Arguments to pass through to CLOVER.
+
+        """
+
+        super().__init__()
+        self.clover_args = clover_args
+
+    def run(self) -> None:
+        """Run the thread."""
+
+        clover_main(self.clover_args, False, None)
 
 
 def parse_battery_inputs(

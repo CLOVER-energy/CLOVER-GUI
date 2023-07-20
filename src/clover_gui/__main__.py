@@ -25,6 +25,7 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
     BaseScreen,
+    CloverThread,
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
     parse_diesel_inputs,
@@ -396,7 +397,7 @@ class App(ttk.Window):
         self.load_location_window.mainloop()
 
     # Move to run screen
-    def open_run_screen(self) -> None:
+    def open_run_screen(self, clover_thread: CloverThread) -> None:
         """moves to the run page"""
 
         self.configuration_screen.pack_forget()
