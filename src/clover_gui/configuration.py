@@ -1470,7 +1470,10 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.forward_button.grid(row=0, column=2, padx=10, pady=5)
 
         self.advanced_settings_button = ttk.Button(
-            self.bottom_bar_frame, bootstyle=INFO, text="Advanced settings", command=open_details_window
+            self.bottom_bar_frame,
+            bootstyle=INFO,
+            text="Advanced settings",
+            command=open_details_window,
         )
         self.advanced_settings_button.grid(
             row=0, column=4, sticky="w", pady=5, ipadx=80, ipady=20
