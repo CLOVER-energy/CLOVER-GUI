@@ -80,6 +80,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         self.start_year = tk.DoubleVar()
         self.end_year = tk.DoubleVar()
+        self.open_run_screen = open_run_screen
 
         # self.end_year_slider = ttk.Scale(self, bootstyle="danger")
         # self.end_year_slider.grid(row=3, column=1, padx=20)
@@ -150,15 +151,11 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         )
 
         # Combines the functions to open the run screen and launch the simulation.
-        def combine_funcs(evt=None):
-            open_run_screen()
-            self.launch_simulation()
-
         self.run_simulation_button = ttk.Button(
             self,
             text="Run Simulation",
             bootstyle=f"{INFO}-outline",
-            command=combine_funcs,
+            command=self.launch_simulation,
         )
         self.run_simulation_button.grid(
             row=5, column=3, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
@@ -168,8 +165,6 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
     def launch_simulation(self) -> None:
         """Launch a CLOVER simulation."""
-
-        BaseScreen.add_screen_moving_forward(self)
 
         # Assemble arguments and call to CLOVER.
         clover_args: list[str] = [
@@ -186,6 +181,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             clover_args.append("-sp")
 
         clover_main(clover_args, True)
+        self.open_run_screen()
 
     def set_simulation(self, simulation: Simulation) -> None:
         """
