@@ -12,8 +12,6 @@
 
 import tkinter as tk
 
-from typing import Callable
-
 import ttkbootstrap as ttk
 
 from clover.impact.finance import COST, COST_DECREASE, OM
@@ -61,8 +59,6 @@ class BatteryFrame(ttk.Frame):
         self.columnconfigure(1, weight=10)
         self.columnconfigure(2, weight=1)
         self.columnconfigure(3, weight=1)
-
-        self.add_battery_to_system_frame: Callable | None = None
 
         # Battery being selected
         self.battery_selected_label = ttk.Label(self, text="Battery to configure")
@@ -669,9 +665,6 @@ class BatteryFrame(ttk.Frame):
         self.battery_selected_combobox.configure(textvariable=self.battery_selected)
         self.battery_name_entry.configure(textvariable=self.battery_selected)
         self.update_battery_frame()
-
-        # Add the battery to the system frame
-        self.add_battery_to_system_frame(new_name)
 
     def enter_battery_name(self, _) -> None:
         """Called when someone enters a new battery name."""

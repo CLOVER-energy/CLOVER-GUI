@@ -12,8 +12,6 @@
 
 import tkinter as tk
 
-from typing import Callable
-
 import ttkbootstrap as ttk
 
 from clover.impact.finance import COST, COST_DECREASE, OM
@@ -61,8 +59,6 @@ class GeneratorFrame(ttk.Frame):
         self.columnconfigure(1, weight=10)  # These rows have entries
         self.columnconfigure(2, weight=1)  # These rows have entries
         self.columnconfigure(3, weight=1)  # These rows have entries
-
-        self.add_generator_to_system_frame: Callable | None = None
 
         # Diesel generator being selected
         self.diesel_generator_selected_label = ttk.Label(
@@ -387,9 +383,6 @@ class GeneratorFrame(ttk.Frame):
             textvariable=self.diesel_generator_selected
         )
         self.update_diesel_generator_frame()
-
-        # Add the generator to the system frame
-        self.add_generator_to_system_frame(new_name)
 
     def enter_diesel_generator_name(self, _) -> None:
         """Called when someone enters a new diesel_generator name."""
