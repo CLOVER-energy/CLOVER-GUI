@@ -30,6 +30,7 @@ from .__utils__ import BaseScreen, CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY
 
 __all__ = ("RunScreen",)
 
+
 class StoppableThread(Thread):
     """
     Thread class with a stop() method.
@@ -38,7 +39,7 @@ class StoppableThread(Thread):
 
     """
 
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(StoppableThread, self).__init__(*args, **kwargs)
         self._stop_event = Event()
 
@@ -47,6 +48,7 @@ class StoppableThread(Thread):
 
     def stopped(self):
         return self._stop_event.is_set()
+
 
 class RunScreen(BaseScreen, show_navigation=True):
 
@@ -96,25 +98,28 @@ class RunScreen(BaseScreen, show_navigation=True):
         self.clover_progress_bar: ttk.Progressbar = ttk.Progressbar(
             self, bootstyle=f"{SUCCESS}-striped", mode="determinate"
         )
-        self.clover_progress_bar.grid(row=1, column=0, sticky="ew", ipadx=60, padx=20, pady=5)
+        self.clover_progress_bar.grid(
+            row=1, column=0, sticky="ew", ipadx=60, padx=20, pady=5
+        )
 
         # Stop the clover thread with a button.
         self.stop_button = ttk.Button(
             self, text="STOP", bootstyle=f"{DANGER}-inverted", command=self.stop
         )
-        self.stop_button.grid(row=1, column=1, padx=20, pady=5, ipadx=60, ipady=10, sticky="ew")
+        self.stop_button.grid(
+            row=1, column=1, padx=20, pady=5, ipadx=60, ipady=10, sticky="ew"
+        )
 
         self.sub_process_frame = ScrolledFrame(self)
-        self.sub_process_frame.grid(row=2, column=0, columnspan=2, sticky="news", padx=10, pady=5)
+        self.sub_process_frame.grid(
+            row=2, column=0, columnspan=2, sticky="news", padx=10, pady=5
+        )
 
         self.sub_process_label = ttk.Label(self.sub_process_frame, bootstyle=DARK)
-        self.sub_process_label.grid(
-            row=0, column=0, sticky="news", padx=10, pady=5
-        )
+        self.sub_process_label.grid(row=0, column=0, sticky="news", padx=10, pady=5)
 
         # Create a buffer for the stdout
         self.stdout_data: str = ""
-
 
     def read_output(self, pipe: TextIOWrapper):
         """
@@ -126,7 +131,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             # Windows uses: "\r\n" instead of "\n" for new lines.
             data = data.replace(b"\r\n", b"\n")
             if data:
-                self.stdout_data += (new_data:=data.decode())
+                self.stdout_data += (new_data := data.decode())
 
                 if "100%" in new_data:
                     self.push_progress_bar(20)
@@ -151,7 +156,9 @@ class RunScreen(BaseScreen, show_navigation=True):
         self.clover_thread = clover_thread
 
         # Create a thread with the target to read the output.
-        self.reading_thread = Thread(target=self.read_output, args=(clover_thread.stdout,))
+        self.reading_thread = Thread(
+            target=self.read_output, args=(clover_thread.stdout,)
+        )
         self.reading_thread.start()
 
         # A tkinter loop that will show `self.stdout_data` on the screen
@@ -171,7 +178,9 @@ class RunScreen(BaseScreen, show_navigation=True):
 
     def show_stdout(self):
         """Read `self.stdout_data` and put the data in the GUI."""
-        self.sub_process_label.config(text=self.stdout_data.strip("\n"), bootstyle=f"dark-inverse")
+        self.sub_process_label.config(
+            text=self.stdout_data.strip("\n"), bootstyle=f"dark-inverse"
+        )
         self.after(1, self.show_stdout)
 
     def stop(self, stopping=[]):
