@@ -222,7 +222,7 @@ def clover_thread(clover_args: list[str]) -> Popen:
 
     """
 
-    return Popen(clover_main(clover_args, False, None), stdout=PIPE, stderr=STDOUT)
+    return Popen(["clover"] + clover_args, stdout=PIPE, stderr=STDOUT)
 
 
 def parse_battery_inputs(
