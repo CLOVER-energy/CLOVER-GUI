@@ -83,10 +83,10 @@ class DetailsWindow(tk.Toplevel):
         self.solar_frame = SolarFrame(self.details_notebook)
         self.details_notebook.add(self.solar_frame, text="Solar", sticky="news")
 
-        self.wind_frame = WindFrame(self.details_notebook)
-        self.details_notebook.add(
-            self.wind_frame, text="Wind", sticky="news", state=DISABLED
-        )
+        # self.wind_frame = WindFrame(self.details_notebook)
+        # self.details_notebook.add(
+        #     self.wind_frame, text="Wind", sticky="news", state=DISABLED
+        # )
 
         self.storage_frame = StorageFrame(self.details_notebook)
         self.details_notebook.add(self.storage_frame, text="Storage", sticky="news")
@@ -94,15 +94,15 @@ class DetailsWindow(tk.Toplevel):
         self.load_frame = LoadFrame(self.details_notebook)
         self.details_notebook.add(self.load_frame, text="Load", sticky="news")
 
-        self.conversion_frame = ConversionFrame(self.details_notebook)
-        self.details_notebook.add(
-            self.conversion_frame, text="Convert", sticky="news", state=DISABLED
-        )
+        # self.conversion_frame = ConversionFrame(self.details_notebook)
+        # self.details_notebook.add(
+        #     self.conversion_frame, text="Convert", sticky="news", state=DISABLED
+        # )
 
-        self.transmission_frame = TransmissionFrame(self.details_notebook)
-        self.details_notebook.add(
-            self.transmission_frame, text="Transmit.", sticky="news", state=DISABLED
-        )
+        # self.transmission_frame = TransmissionFrame(self.details_notebook)
+        # self.details_notebook.add(
+        #     self.transmission_frame, text="Transmit.", sticky="news", state=DISABLED
+        # )
 
         self.diesel_frame = DieselFrame(self.details_notebook)
         self.details_notebook.add(self.diesel_frame, text="Diesel", sticky="news")
@@ -118,6 +118,17 @@ class DetailsWindow(tk.Toplevel):
 
         self.system_frame = SystemFrame(self.details_notebook)
         self.details_notebook.add(self.system_frame, text="System", sticky="news")
+
+        # Update the various frames
+        self.solar_frame.pv_frame.add_panel_to_system_frame = (
+            self.system_frame.add_pv_panel
+        )
+        self.storage_frame.battery_frame.add_battery_to_system_frame = (
+            self.system_frame.add_battery
+        )
+        self.diesel_frame.generator_frame.add_generator_to_system_frame = (
+            self.system_frame.add_diesel_generator
+        )
 
     def save_and_close(self) -> None:
         """Actioned when closed."""
