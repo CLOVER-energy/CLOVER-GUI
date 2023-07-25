@@ -1,6 +1,6 @@
 #!/usr/bin/python3.10
 ########################################################################################
-# load_location.py - The load-location module for CLOVER-GUI application.              #
+# preferences.py - The preferences module for CLOVER-GUI application.                  #
 #                                                                                      #
 # Author: Ben Winchester, Hamish Beath                                                 #
 # Copyright: Ben Winchester, 2022                                                      #
@@ -22,28 +22,25 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import BaseScreen, LOAD_LOCATION_GEOMETRY, LOCATIONS_DIRECTORY
 
-__all__ = ("LoadLocationWindow",)
+__all__ = ("PreferencesWindow",)
 
 
-class LoadLocationScreen(BaseScreen, show_navigation=False):
+class PreferencesScreen(BaseScreen, show_navigation=False):
     """
-    Represents the load-location screen.
+    Represents the preferences window.
 
-    The load-location screen enables a user to load an existing location.
+    The preferences screen enables a user to set various preferences.
 
     TODO: Update attributes.
 
     """
 
-    def __init__(self, parent, load_location_callback: Callable) -> None:
+    def __init__(self, parent) -> None:
         """
-        Instantiate a :class:`LoadLocationScreen` instance.
+        Instantiate a :class:`PreferencesScreen` instance.
 
         :param: parent
             The parent window or frame.
-
-        :param: load_location_callback
-            The callback function for loading an existing location.
 
         """
 
@@ -107,7 +104,7 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         self.load_location_name.set(self.load_location_combobox.get())
 
 
-class LoadLocationWindow(tk.Toplevel):
+class PreferencesWindow(tk.Toplevel):
     """
     Represents the load-location popup window.
 
@@ -118,9 +115,9 @@ class LoadLocationWindow(tk.Toplevel):
 
     """
 
-    def __init__(self, load_location_callback: Callable) -> None:
+    def __init__(self) -> None:
         """
-        Instantiate a :class:`LoadLocationWindow` instance.
+        Instantiate a :class:`PreferencesWindow` instance.
 
         :param: load_location_callback:
             The callback function for when an existing location is to be loaded.
@@ -134,14 +131,6 @@ class LoadLocationWindow(tk.Toplevel):
 
         self.geometry(LOAD_LOCATION_GEOMETRY)
 
-        self.load_location_frame = LoadLocationScreen(self, load_location_callback)
+        self.load_location_frame = PreferencesScreen(self)
 
         self.protocol("WM_DELETE_WINDOW", self.withdraw)
-
-    def display_progress_bar(self) -> None:
-        """
-        Create and display a progress bar to track progress with loading the location.
-
-        """
-
-        self.load_location_frame.progress_bar.start()
