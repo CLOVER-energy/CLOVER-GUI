@@ -11,9 +11,11 @@
 
 import collections
 import os
-import threading
+
 
 from logging import Logger
+from subprocess import PIPE, Popen, STDOUT
+
 from typing import Any, DefaultDict
 
 import ttkbootstrap as ttk
@@ -28,7 +30,7 @@ from clover.simulation.storage_utils import Battery
 __all__ = (
     "BaseScreen",
     "CLOVER_SPLASH_SCREEN_IMAGE",
-    "CloverThread",
+    "clover_thread",
     "IMAGES_DIRECTORY",
     "LOAD_LOCATION_GEOMETRY",
     "MAIN_WINDOW_GEOMETRY",
@@ -211,28 +213,16 @@ class BaseScreen(ttk.Frame):
         home_frame.pack(fill="both", expand=True)
 
 
-class CloverThread(threading.Thread):
+def clover_thread(clover_args: list[str]) -> Popen:
     """
-    Represents a thread to run CLOVER in the background.
+    Run CLOVER in the background.
+
+    :param: clover_args
+        Arguments to pass through to CLOVER.
 
     """
 
-    def __init__(self, clover_args: list[str]) -> None:
-        """
-        Instantiate a :class:`CloverThread`.
-
-        :param: clover_args
-            Arguments to pass through to CLOVER.
-
-        """
-
-        super().__init__()
-        self.clover_args = clover_args
-
-    def run(self) -> None:
-        """Run the thread."""
-
-        clover_main(self.clover_args, False, None)
+    return Popen(clover_main(clover_args, False, None), stdout=PIPE, stderr=STDOUT)
 
 
 def parse_battery_inputs(

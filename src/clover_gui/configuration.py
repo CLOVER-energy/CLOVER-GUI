@@ -21,7 +21,7 @@ from clover.optimisation.__utils__ import Criterion, THRESHOLD_CRITERION_TO_MODE
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
-from .__utils__ import BaseScreen, CloverThread
+from .__utils__ import BaseScreen, clover_thread
 from .scenario import ConfigurationFrame
 
 
@@ -1362,6 +1362,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         super().__init__()
 
+        self.open_run_screen: Callable = open_run_screen
         self.system_lifetime: ttk.IntVar = system_lifetime
 
         self.pack(fill="both", expand=True)
@@ -1489,6 +1490,5 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             if not self.simulation_frame.generate_plots.get():
                 clover_args.append("-sp")
 
-        self.clover_thread = CloverThread(clover_args)
-        self.clover_thread.start()
+        self.clover_thread = clover_thread(clover_args)
         self.open_run_screen(self.clover_thread)

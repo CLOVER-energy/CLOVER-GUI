@@ -13,6 +13,8 @@ import os
 import pkgutil
 import ttkbootstrap as ttk
 
+from subprocess import Popen
+
 from clover import (
     get_logger,
     LOCATIONS_FOLDER_NAME,
@@ -25,7 +27,7 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
     BaseScreen,
-    CloverThread,
+    clover_thread,
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
     parse_diesel_inputs,
@@ -285,7 +287,7 @@ class App(ttk.Window):
             self.logger,
             None,
         )
-        set_progress_bar_progress(10 * (percent_fraction := 1 / 12))
+        set_progress_bar_progress(100 * (percent_fraction := 1 / 12))
 
         # Load the PV and battery input files as these are not returned in CLOVER as a whole
         self.inputs_directory_relative_path = os.path.join(
@@ -308,20 +310,20 @@ class App(ttk.Window):
 
         # Set all inputs accordingly
         self.configuration_screen.configuration_frame.set_scenarios(scenarios)
-        set_progress_bar_progress(20 * percent_fraction)
+        set_progress_bar_progress(200 * percent_fraction)
 
         self.configuration_screen.simulation_frame.set_simulation(simulations[0])
-        set_progress_bar_progress(30 * percent_fraction)
+        set_progress_bar_progress(300 * percent_fraction)
 
         self.configuration_screen.optimisation_frame.set_optimisation(
             optimisations[0], optimisation_inputs
         )
-        set_progress_bar_progress(40 * percent_fraction)
+        set_progress_bar_progress(400 * percent_fraction)
 
         self.details_window.solar_frame.set_solar(
             pv_panels, pv_panel_costs, pv_panel_emissions
         )
-        set_progress_bar_progress(40 * percent_fraction)
+        set_progress_bar_progress(500 * percent_fraction)
 
         # self.details_window.solar_frame.set_solar(
         #     pv_panels, pv_panel_costs, pv_panel_emissions
@@ -331,32 +333,32 @@ class App(ttk.Window):
         self.details_window.storage_frame.battery_frame.set_batteries(
             batteries, battery_costs, battery_emissions
         )
-        set_progress_bar_progress(60 * percent_fraction)
+        set_progress_bar_progress(600 * percent_fraction)
 
         self.details_window.load_frame.set_loads(device_utilisations)
-        set_progress_bar_progress(70 * percent_fraction)
+        set_progress_bar_progress(700 * percent_fraction)
 
         self.details_window.diesel_frame.generator_frame.set_generators(
             minigrid.diesel_generator, diesel_generators, diesel_costs, diesel_emissions
         )
         # self.details_window.diesel_frame.heater_frame.set_water_heaters(minigrid.diesel_water_heater)
-        set_progress_bar_progress(80 * percent_fraction)
+        set_progress_bar_progress(800 * percent_fraction)
 
         self.details_window.grid_frame.set_profiles(grid_times)
-        set_progress_bar_progress(90 * percent_fraction)
+        set_progress_bar_progress(900 * percent_fraction)
 
         self.details_window.finance_frame.set_finance_inputs(
             finance_inputs, self.logger
         )
-        set_progress_bar_progress(100 * percent_fraction)
+        set_progress_bar_progress(1000 * percent_fraction)
 
         self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs, self.logger)
-        set_progress_bar_progress(110 * percent_fraction)
+        set_progress_bar_progress(1100 * percent_fraction)
 
         self.details_window.system_frame.set_system(
             batteries, diesel_generators, minigrid, pv_panels
         )
-        set_progress_bar_progress(120 * percent_fraction)
+        set_progress_bar_progress(1200 * percent_fraction)
 
         # Close the load-location window once completed
         if self.load_location_window is not None:
@@ -397,12 +399,13 @@ class App(ttk.Window):
         self.load_location_window.mainloop()
 
     # Move to run screen
-    def open_run_screen(self, clover_thread: CloverThread) -> None:
+    def open_run_screen(self, clover_thread: Popen) -> None:
         """moves to the run page"""
 
         self.configuration_screen.pack_forget()
         BaseScreen.add_screen_moving_forward(self.configuration_screen)
         self.run_screen.pack(fill="both", expand=True)
+        self.run_screen.run_with_clover(clover_thread)
 
     def setup(self) -> None:
         """
