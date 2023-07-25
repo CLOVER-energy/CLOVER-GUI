@@ -1,6 +1,6 @@
 #!/usr/bin/python3.10
 ########################################################################################
-# __init__.py - The init module for CLOVER-GUI application.                            #
+# configuration.py - The configuration module for CLOVER-GUI application.              #
 #                                                                                      #
 # Author: Ben Winchester, Hamish Beath                                                 #
 # Copyright: Ben Winchester, 2022                                                      #

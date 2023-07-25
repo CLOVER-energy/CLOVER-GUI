@@ -15,10 +15,8 @@ import tkinter as tk
 from io import TextIOWrapper
 from subprocess import Popen
 from threading import Event, Thread
+from typing import Callable
 
-# from tkinter.messagebox import showwarning
-# import subprocess
-# import xterm
 import ttkbootstrap as ttk
 
 
@@ -59,27 +57,31 @@ class RunScreen(BaseScreen, show_navigation=True):
 
     """
 
-    def __init__(
-        self,
-        data_directory: str,
-    ) -> None:
+    def __init__(self, data_directory: str, open_post_run_screen: Callable) -> None:
         """
         Instantiate a :class:`RunFrame` instance.
 
         :param: data_directory
             The path to the data directory.
 
+        :param:
+
         """
 
         super().__init__()
+
+        self.open_post_run_screen = open_post_run_screen
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
 
-        self.columnconfigure(0, weight=6)
+        self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=4)
+        self.columnconfigure(4, weight=1)
 
         self.running_image = tk.PhotoImage(
             file=os.path.join(
@@ -89,7 +91,7 @@ class RunScreen(BaseScreen, show_navigation=True):
         self.running_image = self.running_image.subsample(2)
         self.image_label = ttk.Label(self, image=self.running_image)
         self.image_label.grid(
-            row=0, column=0, columnspan=2, sticky="news", padx=20, pady=5
+            row=0, column=0, columnspan=5, sticky="news", padx=20, pady=5
         )
 
         self.clover_thread: Popen | None = None
@@ -99,7 +101,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             self, bootstyle=f"{SUCCESS}-striped", mode="determinate"
         )
         self.clover_progress_bar.grid(
-            row=1, column=0, sticky="ew", ipadx=60, padx=20, pady=5
+            row=1, column=0, columnspan=4, sticky="ew", ipadx=60, padx=20, pady=5
         )
 
         # Stop the clover thread with a button.
@@ -107,16 +109,52 @@ class RunScreen(BaseScreen, show_navigation=True):
             self, text="STOP", bootstyle=f"{DANGER}-inverted", command=self.stop
         )
         self.stop_button.grid(
-            row=1, column=1, padx=20, pady=5, ipadx=60, ipady=10, sticky="ew"
+            row=1, column=4, padx=20, pady=5, ipadx=60, ipady=10, sticky="ew"
         )
 
         self.sub_process_frame = ScrolledFrame(self)
         self.sub_process_frame.grid(
-            row=2, column=0, columnspan=2, sticky="news", padx=10, pady=5
+            row=2, column=0, columnspan=5, sticky="news", padx=10, pady=5
         )
 
         self.sub_process_label = ttk.Label(self.sub_process_frame, bootstyle=DARK)
         self.sub_process_label.grid(row=0, column=0, sticky="news", padx=10, pady=5)
+
+        # Add navigation buttons
+        self.back_button = ttk.Button(
+            self,
+            text="Back",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_back(self),
+        )
+        self.back_button.grid(row=3, column=0, padx=10, pady=5)
+
+        self.home_button = ttk.Button(
+            self,
+            text="Home",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_home(self),
+        )
+        self.home_button.grid(row=3, column=1, padx=10, pady=5)
+
+        self.forward_button = ttk.Button(
+            self,
+            text="Forward",
+            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_forward(self),
+        )
+        self.forward_button.grid(row=3, column=2, padx=10, pady=5)
+
+        self.post_run_button = ttk.Button(
+            self,
+            bootstyle=SUCCESS,
+            text="View outputs",
+            command=self.open_post_run_screen,
+            state=DISABLED,
+        )
+        self.post_run_button.grid(
+            row=3, column=4, sticky="w", pady=5, ipadx=80, ipady=20
+        )
 
         # Create a buffer for the stdout
         self.stdout_data: str = ""
@@ -139,8 +177,10 @@ class RunScreen(BaseScreen, show_navigation=True):
                 # Scroll to the bottom
                 self.sub_process_frame.yview_moveto(1)
             else:  # clean up
-                self.after(5000, self.stop)  # stop in 5 seconds
+                self.post_run_button.configure(state="enabled")
+                self.after(1000, self.stop)  # stop in 5 seconds
                 return None
+
             # Reduce the length of the data to contain 20 lines only.
             # self.stdout_data = "\n".join(self.stdout_data.split("\n")[-20:])
 

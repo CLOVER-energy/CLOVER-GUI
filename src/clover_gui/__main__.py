@@ -27,7 +27,6 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
     BaseScreen,
-    clover_thread,
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
     parse_diesel_inputs,
@@ -40,6 +39,7 @@ from .load_location import LoadLocationWindow
 from .main_menu import MainMenuScreen
 from .new_location import NewLocationScreen
 from .splash_screen import SplashScreenWindow
+from .post_run import PostRunScreen
 from .running import RunScreen
 
 # All-purpose callback commands
@@ -370,6 +370,13 @@ class App(ttk.Window):
         self.configuration_screen.pack(fill="both", expand=True)
         self.location_name.set(load_location_name)
 
+    def open_configuration_frame(self) -> None:
+        """Opens the configuration frame after a CLOVER run."""
+
+        self.post_run_screen.pack_forget()
+        BaseScreen.add_screen_moving_forward(self.post_run_screen)
+        self.configuration_screen.pack(fill="both", expand=True)
+
     def open_details_window(self, tab_id: int = 0) -> None:
         """Opens the details window."""
 
@@ -387,6 +394,13 @@ class App(ttk.Window):
         BaseScreen.add_screen_moving_forward(self.main_menu_frame)
         self.new_location_frame.pack(fill="both", expand=True)
 
+    def open_new_location_frame_post_run(self) -> None:
+        """Opens the new-location frame after a CLOVER run."""
+
+        self.post_run_screen.pack_forget()
+        BaseScreen.add_screen_moving_forward(self.post_run_screen)
+        self.new_location_frame.pack(fill="both", expand=True)
+
     def open_load_location_window(self) -> None:
         """Open the load-location window."""
 
@@ -398,13 +412,31 @@ class App(ttk.Window):
             self.load_location_window.deiconify()
         self.load_location_window.mainloop()
 
-    # Move to run screen
+    def open_load_location_window_post_run(self) -> None:
+        """Open the load-location window after a CLOVER run."""
+
+        if self.load_location_window is None:
+            self.load_location_window: LoadLocationWindow | None = LoadLocationWindow(
+                self.load_location
+            )
+        else:
+            self.load_location_window.deiconify()
+        self.load_location_window.mainloop()
+
+    def open_post_run_screen(self) -> None:
+        """Moves to the post-run screen."""
+
+        self.run_screen.pack_forget()
+        BaseScreen.add_screen_moving_forward(self.run_screen)
+        self.post_run_screen.pack(fill="both", expand=True)
+
     def open_run_screen(self, clover_thread: Popen) -> None:
-        """moves to the run page"""
+        """Moves to the run page"""
 
         self.configuration_screen.pack_forget()
         BaseScreen.add_screen_moving_forward(self.configuration_screen)
         self.run_screen.pack(fill="both", expand=True)
+        self.run_screen.stdout_data = ""
         self.run_screen.run_with_clover(clover_thread)
 
     def setup(self) -> None:
@@ -439,16 +471,24 @@ class App(ttk.Window):
             self.system_lifetime,
             self.open_run_screen,
         )
-        self.splash.set_progress_bar_progress(80)
         self.configuration_screen.pack_forget()
 
         # Details
         self.details_window: DetailsWindow | None = DetailsWindow(self.system_lifetime)
         self.details_window.withdraw()
-        self.splash.set_progress_bar_progress(100)
+        self.splash.set_progress_bar_progress(80)
 
         # Run
-        self.run_screen = RunScreen(self.data_directory)
+        self.run_screen = RunScreen(self.data_directory, self.open_post_run_screen)
+
+        # Post run
+        self.post_run_screen = PostRunScreen(
+            self.open_configuration_frame,
+            self.open_load_location_window_post_run,
+            self.open_new_location_frame_post_run,
+        )
+
+        self.splash.set_progress_bar_progress(100)
 
     def destroy_splash(self):
         self.splash.destroy()
