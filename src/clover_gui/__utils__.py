@@ -12,7 +12,10 @@
 import collections
 import os
 
+
 from logging import Logger
+from subprocess import PIPE, Popen, STDOUT
+
 from typing import Any, DefaultDict
 
 import ttkbootstrap as ttk
@@ -21,14 +24,18 @@ from clover import read_yaml
 from clover.fileparser import DIESEL_CONSUMPTION, DIESEL_GENERATORS, MINIMUM_LOAD
 from clover.simulation.diesel import DieselGenerator
 from clover.generation.solar import PVPanel, SolarPanelType
+from clover.scripts.clover import clover_main
 from clover.simulation.storage_utils import Battery
 
 __all__ = (
     "BaseScreen",
     "CLOVER_SPLASH_SCREEN_IMAGE",
+    "clover_thread",
     "IMAGES_DIRECTORY",
     "LOAD_LOCATION_GEOMETRY",
     "MAIN_WINDOW_GEOMETRY",
+    "parse_battery_inputs",
+    "parse_diesel_inputs",
     "parse_solar_inputs",
 )
 
@@ -204,6 +211,18 @@ class BaseScreen(ttk.Frame):
         cls._backward_journey.append(self)
 
         home_frame.pack(fill="both", expand=True)
+
+
+def clover_thread(clover_args: list[str]) -> Popen:
+    """
+    Run CLOVER in the background.
+
+    :param: clover_args
+        Arguments to pass through to CLOVER.
+
+    """
+
+    return Popen(clover_main(clover_args, False, None), stdout=PIPE, stderr=STDOUT)
 
 
 def parse_battery_inputs(
