@@ -29,11 +29,14 @@ from clover.simulation.storage_utils import Battery
 
 __all__ = (
     "BaseScreen",
+    "BATTERIES",
     "CLOVER_SPLASH_SCREEN_IMAGE",
     "clover_thread",
+    "COSTS",
     "DEFAULT_GUI_THEME",
     "DEFAULT_RENEWABLES_NINJA_TOKEN",
     "DEFAULT_SYSTEM_LIFETIME",
+    "EMISSIONS",
     "GLOBAL_SETTINGS_FILEPATH",
     "IMAGES_DIRECTORY",
     "LOAD_LOCATION_GEOMETRY",
@@ -46,6 +49,10 @@ __all__ = (
     "THEME",
 )
 
+# Batteries:
+#   Keyword for battery input information.
+BATTERIES: str = "batteries"
+
 # Battery inputs file:
 #   The battery inputs file.
 BATTERY_INPUTS_FILE: str = os.path.join("simulation", "battery_inputs.yaml")
@@ -57,6 +64,10 @@ CLOVER_ICON_IMAGE: str = "clover_logo.png"
 # CLOVER splash-screen image:
 #   The name of the CLOVER splash-screen image.
 CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_5_2_beta.png"
+
+# Costs:
+#   Keyword for costs.
+COSTS: str = "costs"
 
 # Default GUI theme:
 #   The default theme for the GUI.
@@ -77,6 +88,10 @@ DETAILS_GEOMETRY: str = "1080x720"
 # Diesel inputs file:
 #   The diesel inputs file.
 DIESEL_INPUTS_FILE: str = os.path.join("generation", "diesel_inputs.yaml")
+
+# Emissions:
+#   Keyword for emissions.
+EMISSIONS: str = "emissions"
 
 # Global settings filepath:
 #   Path to the global-settings file.
@@ -117,14 +132,6 @@ SYSTEM_LIFETIME: str = "system_lifetime"
 # Theme:
 #   Keyword for parsing the GUI theme.
 THEME: str = "theme"
-
-# Costs:
-#   Keyword for costs.
-_COSTS: str = "costs"
-
-# Emissions:
-#   Keyword for emissions.
-_EMISSIONS: str = "emissions"
 
 # Emissions:
 #   Keyword for emissions.
@@ -295,10 +302,10 @@ def parse_battery_inputs(
 
     batteries = [Battery.from_dict(entry) for entry in battery_inputs]
     battery_costs: dict[str, dict[str, float]] = {
-        entry[_NAME]: entry[_COSTS] for entry in battery_inputs
+        entry[_NAME]: entry[COSTS] for entry in battery_inputs
     }
     battery_emissions: dict[str, dict[str, float]] = {
-        entry[_NAME]: entry[_EMISSIONS] for entry in battery_inputs
+        entry[_NAME]: entry[EMISSIONS] for entry in battery_inputs
     }
 
     return batteries, battery_costs, battery_emissions
@@ -338,10 +345,10 @@ def parse_diesel_inputs(
         for entry in diesel_inputs[DIESEL_GENERATORS]
     ]
     diesel_generator_costs: dict[str, dict[str, float]] = {
-        entry[_NAME]: entry[_COSTS] for entry in diesel_inputs[DIESEL_GENERATORS]
+        entry[_NAME]: entry[COSTS] for entry in diesel_inputs[DIESEL_GENERATORS]
     }
     diesel_generator_emissions: dict[str, dict[str, float]] = {
-        entry[_NAME]: entry[_EMISSIONS] for entry in diesel_inputs[DIESEL_GENERATORS]
+        entry[_NAME]: entry[EMISSIONS] for entry in diesel_inputs[DIESEL_GENERATORS]
     }
 
     return diesel_generators, diesel_generator_costs, diesel_generator_emissions
@@ -390,7 +397,7 @@ def parse_solar_inputs(
     try:
         pv_panel_costs: dict[str, DefaultDict[str, float]] = {
             pv_panel.name: [
-                collections.defaultdict(float, panel_data[_COSTS])
+                collections.defaultdict(float, panel_data[COSTS])
                 for panel_data in solar_generation_inputs["panels"]
                 if panel_data[_NAME] == pv_panel.name
             ][0]
@@ -407,7 +414,7 @@ def parse_solar_inputs(
     try:
         pv_panel_emissions: dict[str, DefaultDict[str, float]] = {
             pv_panel.name: [
-                collections.defaultdict(float, panel_data[_EMISSIONS])
+                collections.defaultdict(float, panel_data[EMISSIONS])
                 for panel_data in solar_generation_inputs["panels"]
                 if panel_data[_NAME] == pv_panel.name
             ][0]

@@ -16,6 +16,8 @@ import ttkbootstrap as ttk
 from logging import Logger
 from subprocess import Popen
 
+import yaml
+
 from clover import (
     get_logger,
     LOCATIONS_FOLDER_NAME,
@@ -29,6 +31,7 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
     BaseScreen,
+    BATTERIES,
     CLOVER_ICON_IMAGE,
     DEFAULT_GUI_THEME,
     DEFAULT_RENEWABLES_NINJA_TOKEN,
@@ -53,15 +56,6 @@ from .splash_screen import SplashScreenWindow
 from .preferences import PreferencesWindow
 from .post_run import PostRunScreen
 from .running import RunScreen
-
-
-def save_configuration() -> None:
-    """
-    Saves the current configuration.
-
-    """
-
-    pass
 
 
 def open_help_window() -> None:
@@ -98,10 +92,11 @@ class App(ttk.Window):
         self.theme = theme
         self.style.theme_use(self.theme.get())
 
-        # Setup the CLOVER-GUI application.
-        self.withdraw()
+        # Setup the CLOVER-GUI application so that exiting causes data to be saved.
+        self.protocol("WM_DELETE_WINDOW", self.save_and_withdraw)
 
         # Display the splash screen whilst loading
+        self.withdraw()
         self.splash = SplashScreenWindow(self, self.data_directory)
 
         # Setup the menubar
@@ -110,7 +105,7 @@ class App(ttk.Window):
         # File menu
         self.file_menu = ttk.Menu(self.menu_bar, tearoff=0)
         self.file_menu.add_command(label="Open", command=self.open_load_location_window)
-        self.file_menu.add_command(label="Save", command=save_configuration)
+        self.file_menu.add_command(label="Save", command=self.save_configuration)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.quit)
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
@@ -279,20 +274,20 @@ class App(ttk.Window):
 
         # Parse input files
         (
-            converters,
+            _,
             device_utilisations,
             minigrid,
             finance_inputs,
             generation_inputs,
             ghg_inputs,
             grid_times,
-            location,
+            _,
             optimisation_inputs,
             optimisations,
             scenarios,
             simulations,
             electric_load_profile,
-            water_source_times,
+            _,
             input_file_info,
         ) = parse_input_files(
             False,
@@ -301,6 +296,7 @@ class App(ttk.Window):
             self.logger,
             None,
         )
+        self.input_file_info = input_file_info
         set_progress_bar_progress(100 * (percent_fraction := 1 / 12))
 
         # Load the PV and battery input files as these are not returned in CLOVER as a whole
@@ -519,6 +515,64 @@ class App(ttk.Window):
             ),
             ttk.StringVar(self, global_settings_yaml.get(THEME, DEFAULT_GUI_THEME)),
         )
+
+    def save_configuration(self) -> None:
+        """
+        Saves the current configuration.
+
+        """
+
+        # Don't attempt to save the configuration if no location has been loaded before
+        # the user quits the application or proceeds to a subsequent step.
+        if self.location_name.get() == "":
+            return
+
+        # Save the battery information
+        with open(
+            self.input_file_info[BATTERIES], "w", encoding="utf-8"
+        ) as battery_inputs_file:
+            yaml.dump(
+                self.details_window.storage_frame.battery_frame.batteries,
+                battery_inputs_file,
+            )
+
+        # Save the converters information
+
+        # Save the devices information
+
+        # Save the diesel_inputs information
+
+        # Save the energy_system information
+
+        # Save the finance_inputs information
+
+        # Save the generation_inputs information
+
+        # Save the ghg_inputs information
+
+        # Save the grid_times information
+
+        # Save the location_inputs information
+
+        # Save the optimisation_inputs information
+
+        # Save the scenarios information
+
+        # Save the simulation information
+
+        # Save the solar_inputs information
+
+        # Save the transmission_inputs
+
+    def save_and_withdraw(self) -> None:
+        """Save all user settings and close."""
+
+        try:
+            self.save_configuration()
+        except Exception:
+            pass
+
+        self.destroy()
 
     def select_theme(self, theme: str) -> None:
         """Set the theme for the window."""

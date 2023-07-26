@@ -22,6 +22,7 @@ from clover.simulation.storage_utils import Battery
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
+from ..__utils__ import COSTS, EMISSIONS
 
 __all__ = ("StorageFrame",)
 
@@ -673,6 +674,53 @@ class BatteryFrame(ttk.Frame):
         # Add the battery to the system frame
         self.add_battery_to_system_frame(new_name)
 
+    @property
+    def batteries(self) -> list[dict[str, float | dict[str, float]]]:
+        """
+        Return a list of batteries based on the information provided in the frame.
+
+        :return:
+            The batteries based on the frame's information.
+
+
+        """
+
+        batteries: list[dict[str, float | dict[str, float]]] = []
+
+        for battery_name in self.battery_name_values:
+            battery_dict = Battery(
+                self.battery_capacities[battery_name].get(),
+                self.cycle_lifetime[battery_name].get(),
+                self.leakage[battery_name].get() / 100,
+                self.maximum_charge[battery_name].get() / 100,
+                self.minimum_charge[battery_name].get() / 100,
+                battery_name,
+                self.c_rate_charging[battery_name].get() / 100,
+                self.conversion_efficiency_in[battery_name].get() / 100,
+                self.conversion_efficiency_out[battery_name].get() / 100,
+                self.c_rate_discharging[battery_name].get() / 100,
+                self.lifetime_capacity_loss[battery_name].get() / 100,
+                self.battery_capacities[battery_name].get(),
+                True,
+            ).as_dict
+
+            # Append cost and emissions information
+            battery_dict[COSTS] = {
+                COST: self.costs[battery_name].get(),
+                COST_DECREASE: self.cost_decrease[battery_name].get(),
+                OM: self.o_and_m_costs[battery_name].get(),
+            }
+
+            battery_dict[EMISSIONS] = {
+                GHGS: self.embedded_emissions[battery_name].get(),
+                GHG_DECREASE: self.annual_emissions_decrease[battery_name].get(),
+                OM_GHGS: self.om_emissions[battery_name].get(),
+            }
+
+            batteries.append(battery_dict)
+
+        return batteries
+
     def enter_battery_name(self, _) -> None:
         """Called when someone enters a new battery name."""
         self.populate_available_batteries()
@@ -793,6 +841,8 @@ class BatteryFrame(ttk.Frame):
             The battery emissions information;
 
         """
+
+        self.battery_name_values: dict[str, ttk.StringVar] = {}
 
         for battery in batteries:
             self.battery_name_values[battery.name] = ttk.StringVar(self, battery.name)

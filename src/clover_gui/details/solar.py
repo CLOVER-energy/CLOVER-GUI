@@ -667,6 +667,8 @@ class PVFrame(ttk.Frame):
 
         """
 
+        self.panel_name_values: dict[str, ttk.StringVar] = {}
+
         for pv_panel in pv_panels:
             self.panel_name_values[pv_panel.name] = ttk.StringVar(self, pv_panel.name)
             self.panel_lifetimes[pv_panel.name] = ttk.DoubleVar(self, pv_panel.lifetime)
