@@ -42,6 +42,7 @@ __all__ = (
     "LOAD_LOCATION_GEOMETRY",
     "MAIN_WINDOW_GEOMETRY",
     "RENEWABLES_NINJA_TOKEN",
+    "PANELS",
     "parse_battery_inputs",
     "parse_diesel_inputs",
     "parse_solar_inputs",
@@ -116,6 +117,10 @@ LOCATIONS_DIRECTORY: str = "locations"
 # Main-window geometry:
 #   The geometry to use for the main window, specified in width and height.
 MAIN_WINDOW_GEOMETRY: str = "1260x800"
+
+# Panels:
+#   Keyword for saving panel names.
+PANELS: str = "panels"
 
 # Renewables-ninja token:
 #   Keyword for parsing the renewables.ninja token.
@@ -389,7 +394,7 @@ def parse_solar_inputs(
     # Parse the PV-panel information.
     pv_panels: list[PVPanel] = [
         PVPanel.from_dict(logger, panel_input)
-        for panel_input in solar_generation_inputs["panels"]
+        for panel_input in solar_generation_inputs[PANELS]
         if panel_input["type"] == SolarPanelType.PV.value
     ]
 
@@ -398,7 +403,7 @@ def parse_solar_inputs(
         pv_panel_costs: dict[str, DefaultDict[str, float]] = {
             pv_panel.name: [
                 collections.defaultdict(float, panel_data[COSTS])
-                for panel_data in solar_generation_inputs["panels"]
+                for panel_data in solar_generation_inputs[PANELS]
                 if panel_data[_NAME] == pv_panel.name
             ][0]
             for pv_panel in pv_panels
@@ -415,7 +420,7 @@ def parse_solar_inputs(
         pv_panel_emissions: dict[str, DefaultDict[str, float]] = {
             pv_panel.name: [
                 collections.defaultdict(float, panel_data[EMISSIONS])
-                for panel_data in solar_generation_inputs["panels"]
+                for panel_data in solar_generation_inputs[PANELS]
                 if panel_data[_NAME] == pv_panel.name
             ][0]
             for pv_panel in pv_panels

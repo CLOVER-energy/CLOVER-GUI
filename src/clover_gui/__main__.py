@@ -57,6 +57,10 @@ from .preferences import PreferencesWindow
 from .post_run import PostRunScreen
 from .running import RunScreen
 
+# Solar inputs:
+#   Keyword for saving solar inputs information.
+SOLAR_INPUTS: str = "solar_inputs"
+
 
 def open_help_window() -> None:
     """
@@ -561,6 +565,10 @@ class App(ttk.Window):
         # Save the simulation information
 
         # Save the solar_inputs information
+        with open(
+            self.input_file_info[SOLAR_INPUTS], "w", encoding="utf-8"
+        ) as solar_inputs_file:
+            yaml.dump(self.details_window.solar_frame.pv_panels, solar_inputs_file)
 
         # Save the transmission_inputs
 

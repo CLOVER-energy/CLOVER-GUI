@@ -21,6 +21,8 @@ from clover.impact.ghgs import GHGS, GHG_DECREASE, OM_GHGS
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
+from ..__utils__ import COSTS, EMISSIONS, PANELS
+
 
 __all__ = ("SolarFrame",)
 
@@ -917,6 +919,50 @@ class SolarFrame(ttk.Frame):
         )
 
         # TODO: Add configuration frame widgets and layout
+
+    @property
+    def pv_panels(self) -> list[dict[str, float | dict[str, float]]]:
+        """
+        Return a list of solar panels based on the information provided in the frame.
+
+        :return:
+            The solar panels based on the frame's information.
+
+
+        """
+
+        pv_panels: dict[list[dict[str, float | dict[str, float]]]] = {PANELS: []}
+
+        for panel_name in self.pv_frame.panel_name_values:
+            panel_dict = PVPanel(
+                self.pv_frame.panel_orientation[panel_name].get(),
+                self.pv_frame.panel_lifetimes[panel_name].get(),
+                panel_name,
+                self.pv_frame.nominal_power[panel_name].get(),
+                True,
+                self.pv_frame.reference_efficiencies[panel_name].get(),
+                self.pv_frame.reference_temperature[panel_name].get(),
+                self.pv_frame.thermal_coefficient[panel_name].get(),
+                self.pv_frame.panel_tilt[panel_name].get(),
+                Tracking(0),
+            ).as_dict
+
+            # Append cost and emissions information
+            panel_dict[COSTS] = {
+                COST: self.pv_frame.costs[panel_name].get(),
+                COST_DECREASE: self.pv_frame.cost_decrease[panel_name].get(),
+                OM: self.pv_frame.o_and_m_costs[panel_name].get(),
+            }
+
+            panel_dict[EMISSIONS] = {
+                GHGS: self.pv_frame.embedded_emissions[panel_name].get(),
+                GHG_DECREASE: self.pv_frame.annual_emissions_decrease[panel_name].get(),
+                OM_GHGS: self.pv_frame.om_emissions[panel_name].get(),
+            }
+
+            pv_panels[PANELS].append(panel_dict)
+
+        return pv_panels
 
     def set_solar(
         self,
