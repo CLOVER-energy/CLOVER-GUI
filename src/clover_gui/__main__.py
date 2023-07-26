@@ -13,6 +13,7 @@ import os
 import pkgutil
 import ttkbootstrap as ttk
 
+from logging import Logger
 from subprocess import Popen
 
 from clover import (
@@ -20,6 +21,7 @@ from clover import (
     LOCATIONS_FOLDER_NAME,
     INPUTS_DIRECTORY,
     parse_input_files,
+    read_yaml,
 )
 from clover.scripts.new_location import create_new_location
 from ttkbootstrap.constants import *
@@ -27,10 +29,17 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
     BaseScreen,
+    DEFAULT_GUI_THEME,
+    DEFAULT_RENEWABLES_NINJA_TOKEN,
+    DEFAULT_SYSTEM_LIFETIME,
+    GLOBAL_SETTINGS_FILEPATH,
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
     parse_diesel_inputs,
     parse_solar_inputs,
+    RENEWABLES_NINJA_TOKEN,
+    SYSTEM_LIFETIME,
+    THEME,
     update_location_information,
 )
 from .configuration import ConfigurationScreen
@@ -39,6 +48,7 @@ from .load_location import LoadLocationWindow
 from .main_menu import MainMenuScreen
 from .new_location import NewLocationScreen
 from .splash_screen import SplashScreenWindow
+from .preferences import PreferencesWindow
 from .post_run import PostRunScreen
 from .running import RunScreen
 
@@ -56,14 +66,6 @@ def save_configuration() -> None:
     """
     Saves the current configuration.
 
-    """
-
-    pass
-
-
-def open_preferences_window() -> None:
-    """
-    Opens the user-preferences popup window.
     """
 
     pass
@@ -88,13 +90,20 @@ class App(ttk.Window):
 
         # Set the theme and styles
         super().__init__()
-        self.theme = "journal"
 
         # Set attributes
         self._data_directory: str | None = None
         self.location_name: ttk.StringVar = ttk.StringVar(self, "")
         self.logger = get_logger("clover_gui", False)
-        self.system_lifetime: ttk.IntVar = ttk.IntVar(self, 30, "system_lifetime")
+
+        # Open the settings file
+        renewables_ninja_token, system_lifetime, theme = self.read_global_settings(
+            self.logger
+        )
+        self.renewables_ninja_token = renewables_ninja_token
+        self.system_lifetime = system_lifetime
+        self.theme = theme
+        self.style.theme_use(self.theme.get())
 
         # Setup the CLOVER-GUI application.
         self.withdraw()
@@ -116,7 +125,9 @@ class App(ttk.Window):
 
         # Edit menu
         self.edit_menu = ttk.Menu(self.menu_bar, tearoff=0)
-        self.edit_menu.add_command(label="Preferences", command=open_preferences_window)
+        self.edit_menu.add_command(
+            label="Preferences", command=self.open_preferences_window
+        )
         self.menu_bar.add_cascade(label="Edit", menu=self.edit_menu)
 
         # Help menu
@@ -381,7 +392,9 @@ class App(ttk.Window):
         """Opens the details window."""
 
         if self.details_window is None:
-            self.details_window: DetailsWindow | None = DetailsWindow()
+            self.details_window: DetailsWindow | None = DetailsWindow(
+                self.system_lifetime, self.renewables_ninja_token
+            )
         else:
             self.details_window.deiconify()
         self.details_window.details_notebook.select(tab_id)
@@ -430,6 +443,22 @@ class App(ttk.Window):
         BaseScreen.add_screen_moving_forward(self.run_screen)
         self.post_run_screen.pack(fill="both", expand=True)
 
+    def open_preferences_window(self) -> None:
+        """
+        Opens the user-preferences popup window.
+        """
+
+        if self.preferences_window is None:
+            self.preferences_window: PreferencesWindow | None = PreferencesWindow(
+                self.renewables_ninja_token,
+                self.select_theme,
+                self.system_lifetime,
+                self.theme,
+            )
+        else:
+            self.preferences_window.deiconify()
+        self.preferences_window.mainloop()
+
     def open_run_screen(self, clover_thread: Popen) -> None:
         """Moves to the run page"""
 
@@ -438,6 +467,45 @@ class App(ttk.Window):
         self.run_screen.pack(fill="both", expand=True)
         self.run_screen.stdout_data = ""
         self.run_screen.run_with_clover(clover_thread)
+
+    def read_global_settings(
+        self, logger: Logger
+    ) -> tuple[ttk.IntVar, ttk.StringVar, ttk.StringVar]:
+        """
+        Read the global settings.
+
+        :returns:
+            - The renewables.ninja API token,
+            - The system lifetime in years,
+            - The theme.
+
+        """
+
+        try:
+            global_settings_yaml = read_yaml(GLOBAL_SETTINGS_FILEPATH, logger)
+        except FileNotFoundError:
+            return (
+                ttk.StringVar(self, DEFAULT_RENEWABLES_NINJA_TOKEN),
+                ttk.IntVar(self, DEFAULT_SYSTEM_LIFETIME),
+                ttk.StringVar(self, DEFAULT_GUI_THEME),
+            )
+
+        return (
+            ttk.StringVar(
+                self,
+                global_settings_yaml.get(
+                    RENEWABLES_NINJA_TOKEN, DEFAULT_RENEWABLES_NINJA_TOKEN
+                ),
+            ),
+            ttk.IntVar(
+                self, global_settings_yaml.get(SYSTEM_LIFETIME, DEFAULT_SYSTEM_LIFETIME)
+            ),
+            ttk.StringVar(self, global_settings_yaml.get(THEME, DEFAULT_GUI_THEME)),
+        )
+
+    def select_theme(self, theme: str) -> None:
+        """Set the theme for the window."""
+        self.style.theme_use(theme)
 
     def setup(self) -> None:
         """
@@ -452,6 +520,9 @@ class App(ttk.Window):
             self.open_new_location_frame,
         )
         self.splash.set_progress_bar_progress(40)
+
+        # Preferences
+        self.preferences_window: PreferencesWindow | None = None
 
         # New-location
         self.new_location_frame = NewLocationScreen(
@@ -474,7 +545,9 @@ class App(ttk.Window):
         self.configuration_screen.pack_forget()
 
         # Details
-        self.details_window: DetailsWindow | None = DetailsWindow(self.system_lifetime)
+        self.details_window: DetailsWindow | None = DetailsWindow(
+            self.system_lifetime, self.renewables_ninja_token
+        )
         self.details_window.withdraw()
         self.splash.set_progress_bar_progress(80)
 

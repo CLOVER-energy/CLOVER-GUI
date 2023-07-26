@@ -35,7 +35,18 @@ class PVFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, renewables_ninja_token: ttk.StringVar):
+        """
+        Instantiate a :class:`PVFrame` instance.
+
+        :param: parent
+            The parent frame.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
+
+
+        """
         super().__init__(parent)
 
         self.rowconfigure(0, weight=1)
@@ -61,7 +72,8 @@ class PVFrame(ttk.Frame):
 
         self.add_panel_to_system_frame: Callable | None = None
 
-        self.renewables_ninja_token = tk.StringVar(value="YOUR API TOKEN")
+        self.renewables_ninja_token = renewables_ninja_token
+
         self.renewables_ninja_token_entry = ttk.Entry(
             self,
             bootstyle=f"{WARNING}-inverted",
@@ -865,7 +877,19 @@ class SolarFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, renewables_ninja_token: ttk.StringVar):
+        """
+        Instantiate a :class:`PVFrame` instance.
+
+        :param: parent
+            The parent frame.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
+
+
+        """
+
         super().__init__(parent)
 
         self.columnconfigure(0, weight=1)
@@ -874,7 +898,7 @@ class SolarFrame(ttk.Frame):
         self.solar_notebook = ttk.Notebook(self, bootstyle=WARNING)
         self.solar_notebook.grid(row=0, column=0, padx=20, pady=10, sticky="news")
 
-        self.pv_frame = PVFrame(self)
+        self.pv_frame = PVFrame(self, renewables_ninja_token)
         self.solar_notebook.add(self.pv_frame, text="PV panels", sticky="news")
 
         self.pv_t_frame = PVTFrame(self)

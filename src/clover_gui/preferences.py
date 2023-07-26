@@ -15,14 +15,34 @@ import tkinter as tk
 from typing import Callable
 
 import ttkbootstrap as ttk
+import yaml
 
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 
-from .__utils__ import BaseScreen, LOAD_LOCATION_GEOMETRY, LOCATIONS_DIRECTORY
+from .__utils__ import (
+    BaseScreen,
+    DEFAULT_GUI_THEME,
+    GLOBAL_SETTINGS_FILEPATH,
+    LOAD_LOCATION_GEOMETRY,
+    RENEWABLES_NINJA_TOKEN,
+    SYSTEM_LIFETIME,
+    THEME,
+)
 
 __all__ = ("PreferencesWindow",)
+
+# Available themes:
+#   The list of available themes.
+AVAILABLE_THEMES: list[str] = [
+    DEFAULT_GUI_THEME,
+    "journal",
+    "cosmo",
+    "minty",
+    "darkly",
+    "vapor",
+]
 
 
 class PreferencesScreen(BaseScreen, show_navigation=False):
@@ -35,73 +55,93 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
     """
 
-    def __init__(self, parent) -> None:
+    def __init__(
+        self,
+        parent,
+        renewables_ninja_token: ttk.StringVar,
+        select_theme: Callable,
+        system_lifetime: ttk.IntVar,
+        theme: ttk.StringVar,
+    ) -> None:
         """
         Instantiate a :class:`PreferencesScreen` instance.
 
         :param: parent
             The parent window or frame.
 
+        :param: select_theme
+            Function to select the theme.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
+
+        :param: system_lifetime
+            The lifetime of the system, in years.
+
+        :param: theme
+            The current theme.
+
         """
 
         super().__init__(parent)
 
-        self.pack(fill="both", expand=True)
-        self.columnconfigure(0, weight=2)  # First row has the header
-        self.columnconfigure(1, weight=1)  # These rows have entries
+        self.renewables_ninja_token = renewables_ninja_token
+        self.select_theme = select_theme
+        self.system_lifetime = system_lifetime
+        self.theme = theme
 
-        self.rowconfigure(0, weight=6)
-        self.rowconfigure(1, weight=3)
-        self.rowconfigure(2, weight=3)
-        self.rowconfigure(3, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1)
 
-        self.label = ttk.Label(
-            self, text="Load an existing location", style=f"{PRIMARY}", font=80
-        )
-        self.label.grid(row=0, column=0, columnspan=2, pady=10)
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
 
-        self.location_name_label = ttk.Label(self, text="Location name")
-        self.location_name_label.grid(row=1, column=0, sticky="e")
+        self.renewables_ninja_label = ttk.Label(self, text="Renewables ninja API token")
+        self.renewables_ninja_label.grid(row=0, column=0, sticky="w", padx=10, pady=5)
 
-        self.load_location_name: ttk.StringVar = ttk.StringVar(self)
-
-        self.load_location_combobox = ttk.Combobox(
-            self, bootstyle="primary", textvariable=self.load_location_name
-        )
-        self.load_location_combobox.grid(
-            row=1, column=1, padx=10, pady=5, sticky="w", ipadx=80
-        )
-        self.load_location_combobox.bind("<<ComboboxSelected>>", self.select_location)
-        self.populate_available_locations()
-
-        self.load_button = ttk.Button(
+        self.renewables_ninja_entry = ttk.Entry(
             self,
-            text="Load",
-            bootstyle=f"{PRIMARY}-outline",
-            command=load_location_callback,
+            textvariable=self.renewables_ninja_token,
         )
-        self.load_button.grid(row=2, column=1, padx=10, pady=10, ipadx=80, ipady=20)
-
-        self.progress_bar = ttk.Progressbar(
-            self, bootstyle=f"{PRIMARY}-striped", mode="determinate"
-        )
-        self.progress_bar.grid(
-            row=3, column=0, columnspan=2, pady=20, padx=20, sticky="ew"
+        self.renewables_ninja_entry.grid(
+            row=0, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-    def populate_available_locations(self) -> None:
-        """Populates available locations for selection."""
+        self.system_lifetime_label = ttk.Label(self, text="System lifetime")
+        self.system_lifetime_label.grid(row=1, column=0, sticky="w", padx=10, pady=5)
 
-        if not os.path.isdir(LOCATIONS_DIRECTORY):
-            return
+        self.system_lifetime_entry = ttk.Entry(
+            self,
+            textvariable=self.system_lifetime,
+        )
+        self.system_lifetime_entry.grid(
+            row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
 
-        self.load_location_combobox["values"] = os.listdir(LOCATIONS_DIRECTORY)
-        self.load_location_name.set(self.load_location_combobox["values"][0])
+        self.system_lifetime_unit = ttk.Label(self, text="years")
+        self.system_lifetime_unit.grid(row=1, column=2, sticky="w", padx=10, pady=5)
 
-    def select_location(self, _) -> None:
-        """Selects the location specified."""
+        self.theme_label = ttk.Label(self, text="Theme")
+        self.theme_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
-        self.load_location_name.set(self.load_location_combobox.get())
+        self.theme_combobox = ttk.Combobox(
+            self, textvariable=self.theme, state=READONLY
+        )
+        self.theme_combobox.grid(row=2, column=1, padx=10, pady=5, sticky="w", ipadx=60)
+        self.theme_combobox.bind("<<ComboboxSelected>>", self.combobox_theme_select)
+        self.populate_themes()
+
+    def combobox_theme_select(self, _) -> None:
+        """Select the theme from the combobox."""
+
+        self.select_theme(self.theme_combobox.get())
+
+    def populate_themes(self) -> None:
+        """Populate the combobox with themes."""
+
+        self.theme_combobox["values"] = AVAILABLE_THEMES
 
 
 class PreferencesWindow(tk.Toplevel):
@@ -115,12 +155,28 @@ class PreferencesWindow(tk.Toplevel):
 
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        renewables_ninja_token: ttk.StringVar,
+        select_theme: Callable,
+        system_lifetime: ttk.IntVar,
+        theme: str,
+    ) -> None:
         """
         Instantiate a :class:`PreferencesWindow` instance.
 
-        :param: load_location_callback:
-            The callback function for when an existing location is to be loaded.
+        :param: select_theme
+            Function to select the theme.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
+
+        :param: system_lifetime
+            The lifetime of the system, in years.
+
+        :param: theme
+            The current theme.
+
 
         """
 
@@ -131,6 +187,35 @@ class PreferencesWindow(tk.Toplevel):
 
         self.geometry(LOAD_LOCATION_GEOMETRY)
 
-        self.load_location_frame = PreferencesScreen(self)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=10)
 
-        self.protocol("WM_DELETE_WINDOW", self.withdraw)
+        self.preferences_label = ttk.Label(
+            self, bootstyle=SECONDARY, text="Preferences", font="80"
+        )
+        self.preferences_label.grid(row=0, column=0, sticky="w", padx=20, pady=5)
+
+        self.preferences_screen = PreferencesScreen(
+            self, renewables_ninja_token, select_theme, system_lifetime, theme
+        )
+        self.preferences_screen.grid(row=1, column=0, padx=20, pady=5, sticky="news")
+
+        self.protocol("WM_DELETE_WINDOW", self.withdraw_and_save)
+
+    def withdraw_and_save(self) -> None:
+        """Withdraw and save the window."""
+
+        # Save the configuration.
+        with open(
+            GLOBAL_SETTINGS_FILEPATH, "w", encoding="utf-8"
+        ) as global_settings_file:
+            yaml.dump(
+                {
+                    RENEWABLES_NINJA_TOKEN: self.preferences_screen.renewables_ninja_token.get(),
+                    SYSTEM_LIFETIME: self.preferences_screen.system_lifetime.get(),
+                    THEME: self.preferences_screen.theme.get(),
+                },
+                global_settings_file,
+            )
+
+        self.withdraw()

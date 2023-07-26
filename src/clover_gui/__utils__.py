@@ -31,12 +31,19 @@ __all__ = (
     "BaseScreen",
     "CLOVER_SPLASH_SCREEN_IMAGE",
     "clover_thread",
+    "DEFAULT_GUI_THEME",
+    "DEFAULT_RENEWABLES_NINJA_TOKEN",
+    "DEFAULT_SYSTEM_LIFETIME",
+    "GLOBAL_SETTINGS_FILEPATH",
     "IMAGES_DIRECTORY",
     "LOAD_LOCATION_GEOMETRY",
     "MAIN_WINDOW_GEOMETRY",
+    "RENEWABLES_NINJA_TOKEN",
     "parse_battery_inputs",
     "parse_diesel_inputs",
     "parse_solar_inputs",
+    "SYSTEM_LIFETIME",
+    "THEME",
 )
 
 # Battery inputs file:
@@ -45,7 +52,19 @@ BATTERY_INPUTS_FILE: str = os.path.join("simulation", "battery_inputs.yaml")
 
 # CLOVER splash-screen image:
 #   The name of the CLOVER splash-screen image.
-CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen.png"
+CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_5_2_beta.png"
+
+# Default GUI theme:
+#   The default theme for the GUI.
+DEFAULT_GUI_THEME: str = "litera"
+
+# Default renewables.ninja token:
+#   The default text to display for the renewables.ninja token.
+DEFAULT_RENEWABLES_NINJA_TOKEN: str = "CONFIGURE TOKEN IN PREFERENCES"
+
+# Default system lifetime:
+#   The defailt lifetime for the system, in years.
+DEFAULT_SYSTEM_LIFETIME: int = 30
 
 # Details geometry:
 #   The geometry to use for the details window.
@@ -54,6 +73,10 @@ DETAILS_GEOMETRY: str = "1080x720"
 # Diesel inputs file:
 #   The diesel inputs file.
 DIESEL_INPUTS_FILE: str = os.path.join("generation", "diesel_inputs.yaml")
+
+# Global settings filepath:
+#   Path to the global-settings file.
+GLOBAL_SETTINGS_FILEPATH: str = "global_settings.yaml"
 
 # Images directory:
 #   The directory containing the images to display.
@@ -73,11 +96,23 @@ LOCATIONS_DIRECTORY: str = "locations"
 
 # Main-window geometry:
 #   The geometry to use for the main window, specified in width and height.
-MAIN_WINDOW_GEOMETRY: str = "1220x800"
+MAIN_WINDOW_GEOMETRY: str = "1260x800"
+
+# Renewables-ninja token:
+#   Keyword for parsing the renewables.ninja token.
+RENEWABLES_NINJA_TOKEN: str = "renewables_ninja_token"
 
 # Solar inputs file:
 #   The solar inputs file.
 SOLAR_INPUTS_FILE: str = os.path.join("generation", "solar_generation_inputs.yaml")
+
+# System lifetime:
+#   Keyword for parsing the system lifetime.
+SYSTEM_LIFETIME: str = "system_lifetime"
+
+# Theme:
+#   Keyword for parsing the GUI theme.
+THEME: str = "theme"
 
 # Costs:
 #   Keyword for costs.

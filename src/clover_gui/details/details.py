@@ -44,12 +44,17 @@ class DetailsWindow(tk.Toplevel):
 
     """
 
-    def __init__(self, system_lifetime: ttk.IntVar) -> None:
+    def __init__(
+        self, system_lifetime: ttk.IntVar, renewables_ninja_token: ttk.StringVar
+    ) -> None:
         """
         Instantiate a :class:`DetailsWindow` instance.
 
         :param: system_lifetime
             The lifetime of the system.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
 
         """
 
@@ -75,12 +80,12 @@ class DetailsWindow(tk.Toplevel):
         self.details_notebook = ttk.Notebook(self, bootstyle=f"{SECONDARY}")
         self.details_notebook.grid(
             row=1, column=0, sticky="nsew", padx=20, pady=5
-        )  # Use grid
+        )
 
         style = ttk.Style()
         style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 8))
 
-        self.solar_frame = SolarFrame(self.details_notebook)
+        self.solar_frame = SolarFrame(self.details_notebook, renewables_ninja_token)
         self.details_notebook.add(self.solar_frame, text="Solar", sticky="news")
 
         # self.wind_frame = WindFrame(self.details_notebook)
