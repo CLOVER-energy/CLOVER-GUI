@@ -54,15 +54,6 @@ from .preferences import PreferencesWindow
 from .post_run import PostRunScreen
 from .running import RunScreen
 
-# All-purpose callback commands
-def open_configuration() -> None:
-    """
-    Opens a user-pre-defined configuration.
-
-    """
-
-    pass
-
 
 def save_configuration() -> None:
     """
@@ -118,7 +109,7 @@ class App(ttk.Window):
 
         # File menu
         self.file_menu = ttk.Menu(self.menu_bar, tearoff=0)
-        self.file_menu.add_command(label="Open", command=open_configuration)
+        self.file_menu.add_command(label="Open", command=self.open_load_location_window)
         self.file_menu.add_command(label="Save", command=save_configuration)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.quit)
@@ -402,6 +393,14 @@ class App(ttk.Window):
         self.configuration_screen.pack(fill="both", expand=True)
         self.location_name.set(load_location_name)
 
+    def open_configuration(self) -> None:
+        """
+        Opens a user-pre-defined configuration.
+
+        """
+
+        pass
+
     def open_configuration_frame(self) -> None:
         """Opens the configuration frame after a CLOVER run."""
 
@@ -445,17 +444,6 @@ class App(ttk.Window):
 
     def open_load_location_window(self) -> None:
         """Open the load-location window."""
-
-        if self.load_location_window is None:
-            self.load_location_window: LoadLocationWindow | None = LoadLocationWindow(
-                self.load_location
-            )
-        else:
-            self.load_location_window.deiconify()
-        self.load_location_window.mainloop()
-
-    def open_load_location_window_post_run(self) -> None:
-        """Open the load-location window after a CLOVER run."""
 
         if self.load_location_window is None:
             self.load_location_window: LoadLocationWindow | None = LoadLocationWindow(
@@ -586,7 +574,7 @@ class App(ttk.Window):
         # Post run
         self.post_run_screen = PostRunScreen(
             self.open_configuration_frame,
-            self.open_load_location_window_post_run,
+            self.open_load_location_window,
             self.open_new_location_frame_post_run,
         )
 
