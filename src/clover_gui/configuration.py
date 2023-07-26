@@ -43,14 +43,14 @@ class SimulationFrame(BaseScreen, show_navigation=False):
     def __init__(
         self,
         parent,
-        launch_simulation: Callable,
+        launch_clover_run: Callable,
     ) -> None:
         super().__init__(parent)
 
         """
         Instantiate a :class:`ConfigureFrame` instance.
 
-        :param: launch_simulation
+        :param: launch_clover_run
             A callable function to launch a simulation.
 
         """
@@ -148,7 +148,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             self,
             text="Run Simulation",
             bootstyle=f"{INFO}-outline",
-            command=lambda operating_mode=OperatingMode.SIMULATION: launch_simulation(
+            command=lambda operating_mode=OperatingMode.SIMULATION: launch_clover_run(
                 operating_mode
             ),
         )
@@ -359,7 +359,9 @@ class OptimisationFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent, system_lifetime: ttk.IntVar):
+    def __init__(
+        self, parent, launch_clover_run: Callable, system_lifetime: ttk.IntVar
+    ):
         super().__init__(parent)
 
         self.system_lifetime = system_lifetime
@@ -383,8 +385,8 @@ class OptimisationFrame(ttk.Frame):
         # self.rowconfigure(11, weight=1)
         # self.rowconfigure(12, weight=1)
 
-        self.columnconfigure(0, weight=1)
-        # self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=4)
+        self.columnconfigure(1, weight=1)
         # self.columnconfigure(2, weight=1)
         # self.columnconfigure(3, weight=1)
         # self.columnconfigure(4, weight=1)
@@ -396,6 +398,7 @@ class OptimisationFrame(ttk.Frame):
         self.iterations_frame.grid(
             row=0,
             column=0,
+            columnspan=2,
             padx=5,
             pady=10,
             ipady=80,
@@ -576,6 +579,7 @@ class OptimisationFrame(ttk.Frame):
         self.steps_frame.grid(
             row=1,
             column=0,
+            columnspan=2,
             padx=5,
             pady=10,
             ipady=0,
@@ -1042,6 +1046,7 @@ class OptimisationFrame(ttk.Frame):
         self.optimisation_criterion_frame.grid(
             row=2,
             column=0,
+            columnspan=2,
             padx=5,
             pady=10,
             ipady=40,
@@ -1096,6 +1101,7 @@ class OptimisationFrame(ttk.Frame):
         self.threshold_criteria_frame.grid(
             row=3,
             column=0,
+            columnspan=2,
             padx=5,
             pady=10,
             ipady=60,
@@ -1158,6 +1164,21 @@ class OptimisationFrame(ttk.Frame):
         )
 
         self.update_threshold_criteria()
+
+        # Combines the functions to open the run screen and launch the simulation.
+        self.run_optimisation_button = ttk.Button(
+            self,
+            text="Run Optimisation",
+            bootstyle=f"{INFO}-outline",
+            command=lambda operating_mode=OperatingMode.OPTIMISATION: launch_clover_run(
+                operating_mode
+            ),
+        )
+        self.run_optimisation_button.grid(
+            row=4, column=1, columnspan=2, padx=5, pady=5, ipadx=80, ipady=20
+        )
+
+        # TODO: Add configuration frame widgets and layout
 
     def delete_criterion(self, criterion: ThresholdCriterion) -> None:
         """
@@ -1402,14 +1423,18 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         self.simulation_frame = SimulationFrame(
             self.configuration_notebook,
-            lambda operating_mode=OperatingMode.SIMULATION: self.launch_simulation(
+            lambda operating_mode=OperatingMode.SIMULATION: self.launch_clover_run(
                 operating_mode
             ),
         )
         self.configuration_notebook.add(self.simulation_frame, text="Simulate")
 
         self.optimisation_frame = OptimisationFrame(
-            self.configuration_notebook, self.system_lifetime
+            self.configuration_notebook,
+            lambda operating_mode=OperatingMode.OPTIMISATION: self.launch_clover_run(
+                operating_mode
+            ),
+            self.system_lifetime,
         )
         self.configuration_notebook.add(self.optimisation_frame, text="Optimise")
 
@@ -1456,7 +1481,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             row=0, column=4, sticky="w", pady=5, ipadx=80, ipady=20
         )
 
-    def launch_simulation(self, operating_mode: OperatingMode) -> None:
+    def launch_clover_run(self, operating_mode: OperatingMode) -> None:
         """Launch a CLOVER simulation."""
 
         # Assemble arguments and call to CLOVER.
@@ -1489,6 +1514,9 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
             if not self.simulation_frame.generate_plots.get():
                 clover_args.append("-sp")
+
+        if operating_mode == OperatingMode.OPTIMISATION:
+            clover_args.extend(["-opt"])
 
         self.clover_thread = clover_thread(clover_args)
         self.open_run_screen(self.clover_thread)

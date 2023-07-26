@@ -109,7 +109,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             self, text="STOP", bootstyle=f"{DANGER}-inverted", command=self.stop
         )
         self.stop_button.grid(
-            row=1, column=4, padx=20, pady=5, ipadx=60, ipady=10, sticky="ew"
+            row=1, column=4, padx=20, pady=5, ipadx=80, ipady=10, sticky="e"
         )
 
         self.sub_process_frame = ScrolledFrame(self)
@@ -153,7 +153,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             state=DISABLED,
         )
         self.post_run_button.grid(
-            row=3, column=4, sticky="w", pady=5, ipadx=80, ipady=20
+            row=3, column=4, sticky="e", pady=5, ipadx=80, ipady=20
         )
 
         # Create a buffer for the stdout
@@ -177,7 +177,6 @@ class RunScreen(BaseScreen, show_navigation=True):
                 # Scroll to the bottom
                 self.sub_process_frame.yview_moveto(1)
             else:  # clean up
-                self.post_run_button.configure(state="enabled")
                 self.after(1000, self.stop)  # stop in 5 seconds
                 return None
 
@@ -225,12 +224,20 @@ class RunScreen(BaseScreen, show_navigation=True):
 
     def stop(self, stopping=[]):
         """Stop subprocess and quit GUI."""
-        if stopping:
+        if len(stopping) > 0:
             return  # avoid killing subprocess more than once
         stopping.append(True)
+
+        clover_return_code = self.clover_thread.poll()
 
         self.clover_thread.kill()  # tell the subprocess to exit
         self.screen_thread.stop()
         self.sub_process_frame.enable_scrolling()
 
-        self.sub_process_frame.enable_scrolling()
+        # Enable the post-run button if the run completed successfully.
+        self.push_progress_bar(100)
+
+        if clover_return_code == 0:
+            self.post_run_button.configure(state="enabled")
+        else:
+            self.clover_progress_bar.configure(bootstyle=f"{DANGER}-striped")
