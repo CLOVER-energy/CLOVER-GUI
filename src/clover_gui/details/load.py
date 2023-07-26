@@ -281,13 +281,16 @@ class LoadFrame(ttk.Frame):
 
         self.select_device(self.devices[0])
 
-    def add_device(self, seed_device: Device | None = None) -> None:
+    def add_device(self, seed_device: Device | None = None, seed_utilisation: pd.DataFrame | None = None) -> None:
         """
         Creates a new device when called.
 
         :param: seed_device
             If specified, the :class:`clover.load.load.Device` to use to determine
             parameters for the device.
+
+        :param: seed_utilisation
+            If specified, the seed device utilisation profile.
 
         """
 
@@ -405,11 +408,19 @@ class LoadFrame(ttk.Frame):
 
         """
 
-        self.devices = []
+        # Delete and forget the old devices buttons.
+        for old_device in self.devices:
+            old_active_button = self.devices_frame.device_active_buttons.pop(old_device)
+            old_active_button.grid_forget()
 
-        for device, utilisations in device_utilisations.items():
+            old_selected_button = self.devices_frame.device_selected_buttons.pop(old_device)
+            old_selected_button.grid_forget()
+
+        self.devices: list[GUIDevice] = []
+
+        for device, utilisation in device_utilisations.items():
             # Create a GUI for the device
-            self.add_device(device)
+            self.add_device(device, utilisation)
 
         self.active_device = self.devices[0]
         self.select_device(self.active_device)

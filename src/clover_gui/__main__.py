@@ -29,10 +29,12 @@ from ttkbootstrap.scrolled import *
 
 from .__utils__ import (
     BaseScreen,
+    CLOVER_ICON_IMAGE,
     DEFAULT_GUI_THEME,
     DEFAULT_RENEWABLES_NINJA_TOKEN,
     DEFAULT_SYSTEM_LIFETIME,
     GLOBAL_SETTINGS_FILEPATH,
+    IMAGES_DIRECTORY,
     MAIN_WINDOW_GEOMETRY,
     parse_battery_inputs,
     parse_diesel_inputs,
@@ -107,10 +109,9 @@ class App(ttk.Window):
 
         # Setup the CLOVER-GUI application.
         self.withdraw()
-        self.splash = SplashScreenWindow(self, self.data_directory)
 
         # Display the splash screen whilst loading
-        self.title("CLOVER")
+        self.splash = SplashScreenWindow(self, self.data_directory)
 
         # Setup the menubar
         self.menu_bar = ttk.Menu()
@@ -145,6 +146,15 @@ class App(ttk.Window):
         self.center_window()
         self.destroy_splash()
         self.deiconify()
+
+        # Set the window icon and title
+        self.title("CLOVER")
+        self.iconphoto(True, ttk.PhotoImage(
+            file=os.path.join(
+                self.data_directory, IMAGES_DIRECTORY, CLOVER_ICON_IMAGE
+            )
+        ))
+
 
     def center_window(self) -> None:
         """

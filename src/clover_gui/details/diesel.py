@@ -499,6 +499,8 @@ class GeneratorFrame(ttk.Frame):
 
         """
 
+        self.diesel_generator_name_values: dict[str, ttk.StringVar] = {}
+
         for diesel_generator in diesel_generators:
             self.diesel_generator_name_values[diesel_generator.name] = ttk.StringVar(
                 self, diesel_generator.name
@@ -544,6 +546,8 @@ class GeneratorFrame(ttk.Frame):
             self.annual_emissions_decrease[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_emissions.get(OM_GHGS, 0)
             )
+
+        self.populate_available_generators()
 
         self.diesel_generator_selected = self.diesel_generator_name_values[
             diesel_generator_selected.name

@@ -50,6 +50,10 @@ __all__ = (
 #   The battery inputs file.
 BATTERY_INPUTS_FILE: str = os.path.join("simulation", "battery_inputs.yaml")
 
+# Clover icon image:
+#   The name of the CLOVER icon to use.
+CLOVER_ICON_IMAGE: str = "clover_logo.png"
+
 # CLOVER splash-screen image:
 #   The name of the CLOVER splash-screen image.
 CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_5_2_beta.png"
