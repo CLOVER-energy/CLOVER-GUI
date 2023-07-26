@@ -78,9 +78,7 @@ class DetailsWindow(tk.Toplevel):
         self.details_label.grid(row=0, column=0, sticky="w", padx=20, pady=5)
 
         self.details_notebook = ttk.Notebook(self, bootstyle=f"{SECONDARY}")
-        self.details_notebook.grid(
-            row=1, column=0, sticky="nsew", padx=20, pady=5
-        )
+        self.details_notebook.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)
 
         style = ttk.Style()
         style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 8))

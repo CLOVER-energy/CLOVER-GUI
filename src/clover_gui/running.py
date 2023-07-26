@@ -90,9 +90,7 @@ class RunScreen(BaseScreen, show_navigation=True):
         )
         self.running_image = self.running_image.subsample(2)
         self.image_label = ttk.Label(self, image=self.running_image)
-        self.image_label.grid(
-            row=0, column=0, columnspan=5, sticky="news", padx=20, pady=5
-        )
+        self.image_label.grid(row=0, column=0, columnspan=5, sticky="news")
 
         self.clover_thread: Popen | None = None
 
@@ -153,7 +151,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             state=DISABLED,
         )
         self.post_run_button.grid(
-            row=3, column=4, sticky="e", pady=5, ipadx=80, ipady=20
+            row=3, column=4, sticky="e", padx=20, pady=5, ipadx=80, ipady=20
         )
 
         # Create a buffer for the stdout
@@ -224,10 +222,6 @@ class RunScreen(BaseScreen, show_navigation=True):
 
     def stop(self, stopping=[]):
         """Stop subprocess and quit GUI."""
-        if len(stopping) > 0:
-            return  # avoid killing subprocess more than once
-        stopping.append(True)
-
         clover_return_code = self.clover_thread.poll()
 
         self.clover_thread.kill()  # tell the subprocess to exit

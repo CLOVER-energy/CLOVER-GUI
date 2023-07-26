@@ -149,12 +149,14 @@ class App(ttk.Window):
 
         # Set the window icon and title
         self.title("CLOVER")
-        self.iconphoto(True, ttk.PhotoImage(
-            file=os.path.join(
-                self.data_directory, IMAGES_DIRECTORY, CLOVER_ICON_IMAGE
-            )
-        ))
-
+        self.iconphoto(
+            True,
+            ttk.PhotoImage(
+                file=os.path.join(
+                    self.data_directory, IMAGES_DIRECTORY, CLOVER_ICON_IMAGE
+                )
+            ),
+        )
 
     def center_window(self) -> None:
         """
@@ -387,14 +389,27 @@ class App(ttk.Window):
             BaseScreen.add_screen_moving_forward(self.main_menu_frame)
         progress_bar.stop()
         progress_bar.grid_forget()
+
+        # Clear the main-menu screen.
         self.main_menu_frame.pack_forget()
+
+        # Clear the CLOVER run screen.
+        self.run_screen.clover_progress_bar["value"] = 0
+        self.run_screen.clover_progress_bar.configure(bootstyle=SUCCESS)
+        self.run_screen.post_run_button.configure(state="disabled")
+        self.post_run_screen.pack_forget()
+
         self.configuration_screen.pack(fill="both", expand=True)
         self.location_name.set(load_location_name)
 
     def open_configuration_frame(self) -> None:
         """Opens the configuration frame after a CLOVER run."""
 
+        self.run_screen.clover_progress_bar["value"] = 0
+        self.run_screen.clover_progress_bar.configure(bootstyle=SUCCESS)
+        self.run_screen.post_run_button.configure(state="disabled")
         self.post_run_screen.pack_forget()
+
         BaseScreen.add_screen_moving_forward(self.post_run_screen)
         self.configuration_screen.pack(fill="both", expand=True)
 
@@ -420,7 +435,11 @@ class App(ttk.Window):
     def open_new_location_frame_post_run(self) -> None:
         """Opens the new-location frame after a CLOVER run."""
 
+        self.run_screen.clover_progress_bar["value"] = 0
+        self.run_screen.clover_progress_bar.configure(bootstyle=SUCCESS)
+        self.run_screen.post_run_button.configure(state="disabled")
         self.post_run_screen.pack_forget()
+
         BaseScreen.add_screen_moving_forward(self.post_run_screen)
         self.new_location_frame.pack(fill="both", expand=True)
 

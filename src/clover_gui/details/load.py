@@ -281,7 +281,11 @@ class LoadFrame(ttk.Frame):
 
         self.select_device(self.devices[0])
 
-    def add_device(self, seed_device: Device | None = None, seed_utilisation: pd.DataFrame | None = None) -> None:
+    def add_device(
+        self,
+        seed_device: Device | None = None,
+        seed_utilisation: pd.DataFrame | None = None,
+    ) -> None:
         """
         Creates a new device when called.
 
@@ -413,7 +417,9 @@ class LoadFrame(ttk.Frame):
             old_active_button = self.devices_frame.device_active_buttons.pop(old_device)
             old_active_button.grid_forget()
 
-            old_selected_button = self.devices_frame.device_selected_buttons.pop(old_device)
+            old_selected_button = self.devices_frame.device_selected_buttons.pop(
+                old_device
+            )
             old_selected_button.grid_forget()
 
         self.devices: list[GUIDevice] = []
