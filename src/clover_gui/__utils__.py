@@ -110,10 +110,6 @@ LOAD_LOCATION_GEOMETRY: str = "800x600"
 #   The locations input file.
 LOCATIONS_INPUT_FILE: str = os.path.join("location_data", "location_inputs.yaml")
 
-# Locations directory:
-#   The name of the locations directory.
-LOCATIONS_DIRECTORY: str = "locations"
-
 # Main-window geometry:
 #   The geometry to use for the main window, specified in width and height.
 MAIN_WINDOW_GEOMETRY: str = "1260x800"

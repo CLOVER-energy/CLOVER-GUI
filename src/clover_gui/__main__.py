@@ -25,6 +25,7 @@ from clover import (
     parse_input_files,
     read_yaml,
 )
+from clover.fileparser import DEVICE_UTILISATIONS_INPUT_DIRECTORY
 from clover.scripts.new_location import create_new_location
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
@@ -350,7 +351,9 @@ class App(ttk.Window):
         )
         set_progress_bar_progress(600 * percent_fraction)
 
-        self.details_window.load_frame.set_loads(device_utilisations)
+        self.details_window.load_frame.set_loads(
+            device_utilisations, os.path.join(LOCATIONS_FOLDER_NAME, load_location_name, INPUTS_DIRECTORY, DEVICE_UTILISATIONS_INPUT_DIRECTORY)
+        )
         set_progress_bar_progress(700 * percent_fraction)
 
         self.details_window.diesel_frame.generator_frame.set_generators(
@@ -418,7 +421,9 @@ class App(ttk.Window):
 
         if self.details_window is None:
             self.details_window: DetailsWindow | None = DetailsWindow(
-                self.system_lifetime, self.renewables_ninja_token
+                self.system_lifetime,
+                self.renewables_ninja_token,
+                self.save_configuration,
             )
         else:
             self.details_window.deiconify()
@@ -488,7 +493,7 @@ class App(ttk.Window):
 
     def read_global_settings(
         self, logger: Logger
-    ) -> tuple[ttk.IntVar, ttk.StringVar, ttk.StringVar]:
+    ) -> tuple[ttk.StringVar, ttk.IntVar, ttk.StringVar]:
         """
         Read the global settings.
 
@@ -626,7 +631,7 @@ class App(ttk.Window):
 
         # Details
         self.details_window: DetailsWindow | None = DetailsWindow(
-            self.system_lifetime, self.renewables_ninja_token
+            self.system_lifetime, self.renewables_ninja_token, self.save_configuration
         )
         self.details_window.withdraw()
         self.splash.set_progress_bar_progress(80)

@@ -11,6 +11,7 @@
 
 import ttkbootstrap as ttk
 
+from clover import ProgrammerJudgementFault
 from clover.generation.solar import PVPanel
 from clover.simulation.diesel import DieselGenerator
 from clover.simulation.energy_system import Minigrid
@@ -456,10 +457,13 @@ class SystemFrame(ttk.Frame):
         self.battery_combobox.set(self.battery.get())
 
         # Update the PV-panel name
-        if minigrid.pv_panel is not None:
-            self.pv_panel.set(minigrid.pv_panel.name)
-        else:
-            self.pv_panel_combobox.configure(state=DISABLED)
+        try:
+            if minigrid.pv_panel is not None:
+                self.pv_panel.set(minigrid.pv_panel.name)
+            else:
+                self.pv_panel_combobox.configure(state=DISABLED)
+        except ProgrammerJudgementFault:
+            self.pv_panel.set(minigrid.pv_panels[0].name)
 
         # Update the combobox
         self.pv_panel_combobox["values"] = [entry.name for entry in pv_panels]

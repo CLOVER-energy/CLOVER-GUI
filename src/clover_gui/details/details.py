@@ -11,6 +11,8 @@
 
 import tkinter as tk
 
+from typing import Callable
+
 import ttkbootstrap as ttk
 
 from ttkbootstrap.constants import *
@@ -45,7 +47,10 @@ class DetailsWindow(tk.Toplevel):
     """
 
     def __init__(
-        self, system_lifetime: ttk.IntVar, renewables_ninja_token: ttk.StringVar
+        self,
+        system_lifetime: ttk.IntVar,
+        renewables_ninja_token: ttk.StringVar,
+        save_configuration: Callable,
     ) -> None:
         """
         Instantiate a :class:`DetailsWindow` instance.
@@ -56,6 +61,9 @@ class DetailsWindow(tk.Toplevel):
         :param: renewables_ninja_token
             The renewables.ninja API token for the user.
 
+        :param: save_configuration
+            Function for saving the configuration.
+
         """
 
         super().__init__()
@@ -63,6 +71,7 @@ class DetailsWindow(tk.Toplevel):
         self.title("CLOVER-GUI Details")
 
         self.system_lifetime = system_lifetime
+        self.save_configuration = save_configuration
 
         self.geometry(DETAILS_GEOMETRY)
 
@@ -137,5 +146,6 @@ class DetailsWindow(tk.Toplevel):
         """Actioned when closed."""
 
         # Save all of the variables from the details screen.
+        self.save_configuration()
 
         self.withdraw()

@@ -16,11 +16,11 @@ from typing import Callable
 
 import ttkbootstrap as ttk
 
+from clover import LOCATIONS_FOLDER_NAME
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
-
-from .__utils__ import BaseScreen, LOAD_LOCATION_GEOMETRY, LOCATIONS_DIRECTORY
+from .__utils__ import BaseScreen, LOAD_LOCATION_GEOMETRY
 
 __all__ = ("LoadLocationWindow",)
 
@@ -95,10 +95,10 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
     def populate_available_locations(self) -> None:
         """Populates available locations for selection."""
 
-        if not os.path.isdir(LOCATIONS_DIRECTORY):
+        if not os.path.isdir(LOCATIONS_FOLDER_NAME):
             return
 
-        self.load_location_combobox["values"] = os.listdir(LOCATIONS_DIRECTORY)
+        self.load_location_combobox["values"] = os.listdir(LOCATIONS_FOLDER_NAME)
         self.load_location_name.set(self.load_location_combobox["values"][0])
 
     def select_location(self, _) -> None:
