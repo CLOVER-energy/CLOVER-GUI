@@ -84,7 +84,7 @@ DEFAULT_SYSTEM_LIFETIME: int = 30
 
 # Details geometry:
 #   The geometry to use for the details window.
-DETAILS_GEOMETRY: str = "1080x720"
+DETAILS_GEOMETRY: str = "1080x800"
 
 # Diesel inputs file:
 #   The diesel inputs file.

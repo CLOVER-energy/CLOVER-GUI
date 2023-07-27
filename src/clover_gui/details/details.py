@@ -70,12 +70,12 @@ class DetailsWindow(tk.Toplevel):
 
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=10)
+        self.rowconfigure(1, weight=6)
 
         self.details_label = ttk.Label(
             self, bootstyle=SECONDARY, text="Detailed settings", font="80"
         )
-        self.details_label.grid(row=0, column=0, sticky="w", padx=20, pady=5)
+        self.details_label.grid(row=0, column=0, sticky="w", padx=20, pady=5, ipady=20)
 
         self.details_notebook = ttk.Notebook(self, bootstyle=f"{SECONDARY}")
         self.details_notebook.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)

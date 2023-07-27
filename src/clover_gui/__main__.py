@@ -284,6 +284,7 @@ class App(ttk.Window):
             finance_inputs,
             generation_inputs,
             ghg_inputs,
+            _,
             grid_times,
             _,
             optimisation_inputs,
