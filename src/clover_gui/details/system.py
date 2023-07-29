@@ -338,10 +338,53 @@ class SystemFrame(ttk.Frame):
         self.ac_to_ac_conversion_unit.grid(
             row=6, column=4, padx=10, pady=5, sticky="ew"
         )
+        
+        # Inverter lifetime
+        self.inverter_lifetime_label = ttk.Label(self, text="Inverter lifetime")
+        self.inverter_lifetime_label.grid(row=7, column=1, padx=10, pady=5, sticky="w")
+
+        self.inverter_lifetime = ttk.DoubleVar(self, "10")
+        self.inverter_lifetime_entry = ttk.Entry(
+            self,
+            bootstyle=WARNING,
+            textvariable=self.inverter_lifetime,
+        )
+
+        self.inverter_lifetime_entry.grid(
+            row=7, column=2, padx=10, pady=5, sticky="ew"
+        )
+
+        self.inverter_lifetime_unit = ttk.Label(self, text=f"years")
+        self.inverter_lifetime_unit.grid(
+            row=7, column=3, padx=10, pady=5, sticky="ew"
+        )
+
+        # Inverter step size
+        self.inverter_step_size_label = ttk.Label(self, text="Inverter step size")
+        self.inverter_step_size_label.grid(
+            row=8, column=1, padx=10, pady=5, sticky="w"
+        )
+
+        self.inverter_step_size = ttk.DoubleVar(self, "1")
+        self.inverter_step_size_entry = ttk.Entry(
+            self,
+            bootstyle=WARNING,
+            textvariable=self.inverter_step_size,
+        )
+
+        self.inverter_step_size_entry.grid(
+            row=8, column=2, padx=10, pady=5, sticky="ew"
+        )
+
+        self.inverter_step_size_unit = ttk.Label(self, text=f"kW")
+        self.inverter_step_size_unit.grid(
+            row=8, column=3, padx=10, pady=5, sticky="ew"
+        )
+
 
         # Select battery
         self.battery_label = ttk.Label(self, text="Battery")
-        self.battery_label.grid(row=7, column=1, padx=10, pady=5, sticky="w")
+        self.battery_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
 
         self.battery = ttk.StringVar(self, "")
         self.battery_combobox = ttk.Combobox(
@@ -351,11 +394,11 @@ class SystemFrame(ttk.Frame):
             bootstyle=WARNING,
             textvariable=self.battery,
         )
-        self.battery_combobox.grid(row=7, column=2, padx=10, pady=5, sticky="ew")
+        self.battery_combobox.grid(row=9, column=2, padx=10, pady=5, sticky="ew")
 
         # Select diesel generator
         self.diesel_generator_label = ttk.Label(self, text="Diesel generator")
-        self.diesel_generator_label.grid(row=8, column=1, padx=10, pady=5, sticky="w")
+        self.diesel_generator_label.grid(row=10, column=1, padx=10, pady=5, sticky="w")
 
         self.diesel_generator = ttk.StringVar(self, "")
         self.diesel_generator_combobox = ttk.Combobox(
@@ -366,12 +409,12 @@ class SystemFrame(ttk.Frame):
             textvariable=self.diesel_generator,
         )
         self.diesel_generator_combobox.grid(
-            row=8, column=2, padx=10, pady=5, sticky="ew"
+            row=10, column=2, padx=10, pady=5, sticky="ew"
         )
 
         # Select PV panel
         self.pv_panel_label = ttk.Label(self, text="PV panel")
-        self.pv_panel_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
+        self.pv_panel_label.grid(row=11, column=1, padx=10, pady=5, sticky="w")
 
         self.pv_panel = ttk.StringVar(self, "")
         self.pv_panel_combobox = ttk.Combobox(
@@ -381,11 +424,11 @@ class SystemFrame(ttk.Frame):
             bootstyle=WARNING,
             textvariable=self.pv_panel,
         )
-        self.pv_panel_combobox.grid(row=9, column=2, padx=10, pady=5, sticky="ew")
+        self.pv_panel_combobox.grid(row=11, column=2, padx=10, pady=5, sticky="ew")
 
         # Select heat exchanger
         self.heat_exchanger_label = ttk.Label(self, text="AC heat exchanger")
-        self.heat_exchanger_label.grid(row=10, column=1, padx=10, pady=5, sticky="w")
+        self.heat_exchanger_label.grid(row=12, column=1, padx=10, pady=5, sticky="w")
 
         self.heat_exchanger = ttk.StringVar(self, "")
         self.heat_exchanger_combobox = ttk.Combobox(
@@ -395,7 +438,7 @@ class SystemFrame(ttk.Frame):
             bootstyle=WARNING,
         )
         self.heat_exchanger_combobox.grid(
-            row=10, column=2, padx=10, pady=5, sticky="ew"
+            row=12, column=2, padx=10, pady=5, sticky="ew"
         )
 
     def set_system(
