@@ -441,12 +441,28 @@ class SystemFrame(ttk.Frame):
             row=12, column=2, padx=10, pady=5, sticky="ew"
         )
 
+        # Select the grid profile
+        self.grid_profile_label = ttk.Label(self, text="Grid profile")
+        self.grid_profile_label.grid(row=13, column=1, padx=10, pady=5, sticky="w")
+
+        self.grid_profile = ttk.StringVar(self, "")
+        self.grid_profile_combobox = ttk.Combobox(
+            self,
+            values=[],
+            state=READONLY,
+            bootstyle=WARNING,
+            textvariable=self.grid_profile,
+        )
+        self.grid_profile_combobox.grid(row=13, column=2, padx=10, pady=5, sticky="ew")
+
+
     def set_system(
         self,
         batteries: list[Battery],
         diesel_generators: list[DieselGenerator],
         minigrid: Minigrid,
         pv_panels: list[PVPanel],
+
     ) -> None:
         """
         Sets the scenarios on the system frame.
@@ -528,6 +544,9 @@ class SystemFrame(ttk.Frame):
             self.heat_exchanger_combobox.configure(state=DISABLED)
         self.heat_exchanger_combobox.set(self.heat_exchanger.get())
 
+        # Update the grid profile name
+
+
     def add_battery(self, battery_name: str) -> None:
         """
         Add a battery to the list of selectable options.
@@ -565,4 +584,17 @@ class SystemFrame(ttk.Frame):
 
         self.pv_panel_combobox["values"] = self.pv_panel_combobox["values"] + (
             pv_panel_name,
+        )
+
+    def add_grid_profile(self, grid_profile_name: str) -> None:
+        """
+        Add a grid profile to the list of selectable options.
+
+        :param: grid_profile_name
+            The name of the grid profile to add.
+
+        """
+
+        self.grid_profile_combobox["values"] = self.grid_profile_combobox["values"] + (
+            grid_profile_name,
         )
