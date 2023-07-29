@@ -64,16 +64,18 @@ class FinanceFrame(ttk.Frame):
         self.rowconfigure(22, weight=1)
         self.rowconfigure(23, weight=1)
 
-        # self.columnconfigure(0, weight=10)  # First row has the header
-        # self.columnconfigure(1, weight=10)  # These rows have entries
-        # self.columnconfigure(2, weight=1)  # These rows have entries
-        # self.columnconfigure(3, weight=1)  # These rows have entries
+        # self.columnconfigure(0, weight=1)
+        # self.columnconfigure(1, weight=1)
+        # self.columnconfigure(2, weight=2)
+        # self.columnconfigure(3, weight=2)
+        # self.columnconfigure(4, weight=1)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=2)
-        self.columnconfigure(3, weight=2)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
         self.columnconfigure(4, weight=1)
+        self.columnconfigure(5, weight=1)
 
         # Header
         self.header = ttk.Label(self, text="")
@@ -83,19 +85,51 @@ class FinanceFrame(ttk.Frame):
         self.discount_rate_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
         self.discount_rate = ttk.DoubleVar(self, "8.0")
 
+        def scalar_discount_rate(_):
+            self.discount_rate.set(max(min(self.discount_rate.get(), 100), 0))
+            self.discount_rate_entry.update()
+
+        self.discount_rate_slider = ttk.Scale(
+            self,
+            from_=0,
+            to=100,
+            orient=ttk.HORIZONTAL,
+            length=320,
+            command=scalar_discount_rate,
+            # bootstyle=WARNING,
+            variable=self.discount_rate,
+        )
+        self.discount_rate_slider.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
+
+        def enter_discount_rate(_):
+            self.discount_rate.set(self.discount_rate_entry.get())
+            self.discount_rate_slider.set(self.discount_rate.get())
+
         self.discount_rate_entry = ttk.Entry(
             self,
-            # bootstyle=DANGER,
+            bootstyle=WARNING,
             textvariable=self.discount_rate,
         )
-        self.discount_rate_entry.grid(
-            row=1, column=2, padx=10, pady=5, ipadx=80, sticky="e"
-        )
 
-        self.discount_rate_units_label = ttk.Label(self, text="%")
-        self.discount_rate_units_label.grid(
-            row=1, column=3, padx=10, pady=5, sticky="w"
-        )
+        self.discount_rate_entry.grid(row=1, column=3, padx=10, pady=5, sticky="ew")
+        self.discount_rate_entry.bind("<Return>", enter_discount_rate)
+
+        self.discount_rate_unit = ttk.Label(self, text=f"%")
+        self.discount_rate_unit.grid(row=1, column=4, padx=10, pady=5, sticky="ew")
+            
+        # self.discount_rate_entry = ttk.Entry(
+        #     self,
+        #     # bootstyle=DANGER,
+        #     textvariable=self.discount_rate,
+        # )
+        # self.discount_rate_entry.grid(
+        #     row=1, column=2, padx=10, pady=5, ipadx=80, sticky="e"
+        # )
+
+        # self.discount_rate_units_label = ttk.Label(self, text="%")
+        # self.discount_rate_units_label.grid(
+        #     row=1, column=3, padx=10, pady=5, sticky="w"
+        # )
 
         # General O&M
         self.general_om_label = ttk.Label(self, text="General O&M")
@@ -113,53 +147,48 @@ class FinanceFrame(ttk.Frame):
         self.general_om_units_label = ttk.Label(self, text="$/year")
         self.general_om_units_label.grid(row=2, column=3, padx=10, pady=5, sticky="w")
 
-        # Misc
-        self.misc_frame = ttk.Labelframe(self, text="Misc. Costs", bootstyle=PRIMARY)
-        self.misc_frame.grid(
-            row=3, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
-        )
-
-        self.misc_frame.columnconfigure(0, weight=1)
-        self.misc_frame.columnconfigure(1, weight=2)
-        self.misc_frame.columnconfigure(2, weight=2, pad=20)
+        # # Misc
+        # self.misc_frame = ttk.Labelframe(self, text="Misc. Costs", bootstyle=PRIMARY)
+        # self.misc_frame.grid(
+        #     row=3, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
+        # )
+        # self.misc_frame.columnconfigure(0, weight=1)
+        # self.misc_frame.columnconfigure(1, weight=2)
+        # self.misc_frame.columnconfigure(2, weight=2, pad=20)
 
         # Capacity Cost
-        self.capacity_cost_label = ttk.Label(
-            self.misc_frame, text="Misc. Capacity Cost"
+        self.capacity_cost_label = ttk.Label(self, text="Misc. Capacity Cost"
         )
-        self.capacity_cost_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.capacity_cost_label.grid(row=3, column=1, padx=10, pady=5, sticky="w")
         self.capacity_cost = ttk.DoubleVar(self, "0.0")
 
-        self.capacity_cost_entry = ttk.Entry(
-            self.misc_frame,
-            # bootstyle=PRIMARY,
-            textvariable=self.capacity_cost,
+        self.capacity_cost_entry = ttk.Entry(self, textvariable=self.capacity_cost,
         )
         self.capacity_cost_entry.grid(
-            row=0, column=1, padx=10, pady=5, ipadx=80, sticky="e"
+            row=3, column=2, padx=10, pady=5, ipadx=80, sticky="e"
         )
 
-        self.capacity_cost_units_label = ttk.Label(self.misc_frame, text="$/kWp")
+        self.capacity_cost_units_label = ttk.Label(self,text="$/kWp")
         self.capacity_cost_units_label.grid(
-            row=0, column=2, padx=10, pady=5, sticky="w"
+            row=3, column=3, padx=10, pady=5, sticky="w"
         )
 
         # Fixed Cost
-        self.fixed_cost_label = ttk.Label(self.misc_frame, text="Misc. Fixed Cost")
-        self.fixed_cost_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.fixed_cost_label = ttk.Label(self, text="Misc. Fixed Cost")
+        self.fixed_cost_label.grid(row=4, column=1, padx=10, pady=5, sticky="w")
         self.fixed_cost = ttk.DoubleVar(self, "0.0")
 
         self.fixed_cost_entry = ttk.Entry(
-            self.misc_frame,
+            self,
             # bootstyle=PRIMARY,
             textvariable=self.fixed_cost,
         )
 
         self.fixed_cost_entry.grid(
-            row=1, column=1, padx=10, pady=5, ipadx=80, sticky="e"
+            row=4, column=2, padx=10, pady=5, ipadx=80, sticky="e"
         )
-        self.fixed_cost_units_label = ttk.Label(self.misc_frame, text="$")
-        self.fixed_cost_units_label.grid(row=1, column=2, padx=10, pady=5, sticky="w")
+        self.fixed_cost_units_label = ttk.Label(self, text="$")
+        self.fixed_cost_units_label.grid(row=4, column=3, padx=10, pady=5, sticky="w")
 
         # BOS Cost
         self.bos_cost_label = ttk.Label(self, text="BOS Cost")
