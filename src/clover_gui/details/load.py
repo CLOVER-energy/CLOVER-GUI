@@ -31,6 +31,27 @@ __all__ = ("LoadFrame",)
 #   Default device utilisation to use.
 DEFAULT_UTILISATION: pd.DataFrame = pd.DataFrame([[0] * 12] * 24)
 
+# _Break:
+#   Keyword used in the CSV code.
+_BREAK: str = "break"
+
+# _Months:
+#   A `list` of all months.
+_MONTHS: list[str] = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
+
 
 class GUIDevice:
     """
@@ -73,20 +94,7 @@ class GUIDevice:
     def device_utilisation_columns(self) -> list[str]:
         """Return nice-looking column headers."""
 
-        return [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dev",
-        ]
+        return _MONTHS
 
     @property
     def device_utilisation_row_data(self) -> Any:
@@ -103,96 +111,148 @@ class GUIDevice:
 
 
 class CSVEntryFrame(ttk.Frame):
-    cellList = []
-    currentCells = []
-    currentCell = None
+    """
+    A CSVEntryFrame, taken from Sebastian Safari under MIT license.
 
-    def __init__(self, filename: str, master=None):
+    Please note, in addition to the license below, modifications have been made to
+    tailor the software under the https://github.com/ssebs/csveditor repository such
+    that it is appropriate to this specific use within the CLOVER-GUI application.
+
+    License is as follows:
+
+    Copyright (c) 2017 Sebastian Safari
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+    """
+
+    cell_list: list[ttk.Entry | ttk.Text] = []
+    current_cells: list[ttk.Entry | ttk.Text] = []
+    current_cell: ttk.Entry | ttk.Text | None = None
+
+    def __init__(self, master=None):
+        """
+        Instantiate the :class:`CSVEntryFrame` instance.
+
+        :param: master
+            The parent instance.
+
+        """
+
         ttk.Frame.__init__(self, master)
+
+        self.filename: str | None = None
+
+        # Place the frame on the screen.
         self.grid()
-        self.createDefaultWidgets()
-        self.filename = filename
+
+        # # Instantiate with a default set of widgets.
+        # self.create_default_widgets()
 
     def focus_tab(self, event):
+        """
+        Focus which occurs when the tab key is pressed.
+
+        :param: event
+            The event instance.
+
+        """
+
         event.widget.tk_focusNext().focus()
-        return "break"
+        return _BREAK
 
     def focus_sh_tab(self, event):
         event.widget.tk_focusPrev().focus()
-        return "break"
+        return _BREAK
 
     def focus_right(self, event):
         # event.widget.tk_focusNext().focus()
         widget = event.widget.focus_get()
 
-        for i in range(len(self.currentCells)):
-            for j in range(len(self.currentCells[0])):
-                if widget == self.currentCells[i][j]:
-                    if j >= len(self.currentCells[0]) - 1:
-                        j = -1
-                    self.currentCells[i][j + 1].focus()
-        return "break"
+        for row in range(len(self.current_cells)):
+            for column in range(len(self.current_cells[0])):
+                if widget == self.current_cells[row][column]:
+                    if column >= len(self.current_cells[0]) - 1:
+                        column = -1
+                    self.current_cells[row][column + 1].focus()
+        return _BREAK
 
     def focus_left(self, event):
         # event.widget.tk_focusNext().focus()
         widget = event.widget.focus_get()
 
-        for i in range(len(self.currentCells)):
-            for j in range(len(self.currentCells[0])):
-                if widget == self.currentCells[i][j]:
-                    if j == 0:
-                        j = len(self.currentCells[0])
-                    self.currentCells[i][j - 1].focus()
-        return "break"
+        for row in range(len(self.current_cells)):
+            for column in range(len(self.current_cells[0])):
+                if widget == self.current_cells[row][column]:
+                    if column == 0:
+                        column = len(self.current_cells[0])
+                    self.current_cells[row][column - 1].focus()
+        return _BREAK
 
     def focus_up(self, event):
         # event.widget.tk_focusNext().focus()
         widget = event.widget.focus_get()
 
-        for i in range(len(self.currentCells)):
-            for j in range(len(self.currentCells[0])):
-                if widget == self.currentCells[i][j]:
-                    if i < 0:
-                        i = len(self.currentCells)
-                    self.currentCells[i - 1][j].focus()
-        return "break"
+        for row in range(len(self.current_cells)):
+            for column in range(len(self.current_cells[0])):
+                if widget == self.current_cells[row][column]:
+                    if row < 0:
+                        row = len(self.current_cells)
+                    self.current_cells[row - 1][column].focus()
+        return _BREAK
 
     def focus_down(self, event):
         # event.widget.tk_focusNext().focus()
         widget = event.widget.focus_get()
 
-        for i in range(len(self.currentCells)):
-            for j in range(len(self.currentCells[0])):
-                if widget == self.currentCells[i][j]:
-                    if i >= len(self.currentCells) - 1:
-                        i = -1
-                    self.currentCells[i + 1][j].focus()
-        return "break"
+        for row in range(len(self.current_cells)):
+            for column in range(len(self.current_cells[0])):
+                if widget == self.current_cells[row][column]:
+                    if row >= len(self.current_cells) - 1:
+                        row = -1
+                    self.current_cells[row + 1][column].focus()
+        return _BREAK
 
     def selectall(self, event):
         event.widget.tag_add("sel", "1.0", "end")
         event.widget.mark_set(INSERT, "1.0")
         event.widget.see(INSERT)
-        return "break"
+        return _BREAK
 
-    def saveFile(self, event):
-        self.saveCells()
+    def save_file(self, event):
+        self.save_cells()
 
     # TODO: Create bind for arrow keys and enter
 
-    def createDefaultWidgets(self):
-        w, h = 7, 1
-        self.sizeX = 4
-        self.sizeY = 6
-        self.defaultCells = []
-        for i in range(self.sizeY):
-            self.defaultCells.append([])
-            for j in range(self.sizeX):
-                self.defaultCells[i].append([])
+    def create_default_widgets(self):
+        cell_width, cell_height = 7, 1
+        self.size_x = 4
+        self.size_y = 6
+        self.default_cells = []
+        for row in range(self.size_y):
+            self.default_cells.append([])
+            for column in range(self.size_x):
+                self.default_cells[row].append([])
 
-        for i in range(self.sizeY):
-            for j in range(self.sizeX):
-                tmp = ttk.Text(self, width=w, height=h)
+        for row in range(self.size_y):
+            for column in range(self.size_x):
+                tmp = ttk.Text(self, width=cell_width, height=cell_height)
                 tmp.bind("<Tab>", self.focus_tab)
                 tmp.bind("<Shift-Tab>", self.focus_sh_tab)
                 tmp.bind("<Return>", self.focus_down)
@@ -202,33 +262,33 @@ class CSVEntryFrame(ttk.Frame):
                 tmp.bind("<Up>", self.focus_up)
                 tmp.bind("<Down>", self.focus_down)
                 tmp.bind("<Control-a>", self.selectall)
-                tmp.bind("<Control-s>", self.saveFile)
+                tmp.bind("<Control-s>", self.save_file)
                 # TODO: Add resize check on column when changing focus
                 tmp.insert(END, "")
-                tmp.grid(padx=0, pady=0, column=j, row=i)
+                tmp.grid(padx=0, pady=0, column=column, row=row)
 
-                self.defaultCells[i][j] = tmp
-                self.cellList.append(tmp)
+                self.default_cells[row][column] = tmp
+                self.cell_list.append(tmp)
 
-        self.defaultCells[0][0].focus_force()
-        self.currentCells = self.defaultCells
-        self.currentCell = self.currentCells[0][0]
+        self.default_cells[0][0].focus_force()
+        self.current_cells = self.default_cells
+        self.current_cell = self.current_cells[0][0]
 
         # TODO: Add buttons to create new rows/columns
 
-    def newCells(self):
-        self.removeCells()
-        self.createDefaultWidgets()
+    def new_cells(self):
+        self.remove_cells()
+        self.create_default_widgets()
 
-    def removeCells(self):
-        while len(self.cellList) > 0:
-            for cell in self.cellList:
-                # print str(i) + str(j)
+    def remove_cells(self):
+        while len(self.cell_list) > 0:
+            for cell in self.cell_list:
+                # print str(row) + str(column)
                 cell.destroy()
-                self.cellList.remove(cell)
+                self.cell_list.remove(cell)
 
-    def loadCells(self):
-        filename = self.filename
+    def load_cells(self, filename: str):
+        self.filename = filename
         ary = []
         col = -1
         rows = []
@@ -242,36 +302,62 @@ class CSVEntryFrame(ttk.Frame):
                 rows.append(row)
 
         # create the array
-        for i in range(len(ary)):
-            for j in range(col):
-                ary[i].append([])
+        for row in range(len(ary)):
+            for column in range(col):
+                ary[row].append([])
 
         # fill the array
-        for i in range(len(ary)):
-            for j in range(col):
-                # print rows[i][j]
-                ary[i][j] = rows[i][j]
+        for row in range(len(ary)):
+            for column in range(col):
+                # print rows[row][column]
+                ary[row][column] = rows[row][column]
 
-        self.removeCells()
+        self.remove_cells()
 
-        # get the max width of the cells
-        mx = 0
-        for i in range(len(ary)):
-            for j in range(len(ary[0])):
-                if len(ary[i][j]) >= mx:
-                    mx = len(ary[i][j])
-        w = mx
+        # Determine the maximum width of the cells
+        # max_cell_width = 0
+        # for row in range(len(ary)):
+        #     for column in range(len(ary[0])):
+        #         max_cell_width = max(len(ary[row][column]), max_cell_width)
 
-        loadCells = []
-        for i in range(len(ary)):
-            loadCells.append([])
-            for j in range(len(ary[0])):
-                loadCells[i].append([])
+        # Cap this at a specific width
+        cell_width = 4
 
-        # create the new cells
-        for i in range(len(ary)):
-            for j in range(len(ary[0])):
-                tmp = tk.Text(self, width=w, height=1)
+        load_cells = []
+        for row in range(len(ary)):
+            load_cells.append([])
+            for column in range(len(ary[0])):
+                load_cells[row].append([])
+
+        # Create the labels
+        for row in range(len(ary) + 1):
+            if row == 0:
+                tmp = ttk.Label(
+                    self, width=cell_width, bootstyle=f"{SUCCESS}-{INVERSE}", text=""
+                )
+            else:
+                tmp = ttk.Label(
+                    self,
+                    width=cell_width,
+                    bootstyle=f"{SUCCESS}-{INVERSE}",
+                    text=(" " if row < 10 else "") + str(row),
+                )
+
+            tmp.grid(padx=0, pady=0, column=0, row=row)
+
+        for column in range(len(ary[0])):
+            tmp = ttk.Label(
+                self,
+                width=cell_width,
+                bootstyle=f"{SUCCESS}-{INVERSE}",
+                text=_MONTHS[column],
+            )
+            tmp.grid(padx=0, pady=0, row=0, column=column + 1)
+
+        # Create the new cells
+        for row in range(len(ary)):
+            for column in range(len(ary[0])):
+                tmp = ttk.Entry(self, width=cell_width)
                 tmp.bind("<Tab>", self.focus_tab)
                 tmp.bind("<Shift-Tab>", self.focus_sh_tab)
                 tmp.bind("<Return>", self.focus_down)
@@ -281,39 +367,40 @@ class CSVEntryFrame(ttk.Frame):
                 tmp.bind("<Up>", self.focus_up)
                 tmp.bind("<Down>", self.focus_down)
                 tmp.bind("<Control-a>", self.selectall)
-                tmp.bind("<Control-s>", self.saveFile)
-                tmp.insert(END, ary[i][j])
+                tmp.bind("<Control-s>", self.save_file)
+                tmp.insert(END, ary[row][column])
 
-                # if(i == 0):
-                #     tmp.config(font=("Helvetica", 10, tkFont.BOLD))
-                #     tmp.config(relief=FLAT, bg=app.master.cget('bg'))
+                if row % 2 == 0:
+                    tmp.config(bootstyle=f"{SUCCESS}")
+                else:
+                    tmp.config(bootstyle=f"{SECONDARY}")
 
-                loadCells[i][j] = tmp
+                load_cells[row][column] = tmp
                 tmp.focus_force()
-                self.cellList.append(tmp)
+                self.cell_list.append(tmp)
 
-                tmp.grid(padx=0, pady=0, column=j, row=i)
+                tmp.grid(padx=0, pady=0, column=column + 1, row=row + 1)
 
-        self.currentCells = loadCells
-        self.currentCell = self.currentCells[0][0]
+        self.current_cells = load_cells
+        self.current_cell = self.current_cells[0][0]
 
-    def saveCells(self):
+    def save_cells(self):
         filename = self.filename
 
         vals = []
-        for i in range(len(self.currentCells)):
-            for j in range(len(self.currentCells[0])):
-                vals.append(self.currentCells[i][j].get(1.0, END).strip())
+        for row in range(len(self.current_cells)):
+            for column in range(len(self.current_cells[0])):
+                vals.append(str(self.current_cells[row][column].get()).strip())
 
-        with open(filename, "wb") as csvfile:
-            for rw in range(len(self.currentCells)):
+        with open(filename, "w", encoding="UTF-8") as csvfile:
+            for rw in range(len(self.current_cells)):
                 row = ""
-                for i in range(len(self.currentCells[0])):
-                    x = rw * len(self.currentCells[0])
-                    if i != len(self.currentCells[0]) - 1:
-                        row += vals[x + i] + ","
+                for row_index in range(len(self.current_cells[0])):
+                    x = rw * len(self.current_cells[0])
+                    if row_index != len(self.current_cells[0]) - 1:
+                        row += vals[x + row_index] + ","
                     else:
-                        row += vals[x + i]
+                        row += vals[x + row_index]
 
                 csvfile.write(row + "\n")
 
@@ -346,14 +433,14 @@ class DeviceSettingsFrame(ttk.Labelframe):
         self.columnconfigure(1, weight=4)
         self.columnconfigure(2, weight=1)
 
-        # self.rowconfigure(0, weight=1)
-        # self.rowconfigure(1, weight=1)
-        # self.rowconfigure(2, weight=1)
-        # self.rowconfigure(3, weight=1)
-        # self.rowconfigure(4, weight=1)
-        # self.rowconfigure(5, weight=1)
-        # self.rowconfigure(6, weight=1)
-        # self.rowconfigure(7, weight=4)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1)
+        self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=1)
+        self.rowconfigure(5, weight=1)
+        self.rowconfigure(6, weight=1)
+        self.rowconfigure(7, weight=4)
 
         # Device name
         self.name_label = ttk.Label(self, text="Device name", style=SUCCESS)
@@ -473,18 +560,32 @@ class DeviceSettingsFrame(ttk.Labelframe):
             row=7, column=0, columnspan=3, padx=10, pady=5, sticky="news"
         )
 
-        self.device_utilisation_entry: Tableview = Tableview(
-            self.device_utilisation_label_frame,
-            coldata=list(parent.active_device.device_utilisation_columns),
-            rowdata=parent.active_device.device_utilisation_row_data,
-            autofit=True,
-            bootstyle=SUCCESS,
+        self.device_utilisation_label_frame.columnconfigure(0, weight=1)
+
+        self.device_utilisation_label_frame.rowconfigure(0, weight=1)
+
+        self.device_utilisation_scrollable_frame = ScrolledFrame(
+            self.device_utilisation_label_frame, bootstyle=SUCCESS
         )
-        self.device_utilisation_entry.grid(
-            row=0, column=0, sticky="news", padx=5, pady=5
+        self.device_utilisation_scrollable_frame.grid(
+            row=0, column=0, padx=0, pady=0, sticky="news"
         )
 
-        self.csv_entry_frame: CSVEntryFrame | None = None
+        # self.device_utilisation_entry: Tableview = Tableview(
+        #     self.device_utilisation_label_frame,
+        #     coldata=list(parent.active_device.device_utilisation_columns),
+        #     rowdata=parent.active_device.device_utilisation_row_data,
+        #     autofit=True,
+        #     bootstyle=SUCCESS,
+        # )
+        # self.device_utilisation_entry.grid(
+        #     row=0, column=0, sticky="news", padx=5, pady=5
+        # )
+
+        self.csv_entry_frame: CSVEntryFrame = CSVEntryFrame(
+            master=self.device_utilisation_scrollable_frame,
+        )
+        self.csv_entry_frame.grid(row=0, column=0, sticky="news", padx=5, pady=5)
 
 
 class DevicesFrame(ScrolledFrame):
@@ -597,6 +698,7 @@ class LoadFrame(ttk.Frame):
         self,
         seed_device: Device | None = None,
         seed_utilisation: pd.DataFrame = DEFAULT_UTILISATION,
+        batch_loading: bool = False,
     ) -> None:
         """
         Creates a new device when called.
@@ -607,6 +709,10 @@ class LoadFrame(ttk.Frame):
 
         :param: seed_utilisation
             If specified, the seed device utilisation profile.
+
+        :param: batch_loading
+            Whether multiple devices are being loaded (True) or a single device is being
+            added (False).
 
         """
 
@@ -687,7 +793,7 @@ class LoadFrame(ttk.Frame):
         )
 
         # Set the other device-selected buttons to look disabled.
-        self.select_device(device)
+        self.select_device(device, batch_loading=batch_loading)
 
         # Update the screen
         self.devices_frame.update()
@@ -711,37 +817,44 @@ class LoadFrame(ttk.Frame):
         self.settings_frame.clean_water_consumption_entry.configure(
             textvariable=device.clean_water_consumption
         )
-        self.settings_frame.device_utilisation_entry.pack_forget()
-        self.settings_frame.device_utilisation_entry: Tableview = Tableview(
-            self.settings_frame.device_utilisation_label_frame,
-            coldata=list(device.device_utilisation_columns),
-            rowdata=device.device_utilisation_row_data,
-            autofit=True,
-            autoalign=True,
-            bootstyle=SUCCESS,
-        )
-        self.settings_frame.device_utilisation_entry.grid(
-            row=0, column=0, sticky="news", padx=5, pady=5
-        )
+        # self.settings_frame.device_utilisation_entry.pack_forget()
+        # self.settings_frame.device_utilisation_entry: Tableview = Tableview(
+        #     self.settings_frame.device_utilisation_label_frame,
+        #     coldata=list(device.device_utilisation_columns),
+        #     rowdata=device.device_utilisation_row_data,
+        #     autofit=True,
+        #     autoalign=True,
+        #     bootstyle=SUCCESS,
+        # )
+        # self.settings_frame.device_utilisation_entry.grid(
+        #     row=0, column=0, sticky="news", padx=5, pady=5
+        # )
 
-        # if self.device_utilisations_directory is not None:
-        #     self.settings_frame.csv_entry_frame = CSVEntryFrame(
-        #         os.path.join(self.device_utilisations_directory, f"{device.name.get()}_times.csv"),
-        #         master=self.settings_frame.device_utilisation_label_frame,
-        #     )
-        #     self.settings_frame.csv_entry_frame.loadCells()
-        #     self.settings_frame.csv_entry_frame.grid(
-        #         row=1, column=0, sticky="news", padx=5, pady=5
-        #     )
+    def select_device(self, device: GUIDevice, batch_loading: bool = False) -> None:
+        """
+        Called to select a device in the left-hand devices pane.
 
-    def select_device(self, device: GUIDevice) -> None:
-        """Called to select a device in the left-hand devices pane."""
+        :param: device
+            The :class:`GUIDevice` to select.
+
+        :param: batch_loading
+            Whether multiple devices are being loaded at once.
+
+        """
         for button in self.devices_frame.device_selected_buttons.values():
             button.configure(style="success.Outline.TButton")
         self.active_device = device
         self.devices_frame.device_selected_buttons[self.active_device].configure(
             style="success.TButton"
         )
+
+        if self.device_utilisations_directory is not None and not batch_loading:
+            self.settings_frame.csv_entry_frame.load_cells(
+                os.path.join(
+                    self.device_utilisations_directory, f"{device.name.get()}_times.csv"
+                )
+            )
+
         self.update_device_settings_frame(device)
 
     def set_loads(
@@ -760,6 +873,9 @@ class LoadFrame(ttk.Frame):
 
         """
 
+        # Set the device utilisations directory.
+        self.device_utilisations_directory = device_utilisations_directory
+
         # Delete and forget the old devices buttons.
         for old_device in self.devices:
             old_active_button = self.devices_frame.device_active_buttons.pop(old_device)
@@ -774,10 +890,7 @@ class LoadFrame(ttk.Frame):
 
         for device, utilisation in device_utilisations.items():
             # Create a GUI for the device
-            self.add_device(device, utilisation)
-
-        # Set the device utilisations directory.
-        self.device_utilisations_directory = device_utilisations_directory
+            self.add_device(device, utilisation, batch_loading=True)
 
         self.active_device = self.devices[0]
         self.select_device(self.active_device)

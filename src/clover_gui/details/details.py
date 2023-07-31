@@ -78,7 +78,7 @@ class DetailsWindow(tk.Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.save_and_close)
 
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1, minsize=100)
         self.rowconfigure(1, weight=6)
 
         self.details_label = ttk.Label(
