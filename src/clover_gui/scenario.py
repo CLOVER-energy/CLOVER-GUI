@@ -49,25 +49,9 @@ class ConfigurationFrame(ttk.Frame):
         self.open_details_window = open_details_window
 
         self.columnconfigure(0, weight=4)
-        self.columnconfigure(1, weight=1)
 
         self.rowconfigure(0, weight=1)
         # self.pack(fill="both", expand=True)
-
-        # Scenario details information
-        self.hover_information_frame: ttk.Labelframe = ttk.Labelframe(
-            self, style="info.TLabelframe", text="Information"
-        )
-        self.hover_information_frame.grid(
-            row=0, column=1, padx=10, pady=5, sticky="news"
-        )
-
-        self.hover_text: ttk.StringVar = ttk.StringVar(self, "")
-
-        self.hover_label = ttk.Label(
-            self.hover_information_frame, textvariable=self.hover_text
-        )
-        self.hover_label.grid(row=0, column=0, sticky="news")
 
         self.scrollable_scenario_frame = ScrolledFrame(self)
         self.scrollable_scenario_frame.grid(
@@ -84,6 +68,11 @@ class ConfigurationFrame(ttk.Frame):
         self.scrollable_scenario_frame.columnconfigure(1, weight=1)
         self.scrollable_scenario_frame.columnconfigure(2, weight=1)
         self.scrollable_scenario_frame.columnconfigure(3, weight=1)
+
+        self.scrollable_scenario_frame.rowconfigure(0, weight=1)
+        self.scrollable_scenario_frame.rowconfigure(1, weight=1)
+        self.scrollable_scenario_frame.rowconfigure(2, weight=1)
+        self.scrollable_scenario_frame.rowconfigure(3, weight=1)
 
         # Selecting system components
         self.power_generation_label: ttk.Label = ttk.Label(

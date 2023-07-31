@@ -317,6 +317,17 @@ class CSVEntryFrame(ttk.Frame):
 
                 csvfile.write(row + "\n")
 
+    def set_filename(self, filename: str) -> None:
+        """
+        Set the filename on the CSV editor.
+
+        :param: filename
+            The filename to set.
+
+        """
+
+        self.filename = filename
+
 
 class DeviceSettingsFrame(ttk.Labelframe):
     """
@@ -713,15 +724,15 @@ class LoadFrame(ttk.Frame):
             row=0, column=0, sticky="news", padx=5, pady=5
         )
 
-        if self.device_utilisations_directory is not None:
-            self.settings_frame.csv_entry_frame = CSVEntryFrame(
-                os.path.join(self.device_utilisations_directory, f"{device.name.get()}_times.csv"),
-                master=self.settings_frame.device_utilisation_label_frame,
-            )
-            self.settings_frame.csv_entry_frame.loadCells()
-            self.settings_frame.csv_entry_frame.grid(
-                row=1, column=0, sticky="news", padx=5, pady=5
-            )
+        # if self.device_utilisations_directory is not None:
+        #     self.settings_frame.csv_entry_frame = CSVEntryFrame(
+        #         os.path.join(self.device_utilisations_directory, f"{device.name.get()}_times.csv"),
+        #         master=self.settings_frame.device_utilisation_label_frame,
+        #     )
+        #     self.settings_frame.csv_entry_frame.loadCells()
+        #     self.settings_frame.csv_entry_frame.grid(
+        #         row=1, column=0, sticky="news", padx=5, pady=5
+        #     )
 
     def select_device(self, device: GUIDevice) -> None:
         """Called to select a device in the left-hand devices pane."""

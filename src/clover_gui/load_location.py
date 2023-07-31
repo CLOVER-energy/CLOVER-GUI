@@ -144,4 +144,7 @@ class LoadLocationWindow(tk.Toplevel):
 
         """
 
+        self.load_location_frame.progress_bar.grid(
+            row=3, column=0, columnspan=2, pady=20, padx=20, sticky="ew"
+        )
         self.load_location_frame.progress_bar.start()

@@ -339,7 +339,7 @@ class SystemFrame(ttk.Frame):
         self.ac_to_ac_conversion_unit.grid(
             row=6, column=4, padx=10, pady=5, sticky="ew"
         )
-        
+
         # Inverter lifetime
         self.inverter_lifetime_label = ttk.Label(self, text="Inverter lifetime")
         self.inverter_lifetime_label.grid(row=7, column=1, padx=10, pady=5, sticky="w")
@@ -351,20 +351,14 @@ class SystemFrame(ttk.Frame):
             textvariable=self.inverter_lifetime,
         )
 
-        self.inverter_lifetime_entry.grid(
-            row=7, column=2, padx=10, pady=5, sticky="ew"
-        )
+        self.inverter_lifetime_entry.grid(row=7, column=2, padx=10, pady=5, sticky="ew")
 
         self.inverter_lifetime_unit = ttk.Label(self, text=f"years")
-        self.inverter_lifetime_unit.grid(
-            row=7, column=3, padx=10, pady=5, sticky="ew"
-        )
+        self.inverter_lifetime_unit.grid(row=7, column=3, padx=10, pady=5, sticky="ew")
 
         # Inverter step size
         self.inverter_step_size_label = ttk.Label(self, text="Inverter step size")
-        self.inverter_step_size_label.grid(
-            row=8, column=1, padx=10, pady=5, sticky="w"
-        )
+        self.inverter_step_size_label.grid(row=8, column=1, padx=10, pady=5, sticky="w")
 
         self.inverter_step_size = ttk.DoubleVar(self, "1")
         self.inverter_step_size_entry = ttk.Entry(
@@ -378,10 +372,7 @@ class SystemFrame(ttk.Frame):
         )
 
         self.inverter_step_size_unit = ttk.Label(self, text=f"kW")
-        self.inverter_step_size_unit.grid(
-            row=8, column=3, padx=10, pady=5, sticky="ew"
-        )
-
+        self.inverter_step_size_unit.grid(row=8, column=3, padx=10, pady=5, sticky="ew")
 
         # Select battery
         self.battery_label = ttk.Label(self, text="Battery")
@@ -456,14 +447,12 @@ class SystemFrame(ttk.Frame):
         )
         self.grid_profile_combobox.grid(row=13, column=2, padx=10, pady=5, sticky="ew")
 
-
     def set_system(
         self,
         batteries: list[Battery],
         diesel_generators: list[DieselGenerator],
         minigrid: Minigrid,
         pv_panels: list[PVPanel],
-
     ) -> None:
         """
         Sets the scenarios on the system frame.
@@ -549,7 +538,6 @@ class SystemFrame(ttk.Frame):
         self.heat_exchanger_combobox.set(self.heat_exchanger.get())
 
         # Update the grid profile name
-
 
     def add_battery(self, battery_name: str) -> None:
         """

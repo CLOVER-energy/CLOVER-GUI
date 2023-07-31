@@ -352,7 +352,13 @@ class App(ttk.Window):
         set_progress_bar_progress(600 * percent_fraction)
 
         self.details_window.load_frame.set_loads(
-            device_utilisations, os.path.join(LOCATIONS_FOLDER_NAME, load_location_name, INPUTS_DIRECTORY, DEVICE_UTILISATIONS_INPUT_DIRECTORY)
+            device_utilisations,
+            os.path.join(
+                LOCATIONS_FOLDER_NAME,
+                load_location_name,
+                INPUTS_DIRECTORY,
+                DEVICE_UTILISATIONS_INPUT_DIRECTORY,
+            ),
         )
         set_progress_bar_progress(700 * percent_fraction)
 
@@ -395,6 +401,7 @@ class App(ttk.Window):
         self.post_run_screen.pack_forget()
 
         self.configuration_screen.pack(fill="both", expand=True)
+        self.configuration_screen.set_location(load_location_name)
         self.location_name.set(load_location_name)
 
     def open_configuration(self) -> None:

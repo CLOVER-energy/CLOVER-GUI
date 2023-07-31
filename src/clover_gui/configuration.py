@@ -1393,22 +1393,22 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.columnconfigure(3, weight=10)
         self.columnconfigure(4, weight=1)
 
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=10)
-        self.rowconfigure(2, weight=1, pad=100)
+        self.rowconfigure(0, weight=1, minsize=80)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1, minsize=80)
 
         self.location_label = ttk.Label(
             self, bootstyle=INFO, text=location_name.get().capitalize(), font="80"
         )
         self.location_label.grid(
-            row=0, column=0, columnspan=2, sticky="ew", padx=60, pady=20
+            row=0, column=0, columnspan=4, sticky="ew", padx=60, pady=20
         )
 
         self.location_name: ttk.Stringvar = location_name
 
         self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
         self.configuration_notebook.grid(
-            row=1, column=0, columnspan=5, sticky="nsew", padx=60, pady=20
+            row=1, column=0, columnspan=5, sticky="ew", padx=60, pady=20
         )  # Use grid
 
         style = ttk.Style()
@@ -1520,3 +1520,15 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         self.clover_thread = clover_thread(clover_args)
         self.open_run_screen(self.clover_thread)
+
+    def set_location(self, location_name: str) -> None:
+        """
+        Set the location name on the screen.
+
+        :param: location_name
+            The name of the location to set.
+
+        """
+
+        self.location_name.set(location_name)
+        self.location_label.configure(text=self.location_name.get())
