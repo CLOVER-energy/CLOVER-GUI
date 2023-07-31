@@ -73,7 +73,7 @@ class GHGFrame(ttk.Frame):
         self.general_om = tk.DoubleVar(value=0)
 
         self.general_om_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.general_om
+            self,  textvariable=self.general_om
         )
         self.general_om_entry.grid(row=1, column=2, sticky="w")
 
@@ -85,7 +85,7 @@ class GHGFrame(ttk.Frame):
         self.misc_label.grid(row=2, column=1, sticky="w")
         self.misc = tk.DoubleVar(value=0)
 
-        self.misc_entry = ttk.Entry(self, bootstyle=DANGER, textvariable=self.misc)
+        self.misc_entry = ttk.Entry(self,  textvariable=self.misc)
         self.misc_entry.grid(row=2, column=2, sticky="w")
 
         self.misc_units = ttk.Label(self, text="kgCO2 p.a.")
@@ -96,7 +96,7 @@ class GHGFrame(ttk.Frame):
         self.bos_label.grid(row=3, column=1, sticky="w")
         self.bos = tk.DoubleVar(value=0)
 
-        self.bos_entry = ttk.Entry(self, bootstyle=DANGER, textvariable=self.bos)
+        self.bos_entry = ttk.Entry(self,  textvariable=self.bos)
         self.bos_entry.grid(row=3, column=2, sticky="w")
 
         self.bos_units = ttk.Label(self, text="kgCO2/kWp")
@@ -109,7 +109,7 @@ class GHGFrame(ttk.Frame):
         self.bos_decrease = tk.DoubleVar(value=0)
 
         self.bos_decrease_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.bos_decrease
+            self,  textvariable=self.bos_decrease
         )
         self.bos_decrease_entry.grid(row=4, column=2, sticky="w")
 
@@ -122,7 +122,7 @@ class GHGFrame(ttk.Frame):
         self.diesel_fuel = tk.DoubleVar(value=0)
 
         self.diesel_fuel_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.diesel_fuel
+            self,  textvariable=self.diesel_fuel
         )
         self.diesel_fuel_entry.grid(row=5, column=2, sticky="w")
 
@@ -135,7 +135,7 @@ class GHGFrame(ttk.Frame):
         self.diesel_om = tk.DoubleVar(value=0)
 
         self.diesel_om_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.diesel_om
+            self,  textvariable=self.diesel_om
         )
         self.diesel_om_entry.grid(row=6, column=2, sticky="w")
 
@@ -148,7 +148,7 @@ class GHGFrame(ttk.Frame):
         # self.grid_extension = tk.DoubleVar(value=0)
 
         # self.grid_extension_entry = ttk.Entry(
-        #     self, bootstyle=DANGER, textvariable=self.grid_extension
+        #     self,  textvariable=self.grid_extension
         # )
         # self.grid_extension_entry.grid(row=7, column=2, sticky="w")
 
@@ -157,83 +157,83 @@ class GHGFrame(ttk.Frame):
 
         # Initial Grid Emissions
         self.initial_grid_label = ttk.Label(self, text="Initial Grid Emissions")
-        self.initial_grid_label.grid(row=8, column=1, sticky="w")
+        self.initial_grid_label.grid(row=7, column=1, sticky="w")
         self.initial_grid = tk.DoubleVar(value=0)
 
         self.initial_grid_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.initial_grid
+            self,  textvariable=self.initial_grid
         )
-        self.initial_grid_entry.grid(row=8, column=2, sticky="w")
+        self.initial_grid_entry.grid(row=7, column=2, sticky="w")
 
         self.initial_grid_units = ttk.Label(self, text="kgCO2/kWh")
-        self.initial_grid_units.grid(row=8, column=3, sticky="w")
+        self.initial_grid_units.grid(row=7, column=3, sticky="w")
 
         # Final Grid Emissions
         self.final_grid_label = ttk.Label(self, text="Final Grid Emissions")
-        self.final_grid_label.grid(row=9, column=1, sticky="w")
+        self.final_grid_label.grid(row=8, column=1, sticky="w")
         self.final_grid = tk.DoubleVar(value=0)
 
         self.final_grid_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.final_grid
+            self,  textvariable=self.final_grid
         )
-        self.final_grid_entry.grid(row=9, column=2, sticky="w")
+        self.final_grid_entry.grid(row=8, column=2, sticky="w")
 
         self.final_grid_units = ttk.Label(self, text="kgCO2/kWh")
-        self.final_grid_units.grid(row=9, column=3, sticky="w")
+        self.final_grid_units.grid(row=8, column=3, sticky="w")
 
         # GHG Emissions from Connection Costs
         self.households_label = ttk.Label(self, text="GHG Emissions from Connections")
-        self.households_label.grid(row=10, column=1, sticky="w")
+        self.households_label.grid(row=9, column=1, sticky="w")
         self.households = tk.DoubleVar(value=0)
 
         self.households_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.households
+            self,  textvariable=self.households
         )
-        self.households_entry.grid(row=10, column=2, sticky="w")
+        self.households_entry.grid(row=9, column=2, sticky="w")
 
         self.households_units = ttk.Label(self, text="kgCO2/household")
-        self.households_units.grid(row=10, column=3, sticky="w")
+        self.households_units.grid(row=9, column=3, sticky="w")
 
         # GHG Emissions from Inverter
         self.inverter_label = ttk.Label(self, text="GHG Emissions from Inverter")
-        self.inverter_label.grid(row=11, column=1, sticky="w")
+        self.inverter_label.grid(row=10, column=1, sticky="w")
         self.inverter = tk.DoubleVar(value=0)
 
         self.inverter_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.inverter
+            self,  textvariable=self.inverter
         )
-        self.inverter_entry.grid(row=11, column=2, sticky="w")
+        self.inverter_entry.grid(row=10, column=2, sticky="w")
 
         self.inverter_units = ttk.Label(self, text="kgCO2/kWp")
-        self.inverter_units.grid(row=11, column=3, sticky="w")
+        self.inverter_units.grid(row=10, column=3, sticky="w")
 
         # GHG Emissions inverter decrease
         self.inverter_decrease_label = ttk.Label(
             self, text="Inverter GHG Emissions decrease"
         )
-        self.inverter_decrease_label.grid(row=12, column=1, sticky="w")
+        self.inverter_decrease_label.grid(row=11, column=1, sticky="w")
         self.inverter_decrease = tk.DoubleVar(value=0)
 
         self.inverter_decrease_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.inverter_decrease
+            self,  textvariable=self.inverter_decrease
         )
-        self.inverter_decrease_entry.grid(row=12, column=2, sticky="w")
+        self.inverter_decrease_entry.grid(row=11, column=2, sticky="w")
 
         self.inverter_decrease_units = ttk.Label(self, text="% p.a.")
-        self.inverter_decrease_units.grid(row=12, column=3, sticky="w")
+        self.inverter_decrease_units.grid(row=11, column=3, sticky="w")
 
         # GHG Emissions from Kerosene
         self.kerosene_label = ttk.Label(self, text="GHG Emissions from Kerosene")
-        self.kerosene_label.grid(row=13, column=1, sticky="w")
+        self.kerosene_label.grid(row=12, column=1, sticky="w")
         self.kerosene = tk.DoubleVar(value=0)
 
         self.kerosene_entry = ttk.Entry(
-            self, bootstyle=DANGER, textvariable=self.kerosene
+            self,  textvariable=self.kerosene
         )
-        self.kerosene_entry.grid(row=13, column=2, sticky="w")
+        self.kerosene_entry.grid(row=12, column=2, sticky="w")
 
         self.kerosene_units = ttk.Label(self, text="kgCO2/hour")
-        self.kerosene_units.grid(row=13, column=3, sticky="w")
+        self.kerosene_units.grid(row=12, column=3, sticky="w")
 
     def set_ghg_inputs(
         self, ghg_inputs: dict[str, float | dict[str, float]], logger: Logger
