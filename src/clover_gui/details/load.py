@@ -288,10 +288,18 @@ class CSVEntryFrame(ttk.Frame):
                 self.cell_list.remove(cell)
 
     def load_cells(self, filename: str):
+        if self.filename is not None:
+            self.save_cells()
+
         self.filename = filename
         ary = []
         col = -1
         rows = []
+
+        # Create the file if it does not exist already, e.g., a new device.
+        if not os.path.isfile(filename):
+            with open(filename, "w", encoding="UTF-8") as new_csvfile:
+                new_csvfile.write("\n".join(["," * 11] * 24))
 
         # get array size & get contents of rows
         with open(filename, "r", encoding="UTF-8") as csvfile:
@@ -404,16 +412,26 @@ class CSVEntryFrame(ttk.Frame):
 
                 csvfile.write(row + "\n")
 
-    def set_filename(self, filename: str) -> None:
+    def update_device_name(self, device_name: str) -> None:
         """
-        Set the filename on the CSV editor.
+        Set the filename on the CSV editor with the updated device name.
 
-        :param: filename
-            The filename to set.
+        :param: device_name
+            The new device name to set.
 
         """
 
-        self.filename = filename
+        # Determine the new filename
+        new_basename = f"{device_name}_times.csv"
+        new_filename = os.path.join(os.path.dirname(self.filename), new_basename)
+
+        # Copy and move the old file and set the filename attribute
+        try:
+            os.rename(self.filename, new_filename)
+        except FileNotFoundError:
+            pass
+
+        self.filename = new_filename
 
 
 class DeviceSettingsFrame(ttk.Labelframe):
@@ -902,3 +920,6 @@ class LoadFrame(ttk.Frame):
             text=self.active_device.name.get().capitalize()
         )
         self.active_device.name.set(self.active_device.name.get().replace(" ", "_"))
+        self.settings_frame.csv_entry_frame.update_device_name(
+            self.active_device.name.get()
+        )
