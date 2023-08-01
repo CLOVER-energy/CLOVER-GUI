@@ -88,8 +88,12 @@ DEFAULT_SYSTEM_LIFETIME: int = 30
 DETAILS_GEOMETRY: str = "1080x800"
 
 # Devices:
-#   Keywrod for device input information.
+#   Keyword for device input information.
 DEVICES: str = "devices"
+
+# Diesel:
+#   Keyword for diesel input information.
+DIESEL: str = "diesel_inputs"
 
 # Diesel inputs file:
 #   The diesel inputs file.

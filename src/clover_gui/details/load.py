@@ -19,7 +19,17 @@ import pandas as pd
 import ttkbootstrap as ttk
 
 from clover import LOCATIONS_FOLDER_NAME
-from clover.load.load import DemandType, Device
+from clover.load.load import (
+    AVAILABLE,
+    DemandType,
+    Device,
+    DEVICE,
+    ELECTRIC_POWER,
+    INITIAL_OWNERSHIP,
+    FINAL_OWNERSHIP,
+    INNOVATION,
+    IMITATION,
+)
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 from ttkbootstrap.tableview import Tableview
@@ -101,13 +111,13 @@ class GUIDevice:
         """
 
         return {
-            "device": self.name.get(),
-            "available": self.active.get(),
-            "electric_power": self.electric_power.get(),
-            "initial_ownership": self.initial_ownership.get(),
-            "final_ownership": self.final_ownership.get(),
-            "innovation": self.innovation.get(),
-            "imitation": self.imitation.get(),
+            DEVICE: self.name.get(),
+            AVAILABLE: self.active.get(),
+            ELECTRIC_POWER: self.electric_power.get(),
+            INITIAL_OWNERSHIP: self.initial_ownership.get(),
+            FINAL_OWNERSHIP: self.final_ownership.get(),
+            IMITATION: self.imitation.get(),
+            INNOVATION: self.innovation.get(),
             "type": self.device_type.get(),
         }
 

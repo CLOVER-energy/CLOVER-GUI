@@ -16,8 +16,28 @@ from typing import Callable
 
 import ttkbootstrap as ttk
 
-from clover.impact.finance import COST, COST_DECREASE, OM
-from clover.impact.ghgs import GHGS, GHG_DECREASE, OM_GHGS
+from clover.fileparser import (
+    COSTS,
+    DIESEL_CONSUMPTION,
+    DIESEL_GENERATORS,
+    EMISSIONS,
+    MINIMUM_LOAD,
+    NAME,
+)
+from clover.impact.finance import (
+    COST,
+    COST_DECREASE,
+    INSTALLATION_COST,
+    INSTALLATION_COST_DECREASE,
+    OM,
+)
+from clover.impact.ghgs import (
+    GHGS,
+    GHG_DECREASE,
+    INSTALLATION_GHGS,
+    INSTALLATION_GHGS_DECREASE,
+    OM_GHGS,
+)
 from clover.simulation.diesel import DieselGenerator
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
@@ -258,9 +278,61 @@ class GeneratorFrame(ttk.Frame):
         self.cost_decrease_unit = ttk.Label(self, text="% decrease / year")
         self.cost_decrease_unit.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
+        # Installation costs
+        self.installation_cost_label = ttk.Label(self, text="Installation cost")
+        self.installation_cost_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+
+        self.installation_costs: dict[str, ttk.DoubleVar] = {
+            diesel_generator_name: ttk.DoubleVar(
+                self, 0, f"{diesel_generator_name}_installation_cost"
+            )
+            for diesel_generator_name in self.diesel_generator_name_values
+        }
+        self.installation_cost_entry = ttk.Entry(
+            self,
+            bootstyle=DANGER,
+            textvariable=self.installation_costs[self.diesel_generator_selected.get()],
+        )
+        self.installation_cost_entry.grid(
+            row=7, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.installation_cost_unit = ttk.Label(self, text="USD ($)")
+        self.installation_cost_unit.grid(row=7, column=2, padx=10, pady=5, sticky="w")
+
+        # Cost decrease
+        self.installation_cost_decrease_label = ttk.Label(
+            self, text="Installation cost decrease"
+        )
+        self.installation_cost_decrease_label.grid(
+            row=8, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_cost_decrease: dict[str, ttk.DoubleVar] = {
+            diesel_generator_name: ttk.DoubleVar(
+                self, 0, f"{diesel_generator_name}_installation_cost_decrease"
+            )
+            for diesel_generator_name in self.diesel_generator_name_values
+        }
+        self.installation_cost_decrease_entry = ttk.Entry(
+            self,
+            bootstyle=DANGER,
+            textvariable=self.installation_cost_decrease[
+                self.diesel_generator_selected.get()
+            ],
+        )
+        self.installation_cost_decrease_entry.grid(
+            row=8, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.installation_cost_decrease_unit = ttk.Label(self, text="% decrease / year")
+        self.installation_cost_decrease_unit.grid(
+            row=8, column=2, padx=10, pady=5, sticky="w"
+        )
+
         # OPEX costs
         self.opex_costs_label = ttk.Label(self, text="OPEX (O&M) costs")
-        self.opex_costs_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+        self.opex_costs_label.grid(row=9, column=0, padx=10, pady=5, sticky="w")
 
         self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
             diesel_generator_name: ttk.DoubleVar(
@@ -274,15 +346,17 @@ class GeneratorFrame(ttk.Frame):
             textvariable=self.o_and_m_costs[self.diesel_generator_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
-            row=7, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+            row=9, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
         self.o_and_m_costs_unit = ttk.Label(self, text="USD ($)")
-        self.o_and_m_costs_unit.grid(row=7, column=2, padx=10, pady=5, sticky="w")
+        self.o_and_m_costs_unit.grid(row=9, column=2, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(self, text="Embedded emissions")
-        self.embedded_emissions_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
+        self.embedded_emissions_label.grid(
+            row=10, column=0, padx=10, pady=5, sticky="w"
+        )
 
         self.embedded_emissions: dict[str, ttk.DoubleVar] = {
             diesel_generator_name: ttk.DoubleVar(
@@ -295,38 +369,19 @@ class GeneratorFrame(ttk.Frame):
             bootstyle=DANGER,
             textvariable=self.embedded_emissions[self.diesel_generator_selected.get()],
         )
+        self.embedded_emissions_entry.grid(
+            row=10, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
 
         self.embedded_emissions_unit = ttk.Label(self, text="kgCO2eq / unit")
-        self.embedded_emissions_unit.grid(row=8, column=2, padx=10, pady=5, sticky="w")
-
-        # O&M emissions
-        self.om_emissions_label = ttk.Label(self, text="O&M emissions")
-        self.om_emissions_label.grid(row=9, column=0, padx=10, pady=5, sticky="w")
-
-        self.om_emissions: dict[str, ttk.DoubleVar] = {
-            diesel_generator_name: ttk.DoubleVar(
-                self, 0, f"{diesel_generator_name}_o_and_m_ghgs"
-            )
-            for diesel_generator_name in self.diesel_generator_name_values
-        }
-        self.om_emissions_entry = ttk.Entry(
-            self,
-            bootstyle=DANGER,
-            textvariable=self.om_emissions[self.diesel_generator_selected.get()],
-        )
-        self.om_emissions_entry.grid(
-            row=9, column=1, padx=10, pady=5, sticky="ew", ipadx=80
-        )
-
-        self.om_emissions_unit = ttk.Label(self, text="kgCO2eq / year")
-        self.om_emissions_unit.grid(row=9, column=2, padx=10, pady=5, sticky="w")
+        self.embedded_emissions_unit.grid(row=10, column=2, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
             self, text="Annual emissions decrease"
         )
         self.annual_emissions_decrease_label.grid(
-            row=10, column=0, padx=10, pady=5, sticky="w"
+            row=11, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.annual_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -343,13 +398,95 @@ class GeneratorFrame(ttk.Frame):
             ],
         )
         self.annual_emissions_decrease_entry.grid(
-            row=10, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+            row=11, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
         self.annual_emissions_decrease_unit = ttk.Label(self, text="% / year")
         self.annual_emissions_decrease_unit.grid(
-            row=10, column=2, padx=10, pady=5, sticky="w"
+            row=11, column=2, padx=10, pady=5, sticky="w"
         )
+
+        # Embedded installation emissions
+        self.installation_emissions_label = ttk.Label(
+            self, text="Installation emissions"
+        )
+        self.installation_emissions_label.grid(
+            row=12, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_emissions: dict[str, ttk.DoubleVar] = {
+            diesel_generator_name: ttk.DoubleVar(
+                self, 0, f"{diesel_generator_name}_installation_ghgs"
+            )
+            for diesel_generator_name in self.diesel_generator_name_values
+        }
+        self.installation_emissions_entry = ttk.Entry(
+            self,
+            bootstyle=DANGER,
+            textvariable=self.installation_emissions[
+                self.diesel_generator_selected.get()
+            ],
+        )
+        self.installation_emissions_entry.grid(
+            row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.installation_emissions_unit = ttk.Label(self, text="kgCO2eq / unit")
+        self.installation_emissions_unit.grid(
+            row=12, column=2, padx=10, pady=5, sticky="w"
+        )
+
+        # Annual installation emissions decrease
+        self.installation_emissions_decrease_label = ttk.Label(
+            self, text="Installation emissions decrease"
+        )
+        self.installation_emissions_decrease_label.grid(
+            row=13, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_emissions_decrease: dict[str, ttk.DoubleVar] = {
+            diesel_generator_name: ttk.DoubleVar(
+                self, 0, f"{diesel_generator_name}_installation_ghgs_decrease"
+            )
+            for diesel_generator_name in self.diesel_generator_name_values
+        }
+        self.installation_emissions_decrease_entry = ttk.Entry(
+            self,
+            bootstyle=DANGER,
+            textvariable=self.installation_emissions_decrease[
+                self.diesel_generator_selected.get()
+            ],
+        )
+        self.installation_emissions_decrease_entry.grid(
+            row=13, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.installation_emissions_decrease_unit = ttk.Label(self, text="% / year")
+        self.installation_emissions_decrease_unit.grid(
+            row=13, column=2, padx=10, pady=5, sticky="w"
+        )
+
+        # O&M emissions
+        self.om_emissions_label = ttk.Label(self, text="O&M emissions")
+        self.om_emissions_label.grid(row=14, column=0, padx=10, pady=5, sticky="w")
+
+        self.om_emissions: dict[str, ttk.DoubleVar] = {
+            diesel_generator_name: ttk.DoubleVar(
+                self, 0, f"{diesel_generator_name}_o_and_m_ghgs"
+            )
+            for diesel_generator_name in self.diesel_generator_name_values
+        }
+        self.om_emissions_entry = ttk.Entry(
+            self,
+            bootstyle=DANGER,
+            textvariable=self.om_emissions[self.diesel_generator_selected.get()],
+        )
+        self.om_emissions_entry.grid(
+            row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.om_emissions_unit = ttk.Label(self, text="kgCO2eq / year")
+        self.om_emissions_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
     def add_diesel_generator(self) -> None:
         """Called when a user presses the new diesel generator button."""
@@ -373,10 +510,14 @@ class GeneratorFrame(ttk.Frame):
         self.minimum_load[new_name] = ttk.DoubleVar(self, 50)
         self.costs[new_name] = ttk.DoubleVar(self, 0)
         self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_costs[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_cost_decrease[new_name] = ttk.DoubleVar(self, 0)
         self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
         self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
-        self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
         self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
 
         # Select the new battery and update the screen
         self.diesel_generator_selected = self.diesel_generator_name_values[new_name]
@@ -416,6 +557,14 @@ class GeneratorFrame(ttk.Frame):
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.cost_decrease.items()
         }
+        self.installation_costs = {
+            self.diesel_generator_name_values[key].get(): value
+            for key, value in self.installation_costs.items()
+        }
+        self.installation_cost_decrease = {
+            self.diesel_generator_name_values[key].get(): value
+            for key, value in self.installation_cost_decrease.items()
+        }
         self.o_and_m_costs = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.o_and_m_costs.items()
@@ -424,18 +573,70 @@ class GeneratorFrame(ttk.Frame):
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.embedded_emissions.items()
         }
-        self.om_emissions = {
-            self.diesel_generator_name_values[key].get(): value
-            for key, value in self.om_emissions.items()
-        }
         self.annual_emissions_decrease = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.annual_emissions_decrease.items()
+        }
+        self.installation_emissions = {
+            self.diesel_generator_name_values[key].get(): value
+            for key, value in self.installation_emissions.items()
+        }
+        self.installation_emissions_decrease = {
+            self.diesel_generator_name_values[key].get(): value
+            for key, value in self.installation_emissions_decrease.items()
+        }
+        self.om_emissions = {
+            self.diesel_generator_name_values[key].get(): value
+            for key, value in self.om_emissions.items()
         }
 
         # Update the diesel generator values.
         self.diesel_generator_name_values = {
             entry.get(): entry for entry in self.diesel_generator_name_values.values()
+        }
+
+    def get_generators(self) -> dict[str, dict[str, dict[str, float] | float | str]]:
+        """
+        Get a mapping containing all the diesel generator information.
+
+        :return:
+            The diesel generator information.
+
+        """
+
+        return {
+            DIESEL_GENERATORS: [
+                {
+                    NAME: generator_name,
+                    DIESEL_CONSUMPTION: self.fuel_consumption[generator_name].get(),
+                    MINIMUM_LOAD: self.minimum_load[generator_name].get(),
+                    COSTS: {
+                        COST: self.costs[generator_name].get(),
+                        INSTALLATION_COST: self.installation_costs[
+                            generator_name
+                        ].get(),
+                        INSTALLATION_COST_DECREASE: self.installation_cost_decrease[
+                            generator_name
+                        ].get(),
+                        OM: self.o_and_m_costs[generator_name].get(),
+                        COST_DECREASE: self.cost_decrease[generator_name].get(),
+                    },
+                    EMISSIONS: {
+                        GHGS: self.embedded_emissions[generator_name].get(),
+                        GHG_DECREASE: self.annual_emissions_decrease[
+                            generator_name
+                        ].get(),
+                        INSTALLATION_GHGS: self.installation_emissions[
+                            generator_name
+                        ].get(),
+                        INSTALLATION_GHGS_DECREASE: self.installation_emissions_decrease[
+                            generator_name
+                        ].get(),
+                        OM_GHGS: self.om_emissions[generator_name].get(),
+                    },
+                }
+                for generator_name in self.diesel_generator_name_values
+            ]
         }
 
     def populate_available_generators(self) -> None:
@@ -527,6 +728,12 @@ class GeneratorFrame(ttk.Frame):
             self.cost_decrease[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_costs.get(COST_DECREASE, 0)
             )
+            self.installation_costs[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_costs.get(INSTALLATION_COST, 0)
+            )
+            self.installation_cost_decrease[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_costs.get(INSTALLATION_COST_DECREASE, 0)
+            )
             self.o_and_m_costs[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_costs.get(OM, 0)
             )
@@ -540,11 +747,17 @@ class GeneratorFrame(ttk.Frame):
                     ]
                 ).get(GHGS, 0),
             )
-            self.om_emissions[diesel_generator.name] = ttk.DoubleVar(
-                self, this_generator_emissions.get(GHG_DECREASE, 0)
-            )
             self.annual_emissions_decrease[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_emissions.get(OM_GHGS, 0)
+            )
+            self.installation_emissions[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_emissions.get(INSTALLATION_GHGS, 0)
+            )
+            self.installation_emissions_decrease[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_emissions.get(INSTALLATION_GHGS_DECREASE, 0)
+            )
+            self.om_emissions[diesel_generator.name] = ttk.DoubleVar(
+                self, this_generator_emissions.get(GHG_DECREASE, 0)
             )
 
         self.populate_available_generators()
@@ -590,6 +803,18 @@ class GeneratorFrame(ttk.Frame):
             textvariable=self.cost_decrease[self.diesel_generator_selected.get()]
         )
 
+        # Update installation costs entry
+        self.installation_cost_entry.configure(
+            textvariable=self.installation_costs[self.diesel_generator_selected.get()]
+        )
+
+        # Update installation cost decrease entry
+        self.installation_cost_decrease_entry.configure(
+            textvariable=self.installation_cost_decrease[
+                self.diesel_generator_selected.get()
+            ]
+        )
+
         # Update O&M costs entry
         self.o_and_m_costs_entry.configure(
             textvariable=self.o_and_m_costs[self.diesel_generator_selected.get()]
@@ -600,16 +825,30 @@ class GeneratorFrame(ttk.Frame):
             textvariable=self.embedded_emissions[self.diesel_generator_selected.get()]
         )
 
-        # Update O&M emissions entry
-        self.om_emissions_entry.configure(
-            textvariable=self.om_emissions[self.diesel_generator_selected.get()]
-        )
-
         # Update annual emissions decrease entry
         self.annual_emissions_decrease_entry.configure(
             textvariable=self.annual_emissions_decrease[
                 self.diesel_generator_selected.get()
             ]
+        )
+
+        # Update installation emissions entry
+        self.installation_emissions_entry.configure(
+            textvariable=self.installation_emissions[
+                self.diesel_generator_selected.get()
+            ]
+        )
+
+        # Update installation decrease emissions entry
+        self.installation_emissions_decrease_entry.configure(
+            textvariable=self.installation_emissions_decrease[
+                self.diesel_generator_selected.get()
+            ]
+        )
+
+        # Update O&M emissions entry
+        self.om_emissions_entry.configure(
+            textvariable=self.om_emissions[self.diesel_generator_selected.get()]
         )
 
 
