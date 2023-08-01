@@ -36,6 +36,7 @@ __all__ = (
     "DEFAULT_GUI_THEME",
     "DEFAULT_RENEWABLES_NINJA_TOKEN",
     "DEFAULT_SYSTEM_LIFETIME",
+    "DEVIES",
     "EMISSIONS",
     "GLOBAL_SETTINGS_FILEPATH",
     "IMAGES_DIRECTORY",
@@ -85,6 +86,10 @@ DEFAULT_SYSTEM_LIFETIME: int = 30
 # Details geometry:
 #   The geometry to use for the details window.
 DETAILS_GEOMETRY: str = "1080x800"
+
+# Devices:
+#   Keywrod for device input information.
+DEVICES: str = "devices"
 
 # Diesel inputs file:
 #   The diesel inputs file.

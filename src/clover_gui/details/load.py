@@ -91,6 +91,27 @@ class GUIDevice:
         self.device_utilisation: pd.DataFrame = device_utilisation
 
     @property
+    def as_dict(self) -> dict[str, bool | float | str]:
+        """
+        Return a dictionary containing the information about the device.
+
+        :return:
+            A dictionary representing the :class:`GUIDevice` for saving purposes.
+
+        """
+
+        return {
+            "device": self.name.get(),
+            "available": self.active.get(),
+            "electric_power": self.electric_power.get(),
+            "initial_ownership": self.initial_ownership.get(),
+            "final_ownership": self.final_ownership.get(),
+            "innovation": self.innovation.get(),
+            "imitation": self.imitation.get(),
+            "type": self.device_type.get(),
+        }
+
+    @property
     def device_utilisation_columns(self) -> list[str]:
         """Return nice-looking column headers."""
 
@@ -444,7 +465,17 @@ class DeviceSettingsFrame(ttk.Labelframe):
 
     """
 
-    def __init__(self, parent: Any):
+    def __init__(self, parent: Any, set_device_type: Callable):
+        """
+        Instantiate a :class:`DeviceSettingsFrame` instance.
+
+        :param: parent
+            The parent frame.
+
+        :param: set_device_type
+            Callable function to call when setting the device type.
+
+        """
         super().__init__(parent, text="Device settings", style=SUCCESS)
 
         self.columnconfigure(0, weight=4)
@@ -471,82 +502,96 @@ class DeviceSettingsFrame(ttk.Labelframe):
 
         self.name_entry.bind("<Return>", parent.update_button_label)
 
+        # Device type
+        self.device_type_label = ttk.Label(self, text="Load type")
+        self.device_type_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        self.device_type_combobox = ttk.Combobox(
+            self, textvariable=parent.active_device.device_type, style=SUCCESS
+        )
+        self.device_type_combobox.grid(
+            row=1, column=1, padx=10, pady=5, ipadx=10, sticky="ew"
+        )
+        self.device_type_combobox.bind("<<ComboboxSelected>>", set_device_type)
+
+        self.device_type_combobox["values"] = [str(e.value) for e in DemandType]
+
         # Electric Power
         self.electric_power_label = ttk.Label(self, text="Electric Power")
-        self.electric_power_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.electric_power_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
         self.electric_power_entry = ttk.Entry(
             self, textvariable=parent.active_device.electric_power.get()
         )
         self.electric_power_entry.grid(
-            row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+            row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
         self.electric_power_unit = ttk.Label(self, text="kW")
-        self.electric_power_unit.grid(row=1, column=2, padx=10, pady=5, sticky="w")
+        self.electric_power_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
 
         # Initial Ownership
         self.initial_ownership_label = ttk.Label(self, text="Initial Ownership")
-        self.initial_ownership_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.initial_ownership_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
         self.initial_ownership_entry = ttk.Entry(
             self, textvariable=parent.active_device.initial_ownership.get()
         )
         self.initial_ownership_entry.grid(
-            row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+            row=3, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
         self.initial_ownership_unit = ttk.Label(self, text="devices / household")
-        self.initial_ownership_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
+        self.initial_ownership_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
 
         # Final Ownership
         self.final_ownership_label = ttk.Label(self, text="Final Ownership")
-        self.final_ownership_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        self.final_ownership_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
         self.final_ownership_entry = ttk.Entry(
             self, textvariable=parent.active_device.final_ownership.get()
         )
         self.final_ownership_entry.grid(
-            row=3, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+            row=4, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
         self.final_ownership_unit = ttk.Label(self, text="devices / household")
-        self.final_ownership_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
+        self.final_ownership_unit.grid(row=4, column=2, padx=10, pady=5, sticky="w")
 
         # Innovation
         self.innovation_label = ttk.Label(self, text="Innovation")
-        self.innovation_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.innovation_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.innovation_entry = ttk.Entry(
             self, textvariable=parent.active_device.innovation.get()
         )
         self.innovation_entry.grid(
-            row=4, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+            row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
         self.innovation_unit = ttk.Label(self, text="innovation_units")
-        self.innovation_unit.grid(row=4, column=2, padx=10, pady=5, sticky="w")
+        self.innovation_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
 
         # Imitation
         self.imitation_label = ttk.Label(self, text="Imitation")
-        self.imitation_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        self.imitation_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
         self.imitation_entry = ttk.Entry(
             self, textvariable=parent.active_device.imitation.get()
         )
         self.imitation_entry.grid(
-            row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=10
+            row=6, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
         self.imitation_unit = ttk.Label(self, text="imitation unit")
-        self.imitation_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
+        self.imitation_unit.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
         # Clean Water Consumption
         self.clean_water_consumption_label = ttk.Label(
             self, text="Clean Water Consumption"
         )
         self.clean_water_consumption_label.grid(
-            row=6, column=0, padx=10, pady=5, sticky="w"
+            row=7, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.clean_water_consumption_entry = ttk.Entry(
@@ -555,7 +600,7 @@ class DeviceSettingsFrame(ttk.Labelframe):
             state=DISABLED,
         )
         self.clean_water_consumption_entry.grid(
-            row=6,
+            row=7,
             column=1,
             padx=10,
             pady=5,
@@ -567,7 +612,7 @@ class DeviceSettingsFrame(ttk.Labelframe):
             self, text="litres / hour", style=SUCCESS, state=DISABLED
         )
         self.clean_water_consumption_unit.grid(
-            row=6, column=2, padx=10, pady=5, sticky="w"
+            row=7, column=2, padx=10, pady=5, sticky="w"
         )
 
         # Device utilisation
@@ -575,7 +620,7 @@ class DeviceSettingsFrame(ttk.Labelframe):
             self, style=SUCCESS, text="Hourly and monthly utilisation probabilities"
         )
         self.device_utilisation_label_frame.grid(
-            row=7, column=0, columnspan=3, padx=10, pady=5, sticky="news"
+            row=8, column=0, columnspan=3, padx=10, pady=5, sticky="news"
         )
 
         self.device_utilisation_label_frame.columnconfigure(0, weight=1)
@@ -687,7 +732,7 @@ class LoadFrame(ttk.Frame):
         self.active_device: GUIDevice = self.devices[0]
 
         # Create the right-hand frame for adjusting device settings
-        self.settings_frame = DeviceSettingsFrame(self)
+        self.settings_frame = DeviceSettingsFrame(self, self.set_device_type)
         self.settings_frame.grid(
             row=0, column=1, padx=20, pady=10, sticky="news", rowspan=2
         )
@@ -821,6 +866,10 @@ class LoadFrame(ttk.Frame):
         """Updates the information for the device currently being considered."""
 
         self.settings_frame.name_entry.configure(textvariable=device.name)
+        self.settings_frame.device_type_combobox.configure(
+            textvariable=device.device_type
+        )
+        self.settings_frame.device_type_combobox.set(device.device_type.get())
         self.settings_frame.electric_power_entry.configure(
             textvariable=device.electric_power
         )
@@ -874,6 +923,13 @@ class LoadFrame(ttk.Frame):
             )
 
         self.update_device_settings_frame(device)
+
+    def set_device_type(self) -> None:
+        """Set the device type on the active device."""
+
+        self.active_device.device_type.set(
+            self.settings_frame.device_type_combobox.get()
+        )
 
     def set_loads(
         self,

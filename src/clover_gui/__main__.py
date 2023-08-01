@@ -37,6 +37,7 @@ from .__utils__ import (
     DEFAULT_GUI_THEME,
     DEFAULT_RENEWABLES_NINJA_TOKEN,
     DEFAULT_SYSTEM_LIFETIME,
+    DEVICES,
     GLOBAL_SETTINGS_FILEPATH,
     IMAGES_DIRECTORY,
     MAIN_WINDOW_GEOMETRY,
@@ -546,7 +547,7 @@ class App(ttk.Window):
 
         # Save the battery information
         with open(
-            self.input_file_info[BATTERIES], "w", encoding="utf-8"
+            self.input_file_info[BATTERIES], "w", encoding=(_encoding := "utf-8")
         ) as battery_inputs_file:
             yaml.dump(
                 self.details_window.storage_frame.battery_frame.batteries,
@@ -556,6 +557,16 @@ class App(ttk.Window):
         # Save the converters information
 
         # Save the devices information
+        with open(
+            self.input_file_info[DEVICES], "w", encoding=_encoding
+        ) as devices_inputs_file:
+            yaml.dump(
+                [entry.as_dict for entry in self.details_window.load_frame.devices],
+                devices_inputs_file,
+            )
+
+        # Save the currently open device-utilisation profile
+        self.details_window.load_frame.settings_frame.csv_entry_frame.save_cells()
 
         # Save the diesel_inputs information
 
