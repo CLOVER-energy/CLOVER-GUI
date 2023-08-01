@@ -1361,6 +1361,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         data_directory: str,
         location_name: ttk.StringVar,
         open_details_window: Callable,
+        save_configuration: Callable,
         system_lifetime: ttk.IntVar,
         open_run_screen: Callable,
     ) -> None:
@@ -1376,6 +1377,9 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         :param: open_details_window
             A callable function to open the details screen.
 
+        :param: save_configuration
+            A callable function to save the configuration.
+
         :param: system_lifetime
             The lifetime of the system, in years.
 
@@ -1384,6 +1388,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         super().__init__()
 
         self.open_run_screen: Callable = open_run_screen
+        self.save_configuration: Callable = save_configuration
         self.system_lifetime: ttk.IntVar = system_lifetime
 
         self.pack(fill="both", expand=True)
@@ -1483,6 +1488,9 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
     def launch_clover_run(self, operating_mode: OperatingMode) -> None:
         """Launch a CLOVER simulation."""
+
+        # Save all input files before running.
+        self.save_configuration()
 
         # Assemble arguments and call to CLOVER.
         clover_args: list[str] = [

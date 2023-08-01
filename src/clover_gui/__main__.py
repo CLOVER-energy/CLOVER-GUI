@@ -647,6 +647,7 @@ class App(ttk.Window):
             self.data_directory,
             self.location_name,
             self.open_details_window,
+            self.save_configuration,
             self.system_lifetime,
             self.open_run_screen,
         )
