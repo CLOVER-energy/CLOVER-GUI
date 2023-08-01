@@ -18,7 +18,10 @@ from typing import Callable
 import customtkinter as ctk
 import ttkbootstrap as ttk
 
-from clover import DieselMode, ResourceType, Scenario
+from clover import DEFAULT_SCENARIO, DemandType, DieselMode, ResourceType, Scenario
+from clover.__utils__ import DistributionNetwork, ELECTRIC_POWER
+from clover.fileparser import BATTERY, DieselMode, NAME, SCENARIOS
+from clover.impact.finance import ImpactingComponent
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 from ttkbootstrap.tooltip import ToolTip
@@ -295,7 +298,7 @@ class ConfigurationFrame(ttk.Frame):
         }
 
         self.resource_selected: dict[ResourceType : ttk.BooleanVar] = {
-            ResourceType.ELECTRIC: ttk.BooleanVar(self, value=True),
+            ResourceType.ELECTRIC: ttk.BooleanVar(self, value=False),
             ResourceType.HOT_CLEAN_WATER: ttk.BooleanVar(self, value=False),
             ResourceType.CLEAN_WATER: ttk.BooleanVar(self, value=False),
         }
@@ -609,7 +612,180 @@ class ConfigurationFrame(ttk.Frame):
             ResourceType.CLEAN_WATER: self.clean_water_public_button,
         }
 
-        # TODO: Add configuration frame widgets and layout
+        # Diesel scenario information
+        self.diesel_label_frame = ttk.Labelframe(
+            self.scrollable_scenario_frame, bootstyle=DANGER, text="Diesel"
+        )
+        self.diesel_label_frame.grid(
+            row=6, column=0, padx=10, pady=5, columnspan=5, sticky="news"
+        )
+
+        self.diesel_label_frame.columnconfigure(0, weight=1)
+        self.diesel_label_frame.columnconfigure(1, weight=1)
+        self.diesel_label_frame.columnconfigure(2, weight=1)
+        self.diesel_label_frame.columnconfigure(3, weight=1)
+
+        # Diesel mode
+        self.diesel_mode_label = ttk.Label(self.diesel_label_frame, text="Mode")
+        self.diesel_mode_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+
+        self.diesel_mode_combobox = ttk.Combobox(
+            self.diesel_label_frame, bootstyle=DANGER, state=DISABLED
+        )
+        self.diesel_mode_combobox.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
+        self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
+
+        # Backup threshold
+        self.diesel_backup_threshold_label = ttk.Label(
+            self.diesel_label_frame, text="Threshold"
+        )
+        self.diesel_backup_threshold_label.grid(
+            row=1, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.diesel_backup_threshold: ttk.DoubleVar = ttk.DoubleVar(self, 0)
+
+        def scalar_threshold(_):
+            self.diesel_backup_entry.update()
+
+        self.diesel_backup_slider = ttk.Scale(
+            self.diesel_label_frame,
+            from_=0,
+            to=100,
+            orient=tk.HORIZONTAL,
+            length=320,
+            command=scalar_threshold,
+            bootstyle=DANGER,
+            variable=self.diesel_backup_threshold,
+        )
+        self.diesel_backup_slider.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+
+        def enter_threshold(_):
+            self.diesel_backup_threshold.set(
+                min(max(float(self.diesel_backup_entry.get()), 0), 100)
+            )
+            self.diesel_backup_slider.set(self.diesel_backup_entry.get())
+
+        self.diesel_backup_entry = ttk.Entry(
+            self.diesel_label_frame,
+            bootstyle=DANGER,
+            textvariable=self.diesel_backup_threshold,
+        )
+        self.diesel_backup_entry.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_entry.bind("<Return>", enter_threshold)
+
+        self.diesel_backup_threshold_unit = ttk.Label(
+            self.diesel_label_frame, text=f"% of hours"
+        )
+        self.diesel_backup_threshold_unit.grid(
+            row=1, column=3, padx=10, pady=5, sticky="w"
+        )
+
+        # Distribution network
+        self.generation_and_distribution_label_frame = ttk.Labelframe(
+            self.scrollable_scenario_frame,
+            bootstyle=SUCCESS,
+            text="Generation and distribution",
+        )
+        self.generation_and_distribution_label_frame.grid(
+            row=7, column=0, padx=10, pady=5, sticky="news", columnspan=5
+        )
+
+        self.generation_and_distribution_label_frame.columnconfigure(0, weight=1)
+        self.generation_and_distribution_label_frame.columnconfigure(1, weight=1)
+        self.generation_and_distribution_label_frame.columnconfigure(2, weight=1)
+        self.generation_and_distribution_label_frame.columnconfigure(3, weight=1)
+
+        self.distribution_network_label = ttk.Label(
+            self.generation_and_distribution_label_frame, text="Distribution network"
+        )
+        self.distribution_network_label.grid(
+            row=0, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.distribution_network_combobox = ttk.Combobox(
+            self.generation_and_distribution_label_frame, bootstyle=SUCCESS
+        )
+        self.distribution_network_combobox.grid(
+            row=0, column=1, padx=10, pady=5, sticky="w"
+        )
+        self.distribution_network_combobox["values"] = [
+            e.value for e in DistributionNetwork
+        ]
+        self.distribution_network_combobox.set(DistributionNetwork.DC.value)
+
+        # Self generation
+        self.prioritise_self_generation_label = ttk.Label(
+            self.generation_and_distribution_label_frame,
+            text="Prioritise self generation",
+        )
+        self.prioritise_self_generation_label.grid(
+            row=0, column=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.prioritise_self_generation_combobox = ttk.Combobox(
+            self.generation_and_distribution_label_frame, bootstyle=SUCCESS
+        )
+        self.prioritise_self_generation_combobox.grid(
+            row=0, column=3, padx=10, pady=5, sticky="w"
+        )
+        self.prioritise_self_generation_combobox["values"] = ["True", "False"]
+        self.prioritise_self_generation_combobox.set("True")
+
+    def as_dict(
+        self, grid_type: str
+    ) -> dict[str, list[dict[str, bool | dict[str, float] | list[str] | str]]]:
+        """
+        Outputs the scenario information in a `dict` ready for saving.
+
+        :returns:
+            The scenario information as a `dict` ready for saving.
+
+        """
+
+        # Determine the available resource types.
+        resource_types: list[str] = []
+        for resource in ResourceType:
+            if self.resource_selected.get(resource, ttk.BooleanVar(self, False)).get():
+                if resource != ResourceType.ELECTRIC:
+                    resource_types.append(resource.value)
+                else:
+                    resource_types.append(ELECTRIC_POWER)
+
+        return {
+            SCENARIOS: [
+                {
+                    NAME: DEFAULT_SCENARIO,
+                    BATTERY: self.battery_selected.get(),
+                    "demands": {
+                        DemandType.DOMESTIC.value: self.domestic_selected[
+                            ResourceType.ELECTRIC
+                        ].get(),
+                        DemandType.COMMERCIAL.value: self.commercial_selected[
+                            ResourceType.ELECTRIC
+                        ].get(),
+                        DemandType.PUBLIC.value: self.public_selected[
+                            ResourceType.ELECTRIC
+                        ].get(),
+                    },
+                    "diesel": {
+                        "mode": self.diesel_mode_combobox.get(),
+                        DieselMode.BACKUP.value: {
+                            "threshold": float(self.diesel_backup_threshold.get()) / 100
+                        },
+                    },
+                    "distribution_network": self.distribution_network_combobox.get(),
+                    ImpactingComponent.GRID.value: self.grid_selected.get(),
+                    "grid_type": grid_type,
+                    # FIXME: Implement a fixed inverter size.
+                    "fixed_inverter_size": False,
+                    "prioritise_self_generation": self.prioritise_self_generation_combobox.get(),
+                    ImpactingComponent.PV.value: self.solar_pv_selected.get(),
+                    "resource_types": resource_types,
+                }
+            ]
+        }
 
     def pv_button_callback(self):
         self.solar_pv_selected.set(not self.solar_pv_selected.get())
@@ -853,4 +1029,18 @@ class ConfigurationFrame(ttk.Frame):
                 if self.resource_selected[ResourceType.CLEAN_WATER].get()
                 else self.public_button_disabled_image
             ),
+        )
+
+        # Set the diesel scenario information
+        self.diesel_mode_combobox.set(scenario.diesel_scenario.mode.value)
+        self.diesel_backup_threshold.set(
+            scenario.diesel_scenario.backup_threshold * 100
+        )
+
+        # Set distribution network
+        self.distribution_network_combobox.set(scenario.distribution_network.value)
+
+        # Set self-prioritisation
+        self.prioritise_self_generation_combobox.set(
+            str(scenario.prioritise_self_generation).capitalize()
         )

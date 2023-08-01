@@ -9,10 +9,9 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
-import tkinter as tk
+from typing import Callable
 
 import pandas as pd
-
 import ttkbootstrap as ttk
 
 from ttkbootstrap.constants import *
@@ -35,6 +34,8 @@ class GridFrame(ttk.Frame):
 
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.add_grid_profile_to_system_frame: Callable | None = None
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=6)
@@ -184,6 +185,9 @@ class GridFrame(ttk.Frame):
             new_name = seed_profile_name
 
         self.grid_profile_values[new_name] = ttk.StringVar(self, new_name)
+
+        # Add the new profile to the system frame.
+        self.add_grid_profile_to_system_frame(new_name)
 
         # Create new probabilities and sliders
         if seed_profile_probabilities is None:

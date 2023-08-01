@@ -451,6 +451,7 @@ class SystemFrame(ttk.Frame):
         self,
         batteries: list[Battery],
         diesel_generators: list[DieselGenerator],
+        grid_profile_name: str,
         minigrid: Minigrid,
         pv_panels: list[PVPanel],
     ) -> None:
@@ -538,6 +539,7 @@ class SystemFrame(ttk.Frame):
         self.heat_exchanger_combobox.set(self.heat_exchanger.get())
 
         # Update the grid profile name
+        self.grid_profile_combobox.set(grid_profile_name)
 
     def add_battery(self, battery_name: str) -> None:
         """
@@ -586,6 +588,10 @@ class SystemFrame(ttk.Frame):
             The name of the grid profile to add.
 
         """
+
+        if not isinstance(self.grid_profile_combobox["values"], tuple):
+            self.grid_profile_combobox["values"] = (grid_profile_name,)
+            return
 
         self.grid_profile_combobox["values"] = self.grid_profile_combobox["values"] + (
             grid_profile_name,

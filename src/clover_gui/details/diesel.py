@@ -622,7 +622,7 @@ class GeneratorFrame(ttk.Frame):
                 {
                     NAME: generator_name,
                     DIESEL_CONSUMPTION: self.fuel_consumption[generator_name].get(),
-                    MINIMUM_LOAD: self.minimum_load[generator_name].get(),
+                    MINIMUM_LOAD: self.minimum_load[generator_name].get() / 100,
                     COSTS: {
                         COST: self.costs[generator_name].get(),
                         INSTALLATION_COST: self.installation_costs[

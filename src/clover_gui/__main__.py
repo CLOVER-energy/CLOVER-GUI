@@ -25,7 +25,7 @@ from clover import (
     parse_input_files,
     read_yaml,
 )
-from clover.fileparser import DEVICE_UTILISATIONS_INPUT_DIRECTORY
+from clover.fileparser import DEVICE_UTILISATIONS_INPUT_DIRECTORY, SCENARIOS
 from clover.scripts.new_location import create_new_location
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
@@ -382,7 +382,7 @@ class App(ttk.Window):
         set_progress_bar_progress(1100 * percent_fraction)
 
         self.details_window.system_frame.set_system(
-            batteries, diesel_generators, minigrid, pv_panels
+            batteries, diesel_generators, scenarios[0].grid_type, minigrid, pv_panels
         )
         set_progress_bar_progress(1200 * percent_fraction)
 
@@ -576,6 +576,15 @@ class App(ttk.Window):
             yaml.dump(self.details_window.diesel_frame.to_dict(), diesel_inputs_file)
 
         # Save the energy_system information
+        with open(
+            self.input_file_info[SCENARIOS], "w", encoding=_encoding
+        ) as scenarios_inputs_file:
+            yaml.dump(
+                self.configuration_screen.configuration_frame.as_dict(
+                    self.details_window.system_frame.grid_profile_combobox.get()
+                ),
+                scenarios_inputs_file,
+            )
 
         # Save the finance_inputs information
 

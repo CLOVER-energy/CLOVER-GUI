@@ -141,6 +141,9 @@ class DetailsWindow(tk.Toplevel):
         self.diesel_frame.generator_frame.add_generator_to_system_frame = (
             self.system_frame.add_diesel_generator
         )
+        self.grid_frame.add_grid_profile_to_system_frame = (
+            self.system_frame.add_grid_profile
+        )
 
     def save_and_close(self) -> None:
         """Actioned when closed."""
