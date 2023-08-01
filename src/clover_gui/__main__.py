@@ -38,6 +38,7 @@ from .__utils__ import (
     DEFAULT_RENEWABLES_NINJA_TOKEN,
     DEFAULT_SYSTEM_LIFETIME,
     DEVICES,
+    DIESEL,
     GLOBAL_SETTINGS_FILEPATH,
     IMAGES_DIRECTORY,
     MAIN_WINDOW_GEOMETRY,
@@ -569,6 +570,10 @@ class App(ttk.Window):
         self.details_window.load_frame.settings_frame.csv_entry_frame.save_cells()
 
         # Save the diesel_inputs information
+        with open(
+            self.input_file_info[DIESEL], "w", encoding=_encoding
+        ) as diesel_inputs_file:
+            yaml.dump(self.details_window.diesel_frame.to_dict(), diesel_inputs_file)
 
         # Save the energy_system information
 

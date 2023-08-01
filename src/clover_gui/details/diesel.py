@@ -540,54 +540,67 @@ class GeneratorFrame(ttk.Frame):
         self.diesel_generator_capacities = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.diesel_generator_capacities.items()
+            if key in self.diesel_generator_name_values
         }
         self.fuel_consumption = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.fuel_consumption.items()
+            if key in self.diesel_generator_name_values
         }
         self.minimum_load = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.minimum_load.items()
+            if key in self.diesel_generator_name_values
         }
         self.costs = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.costs.items()
+            if key in self.diesel_generator_name_values
         }
         self.cost_decrease = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.cost_decrease.items()
+            if key in self.diesel_generator_name_values
         }
         self.installation_costs = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.installation_costs.items()
+            if key in self.diesel_generator_name_values
         }
         self.installation_cost_decrease = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.installation_cost_decrease.items()
+            if key in self.diesel_generator_name_values
         }
         self.o_and_m_costs = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.o_and_m_costs.items()
+            if key in self.diesel_generator_name_values
         }
         self.embedded_emissions = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.embedded_emissions.items()
+            if key in self.diesel_generator_name_values
         }
         self.annual_emissions_decrease = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.annual_emissions_decrease.items()
+            if key in self.diesel_generator_name_values
         }
         self.installation_emissions = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.installation_emissions.items()
+            if key in self.diesel_generator_name_values
         }
         self.installation_emissions_decrease = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.installation_emissions_decrease.items()
+            if key in self.diesel_generator_name_values
         }
         self.om_emissions = {
             self.diesel_generator_name_values[key].get(): value
             for key, value in self.om_emissions.items()
+            if key in self.diesel_generator_name_values
         }
 
         # Update the diesel generator values.
@@ -902,3 +915,14 @@ class DieselFrame(ttk.Frame):
         )
 
         # TODO: Add configuration frame widgets and layout
+
+    def to_dict(self) -> dict[str, dict[str, dict[str, float] | float | str]]:
+        """
+        Return the information from the frame as a dictionary.
+
+        :return:
+            The information from the frame.
+
+        """
+
+        return self.generator_frame.get_generators()
