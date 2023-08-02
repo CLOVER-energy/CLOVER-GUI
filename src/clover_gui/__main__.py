@@ -29,6 +29,7 @@ from clover.fileparser import (
     DEVICE_UTILISATIONS_INPUT_DIRECTORY,
     FINANCE_INPUTS_FILE,
     GHG_INPUTS_FILE,
+    GRID_TIMES_FILE,
     SCENARIOS,
 )
 from clover.scripts.new_location import create_new_location
@@ -625,8 +626,6 @@ class App(ttk.Window):
         ) as finance_inputs_file:
             yaml.dump(self.details_window.finance_frame.as_dict(), finance_inputs_file)
 
-        # Save the generation_inputs information
-
         # Save the ghg_inputs information
         with open(
             self.input_file_info[os.path.basename(GHG_INPUTS_FILE).split(".")[0]],
@@ -636,6 +635,12 @@ class App(ttk.Window):
             yaml.dump(self.details_window.ghgs_frame.as_dict(), ghg_inputs_file)
 
         # Save the grid_times information
+        with open(
+            self.input_file_info[os.path.basename(GRID_TIMES_FILE).split(".")[0]],
+            "w",
+            encoding=_encoding,
+        ) as grid_times_file:
+            yaml.dump(self.details_window.grid_frame.as_dataframe, grid_times_file)
 
         # Save the location_inputs information
 

@@ -131,7 +131,7 @@ class DetailsWindow(tk.Toplevel):
         self.system_frame = SystemFrame(self.details_notebook)
         self.details_notebook.add(self.system_frame, text="System", sticky="news")
 
-        # Update the various frames
+        # Update the various frames with the add-panel functions.
         self.solar_frame.pv_frame.add_panel_to_system_frame = (
             self.system_frame.add_pv_panel
         )
@@ -143,6 +143,20 @@ class DetailsWindow(tk.Toplevel):
         )
         self.grid_frame.add_grid_profile_to_system_frame = (
             self.system_frame.add_grid_profile
+        )
+
+        # Update the various frames with the set-panel functions.
+        self.solar_frame.pv_frame.set_panels_on_system_frame = (
+            self.system_frame.set_pv_panels
+        )
+        self.storage_frame.battery_frame.set_batteries_on_system_frame = (
+            self.system_frame.set_batteries
+        )
+        self.diesel_frame.generator_frame.set_generators_on_system_frame = (
+            self.system_frame.set_diesel_generators
+        )
+        self.grid_frame.set_profiles_on_system_frame = (
+            self.system_frame.set_grid_profiles
         )
 
     def save_and_close(self) -> None:

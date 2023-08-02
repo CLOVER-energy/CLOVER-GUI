@@ -83,6 +83,7 @@ class GeneratorFrame(ttk.Frame):
         self.columnconfigure(3, weight=1)  # These rows have entries
 
         self.add_generator_to_system_frame: Callable | None = None
+        self.set_generators_on_system_frame: Callable | None = None
 
         # Diesel generator being selected
         self.diesel_generator_selected_label = ttk.Label(
@@ -607,6 +608,11 @@ class GeneratorFrame(ttk.Frame):
         self.diesel_generator_name_values = {
             entry.get(): entry for entry in self.diesel_generator_name_values.values()
         }
+
+        # Update the generator names on the system frame.
+        self.set_generators_on_system_frame(
+            list(self.diesel_generator_name_values.keys())
+        )
 
     def get_generators(self) -> dict[str, dict[str, dict[str, float] | float | str]]:
         """

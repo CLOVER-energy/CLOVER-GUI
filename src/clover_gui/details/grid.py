@@ -36,6 +36,7 @@ class GridFrame(ttk.Frame):
         super().__init__(parent)
 
         self.add_grid_profile_to_system_frame: Callable | None = None
+        self.set_profiles_on_system_frame: Callable | None = None
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=6)
@@ -237,6 +238,26 @@ class GridFrame(ttk.Frame):
         # Update the sliders
         self.update_sliders()
 
+    @property
+    def as_dataframe(self) -> pd.DataFrame:
+        """
+        Return the grid profiles as a :class:`pandas.DataFrame` for saving.
+
+        :returns:
+            A :class:`pandas.DataFrame` containing the grid-profile information.
+
+        """
+
+        return pd.DataFrame(
+            {
+                profile_name: [
+                    self.probability_entries[profile_name][hour].get()
+                    for hour in range(24)
+                ]
+                for profile_name in self.grid_profile_values
+            }
+        )
+
     def enter_grid_profile_name(self, _) -> None:
         """Called when someone enters a new grid profile name."""
         self.probability_sliders = {
@@ -256,6 +277,9 @@ class GridFrame(ttk.Frame):
         }
         self.populate_available_profiles()
         self.update_graph_frame_label()
+
+        # Update the profile names on the system frame.
+        self.set_profiles_on_system_frame(list(self.grid_profile_values.keys()))
 
     def enter_probability(self, grid_profile, hour):
         self.probabilities[grid_profile][hour].set(

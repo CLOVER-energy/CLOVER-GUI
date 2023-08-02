@@ -64,6 +64,7 @@ class BatteryFrame(ttk.Frame):
         self.columnconfigure(3, weight=1)
 
         self.add_battery_to_system_frame: Callable | None = None
+        self.set_batteries_on_system_frame: Callable | None = None
 
         # Battery being selected
         self.battery_selected_label = ttk.Label(self, text="Battery to configure")
@@ -795,6 +796,9 @@ class BatteryFrame(ttk.Frame):
         self.battery_name_values = {
             entry.get(): entry for entry in self.battery_name_values.values()
         }
+
+        # Update the battery names on the sysetm frame
+        self.set_batteries_on_system_frame(list(self.battery_name_values.keys()))
 
     def populate_available_batteries(self) -> None:
         """Populate the combo box with the set of avialable batteries."""

@@ -770,7 +770,9 @@ class ConfigurationFrame(ttk.Frame):
                         ].get(),
                     },
                     "diesel": {
-                        "mode": self.diesel_mode_combobox.get(),
+                        "mode": self.diesel_mode_combobox.get()
+                        if self.diesel_selected.get()
+                        else DieselMode.DISABLED.value,
                         DieselMode.BACKUP.value: {
                             "threshold": float(self.diesel_backup_threshold.get()) / 100
                         },
@@ -787,6 +789,17 @@ class ConfigurationFrame(ttk.Frame):
             ]
         }
 
+    def update_diesel_settings(self) -> None:
+        """Updates the diesel settings sliders."""
+
+        # Update the backup threshold accordingly
+        if self.diesel_selected.get():
+            self.diesel_backup_entry.configure(state="enabled")
+            self.diesel_backup_slider.configure(state="enabled")
+        else:
+            self.diesel_backup_entry.configure(state=DISABLED)
+            self.diesel_backup_slider.configure(state=DISABLED)
+
     def pv_button_callback(self):
         self.solar_pv_selected.set(not self.solar_pv_selected.get())
         self.pv_button.configure(image=self.solar_images[self.solar_pv_selected.get()])
@@ -802,6 +815,8 @@ class ConfigurationFrame(ttk.Frame):
         self.diesel_button.configure(
             image=self.diesel_images[self.diesel_selected.get()]
         )
+
+        self.update_diesel_settings()
 
     def grid_button_callback(self):
         self.grid_selected.set(not self.grid_selected.get())
@@ -905,6 +920,7 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         self.diesel_selected.set(scenario.diesel_scenario.mode != DieselMode.DISABLED)
+        self.update_diesel_settings()
         self.diesel_button.configure(
             image=self.diesel_images[self.diesel_selected.get()]
         )
@@ -1032,9 +1048,15 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Set the diesel scenario information
-        self.diesel_mode_combobox.set(scenario.diesel_scenario.mode.value)
+        # self.diesel_mode_combobox.set(scenario.diesel_scenario.mode.value)
+        self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
         self.diesel_backup_threshold.set(
-            scenario.diesel_scenario.backup_threshold * 100
+            (
+                scenario.diesel_scenario.backup_threshold
+                if scenario.diesel_scenario.backup_threshold is not None
+                else 0
+            )
+            * 100
         )
 
         # Set distribution network

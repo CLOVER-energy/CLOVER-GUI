@@ -596,3 +596,47 @@ class SystemFrame(ttk.Frame):
         self.grid_profile_combobox["values"] = self.grid_profile_combobox["values"] + (
             grid_profile_name,
         )
+
+    def set_batteries(self, battery_names: list[str]) -> None:
+        """
+        Set the names of the batteries in the combobox.
+
+        :param: battery_names
+            The `list` of battery names to set.
+
+        """
+
+        self.battery_combobox["values"] = battery_names
+
+    def set_diesel_generators(self, generator_names: list[str]) -> None:
+        """
+        Set the names of the generators in the combobox.
+
+        :param: generator_names
+            The `list` of diesel generator names to set.
+
+        """
+
+        self.diesel_generator_combobox["values"] = generator_names
+
+    def set_pv_panels(self, panel_names: list[str]) -> None:
+        """
+        Set the names of the panel in the combobox.
+
+        :param: panel_names
+            The `list` of panel names to set.
+
+        """
+
+        self.pv_panel_combobox["values"] = panel_names
+
+    def set_grid_profiles(self, grid_profile_names: list[str]) -> None:
+        """
+        Set the names of the grid profiles in the combobox.
+
+        :param: grid_profile_names
+            The `list` of grid-profile names to set.
+
+        """
+
+        self.grid_profile_combobox["values"] = grid_profile_names

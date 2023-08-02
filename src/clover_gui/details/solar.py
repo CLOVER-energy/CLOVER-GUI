@@ -73,6 +73,7 @@ class PVFrame(ttk.Frame):
         self.columnconfigure(3, weight=1)
 
         self.add_panel_to_system_frame: Callable | None = None
+        self.set_panels_on_system_frame: Callable | None = None
 
         self.renewables_ninja_token = renewables_ninja_token
 
@@ -620,6 +621,9 @@ class PVFrame(ttk.Frame):
         self.panel_name_values = {
             entry.get(): entry for entry in self.panel_name_values.values()
         }
+
+        # Update the panel name values in the system frame.
+        self.set_panels_on_system_frame(list(self.panel_name_values.keys()))
 
     def populate_available_panels(self) -> None:
         """Populate the combo box with the set of avialable panels."""
