@@ -27,6 +27,7 @@ from clover import (
 )
 from clover.fileparser import (
     DEVICE_UTILISATIONS_INPUT_DIRECTORY,
+    ENERGY_SYSTEM_INPUTS_FILE,
     FINANCE_INPUTS_FILE,
     GHG_INPUTS_FILE,
     GRID_TIMES_FILE,
@@ -609,13 +610,14 @@ class App(ttk.Window):
 
         # Save the energy_system information
         with open(
-            self.input_file_info[SCENARIOS], "w", encoding=_encoding
-        ) as scenarios_inputs_file:
+            self.input_file_info[
+                os.path.basename(ENERGY_SYSTEM_INPUTS_FILE).split(".")[0]
+            ],
+            "w",
+            encoding=_encoding,
+        ) as energy_system_inputs_file:
             yaml.dump(
-                self.configuration_screen.configuration_frame.as_dict(
-                    self.details_window.system_frame.grid_profile_combobox.get()
-                ),
-                scenarios_inputs_file,
+                self.details_window.system_frame.as_dict, energy_system_inputs_file
             )
 
         # Save the finance_inputs information
@@ -642,11 +644,18 @@ class App(ttk.Window):
         ) as grid_times_file:
             yaml.dump(self.details_window.grid_frame.as_dataframe, grid_times_file)
 
-        # Save the location_inputs information
-
         # Save the optimisation_inputs information
 
         # Save the scenarios information
+        with open(
+            self.input_file_info[SCENARIOS], "w", encoding=_encoding
+        ) as scenarios_inputs_file:
+            yaml.dump(
+                self.configuration_screen.configuration_frame.as_dict(
+                    self.details_window.system_frame.grid_profile_combobox.get()
+                ),
+                scenarios_inputs_file,
+            )
 
         # Save the simulation information
 

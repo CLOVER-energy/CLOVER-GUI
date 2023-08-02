@@ -12,7 +12,16 @@
 import ttkbootstrap as ttk
 
 from clover import ProgrammerJudgementFault
+from clover.fileparser import BATTERY, DIESEL_GENERATOR
 from clover.generation.solar import PVPanel
+from clover.impact.finance import ImpactingComponent, LIFETIME, SIZE_INCREMENT
+from clover.simulation.__utils__ import (
+    AC_TO_AC,
+    AC_TO_DC,
+    CONVERSION,
+    DC_TO_AC,
+    DC_TO_DC,
+)
 from clover.simulation.diesel import DieselGenerator
 from clover.simulation.energy_system import Minigrid
 from clover.simulation.storage_utils import Battery
@@ -640,3 +649,31 @@ class SystemFrame(ttk.Frame):
         """
 
         self.grid_profile_combobox["values"] = grid_profile_names
+
+    @property
+    def as_dict(self) -> dict[str, dict[str, float] | float | str]:
+        """
+        Return the energy-system information as a `dict`.
+
+        :returns:
+            The information as a `dict` ready for saving.
+
+        """
+
+        return {
+            "ac_transmission_efficiency": self.ac_transmission.get() / 100,
+            "dc_transmission_efficiency": self.dc_transmission.get() / 100,
+            BATTERY: self.battery_combobox.get(),
+            CONVERSION: {
+                AC_TO_AC: self.ac_to_ac_conversion.get() / 100,
+                AC_TO_DC: self.ac_to_dc_conversion.get() / 100,
+                DC_TO_AC: self.dc_to_ac_conversion.get() / 100,
+                DC_TO_DC: self.dc_to_dc_conversion.get() / 100,
+            },
+            DIESEL_GENERATOR: self.diesel_generator_combobox.get(),
+            "pv_panel": self.pv_panel_combobox.get(),
+            ImpactingComponent.INVERTER.value: {
+                LIFETIME: self.inverter_lifetime.get(),
+                SIZE_INCREMENT: self.inverter_step_size.get(),
+            },
+        }
