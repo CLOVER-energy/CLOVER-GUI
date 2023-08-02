@@ -390,8 +390,8 @@ class App(ttk.Window):
         if self.load_location_window is not None:
             self.load_location_window.withdraw()
             BaseScreen.add_screen_moving_forward(self.main_menu_frame)
+        set_progress_bar_progress(0)
         progress_bar.stop()
-        progress_bar.grid_forget()
 
         # Clear the main-menu screen.
         self.main_menu_frame.pack_forget()
