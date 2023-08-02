@@ -120,7 +120,7 @@ class FinanceFrame(ttk.Frame):
         # General O&M
         self.general_om_label = ttk.Label(self, text="General O&M")
         self.general_om_label.grid(row=2, column=1, padx=10, pady=5, sticky="w")
-        self.general_om = ttk.DoubleVar(self, "0.0")
+        self.general_om = ttk.DoubleVar(self, 0.0)
 
         self.general_om_entry = ttk.Entry(
             self,
@@ -283,7 +283,7 @@ class FinanceFrame(ttk.Frame):
             row=9, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
         )
         self.grid_cost_units_label = ttk.Label(self, text="$/kWh")
-        self.grid_cost_units_label.grid(row=8, column=3, padx=10, pady=5, sticky="w")
+        self.grid_cost_units_label.grid(row=9, column=3, padx=10, pady=5, sticky="w")
 
         # Distribution network
         self.distribution_network_infrastructure_cost_label = ttk.Label(
@@ -464,10 +464,10 @@ class FinanceFrame(ttk.Frame):
 
         """
 
-        self.discount_rate.set(finance_inputs[DISCOUNT_RATE])
+        self.discount_rate.set(finance_inputs[DISCOUNT_RATE] * 100)
         self.discount_rate_entry.update()
 
-        self.general_om.set(finance_inputs[OM][COST])
+        self.general_om.set(finance_inputs[GENERAL_OM])
         self.general_om_entry.update()
 
         # Misc.
@@ -546,3 +546,41 @@ class FinanceFrame(ttk.Frame):
         # Kerosene
         self.kerosene_cost.set(finance_inputs[ImpactingComponent.KEROSENE.value][COST])
         self.kerosene_cost_entry.update()
+
+    def as_dict(self) -> dict[str, dict[str, float] | float]:
+        """
+        Return the finance screen information as a `dict`.
+
+        :return:
+            The information as a `dict`.
+
+        """
+
+        return {
+            DISCOUNT_RATE: self.discount_rate.get() / 100,
+            GENERAL_OM: self.general_om.get(),
+            ImpactingComponent.MISC.value: {
+                CAPACITY_COST: self.capacity_cost.get(),
+                FIXED_COST: self.fixed_cost.get(),
+            },
+            ImpactingComponent.BOS.value: {
+                COST: self.bos_cost.get(),
+                COST_DECREASE: self.bos_cost_decrease.get(),
+            },
+            ImpactingComponent.DIESEL_FUEL.value: {
+                COST: self.diesel_fuel_cost.get(),
+                COST_DECREASE: self.diesel_fuel_cost_decrease.get(),
+            },
+            ImpactingComponent.GRID.value: {
+                COST: self.grid_cost.get(),
+                _INFRASTRUCTURE_COSTS: self.distribution_network_infrastructure_cost.get(),
+            },
+            ImpactingComponent.HOUSEHOLDS.value: {
+                CONNECTION_COST: self.connection_cost.get()
+            },
+            ImpactingComponent.INVERTER.value: {
+                COST: self.inverter_cost.get(),
+                COST_DECREASE: self.inverter_cost_decrease.get(),
+            },
+            ImpactingComponent.KEROSENE.value: {COST: self.kerosene_cost.get()},
+        }

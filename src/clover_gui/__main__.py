@@ -25,7 +25,11 @@ from clover import (
     parse_input_files,
     read_yaml,
 )
-from clover.fileparser import DEVICE_UTILISATIONS_INPUT_DIRECTORY, SCENARIOS
+from clover.fileparser import (
+    DEVICE_UTILISATIONS_INPUT_DIRECTORY,
+    FINANCE_INPUTS_FILE,
+    SCENARIOS,
+)
 from clover.scripts.new_location import create_new_location
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
@@ -111,7 +115,9 @@ class App(ttk.Window):
 
         # File menu
         self.file_menu = ttk.Menu(self.menu_bar, tearoff=0)
-        self.file_menu.add_command(label="Open", command=self.open_load_location_window)
+        self.file_menu.add_command(
+            label="Open", command=self.save_and_open_load_location_window
+        )
         self.file_menu.add_command(label="Save", command=self.save_configuration)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.quit)
@@ -468,6 +474,12 @@ class App(ttk.Window):
             self.load_location_window.deiconify()
         self.load_location_window.mainloop()
 
+    def save_and_open_load_location_window(self) -> None:
+        """Save the current location then open the load-location window."""
+
+        self.save_configuration()
+        self.open_load_location_window()
+
     def open_post_run_screen(self) -> None:
         """Moves to the post-run screen."""
 
@@ -587,6 +599,12 @@ class App(ttk.Window):
             )
 
         # Save the finance_inputs information
+        with open(
+            self.input_file_info[os.path.basename(FINANCE_INPUTS_FILE).split(".")[0]],
+            "w",
+            encoding=_encoding,
+        ) as finance_inputs_file:
+            yaml.dump(self.details_window.finance_frame.as_dict(), finance_inputs_file)
 
         # Save the generation_inputs information
 
