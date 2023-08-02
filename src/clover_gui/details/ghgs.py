@@ -16,6 +16,7 @@ from logging import Logger
 import ttkbootstrap as ttk
 
 from clover.impact import ImpactingComponent
+from clover.impact.finance import *
 from clover.impact.ghgs import (
     CONNECTION_GHGS,
     FINAL_GHGS,
@@ -294,3 +295,37 @@ class GHGFrame(ttk.Frame):
         # Kerosene
         self.kerosene.set(finance_inputs[ImpactingComponent.KEROSENE.value][GHGS])
         self.kerosene_entry.update()
+
+    def as_dict(self) -> dict[str, dict[str, float] | float]:
+        """
+        Return the finance screen information as a `dict`.
+
+        :return:
+            The information as a `dict`.
+
+        """
+
+        return {
+            "general": {OM: self.general_om.get()},
+            ImpactingComponent.MISC.value: {GHGS: self.misc.get()},
+            ImpactingComponent.BOS.value: {
+                GHGS: self.bos.get(),
+                GHG_DECREASE: self.bos_decrease.get(),
+            },
+            ImpactingComponent.DIESEL_FUEL.value: {
+                GHGS: self.diesel_fuel.get(),
+                OM: self.diesel_om.get(),
+            },
+            ImpactingComponent.GRID.value: {
+                INITIAL_GHGS: self.initial_grid.get(),
+                FINAL_GHGS: self.final_grid.get(),
+            },
+            ImpactingComponent.HOUSEHOLDS.value: {
+                CONNECTION_GHGS: self.households.get(),
+            },
+            ImpactingComponent.INVERTER.value: {
+                GHGS: self.inverter.get(),
+                GHG_DECREASE: self.inverter_decrease.get(),
+            },
+            ImpactingComponent.KEROSENE.value: {GHGS: self.kerosene.get()},
+        }

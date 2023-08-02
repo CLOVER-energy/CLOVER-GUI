@@ -28,6 +28,7 @@ from clover import (
 from clover.fileparser import (
     DEVICE_UTILISATIONS_INPUT_DIRECTORY,
     FINANCE_INPUTS_FILE,
+    GHG_INPUTS_FILE,
     SCENARIOS,
 )
 from clover.scripts.new_location import create_new_location
@@ -607,6 +608,12 @@ class App(ttk.Window):
             yaml.dump(self.details_window.finance_frame.as_dict(), finance_inputs_file)
 
         # Save the generation_inputs information
+        with open(
+            self.input_file_info[os.path.basename(GHG_INPUTS_FILE).split(".")[0]],
+            "w",
+            encoding=_encoding,
+        ) as ghg_inputs_file:
+            yaml.dump(self.details_window.ghgs_frame.as_dict(), ghg_inputs_file)
 
         # Save the ghg_inputs information
 
