@@ -39,11 +39,14 @@ from .__utils__ import (
     BaseScreen,
     BATTERIES,
     CLOVER_ICON_IMAGE,
+    DEFAULT_END_YEAR,
     DEFAULT_GUI_THEME,
     DEFAULT_RENEWABLES_NINJA_TOKEN,
+    DEFAULT_START_YEAR,
     DEFAULT_SYSTEM_LIFETIME,
     DEVICES,
     DIESEL,
+    END_YEAR,
     GLOBAL_SETTINGS_FILEPATH,
     IMAGES_DIRECTORY,
     MAIN_WINDOW_GEOMETRY,
@@ -51,6 +54,7 @@ from .__utils__ import (
     parse_diesel_inputs,
     parse_solar_inputs,
     RENEWABLES_NINJA_TOKEN,
+    START_YEAR,
     SYSTEM_LIFETIME,
     THEME,
     update_location_information,
@@ -96,10 +100,16 @@ class App(ttk.Window):
         self.logger = get_logger("clover_gui", False)
 
         # Open the settings file
-        renewables_ninja_token, system_lifetime, theme = self.read_global_settings(
-            self.logger
-        )
+        (
+            end_year,
+            renewables_ninja_token,
+            start_year,
+            system_lifetime,
+            theme,
+        ) = self.read_global_settings(self.logger)
+        self.end_year = end_year
         self.renewables_ninja_token = renewables_ninja_token
+        self.start_year = start_year
         self.system_lifetime = system_lifetime
         self.theme = theme
         self.style.theme_use(self.theme.get())
@@ -495,8 +505,10 @@ class App(ttk.Window):
 
         if self.preferences_window is None:
             self.preferences_window: PreferencesWindow | None = PreferencesWindow(
+                self.end_year,
                 self.renewables_ninja_token,
                 self.select_theme,
+                self.start_year,
                 self.system_lifetime,
                 self.theme,
             )
@@ -515,12 +527,14 @@ class App(ttk.Window):
 
     def read_global_settings(
         self, logger: Logger
-    ) -> tuple[ttk.StringVar, ttk.IntVar, ttk.StringVar]:
+    ) -> tuple[ttk.IntVar, ttk.StringVar, ttk.IntVar, ttk.IntVar, ttk.StringVar]:
         """
         Read the global settings.
 
         :returns:
+            - The end year for renewables.ninja data,
             - The renewables.ninja API token,
+            - The start year for renewables.ninja data,
             - The system lifetime in years,
             - The theme.
 
@@ -530,18 +544,22 @@ class App(ttk.Window):
             global_settings_yaml = read_yaml(GLOBAL_SETTINGS_FILEPATH, logger)
         except FileNotFoundError:
             return (
+                ttk.IntVar(self, DEFAULT_END_YEAR),
                 ttk.StringVar(self, DEFAULT_RENEWABLES_NINJA_TOKEN),
+                ttk.IntVar(self, DEFAULT_START_YEAR),
                 ttk.IntVar(self, DEFAULT_SYSTEM_LIFETIME),
                 ttk.StringVar(self, DEFAULT_GUI_THEME),
             )
 
         return (
+            ttk.IntVar(self, global_settings_yaml.get(END_YEAR, DEFAULT_END_YEAR)),
             ttk.StringVar(
                 self,
                 global_settings_yaml.get(
                     RENEWABLES_NINJA_TOKEN, DEFAULT_RENEWABLES_NINJA_TOKEN
                 ),
             ),
+            ttk.IntVar(self, global_settings_yaml.get(START_YEAR, DEFAULT_START_YEAR)),
             ttk.IntVar(
                 self, global_settings_yaml.get(SYSTEM_LIFETIME, DEFAULT_SYSTEM_LIFETIME)
             ),
@@ -608,14 +626,14 @@ class App(ttk.Window):
             yaml.dump(self.details_window.finance_frame.as_dict(), finance_inputs_file)
 
         # Save the generation_inputs information
+
+        # Save the ghg_inputs information
         with open(
             self.input_file_info[os.path.basename(GHG_INPUTS_FILE).split(".")[0]],
             "w",
             encoding=_encoding,
         ) as ghg_inputs_file:
             yaml.dump(self.details_window.ghgs_frame.as_dict(), ghg_inputs_file)
-
-        # Save the ghg_inputs information
 
         # Save the grid_times information
 

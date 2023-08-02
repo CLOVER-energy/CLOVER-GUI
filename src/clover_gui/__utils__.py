@@ -33,11 +33,14 @@ __all__ = (
     "CLOVER_SPLASH_SCREEN_IMAGE",
     "clover_thread",
     "COSTS",
+    "DEFAULT_END_YEAR",
     "DEFAULT_GUI_THEME",
     "DEFAULT_RENEWABLES_NINJA_TOKEN",
+    "DEFAULT_START_YEAR",
     "DEFAULT_SYSTEM_LIFETIME",
     "DEVIES",
     "EMISSIONS",
+    "END_YEAR",
     "GLOBAL_SETTINGS_FILEPATH",
     "IMAGES_DIRECTORY",
     "LOAD_LOCATION_GEOMETRY",
@@ -47,6 +50,8 @@ __all__ = (
     "parse_battery_inputs",
     "parse_diesel_inputs",
     "parse_solar_inputs",
+    "RENEWABLES_NINJA_DATA_PERIOD",
+    "START_YEAR",
     "SYSTEM_LIFETIME",
     "THEME",
 )
@@ -71,6 +76,10 @@ CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_5_2_beta.png"
 #   Keyword for costs.
 COSTS: str = "costs"
 
+# Default end year:
+#   The default end year.
+DEFAULT_END_YEAR: int = 2007
+
 # Default GUI theme:
 #   The default theme for the GUI.
 DEFAULT_GUI_THEME: str = "litera"
@@ -78,6 +87,14 @@ DEFAULT_GUI_THEME: str = "litera"
 # Default renewables.ninja token:
 #   The default text to display for the renewables.ninja token.
 DEFAULT_RENEWABLES_NINJA_TOKEN: str = "CONFIGURE TOKEN IN PREFERENCES"
+
+# Renewables-ninja data period:
+#   The number of years for which the renewables.ninja interface needs to run.
+RENEWABLES_NINJA_DATA_PERIOD: int = 9
+
+# Default start year:
+#   The deafult start year.
+DEFAULT_START_YEAR: int = DEFAULT_END_YEAR + RENEWABLES_NINJA_DATA_PERIOD
 
 # Default system lifetime:
 #   The defailt lifetime for the system, in years.
@@ -103,6 +120,10 @@ DIESEL_INPUTS_FILE: str = os.path.join("generation", "diesel_inputs.yaml")
 #   Keyword for emissions.
 EMISSIONS: str = "emissions"
 
+# End year:
+#   Keyword for end year.
+END_YEAR: str = "end_year"
+
 # Global settings filepath:
 #   Path to the global-settings file.
 GLOBAL_SETTINGS_FILEPATH: str = "global_settings.yaml"
@@ -123,6 +144,14 @@ LOCATIONS_INPUT_FILE: str = os.path.join("location_data", "location_inputs.yaml"
 #   The geometry to use for the main window, specified in width and height.
 MAIN_WINDOW_GEOMETRY: str = "1260x800"
 
+# Max start year:
+#   The maximum start year for renewables.ninja.
+MAX_START_YEAR: int = 2007
+
+# Min start year:
+#   The minimum start year for renewables.ninja.
+MIN_START_YEAR: int = 1985
+
 # Panels:
 #   Keyword for saving panel names.
 PANELS: str = "panels"
@@ -130,6 +159,10 @@ PANELS: str = "panels"
 # Renewables-ninja token:
 #   Keyword for parsing the renewables.ninja token.
 RENEWABLES_NINJA_TOKEN: str = "renewables_ninja_token"
+
+# Start year:
+#   Keyword for start year.
+START_YEAR: str = "start_year"
 
 # Solar inputs file:
 #   The solar inputs file.

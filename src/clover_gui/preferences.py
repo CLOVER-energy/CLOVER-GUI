@@ -24,9 +24,14 @@ from ttkbootstrap.scrolled import *
 from .__utils__ import (
     BaseScreen,
     DEFAULT_GUI_THEME,
+    END_YEAR,
     GLOBAL_SETTINGS_FILEPATH,
     LOAD_LOCATION_GEOMETRY,
+    MAX_START_YEAR,
+    MIN_START_YEAR,
     RENEWABLES_NINJA_TOKEN,
+    RENEWABLES_NINJA_DATA_PERIOD,
+    START_YEAR,
     SYSTEM_LIFETIME,
     THEME,
 )
@@ -58,8 +63,10 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
     def __init__(
         self,
         parent,
+        end_year: ttk.IntVar,
         renewables_ninja_token: ttk.StringVar,
         select_theme: Callable,
+        start_year: ttk.IntVar,
         system_lifetime: ttk.IntVar,
         theme: ttk.StringVar,
     ) -> None:
@@ -69,11 +76,17 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
         :param: parent
             The parent window or frame.
 
-        :param: select_theme
-            Function to select the theme.
+        :param: end_year
+            The end year for fetching renewables.ninja data.
 
         :param: renewables_ninja_token
             The renewables.ninja API token for the user.
+
+        :param: select_theme
+            Function to select the theme.
+
+        :param: start_year
+            The start year for fetching renewables.ninja data.
 
         :param: system_lifetime
             The lifetime of the system, in years.
@@ -85,51 +98,177 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         super().__init__(parent)
 
+        self.end_year = end_year
         self.renewables_ninja_token = renewables_ninja_token
         self.select_theme = select_theme
+        self.start_year = start_year
         self.system_lifetime = system_lifetime
         self.theme = theme
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
-        self.rowconfigure(2, weight=1)
 
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
+        # Renewables ninja settings
+        self.renewables_ninja_label_frame = ttk.Labelframe(
+            self, text="Renewables ninja settings"
+        )
+        self.renewables_ninja_label_frame.grid(
+            row=0, column=0, sticky="news", padx=20, pady=5
+        )
 
-        self.renewables_ninja_label = ttk.Label(self, text="Renewables ninja API token")
+        self.renewables_ninja_label_frame.columnconfigure(0, weight=1)
+        self.renewables_ninja_label_frame.columnconfigure(1, weight=1)
+        self.renewables_ninja_label_frame.columnconfigure(2, weight=1)
+
+        self.renewables_ninja_label_frame.rowconfigure(0, weight=1)
+        self.renewables_ninja_label_frame.rowconfigure(1, weight=1)
+        self.renewables_ninja_label_frame.rowconfigure(2, weight=1)
+        self.renewables_ninja_label_frame.rowconfigure(3, weight=1)
+
+        # API token
+        self.renewables_ninja_label = ttk.Label(
+            self.renewables_ninja_label_frame, text="Renewables ninja API token"
+        )
         self.renewables_ninja_label.grid(row=0, column=0, sticky="w", padx=10, pady=5)
 
         self.renewables_ninja_entry = ttk.Entry(
-            self,
+            self.renewables_ninja_label_frame,
             textvariable=self.renewables_ninja_token,
         )
         self.renewables_ninja_entry.grid(
             row=0, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.system_lifetime_label = ttk.Label(self, text="System lifetime")
+        # System lifetime
+        self.system_lifetime_label = ttk.Label(
+            self.renewables_ninja_label_frame, text="System lifetime"
+        )
         self.system_lifetime_label.grid(row=1, column=0, sticky="w", padx=10, pady=5)
 
         self.system_lifetime_entry = ttk.Entry(
-            self,
+            self.renewables_ninja_label_frame,
             textvariable=self.system_lifetime,
         )
         self.system_lifetime_entry.grid(
             row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.system_lifetime_unit = ttk.Label(self, text="years")
+        self.system_lifetime_unit = ttk.Label(
+            self.renewables_ninja_label_frame, text="years"
+        )
         self.system_lifetime_unit.grid(row=1, column=2, sticky="w", padx=10, pady=5)
 
-        self.theme_label = ttk.Label(self, text="Theme")
-        self.theme_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
+        # Start year
+        self.start_year_label = ttk.Label(
+            self.renewables_ninja_label_frame, text="Start year"
+        )
+        self.start_year_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
+        def update_end_year():
+            self.end_year.set(self.start_year.get() + RENEWABLES_NINJA_DATA_PERIOD)
+            self.end_year_entry.update()
+
+        def scalar_start_year(_):
+            self.start_year.set(
+                max(min(self.start_year.get(), MAX_START_YEAR), MIN_START_YEAR)
+            )
+            self.start_year_entry.update()
+            update_end_year()
+
+        self.start_year_slider = ttk.Scale(
+            self.renewables_ninja_label_frame,
+            from_=MIN_START_YEAR,
+            to=MAX_START_YEAR,
+            orient=ttk.HORIZONTAL,
+            length=320,
+            command=scalar_start_year,
+            # bootstyle=WARNING,
+            variable=self.start_year,
+        )
+        self.start_year_slider.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+
+        def enter_start_year(_):
+            self.start_year.set(self.start_year_entry.get())
+            self.start_year_slider.set(self.start_year.get())
+            update_end_year()
+
+        self.start_year_entry = ttk.Entry(
+            self.renewables_ninja_label_frame,
+            # bootstyle=WARNING,
+            textvariable=self.start_year,
+        )
+
+        self.start_year_entry.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
+        self.start_year_entry.bind("<Return>", enter_start_year)
+
+        # End year
+        self.end_year_label = ttk.Label(
+            self.renewables_ninja_label_frame, text="End year"
+        )
+        self.end_year_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        def update_start_year():
+            self.start_year.set(self.end_year.get() - RENEWABLES_NINJA_DATA_PERIOD)
+            self.start_year_entry.update()
+
+        def scalar_end_year(_):
+            self.end_year.set(
+                max(
+                    min(
+                        self.end_year.get(),
+                        MAX_START_YEAR + RENEWABLES_NINJA_DATA_PERIOD,
+                    ),
+                    MIN_START_YEAR + RENEWABLES_NINJA_DATA_PERIOD,
+                )
+            )
+            self.end_year_entry.update()
+            update_start_year()
+
+        self.end_year_slider = ttk.Scale(
+            self.renewables_ninja_label_frame,
+            from_=MIN_START_YEAR + RENEWABLES_NINJA_DATA_PERIOD,
+            to=MAX_START_YEAR + RENEWABLES_NINJA_DATA_PERIOD,
+            orient=ttk.HORIZONTAL,
+            length=320,
+            command=scalar_end_year,
+            # bootstyle=WARNING,
+            variable=self.end_year,
+        )
+        self.end_year_slider.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+        def enter_end_year(_):
+            self.end_year.set(self.end_year_entry.get())
+            self.end_year_slider.set(self.end_year.get())
+            update_start_year()
+
+        self.end_year_entry = ttk.Entry(
+            self.renewables_ninja_label_frame,
+            # bootstyle=WARNING,
+            textvariable=self.end_year,
+        )
+
+        self.end_year_entry.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
+        self.end_year_entry.bind("<Return>", enter_end_year)
+
+        # Graphical user settings
+        self.graphical_label_frame = ttk.Labelframe(self, text="GUI preferences")
+        self.graphical_label_frame.grid(
+            row=1, column=0, sticky="news", padx=20, pady=10
+        )
+
+        self.graphical_label_frame.rowconfigure(0, weight=1)
+
+        self.graphical_label_frame.columnconfigure(0, weight=1)
+        self.graphical_label_frame.columnconfigure(1, weight=1)
+        self.graphical_label_frame.columnconfigure(2, weight=1)
+
+        self.theme_label = ttk.Label(self.graphical_label_frame, text="Theme")
+        self.theme_label.grid(row=0, column=0, sticky="ew", padx=10, pady=5)
 
         self.theme_combobox = ttk.Combobox(
-            self, textvariable=self.theme, state=READONLY
+            self.graphical_label_frame, textvariable=self.theme, state=READONLY
         )
-        self.theme_combobox.grid(row=2, column=1, padx=10, pady=5, sticky="w", ipadx=60)
+        self.theme_combobox.grid(row=0, column=1, padx=10, pady=5, sticky="w", ipadx=60)
         self.theme_combobox.bind("<<ComboboxSelected>>", self.combobox_theme_select)
         self.populate_themes()
 
@@ -157,26 +296,33 @@ class PreferencesWindow(tk.Toplevel):
 
     def __init__(
         self,
+        end_year: ttk.IntVar,
         renewables_ninja_token: ttk.StringVar,
         select_theme: Callable,
+        start_year: ttk.IntVar,
         system_lifetime: ttk.IntVar,
         theme: str,
     ) -> None:
         """
         Instantiate a :class:`PreferencesWindow` instance.
 
-        :param: select_theme
-            Function to select the theme.
+        :param: end_year
+            The end year for fetching renewables.ninja data.
 
         :param: renewables_ninja_token
             The renewables.ninja API token for the user.
+
+        :param: select_theme
+            Function to select the theme.
+
+        :param: start_year
+            The start year for fetching renewables.ninja data.
 
         :param: system_lifetime
             The lifetime of the system, in years.
 
         :param: theme
             The current theme.
-
 
         """
 
@@ -196,7 +342,13 @@ class PreferencesWindow(tk.Toplevel):
         self.preferences_label.grid(row=0, column=0, sticky="w", padx=20, pady=5)
 
         self.preferences_screen = PreferencesScreen(
-            self, renewables_ninja_token, select_theme, system_lifetime, theme
+            self,
+            end_year,
+            renewables_ninja_token,
+            select_theme,
+            start_year,
+            system_lifetime,
+            theme,
         )
         self.preferences_screen.grid(row=1, column=0, padx=20, pady=5, sticky="news")
 
@@ -211,7 +363,9 @@ class PreferencesWindow(tk.Toplevel):
         ) as global_settings_file:
             yaml.dump(
                 {
+                    END_YEAR: self.preferences_screen.end_year.get(),
                     RENEWABLES_NINJA_TOKEN: self.preferences_screen.renewables_ninja_token.get(),
+                    START_YEAR: self.preferences_screen.start_year.get(),
                     SYSTEM_LIFETIME: self.preferences_screen.system_lifetime.get(),
                     THEME: self.preferences_screen.theme.get(),
                 },
