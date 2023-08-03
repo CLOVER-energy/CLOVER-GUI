@@ -14,7 +14,8 @@ import ttkbootstrap as ttk
 from clover import ProgrammerJudgementFault
 from clover.fileparser import BATTERY, DIESEL_GENERATOR
 from clover.generation.solar import PVPanel
-from clover.impact.finance import ImpactingComponent, LIFETIME, SIZE_INCREMENT
+from clover.impact.finance import ImpactingComponent
+from clover.impact.__utils__ import LIFETIME, SIZE_INCREMENT
 from clover.simulation.__utils__ import (
     AC_TO_AC,
     AC_TO_DC,
@@ -549,6 +550,13 @@ class SystemFrame(ttk.Frame):
 
         # Update the grid profile name
         self.grid_profile_combobox.set(grid_profile_name)
+
+        # Update the inverter information.
+        self.inverter_lifetime.set(minigrid.inverter.lifetime)
+        self.inverter_lifetime_entry.update()
+
+        self.inverter_step_size.set(minigrid.inverter.size_increment)
+        self.inverter_step_size_entry.update()
 
     def add_battery(self, battery_name: str) -> None:
         """
