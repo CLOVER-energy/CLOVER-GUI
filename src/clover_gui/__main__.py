@@ -305,7 +305,7 @@ class App(ttk.Window):
             device_utilisations,
             minigrid,
             finance_inputs,
-            generation_inputs,
+            _,
             ghg_inputs,
             _,
             grid_times,
@@ -674,7 +674,7 @@ class App(ttk.Window):
                 scenarios_inputs_file,
             )
 
-        # Save the simulation information
+        # Currently, there is no simulation information to save.
 
         # Save the solar_inputs information
         with open(
