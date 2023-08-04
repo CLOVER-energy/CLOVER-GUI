@@ -16,8 +16,20 @@ from typing import Callable
 import ttkbootstrap as ttk
 
 from clover.generation.solar import PVPanel, Tracking
-from clover.impact.finance import COST, COST_DECREASE, OM
-from clover.impact.ghgs import GHGS, GHG_DECREASE, OM_GHGS
+from clover.impact.finance import (
+    COST,
+    COST_DECREASE,
+    INSTALLATION_COST,
+    INSTALLATION_COST_DECREASE,
+    OM,
+)
+from clover.impact.ghgs import (
+    GHGS,
+    GHG_DECREASE,
+    INSTALLATION_GHGS,
+    INSTALLATION_GHGS_DECREASE,
+    OM_GHGS,
+)
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -51,34 +63,43 @@ class PVFrame(ttk.Frame):
         """
         super().__init__(parent)
 
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
-        self.rowconfigure(2, weight=1)
-        self.rowconfigure(3, weight=1)
-        self.rowconfigure(4, weight=1)
-        self.rowconfigure(5, weight=1)
-        self.rowconfigure(6, weight=1)
-        self.rowconfigure(7, weight=1)
-        self.rowconfigure(8, weight=1)
-        self.rowconfigure(9, weight=1)
-        self.rowconfigure(10, weight=1)
-        self.rowconfigure(11, weight=1)
-        self.rowconfigure(12, weight=1)
-        self.rowconfigure(13, weight=1)
-        self.rowconfigure(14, weight=1)
-
-        self.columnconfigure(0, weight=10)
-        self.columnconfigure(1, weight=10)
-        self.columnconfigure(2, weight=1)
-        self.columnconfigure(3, weight=1)
-
         self.add_panel_to_system_frame: Callable | None = None
         self.set_panels_on_system_frame: Callable | None = None
 
         self.renewables_ninja_token = renewables_ninja_token
 
-        self.renewables_ninja_token_entry = ttk.Entry(
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self.scrolled_frame = ScrolledFrame(
             self,
+            # bootstyle=f"{WARNING}-inverted"
+        )
+        self.scrolled_frame.grid(row=0, column=0, padx=10, pady=5, sticky="news")
+
+        self.scrolled_frame.rowconfigure(0, weight=1)
+        self.scrolled_frame.rowconfigure(1, weight=1)
+        self.scrolled_frame.rowconfigure(2, weight=1)
+        self.scrolled_frame.rowconfigure(3, weight=1)
+        self.scrolled_frame.rowconfigure(4, weight=1)
+        self.scrolled_frame.rowconfigure(5, weight=1)
+        self.scrolled_frame.rowconfigure(6, weight=1)
+        self.scrolled_frame.rowconfigure(7, weight=1)
+        self.scrolled_frame.rowconfigure(8, weight=1)
+        self.scrolled_frame.rowconfigure(9, weight=1)
+        self.scrolled_frame.rowconfigure(10, weight=1)
+        self.scrolled_frame.rowconfigure(11, weight=1)
+        self.scrolled_frame.rowconfigure(12, weight=1)
+        self.scrolled_frame.rowconfigure(13, weight=1)
+        self.scrolled_frame.rowconfigure(14, weight=1)
+
+        self.scrolled_frame.columnconfigure(0, weight=10)
+        self.scrolled_frame.columnconfigure(1, weight=10)
+        self.scrolled_frame.columnconfigure(2, weight=1)
+        self.scrolled_frame.columnconfigure(3, weight=1)
+
+        self.renewables_ninja_token_entry = ttk.Entry(
+            self.scrolled_frame,
             bootstyle=f"{WARNING}-inverted",
             state=DISABLED,
             textvariable=self.renewables_ninja_token,
@@ -95,11 +116,11 @@ class PVFrame(ttk.Frame):
             (panel_name := "CdTe"): ttk.StringVar(self, panel_name),
         }
 
-        self.pv_panel_label = ttk.Label(self, text="Panel to configure")
+        self.pv_panel_label = ttk.Label(self.scrolled_frame, text="Panel to configure")
         self.pv_panel_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         self.pv_panel_combobox = ttk.Combobox(
-            self, bootstyle=WARNING, textvariable=self.panel_selected
+            self.scrolled_frame, bootstyle=WARNING, textvariable=self.panel_selected
         )
         self.pv_panel_combobox.grid(
             row=1, column=1, padx=10, pady=5, sticky="w", ipadx=60
@@ -109,7 +130,7 @@ class PVFrame(ttk.Frame):
 
         # New panel
         self.new_panel_button = ttk.Button(
-            self,
+            self.scrolled_frame,
             bootstyle=f"{WARNING}-{OUTLINE}",
             command=self.add_panel,
             text="New collector",
@@ -117,11 +138,11 @@ class PVFrame(ttk.Frame):
         self.new_panel_button.grid(row=1, column=2, padx=10, pady=5, ipadx=80)
 
         # Panel name
-        self.panel_name_label = ttk.Label(self, text="Panel name")
+        self.panel_name_label = ttk.Label(self.scrolled_frame, text="Panel name")
         self.panel_name_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
         self.panel_name_entry = ttk.Entry(
-            self, bootstyle=WARNING, textvariable=self.panel_selected
+            self.scrolled_frame, bootstyle=WARNING, textvariable=self.panel_selected
         )
         self.panel_name_entry.grid(
             row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=80
@@ -129,7 +150,7 @@ class PVFrame(ttk.Frame):
         self.panel_name_entry.bind("<Return>", self.enter_panel_name)
 
         # Nominal power
-        self.nominal_power_label = ttk.Label(self, text="Nominal power")
+        self.nominal_power_label = ttk.Label(self.scrolled_frame, text="Nominal power")
         self.nominal_power_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
         self.nominal_power: dict[str, ttk.DoubleVar] = {
@@ -137,7 +158,7 @@ class PVFrame(ttk.Frame):
             for panel_name in self.panel_name_values
         }
         self.nominal_power_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.nominal_power[self.panel_selected.get()],
         )
@@ -145,11 +166,11 @@ class PVFrame(ttk.Frame):
             row=3, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.nominal_power_unit = ttk.Label(self, text="kWp")
+        self.nominal_power_unit = ttk.Label(self.scrolled_frame, text="kWp")
         self.nominal_power_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
 
         # Lifetime
-        self.lifetime_label = ttk.Label(self, text="Lifetime")
+        self.lifetime_label = ttk.Label(self.scrolled_frame, text="Lifetime")
         self.lifetime_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
         self.panel_lifetimes: dict[str, ttk.DoubleVar] = {
@@ -164,7 +185,7 @@ class PVFrame(ttk.Frame):
             self.lifetime_entry.update()
 
         self.lifetime_slider = ttk.Scale(
-            self,
+            self.scrolled_frame,
             from_=0,
             to=30,
             orient=tk.HORIZONTAL,
@@ -184,18 +205,18 @@ class PVFrame(ttk.Frame):
             )
 
         self.lifetime_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.panel_lifetimes[self.panel_selected.get()],
         )
         self.lifetime_entry.grid(row=4, column=2, padx=10, pady=5, sticky="ew")
         self.lifetime_entry.bind("<Return>", enter_lifetime)
 
-        self.lifetime_unit = ttk.Label(self, text="years")
+        self.lifetime_unit = ttk.Label(self.scrolled_frame, text="years")
         self.lifetime_unit.grid(row=4, column=3, padx=10, pady=5, sticky="ew")
 
         # Tilt
-        self.tilt_label = ttk.Label(self, text="Tilt")
+        self.tilt_label = ttk.Label(self.scrolled_frame, text="Tilt")
         self.tilt_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.panel_tilt: dict[str, ttk.DoubleVar] = {
@@ -208,7 +229,7 @@ class PVFrame(ttk.Frame):
             self.tilt_entry.update()
 
         self.tilt_slider = ttk.Scale(
-            self,
+            self.scrolled_frame,
             from_=0,
             to=90,
             orient=tk.HORIZONTAL,
@@ -224,18 +245,20 @@ class PVFrame(ttk.Frame):
             self.tilt_slider.set(self.panel_tilt[self.panel_selected.get()].get())
 
         self.tilt_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.panel_tilt[self.panel_selected.get()],
         )
         self.tilt_entry.grid(row=5, column=2, padx=10, pady=5, sticky="ew")
         self.tilt_entry.bind("<Return>", enter_tilt)
 
-        self.tilt_unit = ttk.Label(self, text="degrees")
+        self.tilt_unit = ttk.Label(self.scrolled_frame, text="degrees")
         self.tilt_unit.grid(row=5, column=3, padx=10, pady=5, sticky="ew")
 
         # Azimuthal orientation
-        self.azimuthal_orientation_label = ttk.Label(self, text="Azimuthal orientation")
+        self.azimuthal_orientation_label = ttk.Label(
+            self.scrolled_frame, text="Azimuthal orientation"
+        )
         self.azimuthal_orientation_label.grid(
             row=6, column=0, padx=10, pady=5, sticky="w"
         )
@@ -252,7 +275,7 @@ class PVFrame(ttk.Frame):
             self.azimuthal_orientation_entry.update()
 
         self.azimuthal_orientation_slider = ttk.Scale(
-            self,
+            self.scrolled_frame,
             from_=0,
             to=360,
             orient=tk.HORIZONTAL,
@@ -274,7 +297,7 @@ class PVFrame(ttk.Frame):
             )
 
         self.azimuthal_orientation_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.panel_orientation[self.panel_selected.get()],
         )
@@ -283,13 +306,15 @@ class PVFrame(ttk.Frame):
         )
         self.azimuthal_orientation_entry.bind("<Return>", enter_azimuthal_orientation)
 
-        self.azimuthal_orientation_unit = ttk.Label(self, text="degrees")
+        self.azimuthal_orientation_unit = ttk.Label(self.scrolled_frame, text="degrees")
         self.azimuthal_orientation_unit.grid(
             row=6, column=3, padx=10, pady=5, sticky="ew"
         )
 
         # Reference efficiency
-        self.reference_efficiency_label = ttk.Label(self, text="Reference efficiency")
+        self.reference_efficiency_label = ttk.Label(
+            self.scrolled_frame, text="Reference efficiency"
+        )
         self.reference_efficiency_label.grid(
             row=7, column=0, padx=10, pady=5, sticky="w"
         )
@@ -306,7 +331,7 @@ class PVFrame(ttk.Frame):
             self.reference_efficiency_entry.update()
 
         self.reference_efficiency_slider = ttk.Scale(
-            self,
+            self.scrolled_frame,
             from_=0,
             to=100,
             orient=tk.HORIZONTAL,
@@ -329,7 +354,7 @@ class PVFrame(ttk.Frame):
             )
 
         self.reference_efficiency_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=f"{WARNING}-inverted",
             state=DISABLED,
             textvariable=self.reference_efficiencies[self.panel_selected.get()],
@@ -339,13 +364,15 @@ class PVFrame(ttk.Frame):
         )
         self.reference_efficiency_entry.bind("<Return>", enter_reference_efficiency)
 
-        self.reference_efficiency_unit = ttk.Label(self, text=f"%")
+        self.reference_efficiency_unit = ttk.Label(self.scrolled_frame, text=f"%")
         self.reference_efficiency_unit.grid(
             row=7, column=3, padx=10, pady=5, sticky="ew"
         )
 
         # Reference temperature
-        self.reference_temperature_label = ttk.Label(self, text="Reference temperature")
+        self.reference_temperature_label = ttk.Label(
+            self.scrolled_frame, text="Reference temperature"
+        )
         self.reference_temperature_label.grid(
             row=8, column=0, padx=10, pady=5, sticky="w"
         )
@@ -355,7 +382,7 @@ class PVFrame(ttk.Frame):
             for panel_name in self.panel_name_values
         }
         self.reference_temperature_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.reference_temperature[self.panel_selected.get()],
             state=DISABLED,
@@ -364,13 +391,17 @@ class PVFrame(ttk.Frame):
             row=8, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.reference_temperature_unit = ttk.Label(self, text="degrees Celsius")
+        self.reference_temperature_unit = ttk.Label(
+            self.scrolled_frame, text="degrees Celsius"
+        )
         self.reference_temperature_unit.grid(
             row=8, column=2, padx=10, pady=5, sticky="w"
         )
 
         # Thermal coefficient
-        self.thermal_coefficient_label = ttk.Label(self, text="Thermal coefficient")
+        self.thermal_coefficient_label = ttk.Label(
+            self.scrolled_frame, text="Thermal coefficient"
+        )
         self.thermal_coefficient_label.grid(
             row=9, column=0, padx=10, pady=5, sticky="w"
         )
@@ -380,7 +411,7 @@ class PVFrame(ttk.Frame):
             for panel_name in self.panel_name_values
         }
         self.thermal_coefficient_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.thermal_coefficient[self.panel_selected.get()],
             state=DISABLED,
@@ -389,11 +420,13 @@ class PVFrame(ttk.Frame):
             row=9, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.thermal_coefficient_unit = ttk.Label(self, text="% / degree Celsius")
+        self.thermal_coefficient_unit = ttk.Label(
+            self.scrolled_frame, text="% / degree Celsius"
+        )
         self.thermal_coefficient_unit.grid(row=9, column=2, padx=10, pady=5, sticky="w")
 
         # Cost
-        self.cost_label = ttk.Label(self, text="Cost")
+        self.cost_label = ttk.Label(self.scrolled_frame, text="Cost")
         self.cost_label.grid(row=10, column=0, padx=10, pady=5, sticky="w")
 
         self.costs: dict[str, ttk.DoubleVar] = {
@@ -401,17 +434,17 @@ class PVFrame(ttk.Frame):
             for panel_name in self.panel_name_values
         }
         self.cost_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.costs[self.panel_selected.get()],
         )
         self.cost_entry.grid(row=10, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
-        self.cost_unit = ttk.Label(self, text="USD ($)")
+        self.cost_unit = ttk.Label(self.scrolled_frame, text="USD ($)")
         self.cost_unit.grid(row=10, column=2, padx=10, pady=5, sticky="w")
 
         # Cost decrease
-        self.cost_decrease_label = ttk.Label(self, text="Cost decrease")
+        self.cost_decrease_label = ttk.Label(self.scrolled_frame, text="Cost decrease")
         self.cost_decrease_label.grid(row=11, column=0, padx=10, pady=5, sticky="w")
 
         self.cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -419,7 +452,7 @@ class PVFrame(ttk.Frame):
             for panel_name in self.panel_name_values
         }
         self.cost_decrease_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.cost_decrease[self.panel_selected.get()],
         )
@@ -427,31 +460,87 @@ class PVFrame(ttk.Frame):
             row=11, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.cost_decrease_unit = ttk.Label(self, text="% decrease / year")
+        self.cost_decrease_unit = ttk.Label(
+            self.scrolled_frame, text="% decrease / year"
+        )
         self.cost_decrease_unit.grid(row=11, column=2, padx=10, pady=5, sticky="w")
 
+        # Installation cost
+        self.installation_cost_label = ttk.Label(
+            self.scrolled_frame, text="Installation cost"
+        )
+        self.installation_cost_label.grid(row=12, column=0, padx=10, pady=5, sticky="w")
+
+        self.installation_costs: dict[str, ttk.DoubleVar] = {
+            panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_installation_cost")
+            for panel_name in self.panel_name_values
+        }
+        self.installation_cost_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_costs[self.panel_selected.get()],
+        )
+        self.installation_cost_entry.grid(
+            row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.installation_cost_unit = ttk.Label(self.scrolled_frame, text="USD ($)")
+        self.installation_cost_unit.grid(row=12, column=2, padx=10, pady=5, sticky="w")
+
+        # Installation cost decrease
+        self.installation_cost_decrease_label = ttk.Label(
+            self.scrolled_frame, text="Installation cost decrease"
+        )
+        self.installation_cost_decrease_label.grid(
+            row=13, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_cost_decrease: dict[str, ttk.DoubleVar] = {
+            panel_name: ttk.DoubleVar(
+                self, 0, f"{panel_name}_installation_cost_decrease"
+            )
+            for panel_name in self.panel_name_values
+        }
+        self.installation_cost_decrease_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_cost_decrease[self.panel_selected.get()],
+        )
+        self.installation_cost_decrease_entry.grid(
+            row=13, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.installation_cost_decrease_unit = ttk.Label(
+            self.scrolled_frame, text="% decrease / year"
+        )
+        self.installation_cost_decrease_unit.grid(
+            row=13, column=2, padx=10, pady=5, sticky="w"
+        )
+
         # OPEX costs
-        self.opex_costs_label = ttk.Label(self, text="OPEX (O&M) costs")
-        self.opex_costs_label.grid(row=12, column=0, padx=10, pady=5, sticky="w")
+        self.opex_costs_label = ttk.Label(self.scrolled_frame, text="OPEX (O&M) costs")
+        self.opex_costs_label.grid(row=14, column=0, padx=10, pady=5, sticky="w")
 
         self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_o_and_m_costs")
             for panel_name in self.panel_name_values
         }
         self.o_and_m_costs_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.o_and_m_costs[self.panel_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
-            row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+            row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.o_and_m_costs_unit = ttk.Label(self, text="USD ($)")
-        self.o_and_m_costs_unit.grid(row=12, column=2, padx=10, pady=5, sticky="w")
+        self.o_and_m_costs_unit = ttk.Label(self.scrolled_frame, text="USD ($)")
+        self.o_and_m_costs_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
-        self.embedded_emissions_label = ttk.Label(self, text="Embedded emissions")
+        self.embedded_emissions_label = ttk.Label(
+            self.scrolled_frame, text="Embedded emissions"
+        )
         self.embedded_emissions_label.grid(
             row=13, column=0, padx=10, pady=5, sticky="w"
         )
@@ -461,7 +550,7 @@ class PVFrame(ttk.Frame):
             for panel_name in self.panel_name_values
         }
         self.embedded_emissions_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.embedded_emissions[self.panel_selected.get()],
         )
@@ -469,35 +558,17 @@ class PVFrame(ttk.Frame):
             row=13, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.embedded_emissions_unit = ttk.Label(self, text="kgCO2eq / unit")
+        self.embedded_emissions_unit = ttk.Label(
+            self.scrolled_frame, text="kgCO2eq / unit"
+        )
         self.embedded_emissions_unit.grid(row=13, column=2, padx=10, pady=5, sticky="w")
-
-        # O&M emissions
-        self.om_emissions_label = ttk.Label(self, text="O&M emissions")
-        self.om_emissions_label.grid(row=14, column=0, padx=10, pady=5, sticky="w")
-
-        self.om_emissions: dict[str, ttk.DoubleVar] = {
-            panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_o_and_m_ghgs")
-            for panel_name in self.panel_name_values
-        }
-        self.om_emissions_entry = ttk.Entry(
-            self,
-            bootstyle=WARNING,
-            textvariable=self.om_emissions[self.panel_selected.get()],
-        )
-        self.om_emissions_entry.grid(
-            row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
-        )
-
-        self.om_emissions_unit = ttk.Label(self, text="kgCO2eq / year")
-        self.om_emissions_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
-            self, text="Annual emissions decrease"
+            self.scrolled_frame, text="Annual emissions decrease"
         )
         self.annual_emissions_decrease_label.grid(
-            row=15, column=0, padx=10, pady=5, sticky="w"
+            row=14, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.annual_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -505,18 +576,100 @@ class PVFrame(ttk.Frame):
             for panel_name in self.panel_name_values
         }
         self.annual_emissions_decrease_entry = ttk.Entry(
-            self,
+            self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.annual_emissions_decrease[self.panel_selected.get()],
         )
         self.annual_emissions_decrease_entry.grid(
+            row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.annual_emissions_decrease_unit = ttk.Label(
+            self.scrolled_frame, text="% / year"
+        )
+        self.annual_emissions_decrease_unit.grid(
+            row=14, column=2, padx=10, pady=5, sticky="w"
+        )
+
+        # Embedded installation emissions
+        self.installation_emissions_label = ttk.Label(
+            self.scrolled_frame, text="Installation emissions"
+        )
+        self.installation_emissions_label.grid(
+            row=15, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_emissions: dict[str, ttk.DoubleVar] = {
+            panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_installation_ghgs")
+            for panel_name in self.panel_name_values
+        }
+        self.installation_emissions_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_emissions[self.panel_selected.get()],
+        )
+        self.installation_emissions_entry.grid(
             row=15, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.annual_emissions_decrease_unit = ttk.Label(self, text="% / year")
-        self.annual_emissions_decrease_unit.grid(
+        self.installation_emissions_unit = ttk.Label(
+            self.scrolled_frame, text="kgCO2eq / unit"
+        )
+        self.installation_emissions_unit.grid(
             row=15, column=2, padx=10, pady=5, sticky="w"
         )
+
+        # Annual installation emissions decrease
+        self.installation_emissions_decrease_label = ttk.Label(
+            self.scrolled_frame, text="Installation emissions decrease"
+        )
+        self.installation_emissions_decrease_label.grid(
+            row=16, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_emissions_decrease: dict[str, ttk.DoubleVar] = {
+            panel_name: ttk.DoubleVar(
+                self, 0, f"{panel_name}_installation_ghgs_decrease"
+            )
+            for panel_name in self.panel_name_values
+        }
+        self.installation_emissions_decrease_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_emissions_decrease[
+                self.panel_selected.get()
+            ],
+        )
+        self.installation_emissions_decrease_entry.grid(
+            row=16, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.installation_emissions_decrease_unit = ttk.Label(
+            self.scrolled_frame, text="% / year"
+        )
+        self.installation_emissions_decrease_unit.grid(
+            row=16, column=2, padx=10, pady=5, sticky="w"
+        )
+
+        # O&M emissions
+        self.om_emissions_label = ttk.Label(self.scrolled_frame, text="O&M emissions")
+        self.om_emissions_label.grid(row=14, column=0, padx=10, pady=5, sticky="w")
+
+        self.om_emissions: dict[str, ttk.DoubleVar] = {
+            panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_o_and_m_ghgs")
+            for panel_name in self.panel_name_values
+        }
+        self.om_emissions_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.om_emissions[self.panel_selected.get()],
+        )
+        self.om_emissions_entry.grid(
+            row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+        )
+
+        self.om_emissions_unit = ttk.Label(self.scrolled_frame, text="kgCO2eq / year")
+        self.om_emissions_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
     def add_panel(self) -> None:
         """Called when a user presses the new-panel button."""
@@ -544,6 +697,8 @@ class PVFrame(ttk.Frame):
         self.thermal_coefficient[new_name] = ttk.DoubleVar(self, 0.56)
         self.costs[new_name] = ttk.DoubleVar(self, 0)
         self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_costs[new_name] = ttl.DoubleVar(self, 0)
+        self.installation_cost_decrease[new_name] = ttl.DoubleVar(self, 0)
         self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
         self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
         self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
@@ -600,6 +755,14 @@ class PVFrame(ttk.Frame):
             self.panel_name_values[key].get(): value
             for key, value in self.cost_decrease.items()
         }
+        self.installation_costs = {
+            self.panel_name_values[key].get(): value
+            for key, value in self.installation_costs.items()
+        }
+        self.installation_cost_decrease = {
+            self.panel_name_values[key].get(): value
+            for key, value in self.installation_cost_decrease.items()
+        }
         self.o_and_m_costs = {
             self.panel_name_values[key].get(): value
             for key, value in self.o_and_m_costs.items()
@@ -608,13 +771,21 @@ class PVFrame(ttk.Frame):
             self.panel_name_values[key].get(): value
             for key, value in self.embedded_emissions.items()
         }
-        self.om_emissions = {
-            self.panel_name_values[key].get(): value
-            for key, value in self.om_emissions.items()
-        }
         self.annual_emissions_decrease = {
             self.panel_name_values[key].get(): value
             for key, value in self.annual_emissions_decrease.items()
+        }
+        self.installation_emissions = {
+            self.panel_name_values[key].get(): value
+            for key, value in self.installation_emissions.items()
+        }
+        self.installation_emissions_decrease = {
+            self.panel_name_values[key].get(): value
+            for key, value in self.installation_emissions_decrease.items()
+        }
+        self.om_emissions = {
+            self.panel_name_values[key].get(): value
+            for key, value in self.om_emissions.items()
         }
 
         # Update the panel-name values.
@@ -741,6 +912,12 @@ class PVFrame(ttk.Frame):
             self.cost_decrease[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_costs.get(COST_DECREASE, 0)
             )
+            self.installation_costs[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_costs.get(INSTALLATION_COST, 0)
+            )
+            self.installation_cost_decrease[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_costs.get(INSTALLATION_COST_DECREASE, 0)
+            )
             self.o_and_m_costs[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_costs.get(OM, 0)
             )
@@ -752,11 +929,17 @@ class PVFrame(ttk.Frame):
                     GHGS, 0
                 ),
             )
-            self.om_emissions[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_emissions.get(GHG_DECREASE, 0)
-            )
             self.annual_emissions_decrease[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_emissions.get(OM_GHGS, 0)
+            )
+            self.installation_emissions[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_emissions.get(INSTALLATION_GHGS, 0)
+            )
+            self.installation_emissions_decrease[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_emissions.get(INSTALLATION_GHGS_DECREASE, 0)
+            )
+            self.om_emissions[pv_panel.name] = ttk.DoubleVar(
+                self, this_pv_panel_emissions.get(GHG_DECREASE, 0)
             )
 
         self.panel_selected = self.panel_name_values[pv_panels[0].name]
@@ -804,6 +987,12 @@ class PVFrame(ttk.Frame):
         self.cost_entry.configure(textvariable=self.costs[self.panel_selected.get()])
         self.cost_decrease_entry.configure(
             textvariable=self.cost_decrease[self.panel_selected.get()]
+        )
+        self.installation_cost_entry.configure(
+            textvariable=self.installation_costs[self.panel_selected.get()]
+        )
+        self.installation_cost_decrease_entry.configure(
+            textvariable=self.installation_cost_decrease[self.panel_selected.get()]
         )
         self.o_and_m_costs_entry.configure(
             textvariable=self.o_and_m_costs[self.panel_selected.get()]
@@ -955,12 +1144,22 @@ class SolarFrame(ttk.Frame):
             panel_dict[COSTS] = {
                 COST: self.pv_frame.costs[panel_name].get(),
                 COST_DECREASE: self.pv_frame.cost_decrease[panel_name].get(),
+                INSTALLATION_COST: self.pv_frame.installation_costs[panel_name].get(),
+                INSTALLATION_COST_DECREASE: self.pv_frame.installation_cost_decrease[
+                    panel_name
+                ].get(),
                 OM: self.pv_frame.o_and_m_costs[panel_name].get(),
             }
 
             panel_dict[EMISSIONS] = {
                 GHGS: self.pv_frame.embedded_emissions[panel_name].get(),
                 GHG_DECREASE: self.pv_frame.annual_emissions_decrease[panel_name].get(),
+                INSTALLATION_GHGS: self.pv_frame.installation_emissions[
+                    panel_name
+                ].get(),
+                INSTALLATION_GHGS_DECREASE: self.pv_frame.installation_emissions_decrease[
+                    panel_name
+                ].get(),
                 OM_GHGS: self.pv_frame.om_emissions[panel_name].get(),
             }
 
