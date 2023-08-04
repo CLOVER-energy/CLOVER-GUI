@@ -624,6 +624,8 @@ class SystemFrame(ttk.Frame):
         """
 
         self.battery_combobox["values"] = battery_names
+        if self.battery_combobox.get() not in battery_names:
+            self.battery_combobox.set(battery_names[0])
 
     def set_diesel_generators(self, generator_names: list[str]) -> None:
         """
@@ -635,6 +637,8 @@ class SystemFrame(ttk.Frame):
         """
 
         self.diesel_generator_combobox["values"] = generator_names
+        if self.diesel_generator_combobox.get() not in generator_names:
+            self.diesel_generator_combobox.set(generator_names[0])
 
     def set_pv_panels(self, panel_names: list[str]) -> None:
         """
@@ -646,6 +650,8 @@ class SystemFrame(ttk.Frame):
         """
 
         self.pv_panel_combobox["values"] = panel_names
+        if self.pv_panel_combobox.get() not in panel_names:
+            self.pv_panel_combobox.set(panel_names[0])
 
     def set_grid_profiles(self, grid_profile_names: list[str]) -> None:
         """
@@ -656,7 +662,9 @@ class SystemFrame(ttk.Frame):
 
         """
 
-        self.grid_profile_combobox["values"] = grid_profile_names
+        self.grid_profile_combobox[(_values := "values")] = grid_profile_names
+        if self.grid_profile_combobox.get() not in grid_profile_names:
+            self.grid_profile_combobox.set(grid_profile_names[0])
 
     @property
     def as_dict(self) -> dict[str, dict[str, float] | float | str]:

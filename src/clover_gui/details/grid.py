@@ -321,9 +321,6 @@ class GridFrame(ttk.Frame):
 
     def enter_grid_profile_name(self, _) -> None:
         """Called when someone enters a new grid profile name."""
-        import pdb
-
-        pdb.set_trace()
         self.probability_sliders = {
             self.grid_profile_values[key].get(): value
             for key, value in self.probability_sliders.items()

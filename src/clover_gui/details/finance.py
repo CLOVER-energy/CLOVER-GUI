@@ -212,7 +212,7 @@ class FinanceFrame(ttk.Frame):
             self, text="Distribution Network Infrastructure Cost"
         )
         self.distribution_network_infrastructure_cost_label.grid(
-            row=10, column=1, padx=10, pady=5, sticky="w"
+            row=7, column=1, padx=10, pady=5, sticky="w"
         )
         self.distribution_network_infrastructure_cost = ttk.DoubleVar(self, "0.0")
 
@@ -223,13 +223,13 @@ class FinanceFrame(ttk.Frame):
             state=DISABLED,
         )
         self.distribution_network_infrastructure_cost_entry.grid(
-            row=10, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
+            row=7, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
         )
         self.distribution_network_infrastructure_cost_units_label = ttk.Label(
             self, text="$"
         )
         self.distribution_network_infrastructure_cost_units_label.grid(
-            row=10, column=3, padx=10, pady=5, sticky="w"
+            row=7, column=3, padx=10, pady=5, sticky="w"
         )
 
         # # Households
@@ -246,7 +246,7 @@ class FinanceFrame(ttk.Frame):
 
         # Connection Cost
         self.connection_cost_label = ttk.Label(self, text="Connection Cost")
-        self.connection_cost_label.grid(row=11, column=1, padx=10, pady=5, sticky="w")
+        self.connection_cost_label.grid(row=8, column=1, padx=10, pady=5, sticky="w")
         self.connection_cost = ttk.DoubleVar(self, "0.0")
 
         self.connection_cost_entry = ttk.Entry(
@@ -255,11 +255,11 @@ class FinanceFrame(ttk.Frame):
             textvariable=self.connection_cost,
         )
         self.connection_cost_entry.grid(
-            row=11, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
+            row=8, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
         )
         self.connection_cost_units_label = ttk.Label(self, text="$/household")
         self.connection_cost_units_label.grid(
-            row=11, column=3, padx=10, pady=5, sticky="w"
+            row=8, column=3, padx=10, pady=5, sticky="w"
         )
 
         # # Inverter
@@ -276,7 +276,7 @@ class FinanceFrame(ttk.Frame):
 
         # Inverter Cost
         self.inverter_cost_label = ttk.Label(self, text="Inverter Cost")
-        self.inverter_cost_label.grid(row=12, column=1, padx=10, pady=5, sticky="w")
+        self.inverter_cost_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
         self.inverter_cost = ttk.DoubleVar(self, "0.0")
 
         self.inverter_cost_entry = ttk.Entry(
@@ -285,11 +285,11 @@ class FinanceFrame(ttk.Frame):
             textvariable=self.inverter_cost,
         )
         self.inverter_cost_entry.grid(
-            row=12, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
+            row=9, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
         )
         self.inverter_cost_units_label = ttk.Label(self, text="$/kW")
         self.inverter_cost_units_label.grid(
-            row=12, column=3, padx=10, pady=5, sticky="w"
+            row=9, column=3, padx=10, pady=5, sticky="w"
         )
 
         # Inverter Cost Decrease
@@ -297,7 +297,7 @@ class FinanceFrame(ttk.Frame):
             self, text="Inverter Cost Decrease"
         )
         self.inverter_cost_decrease_label.grid(
-            row=13, column=1, padx=10, pady=5, sticky="w"
+            row=10, column=1, padx=10, pady=5, sticky="w"
         )
         self.inverter_cost_decrease = ttk.DoubleVar(self, "0.0")
 
@@ -307,11 +307,11 @@ class FinanceFrame(ttk.Frame):
             textvariable=self.inverter_cost_decrease,
         )
         self.inverter_cost_decrease_entry.grid(
-            row=13, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
+            row=10, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
         )
         self.inverter_cost_decrease_units_label = ttk.Label(self, text="%/year")
         self.inverter_cost_decrease_units_label.grid(
-            row=13, column=3, padx=10, pady=5, sticky="w"
+            row=10, column=3, padx=10, pady=5, sticky="w"
         )
 
         # # Inverter Lifetime
@@ -362,17 +362,17 @@ class FinanceFrame(ttk.Frame):
 
         # Kerosene Cost
         self.kerosene_cost_label = ttk.Label(self, text="Kerosene Cost")
-        self.kerosene_cost_label.grid(row=14, column=1, padx=10, pady=5, sticky="w")
+        self.kerosene_cost_label.grid(row=11, column=1, padx=10, pady=5, sticky="w")
         self.kerosene_cost = ttk.DoubleVar(self, "0.0")
 
         self.kerosene_cost_entry = ttk.Entry(self, textvariable=self.kerosene_cost)
         self.kerosene_cost_entry.grid(
-            row=14, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
+            row=11, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
         )
 
         self.kerosene_cost_units_label = ttk.Label(self, text="$/hour")
         self.kerosene_cost_units_label.grid(
-            row=14, column=3, padx=10, pady=5, sticky="w"
+            row=11, column=3, padx=10, pady=5, sticky="w"
         )
 
     def set_finance_inputs(
