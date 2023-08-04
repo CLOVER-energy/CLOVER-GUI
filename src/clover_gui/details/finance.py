@@ -211,68 +211,6 @@ class FinanceFrame(ttk.Frame):
             row=6, column=3, padx=10, pady=5, sticky="w"
         )
 
-        # # Diesel Fuel
-        # self = ttk.Labelframe(
-        #     self, text="Diesel Fuel", bootstyle=DANGER
-        # )
-        # self.grid(
-        #     row=6, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
-        # )
-
-        # self.columnconfigure(0, weight=1)
-        # self.columnconfigure(1, weight=2)
-        # self.columnconfigure(2, weight=2, pad=30)
-
-        # Diesel Fuel Cost
-        self.diesel_fuel_cost_label = ttk.Label(self, text="Diesel Fuel Cost")
-        self.diesel_fuel_cost_label.grid(row=7, column=1, padx=10, pady=5, sticky="w")
-        self.diesel_fuel_cost = ttk.DoubleVar(self, "0.0")
-
-        self.diesel_fuel_cost_entry = ttk.Entry(
-            self,
-            # bootstyle=DANGER,
-            textvariable=self.diesel_fuel_cost,
-        )
-        self.diesel_fuel_cost_entry.grid(
-            row=7, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
-        )
-        self.diesel_fuel_cost_units_label = ttk.Label(self, text="$/litre")
-        self.diesel_fuel_cost_units_label.grid(
-            row=7, column=3, padx=10, pady=5, sticky="w"
-        )
-
-        # Diesel Fuel Cost Decrease
-        self.diesel_fuel_cost_decrease_label = ttk.Label(
-            self, text="Diesel Fuel Cost Decrease"
-        )
-        self.diesel_fuel_cost_decrease_label.grid(
-            row=8, column=1, padx=10, pady=5, sticky="w"
-        )
-        self.diesel_fuel_cost_decrease = ttk.DoubleVar(self, "0.0")
-
-        self.diesel_fuel_cost_decrease_entry = ttk.Entry(
-            self,
-            # bootstyle=DANGER,
-            textvariable=self.diesel_fuel_cost_decrease,
-        )
-        self.diesel_fuel_cost_decrease_entry.grid(
-            row=8, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
-        )
-        self.diesel_fuel_cost_decrease_units_label = ttk.Label(self, text="%/year")
-        self.diesel_fuel_cost_decrease_units_label.grid(
-            row=8, column=3, padx=10, pady=5, sticky="w"
-        )
-
-        # # Grid
-        # self = ttk.Labelframe(self, text="Grid", bootstyle=SUCCESS)
-        # self.grid(
-        #     row=7, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
-        # )
-
-        # self.columnconfigure(0, weight=1)
-        # self.columnconfigure(1, weight=3)
-        # self.columnconfigure(2, weight=3, pad=110)
-
         # Grid Cost
         self.grid_cost_label = ttk.Label(self, text="Grid Cost")
         self.grid_cost_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
@@ -508,17 +446,6 @@ class FinanceFrame(ttk.Frame):
         )
         self.bos_cost_decrease_entry.update()
 
-        # Diesel
-        self.diesel_fuel_cost.set(
-            finance_inputs[ImpactingComponent.DIESEL_FUEL.value][COST]
-        )
-        self.diesel_fuel_cost_entry.update()
-
-        self.diesel_fuel_cost_decrease.set(
-            finance_inputs[ImpactingComponent.DIESEL_FUEL.value][COST_DECREASE]
-        )
-        self.diesel_fuel_cost_decrease_entry.update()
-
         # Grid
         self.grid_cost.set(finance_inputs[ImpactingComponent.GRID.value][COST])
         self.grid_cost_entry.update()
@@ -566,10 +493,6 @@ class FinanceFrame(ttk.Frame):
             ImpactingComponent.BOS.value: {
                 COST: self.bos_cost.get(),
                 COST_DECREASE: self.bos_cost_decrease.get(),
-            },
-            ImpactingComponent.DIESEL_FUEL.value: {
-                COST: self.diesel_fuel_cost.get(),
-                COST_DECREASE: self.diesel_fuel_cost_decrease.get(),
             },
             ImpactingComponent.GRID.value: {
                 COST: self.grid_cost.get(),

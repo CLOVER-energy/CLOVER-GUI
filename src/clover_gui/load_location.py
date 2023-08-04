@@ -98,7 +98,13 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         if not os.path.isdir(LOCATIONS_FOLDER_NAME):
             return
 
-        self.load_location_combobox["values"] = os.listdir(LOCATIONS_FOLDER_NAME)
+        self.load_location_combobox["values"] = sorted(
+            [
+                entry
+                for entry in os.listdir(LOCATIONS_FOLDER_NAME)
+                if os.path.isdir(os.path.join(LOCATIONS_FOLDER_NAME, entry))
+            ]
+        )
         self.load_location_name.set(self.load_location_combobox["values"][0])
 
     def select_location(self, _) -> None:

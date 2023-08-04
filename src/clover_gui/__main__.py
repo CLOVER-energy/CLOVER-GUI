@@ -33,6 +33,7 @@ from clover.fileparser import (
     GRID_TIMES_FILE,
     SCENARIOS,
 )
+from clover.impact.finance import ImpactingComponent
 from clover.scripts.new_location import create_new_location
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
@@ -383,6 +384,9 @@ class App(ttk.Window):
         )
         set_progress_bar_progress(700 * percent_fraction)
 
+        self.details_window.diesel_frame.set_fuel_impact(
+            finance_inputs[ImpactingComponent.DIESEL_FUEL.value]
+        )
         self.details_window.diesel_frame.generator_frame.set_generators(
             minigrid.diesel_generator, diesel_generators, diesel_costs, diesel_emissions
         )
