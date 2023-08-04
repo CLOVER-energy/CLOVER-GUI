@@ -109,7 +109,7 @@ class PVFrame(ttk.Frame):
         )
 
         # Panel selected
-        self.panel_selected = tk.StringVar(value="m-Si")
+        self.panel_selected = ttk.StringVar(value="m-Si")
         self.panel_name_values = {
             "m-Si": self.panel_selected,
             (panel_name := "p-Si"): ttk.StringVar(self, panel_name),

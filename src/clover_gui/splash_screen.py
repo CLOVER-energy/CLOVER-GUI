@@ -50,7 +50,7 @@ class SplashScreenWindow(tk.Toplevel):
             )
         )
         self.background_image = self.background_image.subsample(2)
-        self.splash_label = tk.Label(self, image=self.background_image)
+        self.splash_label = ttk.Label(self, image=self.background_image)
         self.splash_label.pack()
 
         # Create an updatable progress bar.

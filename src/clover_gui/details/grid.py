@@ -14,12 +14,18 @@ from typing import Callable
 import pandas as pd
 import ttkbootstrap as ttk
 
+from clover.impact.finance import COST, ImpactingComponent
+from clover.impact.ghgs import INITIAL_GHGS, FINAL_GHGS
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 from ..__utils__ import DETAILS_GEOMETRY
 
 __all__ = ("GridFrame",)
+
+# Infrastructure costs:
+#   Keyword for the infrastructure costs.
+_INFRASTRUCTURE_COSTS: str = "infrastructure_costs"
 
 
 class GridFrame(ttk.Frame):
@@ -38,8 +44,11 @@ class GridFrame(ttk.Frame):
         self.add_grid_profile_to_system_frame: Callable | None = None
         self.set_profiles_on_system_frame: Callable | None = None
 
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=6)
+        self.rowconfigure(0, weight=1, minsize=40)
+        self.rowconfigure(1, weight=1, minsize=40)
+        self.rowconfigure(2, weight=1, minsize=40)
+        self.rowconfigure(3, weight=1, minsize=40)
+        self.rowconfigure(4, weight=6, minsize=500)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -66,7 +75,7 @@ class GridFrame(ttk.Frame):
 
         # Grid profile name
         self.grid_profile_label = ttk.Label(self, text="Profile name")
-        self.grid_profile_label.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+        self.grid_profile_label.grid(row=0, column=1, padx=10, pady=5, sticky="w")
 
         self.grid_profile_entry = ttk.Entry(
             self, bootstyle=SUCCESS, textvariable=self.grid_profile_name
@@ -86,13 +95,57 @@ class GridFrame(ttk.Frame):
         )
         self.new_profile_button.grid(row=0, column=3, padx=10, pady=5)
 
+        # Grid costs
+        self.grid_cost_label = ttk.Label(self, text="Grid Cost")
+        self.grid_cost_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+        self.grid_cost = ttk.DoubleVar(self, 0)
+
+        self.grid_cost_entry = ttk.Entry(
+            self, textvariable=self.grid_cost, bootstyle=SUCCESS
+        )
+        self.grid_cost_entry.grid(
+            row=1, column=2, padx=10, pady=5, ipadx=20, sticky="ew"
+        )
+        self.grid_cost_units_label = ttk.Label(self, text="$/kWh")
+        self.grid_cost_units_label.grid(row=1, column=3, padx=10, pady=5, sticky="w")
+
+        # Initial Grid Emissions
+        self.initial_grid_ghgs_label = ttk.Label(self, text="Initial Grid Emissions")
+        self.initial_grid_ghgs_label.grid(row=2, column=1, sticky="w", padx=10, pady=5)
+        self.initial_grid_ghgs = ttk.DoubleVar(value=0)
+
+        self.initial_grid_ghgs_entry = ttk.Entry(
+            self, textvariable=self.initial_grid_ghgs, bootstyle=SUCCESS
+        )
+        self.initial_grid_ghgs_entry.grid(
+            row=2, column=2, padx=10, pady=5, ipadx=20, sticky="ew"
+        )
+
+        self.initial_grid_ghgs_units = ttk.Label(self, text="kgCO2/kWh")
+        self.initial_grid_ghgs_units.grid(row=2, column=3, padx=10, pady=5, sticky="w")
+
+        # Final Grid Emissions
+        self.final_grid_ghgs_label = ttk.Label(self, text="Final Grid Emissions")
+        self.final_grid_ghgs_label.grid(row=3, column=1, padx=10, pady=5, sticky="w")
+        self.final_grid_ghgs = ttk.DoubleVar(value=0)
+
+        self.final_grid_ghgs_entry = ttk.Entry(
+            self, textvariable=self.final_grid_ghgs, bootstyle=SUCCESS
+        )
+        self.final_grid_ghgs_entry.grid(
+            row=3, column=2, padx=10, pady=5, ipadx=20, sticky="ew"
+        )
+
+        self.final_grid_ghgs_units = ttk.Label(self, text="kgCO2/kWh")
+        self.final_grid_ghgs_units.grid(row=3, column=3, padx=10, pady=5, sticky="w")
+
         # Graph
         self.graph_frame = ttk.Labelframe(
             self,
             style="success.TLabelframe",
         )
         self.graph_frame.grid(
-            row=1,
+            row=4,
             column=0,
             columnspan=4,
             padx=5,
@@ -258,8 +311,19 @@ class GridFrame(ttk.Frame):
             }
         )
 
+    @property
+    def impact_information(self) -> dict[str, float]:
+        return {
+            COST: self.grid_cost.get(),
+            INITIAL_GHGS: self.initial_grid_ghgs.get(),
+            FINAL_GHGS: self.final_grid_ghgs.get(),
+        }
+
     def enter_grid_profile_name(self, _) -> None:
         """Called when someone enters a new grid profile name."""
+        import pdb
+
+        pdb.set_trace()
         self.probability_sliders = {
             self.grid_profile_values[key].get(): value
             for key, value in self.probability_sliders.items()
@@ -314,20 +378,44 @@ class GridFrame(ttk.Frame):
         # Update the sliders
         self.update_sliders()
 
-    def set_profiles(self, grid_times: pd.DataFrame) -> None:
+    def set_profiles(
+        self, grid_times: pd.DataFrame, impact_inputs: dict[str, float]
+    ) -> None:
         """
         Set the grid profile times based on the inputs.
 
         :param: grid_times
             A :class:`pd.DataFrame` containing the grid-times frame.
 
+        :param: impact_inputs
+            The impact inputs information
+
         """
+
+        self.grid_profile_values = {}
+        self.probabilities = {}
+        self.probability_sliders = {}
+        self.probability_entries = {}
 
         for profile_name, profile_probabilities in grid_times.to_dict().items():
             self.add_profile(
                 seed_profile_name=profile_name,
                 seed_profile_probabilities=profile_probabilities,
             )
+
+        # Costs
+        self.grid_cost.set(impact_inputs[ImpactingComponent.GRID.value][COST])
+
+        # GHGs
+        self.initial_grid_ghgs.set(
+            impact_inputs[ImpactingComponent.GRID.value][INITIAL_GHGS]
+        )
+        self.initial_grid_ghgs_entry.update()
+
+        self.final_grid_ghgs.set(
+            impact_inputs[ImpactingComponent.GRID.value][FINAL_GHGS]
+        )
+        self.final_grid_ghgs_entry.update()
 
     def update_graph_frame_label(self) -> None:
         self.graph_frame.configure(

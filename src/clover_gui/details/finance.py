@@ -21,10 +21,6 @@ from ttkbootstrap.scrolled import *
 
 __all__ = ("FinanceFrame",)
 
-# Infrastructure costs:
-#   Keyword for the infrastructure costs.
-_INFRASTRUCTURE_COSTS: str = "infrastructure_costs"
-
 
 class FinanceFrame(ttk.Frame):
     """
@@ -210,18 +206,6 @@ class FinanceFrame(ttk.Frame):
         self.bos_cost_decrease_units_label.grid(
             row=6, column=3, padx=10, pady=5, sticky="w"
         )
-
-        # Grid Cost
-        self.grid_cost_label = ttk.Label(self, text="Grid Cost")
-        self.grid_cost_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
-        self.grid_cost = ttk.DoubleVar(self, "0.0")
-
-        self.grid_cost_entry = ttk.Entry(self, textvariable=self.grid_cost)
-        self.grid_cost_entry.grid(
-            row=9, column=2, padx=10, pady=5, ipadx=80, sticky="ew"
-        )
-        self.grid_cost_units_label = ttk.Label(self, text="$/kWh")
-        self.grid_cost_units_label.grid(row=9, column=3, padx=10, pady=5, sticky="w")
 
         # Distribution network
         self.distribution_network_infrastructure_cost_label = ttk.Label(
@@ -446,15 +430,6 @@ class FinanceFrame(ttk.Frame):
         )
         self.bos_cost_decrease_entry.update()
 
-        # Grid
-        self.grid_cost.set(finance_inputs[ImpactingComponent.GRID.value][COST])
-        self.grid_cost_entry.update()
-
-        self.distribution_network_infrastructure_cost.set(
-            finance_inputs[ImpactingComponent.GRID.value].get(_INFRASTRUCTURE_COSTS, 0)
-        )
-        self.distribution_network_infrastructure_cost_entry.update()
-
         # Household
         self.connection_cost.set(
             finance_inputs[ImpactingComponent.HOUSEHOLDS.value][CONNECTION_COST]
@@ -474,6 +449,7 @@ class FinanceFrame(ttk.Frame):
         self.kerosene_cost.set(finance_inputs[ImpactingComponent.KEROSENE.value][COST])
         self.kerosene_cost_entry.update()
 
+    @property
     def as_dict(self) -> dict[str, dict[str, float] | float]:
         """
         Return the finance screen information as a `dict`.
@@ -493,10 +469,6 @@ class FinanceFrame(ttk.Frame):
             ImpactingComponent.BOS.value: {
                 COST: self.bos_cost.get(),
                 COST_DECREASE: self.bos_cost_decrease.get(),
-            },
-            ImpactingComponent.GRID.value: {
-                COST: self.grid_cost.get(),
-                _INFRASTRUCTURE_COSTS: self.distribution_network_infrastructure_cost.get(),
             },
             ImpactingComponent.HOUSEHOLDS.value: {
                 CONNECTION_COST: self.connection_cost.get()

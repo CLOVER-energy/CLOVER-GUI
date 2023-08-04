@@ -72,12 +72,12 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.columnconfigure(3, weight=1)
         self.columnconfigure(4, weight=1)
 
-        self.start_year = tk.DoubleVar()
-        self.end_year = tk.DoubleVar()
+        self.start_year = ttk.DoubleVar()
+        self.end_year = ttk.DoubleVar()
 
         # self.end_year_slider = ttk.Scale(self, bootstyle="danger")
         # self.end_year_slider.grid(row=3, column=1, padx=20)
-        self.generate_plots = tk.BooleanVar()
+        self.generate_plots = ttk.BooleanVar()
 
         # PV size
         self.pv_size_label = ttk.Label(self, text="PV System Size")

@@ -962,7 +962,7 @@ class DieselFrame(ttk.Frame):
             textvariable=self.diesel_fuel_cost,
         )
         self.diesel_fuel_cost_entry.grid(
-            row=0, column=1, padx=10, pady=5, ipadx=80, sticky="ew"
+            row=0, column=1, padx=10, pady=5, ipadx=20, sticky="ew"
         )
         self.diesel_fuel_cost_units_label = ttk.Label(self, text="$/litre")
         self.diesel_fuel_cost_units_label.grid(
@@ -984,7 +984,7 @@ class DieselFrame(ttk.Frame):
             textvariable=self.diesel_fuel_cost_decrease,
         )
         self.diesel_fuel_cost_decrease_entry.grid(
-            row=0, column=4, padx=10, pady=5, ipadx=80, sticky="ew"
+            row=0, column=4, padx=10, pady=5, ipadx=20, sticky="ew"
         )
         self.diesel_fuel_cost_decrease_units_label = ttk.Label(self, text="%/year")
         self.diesel_fuel_cost_decrease_units_label.grid(

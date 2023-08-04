@@ -327,6 +327,11 @@ class App(ttk.Window):
         self.input_file_info = input_file_info
         set_progress_bar_progress(100 * (percent_fraction := 1 / 12))
 
+        # Combine the inputs, to phase out.
+        finance_inputs[ImpactingComponent.GRID.value].update(
+            ghg_inputs[ImpactingComponent.GRID.value]
+        )
+
         # Load the PV and battery input files as these are not returned in CLOVER as a whole
         self.inputs_directory_relative_path = os.path.join(
             LOCATIONS_FOLDER_NAME,
@@ -393,7 +398,7 @@ class App(ttk.Window):
         # self.details_window.diesel_frame.heater_frame.set_water_heaters(minigrid.diesel_water_heater)
         set_progress_bar_progress(800 * percent_fraction)
 
-        self.details_window.grid_frame.set_profiles(grid_times)
+        self.details_window.grid_frame.set_profiles(grid_times, finance_inputs)
         set_progress_bar_progress(900 * percent_fraction)
 
         self.details_window.finance_frame.set_finance_inputs(
@@ -625,20 +630,28 @@ class App(ttk.Window):
             )
 
         # Save the finance_inputs information
+        finance_outputs = self.details_window.finance_frame.as_dict
+        finance_outputs[
+            ImpactingComponent.GRID.value
+        ] = self.details_window.grid_frame.impact_information
         with open(
             self.input_file_info[os.path.basename(FINANCE_INPUTS_FILE).split(".")[0]],
             "w",
             encoding=_encoding,
         ) as finance_inputs_file:
-            yaml.dump(self.details_window.finance_frame.as_dict(), finance_inputs_file)
+            yaml.dump(finance_outputs, finance_inputs_file)
 
         # Save the ghg_inputs information
+        ghg_outputs = self.details_window.ghgs_frame.as_dict
+        ghg_outputs[
+            ImpactingComponent.GRID.value
+        ] = self.details_window.grid_frame.impact_information
         with open(
             self.input_file_info[os.path.basename(GHG_INPUTS_FILE).split(".")[0]],
             "w",
             encoding=_encoding,
         ) as ghg_inputs_file:
-            yaml.dump(self.details_window.ghgs_frame.as_dict(), ghg_inputs_file)
+            yaml.dump(ghg_outputs, ghg_inputs_file)
 
         # Save the grid_times information
         with open(
@@ -646,7 +659,7 @@ class App(ttk.Window):
             "w",
             encoding=_encoding,
         ) as grid_times_file:
-            yaml.dump(self.details_window.grid_frame.as_dataframe, grid_times_file)
+            self.details_window.grid_frame.as_dataframe.to_csv(grid_times_file)
 
         # Save the optimisation_inputs information
 
