@@ -166,4 +166,4 @@ cython_debug/
 locations/
 
 # Settings files
-global_settings.yaml
+./global_settings.yaml
