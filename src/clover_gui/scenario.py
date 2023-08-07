@@ -613,35 +613,35 @@ class ConfigurationFrame(ttk.Frame):
         }
 
         # Diesel scenario information
-        self.diesel_label_frame = ttk.Labelframe(
-            self.scrollable_scenario_frame, bootstyle=DANGER, text="Diesel"
-        )
-        self.diesel_label_frame.grid(
-            row=6, column=0, padx=10, pady=5, columnspan=5, sticky="news"
-        )
+        # self.diesel_label_frame = ttk.Labelframe(
+        #     self.scrollable_scenario_frame, bootstyle=DANGER, text="Diesel"
+        # )
+        # self.diesel_label_frame.grid(
+        #     row=6, column=0, padx=10, pady=5, columnspan=5, sticky="news"
+        # )
 
-        self.diesel_label_frame.columnconfigure(0, weight=1)
-        self.diesel_label_frame.columnconfigure(1, weight=1)
-        self.diesel_label_frame.columnconfigure(2, weight=1)
-        self.diesel_label_frame.columnconfigure(3, weight=1)
+        # self.diesel_label_frame.columnconfigure(0, weight=1)
+        # self.diesel_label_frame.columnconfigure(1, weight=1)
+        # self.diesel_label_frame.columnconfigure(2, weight=1)
+        # self.diesel_label_frame.columnconfigure(3, weight=1)
 
         # Diesel mode
-        self.diesel_mode_label = ttk.Label(self.diesel_label_frame, text="Mode")
-        self.diesel_mode_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.diesel_mode_label = ttk.Label(self.scrollable_scenario_frame, text="Mode")
+        self.diesel_mode_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
         self.diesel_mode_combobox = ttk.Combobox(
-            self.diesel_label_frame, bootstyle=DANGER, state=DISABLED
+            self.scrollable_scenario_frame, bootstyle=DANGER, state=DISABLED
         )
-        self.diesel_mode_combobox.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        self.diesel_mode_combobox.grid(row=6, column=1, padx=10, pady=5, sticky="ew")
         self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
         self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
 
         # Backup threshold
         self.diesel_backup_threshold_label = ttk.Label(
-            self.diesel_label_frame, text="Threshold"
+            self.scrollable_scenario_frame, text="Threshold"
         )
         self.diesel_backup_threshold_label.grid(
-            row=1, column=0, padx=10, pady=5, sticky="w"
+            row=7, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.diesel_backup_threshold: ttk.DoubleVar = ttk.DoubleVar(self, 0)
@@ -650,7 +650,7 @@ class ConfigurationFrame(ttk.Frame):
             self.diesel_backup_entry.update()
 
         self.diesel_backup_slider = ttk.Scale(
-            self.diesel_label_frame,
+            self.scrollable_scenario_frame,
             from_=0,
             to=100,
             orient=tk.HORIZONTAL,
@@ -659,7 +659,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle=DANGER,
             variable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_slider.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_slider.grid(row=7, column=1, padx=10, pady=5, sticky="ew")
 
         def enter_threshold(_):
             self.diesel_backup_threshold.set(
@@ -668,47 +668,47 @@ class ConfigurationFrame(ttk.Frame):
             self.diesel_backup_slider.set(self.diesel_backup_entry.get())
 
         self.diesel_backup_entry = ttk.Entry(
-            self.diesel_label_frame,
+            self.scrollable_scenario_frame,
             bootstyle=DANGER,
             textvariable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_entry.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_entry.grid(row=7, column=2, padx=10, pady=5, sticky="ew")
         self.diesel_backup_entry.bind("<Return>", enter_threshold)
 
         self.diesel_backup_threshold_unit = ttk.Label(
-            self.diesel_label_frame, text=f"% of hours"
+            self.scrollable_scenario_frame, text=f"% of hours"
         )
         self.diesel_backup_threshold_unit.grid(
-            row=1, column=3, padx=10, pady=5, sticky="w"
+            row=7, column=3, padx=10, pady=5, sticky="w"
         )
 
         # Distribution network
-        self.generation_and_distribution_label_frame = ttk.Labelframe(
-            self.scrollable_scenario_frame,
-            bootstyle=SUCCESS,
-            text="Generation and distribution",
-        )
-        self.generation_and_distribution_label_frame.grid(
-            row=7, column=0, padx=10, pady=5, sticky="news", columnspan=5
-        )
+        # self.generation_and_distribution_label_frame = ttk.Labelframe(
+        #     self.scrollable_scenario_frame,
+        #     bootstyle=SUCCESS,
+        #     text="Generation and distribution",
+        # )
+        # self.generation_and_distribution_label_frame.grid(
+        #     row=7, column=0, padx=10, pady=5, sticky="news", columnspan=5
+        # )
 
-        self.generation_and_distribution_label_frame.columnconfigure(0, weight=1)
-        self.generation_and_distribution_label_frame.columnconfigure(1, weight=1)
-        self.generation_and_distribution_label_frame.columnconfigure(2, weight=1)
-        self.generation_and_distribution_label_frame.columnconfigure(3, weight=1)
+        # self.generation_and_distribution_label_frame.columnconfigure(0, weight=1)
+        # self.generation_and_distribution_label_frame.columnconfigure(1, weight=1)
+        # self.generation_and_distribution_label_frame.columnconfigure(2, weight=1)
+        # self.generation_and_distribution_label_frame.columnconfigure(3, weight=1)
 
         self.distribution_network_label = ttk.Label(
-            self.generation_and_distribution_label_frame, text="Distribution network"
+            self.scrollable_scenario_frame, text="Distribution network"
         )
         self.distribution_network_label.grid(
-            row=0, column=0, padx=10, pady=5, sticky="w"
+            row=8, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.distribution_network_combobox = ttk.Combobox(
-            self.generation_and_distribution_label_frame, bootstyle=SUCCESS
+            self.scrollable_scenario_frame, bootstyle=SUCCESS
         )
         self.distribution_network_combobox.grid(
-            row=0, column=1, padx=10, pady=5, sticky="w"
+            row=8, column=1, padx=10, pady=5, sticky="w"
         )
         self.distribution_network_combobox["values"] = [
             e.value for e in DistributionNetwork
@@ -717,18 +717,18 @@ class ConfigurationFrame(ttk.Frame):
 
         # Self generation
         self.prioritise_self_generation_label = ttk.Label(
-            self.generation_and_distribution_label_frame,
+            self.scrollable_scenario_frame,
             text="Prioritise self generation",
         )
         self.prioritise_self_generation_label.grid(
-            row=0, column=2, padx=10, pady=5, sticky="w"
+            row=8, column=2, padx=10, pady=5, sticky="w"
         )
 
         self.prioritise_self_generation_combobox = ttk.Combobox(
-            self.generation_and_distribution_label_frame, bootstyle=SUCCESS
+            self.scrollable_scenario_frame, bootstyle=SUCCESS
         )
         self.prioritise_self_generation_combobox.grid(
-            row=0, column=3, padx=10, pady=5, sticky="w"
+            row=8, column=3, padx=10, pady=5, sticky="w"
         )
         self.prioritise_self_generation_combobox["values"] = ["True", "False"]
         self.prioritise_self_generation_combobox.set("True")
