@@ -31,7 +31,6 @@ from clover.fileparser import (
     FINANCE_INPUTS_FILE,
     GHG_INPUTS_FILE,
     GRID_TIMES_FILE,
-    OPTIMISATION_INPUTS_FILE,
     SCENARIOS,
 )
 from clover.impact.finance import ImpactingComponent
@@ -663,17 +662,6 @@ class App(ttk.Window):
             self.details_window.grid_frame.as_dataframe.to_csv(grid_times_file)
 
         # Save the optimisation_inputs information
-        with open(
-            self.input_file_info[
-                os.path.basename(OPTIMISATION_INPUTS_FILE).split(".")[0]
-            ],
-            "w",
-            encoding=_encoding,
-        ) as optimisation_inputs_file:
-            yaml.dump(
-                self.configuration_screen.optimisation_frame.as_dict,
-                optimisation_inputs_file,
-            )
 
         # Save the scenarios information
         with open(
