@@ -731,10 +731,15 @@ class LoadFrame(ttk.Frame):
         self.device_utilisations_directory: str | None = None
 
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=2, minsize=600)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1, minsize=300)
+        self.columnconfigure(3, weight=2, minsize=300)
 
         self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=8)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1)
+        self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=8)
 
         self.devices = [
             GUIDevice(
@@ -753,10 +758,46 @@ class LoadFrame(ttk.Frame):
 
         self.active_device: GUIDevice = self.devices[0]
 
+        # Create the from-file vs auto-genrated entry
+        self.from_file_button = ttk.Checkbutton(
+            self,
+            command=self._from_file_callback,
+            bootstyle=f"{SUCCESS}-{TOOLBUTTON}",
+            text="From an input file",
+        )
+        self.fixed_tracking_button.grid(
+            row=0, column=0, padx=10, pady=5, ipadx=20, sticky="ew"
+        )
+
+        self.open_file_button = ttk.Button(
+            self,
+            command=self._open_load_file,
+            bootstyle=f"{SUCCESS}",
+            text="Select file"
+        )
+        self.open_file_button.grid(row=0, column=1, padx=10, pady=5, ipadx=20, sticky="ew")
+
+        self.filename: ttk.StringVar = ttk.StringVar(self, "")
+        self.load_file_path_entry = ttk.Entry(
+            self,
+            bootstyle=f"{SUCCESS}-inverted",
+            textvariable=self.filename,
+            state=DISABLED=
+        )
+
+        # Place a seperator between the two
+        self.separator = ttk.Separator(
+            self.scrollable_scenario_frame, orient="horizontal"
+        )
+        self.separator.grid(
+            row=2, column=0, pady=5, padx=10, columnspan=4, sticky="news"
+        )
+
+
         # Create the right-hand frame for adjusting device settings
         self.settings_frame = DeviceSettingsFrame(self, self.set_device_type)
         self.settings_frame.grid(
-            row=0, column=1, padx=20, pady=10, sticky="news", rowspan=2
+            row=3, column=1, columnspan=3, padx=20, pady=10, sticky="news", rowspan=2
         )
 
         # Create the button for creating devices
@@ -766,13 +807,13 @@ class LoadFrame(ttk.Frame):
             command=self.add_device,
             text="New device",
         )
-        self.add_device_button.grid(row=0, column=0, padx=10, pady=5, ipadx=80)
+        self.add_device_button.grid(row=3, column=0, padx=10, pady=5, ipadx=80)
 
         # Create the left-hand frame for selecting the devices
         self.devices_frame = DevicesFrame(
             self, self.select_device, self.update_device_settings_frame
         )
-        self.devices_frame.grid(row=1, column=0, padx=20, pady=10, sticky="news")
+        self.devices_frame.grid(row=4, column=0, padx=20, pady=10, sticky="news")
 
         for device, button in self.devices_frame.device_selected_buttons.items():
             button.configure(command=lambda device=device: self.select_device(device))
