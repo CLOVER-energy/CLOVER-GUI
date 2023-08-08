@@ -1534,7 +1534,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.columnconfigure(4, weight=1)
 
         self.rowconfigure(0, weight=1, minsize=80)
-        self.rowconfigure(1, weight=1)
+        self.rowconfigure(1, weight=1, minsize=600)
         self.rowconfigure(2, weight=1, minsize=80)
 
         self.location_label = ttk.Label(
@@ -1548,7 +1548,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
         self.configuration_notebook.grid(
-            row=1, column=0, columnspan=5, sticky="ew", padx=60, pady=20
+            row=1, column=0, columnspan=5, sticky="news", padx=60, pady=20
         )  # Use grid
 
         style = ttk.Style()
