@@ -83,6 +83,7 @@ class ConfigurationFrame(ttk.Frame):
         self.scrollable_scenario_frame.rowconfigure(8, weight=1)
         self.scrollable_scenario_frame.rowconfigure(9, weight=1)
         self.scrollable_scenario_frame.rowconfigure(10, weight=1)
+        self.scrollable_scenario_frame.rowconfigure(11, weight=1)
 
         # Selecting system components
         self.power_generation_label: ttk.Label = ttk.Label(
@@ -653,7 +654,7 @@ class ConfigurationFrame(ttk.Frame):
         self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
 
         self.diesel_mode_combobox = ttk.Combobox(
-            self.scrollable_scenario_frame, state=DISABLED
+            self.scrollable_scenario_frame, state=DISABLED, width=10
         )
         self.diesel_mode_combobox.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
         self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
@@ -677,7 +678,7 @@ class ConfigurationFrame(ttk.Frame):
             from_=0,
             to=100,
             orient=tk.HORIZONTAL,
-            length=320,
+            # length=320,
             command=scalar_threshold,
             variable=self.diesel_backup_threshold,
         )
@@ -742,14 +743,14 @@ class ConfigurationFrame(ttk.Frame):
             text="Prioritise self generation",
         )
         self.prioritise_self_generation_label.grid(
-            row=10, column=2, padx=10, pady=5, sticky="w"
+            row=11, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.prioritise_self_generation_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
         self.prioritise_self_generation_combobox.grid(
-            row=10, column=3, padx=10, pady=5, sticky="w"
+            row=11, column=1, padx=10, pady=5, sticky="w"
         )
         self.prioritise_self_generation_combobox["values"] = ["True", "False"]
         self.prioritise_self_generation_combobox.set("True")
