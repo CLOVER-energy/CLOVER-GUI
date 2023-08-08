@@ -16,8 +16,16 @@ import ttkbootstrap as ttk
 from typing import Callable
 
 from clover import OperatingMode, Simulation
+from clover.__utils__ import ITERATION_LENGTH, MAX, MIN, NUMBER_OF_ITERATIONS, STEP
+from clover.fileparser import OPTIMISATIONS
 from clover.optimisation import Optimisation, OptimisationParameters, ThresholdMode
-from clover.optimisation.__utils__ import Criterion, THRESHOLD_CRITERION_TO_MODE
+from clover.optimisation.__utils__ import (
+    Criterion,
+    OPTIMISATION_CRITERIA,
+    OptimisationComponent,
+    THRESHOLD_CRITERIA,
+    THRESHOLD_CRITERION_TO_MODE,
+)
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -205,7 +213,7 @@ class ThresholdCriterion:
     # .. attribute:: _permissable_threshold_criteria
     #   The `list` of permissable threshold criteria.
 
-    criterion_to_name_map: dict[str, str] = {
+    criterion_to_name_map: dict[Criterion, str] = {
         Criterion.BLACKOUTS: "Blackouts fraction",
         Criterion.CLEAN_WATER_BLACKOUTS: "Clean water blackouts fraction",
         Criterion.CUMULATIVE_COST: "Cumulative cost / $",
@@ -223,6 +231,8 @@ class ThresholdCriterion:
         Criterion.TOTAL_COST: "Total_cost / $",
         Criterion.UNMET_ENERGY_FRACTION: "Unmet energy fraction",
     }
+
+    _name_to_criterion_map: dict[str, Criterion] | None = None
 
     _permissable_chevrons: list[str] = sorted(["<", ">"])
 
@@ -335,6 +345,23 @@ class ThresholdCriterion:
         self.less_than_combobox.grid_forget()
         self.value_entry.grid_forget()
         self.delete_criterion_button.grid_forget()
+
+    @classmethod
+    @property
+    def name_to_criterion_map(self) -> dict[str, Criterion]:
+        """
+        Return a mapping bewteen criteria and names to be stored.
+
+        :return:
+            A mapping between criteria and names to store them in-file.
+
+        """
+
+        if self._name_to_criterion_map is None:
+            self._name_to_criterion_map: dict[str, Criterion] = {
+                value: key for key, value in self.criterion_to_name_map.items()
+            }
+        return self._name_to_criterion_map
 
     def set_index(self, index: int) -> None:
         """
@@ -1179,6 +1206,60 @@ class OptimisationFrame(ttk.Frame):
         )
 
         # TODO: Add configuration frame widgets and layout
+
+    @property
+    def as_dict(
+        self,
+    ) -> dict[
+        str,
+        dict[str, float] | float | list[dict[str, list[dict[str, float | str]] | str]],
+    ]:
+        """
+        Return the optimisation screen information as a `dict`.
+
+        In order to update the optimisation inputs file ready to run a CLOVER
+        optimisation, the optimisation inputs information needs to be saved.
+
+        :returns:
+            The optimisation information ready to be saved.
+
+        """
+
+        return {
+            ITERATION_LENGTH: self.iteration_length.get(),
+            NUMBER_OF_ITERATIONS: self.number_of_iterations.get(),
+            OptimisationComponent.PV_SIZE.value: {
+                MAX: self.pv_max.get(),
+                MIN: self.pv_min.get(),
+                STEP: self.pv_step.get(),
+            },
+            OptimisationComponent.STORAGE_SIZE.value: {
+                MAX: self.storage_max.get(),
+                MIN: self.storage_min.get(),
+                STEP: self.storage_step.get(),
+            },
+            OPTIMISATIONS: [
+                {
+                    OPTIMISATION_CRITERIA: [
+                        {
+                            ThresholdCriterion.name_to_criterion_map[
+                                self.optimisation_criterion.get()
+                            ]
+                            .value: self.optimisation_minmax.get()
+                            .lower()
+                        }
+                    ],
+                    THRESHOLD_CRITERIA: [
+                        {
+                            ThresholdCriterion.name_to_criterion_map[
+                                criterion.criterion_name.get()
+                            ].value: criterion.value.get()
+                            for criterion in self.threshold_criteria
+                        }
+                    ],
+                }
+            ],
+        }
 
     def delete_criterion(self, criterion: ThresholdCriterion) -> None:
         """
