@@ -486,7 +486,7 @@ class OptimisationFrame(ttk.Frame):
             self, False, "warning_text_displayed"
         )
         self.warning_text.grid(
-            row=1, column=0, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=3, column=0, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def update_optimisation_time_warning() -> None:
@@ -542,6 +542,15 @@ class OptimisationFrame(ttk.Frame):
                     bootstyle=SECONDARY,
                 )
 
+        # Iteration header
+        bold_head = ttk.Style()
+        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 14, "bold"))
+        
+        self.iteration_header = ttk.Label(
+            self.scrollable_optimisation_frame, text="Iterations", style="Bold.TLabel"
+        )
+        self.iteration_header.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        
         # Iteration length
         self.iteration_length_label = ttk.Label(
             self.scrollable_optimisation_frame, text="Iteration Length"
@@ -637,12 +646,8 @@ class OptimisationFrame(ttk.Frame):
             self.scrollable_optimisation_frame, orient=tk.HORIZONTAL
         )
         self.horizontal_divider.grid(
-            row=3, column=0, columnspan=4, padx=10, pady=5, sticky="ew"
+            row=4, column=0, columnspan=7, padx=10, pady=5, sticky="ew"
         )
-
-
-
-
 
         # Steps frame
         # self.steps_frame = ttk.Labelframe(
@@ -702,54 +707,60 @@ class OptimisationFrame(ttk.Frame):
         #     6, weight=1
         # )  # These rows have entries
 
+        # Optimisation parameters header
+        self.optimisation_parameters_header = ttk.Label(
+            self.scrollable_optimisation_frame, text="Optimisation configuration parameters", style="Bold.TLabel"
+        )
+        self.optimisation_parameters_header.grid(row=5, column=0, padx=10, pady=5, sticky="w")
+
         # PV step size
         self.pv_label = ttk.Label(
             self.scrollable_optimisation_frame, text="PV", bootstyle=DARK
         )
-        self.pv_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.pv_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
         self.pv_min_label = ttk.Label(self.scrollable_optimisation_frame, text="min")
-        self.pv_min_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        self.pv_min_label.grid(row=6, column=0, padx=10, pady=5, sticky="e")
 
         self.pv_min = ttk.IntVar(self, 5)
         self.pv_min_entry = ttk.Entry(
             self.scrollable_optimisation_frame, bootstyle=INFO, textvariable=self.pv_min
         )
-        self.pv_min_entry.grid(row=5, column=1, padx=10, pady=5, sticky="ew")
+        self.pv_min_entry.grid(row=6, column=1, padx=10, pady=5, sticky="ew")
 
         self.pv_min_unit = ttk.Label(self.scrollable_optimisation_frame, text="panels")
-        self.pv_min_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
+        self.pv_min_unit.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
         self.pv_max_label = ttk.Label(self.scrollable_optimisation_frame, text="max")
-        self.pv_max_label.grid(row=5, column=2, padx=10, pady=5, sticky="e")
+        self.pv_max_label.grid(row=6, column=2, padx=10, pady=5, sticky="e")
 
         self.pv_max = ttk.IntVar(self, 20)
         self.pv_max_entry = ttk.Entry(
             self.scrollable_optimisation_frame, bootstyle=INFO, textvariable=self.pv_max
         )
-        self.pv_max_entry.grid(row=5, column=3, padx=10, pady=5, sticky="ew")
+        self.pv_max_entry.grid(row=6, column=3, padx=10, pady=5, sticky="ew")
 
         self.pv_max_unit = ttk.Label(self.scrollable_optimisation_frame, text="panels")
-        self.pv_max_unit.grid(row=5, column=4, padx=10, pady=5, sticky="w")
+        self.pv_max_unit.grid(row=6, column=4, padx=10, pady=5, sticky="w")
 
         self.pv_step_label = ttk.Label(self.scrollable_optimisation_frame, text="step")
-        self.pv_step_label.grid(row=5, column=4, padx=10, pady=5, sticky="e")
+        self.pv_step_label.grid(row=6, column=4, padx=10, pady=5, sticky="e")
         self.pv_step = ttk.IntVar(self, 5)
 
         self.pv_step_entry = ttk.Entry(
             self.scrollable_optimisation_frame, bootstyle=INFO, textvariable=self.pv_step
         )
-        self.pv_step_entry.grid(row=5, column=5, padx=10, pady=5, sticky="ew")
+        self.pv_step_entry.grid(row=6, column=5, padx=10, pady=5, sticky="ew")
 
         self.pv_step_unit = ttk.Label(self.scrollable_optimisation_frame, text="panels")
-        self.pv_step_unit.grid(row=5, column=6, padx=10, pady=5, sticky="w")
+        self.pv_step_unit.grid(row=6, column=6, padx=10, pady=5, sticky="w")
 
         # Storage step size
         self.storage_label = ttk.Label(self.scrollable_optimisation_frame, text="Batteries")
-        self.storage_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
+        self.storage_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
 
         self.storage_min_label = ttk.Label(self.scrollable_optimisation_frame, text="min")
-        self.storage_min_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+        self.storage_min_label.grid(row=7, column=0, padx=10, pady=5, sticky="e")
 
         self.storage_min = ttk.IntVar(self, 5)
         self.storage_min_entry = ttk.Entry(
@@ -1176,45 +1187,45 @@ class OptimisationFrame(ttk.Frame):
         self.separator.grid(row=20, column=0, columnspan=7, sticky="ew")
   
         # Threshold criteria frame
-        self.threshold_criteria_frame = ttk.Labelframe(
-            self, style="info.TLabelframe", text="Threshold criteria"
-        )
-        self.threshold_criteria_frame.grid(
-            row=3,
-            column=0,
-            columnspan=2,
-            padx=5,
-            pady=10,
-            ipady=60,
-            ipadx=20,
-            sticky="news",
-        )
+        # self.threshold_criteria_frame = ttk.Labelframe(
+        #     self, style="info.TLabelframe", text="Threshold criteria"
+        # )
+        # self.threshold_criteria_frame.grid(
+        #     row=3,
+        #     column=0,
+        #     columnspan=2,
+        #     padx=5,
+        #     pady=10,
+        #     ipady=60,
+        #     ipadx=20,
+        #     sticky="news",
+        # )
 
-        self.threshold_criteria_frame.rowconfigure(0, weight=1, pad=40)
-        self.threshold_criteria_frame.rowconfigure(1, weight=4)
+        # self.threshold_criteria_frame.rowconfigure(0, weight=1, pad=40)
+        # self.threshold_criteria_frame.rowconfigure(1, weight=4)
 
-        self.threshold_criteria_frame.columnconfigure(0, weight=1)
-        self.threshold_criteria_frame.columnconfigure(1, weight=1)
-        self.threshold_criteria_frame.columnconfigure(2, weight=1)
-        self.threshold_criteria_frame.columnconfigure(3, weight=1)
+        # self.threshold_criteria_frame.columnconfigure(0, weight=1)
+        # self.threshold_criteria_frame.columnconfigure(1, weight=1)
+        # self.threshold_criteria_frame.columnconfigure(2, weight=1)
+        # self.threshold_criteria_frame.columnconfigure(3, weight=1)
 
-        # Create the scrollable frame for threshold criteria
-        self.scrollable_threshold_frame = ScrolledFrame(self.scrollable_optimisation_frame)
-        self.scrollable_threshold_frame.grid(
-            row=1,
-            column=0,
-            columnspan=4,
-            padx=10,
-            pady=5,
-            sticky="ew",
-            ipadx=10,
-            ipady=30,
-        )
+        # # Create the scrollable frame for threshold criteria
+        # self.scrollable_threshold_frame = ScrolledFrame(self.scrollable_optimisation_frame)
+        # self.scrollable_threshold_frame.grid(
+        #     row=1,
+        #     column=0,
+        #     columnspan=4,
+        #     padx=10,
+        #     pady=5,
+        #     sticky="ew",
+        #     ipadx=10,
+        #     ipady=30,
+        # )
 
-        self.scrollable_threshold_frame.columnconfigure(0, weight=1)
-        self.scrollable_threshold_frame.columnconfigure(1, weight=1)
-        self.scrollable_threshold_frame.columnconfigure(2, weight=1)
-        self.scrollable_threshold_frame.columnconfigure(3, weight=1)
+        # self.scrollable_threshold_frame.columnconfigure(0, weight=1)
+        # self.scrollable_threshold_frame.columnconfigure(1, weight=1)
+        # self.scrollable_threshold_frame.columnconfigure(2, weight=1)
+        # self.scrollable_threshold_frame.columnconfigure(3, weight=1)
 
         self.threshold_criteria: list[ThresholdCriterion] = []
 
@@ -1222,7 +1233,7 @@ class OptimisationFrame(ttk.Frame):
             """Add a new threshold criterion to the list."""
             self.threshold_criteria.append(
                 ThresholdCriterion(
-                    self.scrollable_threshold_frame,
+                    self.scrollable_optimisation_frame,
                     ttk.StringVar(
                         self, ThresholdCriterion.default_threshold_criterion()
                     ),
@@ -1235,7 +1246,7 @@ class OptimisationFrame(ttk.Frame):
             self.update_threshold_criteria()
 
         self.add_threshold_criterion_button = ttk.Button(
-            self.scrollable_threshold_frame,
+            self.scrollable_optimisation_frame,
             bootstyle=f"{INFO}-{OUTLINE}",
             command=add_threshold_criterion,
             text="Add threshold criterion",
@@ -1457,7 +1468,7 @@ class OptimisationFrame(ttk.Frame):
         for index, criterion in enumerate(optimisation.threshold_criteria):
             self.threshold_criteria.append(
                 ThresholdCriterion(
-                    self.scrollable_threshold_frame,
+                    self.scrollable_optimisation_frame,
                     ttk.StringVar(
                         self, ThresholdCriterion.criterion_to_name_map[criterion]
                     ),
