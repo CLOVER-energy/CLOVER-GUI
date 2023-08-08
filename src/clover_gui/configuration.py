@@ -396,27 +396,26 @@ class OptimisationFrame(ttk.Frame):
         # TODO: Add configuration frame widgets and layout
         self.pack(fill="both", expand=True)
 
-        # Set the physical distance weights of the rows and columns
-        self.rowconfigure(0, weight=4, pad=60)  # Row has iteration settings
-        self.rowconfigure(1, weight=1)  # Row has step settings
-        self.rowconfigure(2, weight=1)  # Row has optimisation criteria
-        self.rowconfigure(3, weight=8, pad=120)  # Row has threshold criteria
-        # self.rowconfigure(3, weight=1)
-        # self.rowconfigure(4, weight=1)
-        # self.rowconfigure(5, weight=1)
-        # self.rowconfigure(6, weight=1)
-        # self.rowconfigure(7, weight=1)
-        # self.rowconfigure(8, weight=1)
-        # self.rowconfigure(9, weight=1)
-        # self.rowconfigure(10, weight=1)
-        # self.rowconfigure(11, weight=1)
-        # self.rowconfigure(12, weight=1)
 
-        self.columnconfigure(0, weight=4)
-        self.columnconfigure(1, weight=1)
-        # self.columnconfigure(2, weight=1)
-        # self.columnconfigure(3, weight=1)
-        # self.columnconfigure(4, weight=1)
+        self.rowconfigure(0, weight=10) # scrolled frame
+        self.rowconfigure(1, weight=1) # run optimisation button
+
+        self.columnconfigure(0, weight=1)
+
+        # Create the scrollable frame
+        self.scrollable_optimisation_frame = ScrolledFrame(
+            self,
+        )
+        self.scrollable_optimisation_frame.grid(
+            row=0,
+            sticky="news",
+            padx=10,
+            pady=5
+        )
+
+        self.scrollable_optimisation_frame.rowconfigure(
+            0, weight=1  # iterations line 1
+        )
 
         # Iterations frame
         self.iterations_frame = ttk.Labelframe(
