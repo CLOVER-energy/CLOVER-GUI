@@ -396,9 +396,8 @@ class OptimisationFrame(ttk.Frame):
         # TODO: Add configuration frame widgets and layout
         self.pack(fill="both", expand=True)
 
-
-        self.rowconfigure(0, weight=10) # scrolled frame
-        self.rowconfigure(1, weight=1) # run optimisation button
+        self.rowconfigure(0, weight=10)  # scrolled frame
+        self.rowconfigure(1, weight=1)  # run optimisation button
 
         self.columnconfigure(0, weight=1)
 
@@ -406,12 +405,7 @@ class OptimisationFrame(ttk.Frame):
         self.scrollable_optimisation_frame = ScrolledFrame(
             self,
         )
-        self.scrollable_optimisation_frame.grid(
-            row=0,
-            sticky="news",
-            padx=10,
-            pady=5
-        )
+        self.scrollable_optimisation_frame.grid(row=0, sticky="news", padx=10, pady=5)
 
         self.scrollable_optimisation_frame.rowconfigure(
             0, weight=1  # iterations line 1

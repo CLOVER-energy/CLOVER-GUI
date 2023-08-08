@@ -192,6 +192,19 @@ class CSVEntryFrame(ttk.Frame):
 
         # Place the frame on the screen.
         self.grid()
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
+        self.columnconfigure(4, weight=1)
+        self.columnconfigure(5, weight=1)
+        self.columnconfigure(6, weight=1)
+        self.columnconfigure(7, weight=1)
+        self.columnconfigure(8, weight=1)
+        self.columnconfigure(9, weight=1)
+        self.columnconfigure(10, weight=1)
+        self.columnconfigure(11, weight=1)
+        self.columnconfigure(12, weight=1)
 
         # # Instantiate with a default set of widgets.
         # self.create_default_widgets()
@@ -296,7 +309,7 @@ class CSVEntryFrame(ttk.Frame):
                 tmp.bind("<Control-s>", self.save_file)
                 # TODO: Add resize check on column when changing focus
                 tmp.insert(END, "")
-                tmp.grid(padx=2, pady=1, column=column, row=row)
+                tmp.grid(padx=2, pady=1, column=column, row=row, sticky="ew")
 
                 self.default_cells[row][column] = tmp
                 self.cell_list.append(tmp)
@@ -382,7 +395,7 @@ class CSVEntryFrame(ttk.Frame):
                     text=(" " if row < 10 else "") + str(row),
                 )
 
-            tmp.grid(padx=2, pady=1, column=0, row=row)
+            tmp.grid(padx=2, pady=1, column=0, row=row, sticky="ew")
 
         for column in range(len(ary[0])):
             tmp = ttk.Label(
@@ -391,7 +404,7 @@ class CSVEntryFrame(ttk.Frame):
                 bootstyle=f"{SUCCESS}-{INVERSE}",
                 text=_MONTHS[column],
             )
-            tmp.grid(padx=2, pady=1, row=0, column=column + 1)
+            tmp.grid(padx=2, pady=1, row=0, column=column + 1, sticky="ew")
 
         # Create the new cells
         for row in range(len(ary)):
@@ -418,7 +431,7 @@ class CSVEntryFrame(ttk.Frame):
                 tmp.focus_force()
                 self.cell_list.append(tmp)
 
-                tmp.grid(padx=2, pady=1, column=column + 1, row=row + 1)
+                tmp.grid(padx=2, pady=1, column=column + 1, row=row + 1, sticky="ew")
 
         self.current_cells = load_cells
         self.current_cell = self.current_cells[0][0]

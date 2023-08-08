@@ -618,14 +618,20 @@ class ConfigurationFrame(ttk.Frame):
             ResourceType.HOT_CLEAN_WATER: self.hot_water_public_button,
             ResourceType.CLEAN_WATER: self.clean_water_public_button,
         }
-        
+
         # Row with a horizontal separator
-        self.separator = ttk.Separator(self.scrollable_scenario_frame, orient="horizontal")
-        self.separator.grid(row=6, column=0, pady=5, padx=10, columnspan=5, sticky="news")
+        self.separator = ttk.Separator(
+            self.scrollable_scenario_frame, orient="horizontal"
+        )
+        self.separator.grid(
+            row=6, column=0, pady=5, padx=10, columnspan=5, sticky="news"
+        )
 
         # Empty row
         self.empty_row = ttk.Frame(self.scrollable_scenario_frame)
-        self.empty_row.grid(row=7, column=0, pady=5, padx=10, columnspan=5, sticky="news")
+        self.empty_row.grid(
+            row=7, column=0, pady=5, padx=10, columnspan=5, sticky="news"
+        )
 
         # Diesel scenario information
         # self.diesel_label_frame = ttk.Labelframe(
@@ -641,7 +647,9 @@ class ConfigurationFrame(ttk.Frame):
         # self.diesel_label_frame.columnconfigure(3, weight=1)
 
         # Diesel mode
-        self.diesel_mode_label = ttk.Label(self.scrollable_scenario_frame, text="Diesel mode")
+        self.diesel_mode_label = ttk.Label(
+            self.scrollable_scenario_frame, text="Diesel mode"
+        )
         self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
 
         self.diesel_mode_combobox = ttk.Combobox(
@@ -695,8 +703,6 @@ class ConfigurationFrame(ttk.Frame):
             row=9, column=3, padx=10, pady=5, sticky="w"
         )
 
-
-
         # Distribution network
         # self.generation_and_distribution_label_frame = ttk.Labelframe(
         #     self.scrollable_scenario_frame,
@@ -720,7 +726,7 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         self.distribution_network_combobox = ttk.Combobox(
-            self.scrollable_scenario_frame, 
+            self.scrollable_scenario_frame,
         )
         self.distribution_network_combobox.grid(
             row=10, column=1, padx=10, pady=5, sticky="w"
@@ -740,7 +746,7 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         self.prioritise_self_generation_combobox = ttk.Combobox(
-            self.scrollable_scenario_frame, 
+            self.scrollable_scenario_frame,
         )
         self.prioritise_self_generation_combobox.grid(
             row=10, column=3, padx=10, pady=5, sticky="w"
