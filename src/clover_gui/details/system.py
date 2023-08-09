@@ -354,7 +354,7 @@ class SystemFrame(ttk.Frame):
         self.inverter_lifetime_label = ttk.Label(self, text="Inverter lifetime")
         self.inverter_lifetime_label.grid(row=7, column=1, padx=10, pady=5, sticky="w")
 
-        self.inverter_lifetime = ttk.DoubleVar(self, "10")
+        self.inverter_lifetime = ttk.IntVar(self, "10")
         self.inverter_lifetime_entry = ttk.Entry(
             self,
             bootstyle=WARNING,
@@ -370,7 +370,7 @@ class SystemFrame(ttk.Frame):
         self.inverter_step_size_label = ttk.Label(self, text="Inverter step size")
         self.inverter_step_size_label.grid(row=8, column=1, padx=10, pady=5, sticky="w")
 
-        self.inverter_step_size = ttk.DoubleVar(self, "1")
+        self.inverter_step_size = ttk.IntVar(self, "1")
         self.inverter_step_size_entry = ttk.Entry(
             self,
             bootstyle=WARNING,
@@ -689,7 +689,7 @@ class SystemFrame(ttk.Frame):
             DIESEL_GENERATOR: self.diesel_generator_combobox.get(),
             "pv_panel": self.pv_panel_combobox.get(),
             ImpactingComponent.INVERTER.value: {
-                LIFETIME: self.inverter_lifetime.get(),
-                SIZE_INCREMENT: self.inverter_step_size.get(),
+                LIFETIME: int(self.inverter_lifetime.get()),
+                SIZE_INCREMENT: int(self.inverter_step_size.get()),
             },
         }
