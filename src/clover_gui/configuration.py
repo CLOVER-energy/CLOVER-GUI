@@ -103,7 +103,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.storage_size_label.grid(row=2, column=1, sticky="e")
 
         self.storage_size: ttk.DoubleVar = ttk.DoubleVar(self, value=0)
-        self.storage_size_entry = ttk.Entry(self, bootstyle=INFO)
+        self.storage_size_entry = ttk.Entry(self, bootstyle=INFO, textvariable=self.storage_size)
         self.storage_size_entry.grid(
             row=2, column=2, padx=10, pady=5, sticky="e", ipadx=80
         )
