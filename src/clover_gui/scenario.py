@@ -101,7 +101,7 @@ class ConfigurationFrame(ttk.Frame):
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "solar_gui_deselected.png"
+                    data_directory, _IMAGES_DIRECTORY_NAME, "solar_gui_disabled.png"
                 )
             ),
         }
@@ -143,7 +143,7 @@ class ConfigurationFrame(ttk.Frame):
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "battery_gui_deselected.png"
+                    data_directory, _IMAGES_DIRECTORY_NAME, "battery_gui_disabled.png"
                 )
             ),
         }
@@ -184,7 +184,7 @@ class ConfigurationFrame(ttk.Frame):
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "diesel_gui_deselected.png"
+                    data_directory, _IMAGES_DIRECTORY_NAME, "diesel_gui_disabled.png"
                 )
             ),
         }
@@ -224,7 +224,7 @@ class ConfigurationFrame(ttk.Frame):
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "grid_gui_deselected.png"
+                    data_directory, _IMAGES_DIRECTORY_NAME, "grid_gui_disabled.png"
                 )
             ),
         }
@@ -396,7 +396,7 @@ class ConfigurationFrame(ttk.Frame):
                 file=os.path.join(
                     data_directory,
                     _IMAGES_DIRECTORY_NAME,
-                    "domestic_gui_deselected.png",
+                    "domestic_gui_disabled.png",
                 )
             ),
         }
@@ -412,7 +412,7 @@ class ConfigurationFrame(ttk.Frame):
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, "images", "commercial_gui_deselected.png"
+                    data_directory, "images", "commercial_gui_disabled.png"
                 )
             ),
         }
@@ -425,7 +425,7 @@ class ConfigurationFrame(ttk.Frame):
                 file=os.path.join(data_directory, "images", "public_gui_selected.png")
             ),
             False: ttk.PhotoImage(
-                file=os.path.join(data_directory, "images", "public_gui_deselected.png")
+                file=os.path.join(data_directory, "images", "public_gui_disabled.png")
             ),
         }
         self.public_button_disabled_image: ttk.PhotoImage = ttk.PhotoImage(
@@ -651,12 +651,12 @@ class ConfigurationFrame(ttk.Frame):
         self.diesel_mode_label = ttk.Label(
             self.scrollable_scenario_frame, text="Diesel mode"
         )
-        self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
+        # self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
 
         self.diesel_mode_combobox = ttk.Combobox(
             self.scrollable_scenario_frame, state=DISABLED, width=10
         )
-        self.diesel_mode_combobox.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
+        # self.diesel_mode_combobox.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
         self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
         self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
 
