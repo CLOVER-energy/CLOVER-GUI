@@ -663,13 +663,30 @@ class DeviceSettingsFrame(ttk.Labelframe):
         self.clean_water_consumption_unit.grid(
             row=7, column=2, padx=10, pady=5, sticky="w"
         )
+        
+        # Empty row
+        self.empty_row = ttk.Label(self.scrollable_frame, text="")
+        self.empty_row.grid(row=8, column=0, columnspan=3, padx=10, pady=5, sticky="w")
+        
+        # Line separator
+        self.line_separator = ttk.Separator(self.scrollable_frame, orient="horizontal")
+        self.line_separator.grid(
+            row=9, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
 
+        # Device Utilisation Header
+        # bold_head = ttk.Style()
+        # bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))      
+        self.device_utilisation_header = ttk.Label(
+            self.scrollable_frame, text="Device Utilisation Profile", style=SUCCESS)
+        self.device_utilisation_header.grid(
+            row=10, column=0, padx=10, pady=5, sticky="w")
+        
         # Device utilisation
         self.csv_entry_frame: CSVEntryFrame = CSVEntryFrame(
             master=self.scrollable_frame,
         )
         self.csv_entry_frame.grid(
-            row=8, column=0, columnspan=3, sticky="news", padx=5, pady=5
+            row=11, column=0, columnspan=3, sticky="news", padx=5, pady=5
         )
 
 
