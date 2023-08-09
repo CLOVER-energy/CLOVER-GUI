@@ -690,6 +690,6 @@ class SystemFrame(ttk.Frame):
             "pv_panel": self.pv_panel_combobox.get(),
             ImpactingComponent.INVERTER.value: {
                 LIFETIME: int(self.inverter_lifetime.get()),
-                SIZE_INCREMENT: int(self.inverter_step_size.get()),
+                SIZE_INCREMENT: self.inverter_step_size.get(),
             },
         }
