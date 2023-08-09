@@ -274,7 +274,7 @@ class PVFrame(ttk.Frame):
         }
 
         def scalar_tilt(_):
-            self.panel_tilt[self.panel_selected.get()].set(self.tilt_slider.get())
+            self.panel_tilt[self.panel_selected.get()].set(int(self.tilt_slider.get()))
             self.tilt_entry.update()
 
         self.tilt_slider = ttk.Scale(
@@ -292,8 +292,8 @@ class PVFrame(ttk.Frame):
         )
 
         def enter_tilt(_):
-            self.panel_tilt[self.panel_selected.get()].set(self.tilt_entry.get())
-            self.tilt_slider.set(self.panel_tilt[self.panel_selected.get()].get())
+            self.panel_tilt[self.panel_selected.get()].set(int(self.tilt_entry.get()))
+            self.tilt_slider.set(int(self.panel_tilt[self.panel_selected.get()].get()))
 
         self.tilt_entry = ttk.Entry(
             self.scrolled_frame,
