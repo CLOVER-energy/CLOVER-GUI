@@ -306,7 +306,6 @@ class App(ttk.Window):
             device_utilisations,
             minigrid,
             finance_inputs,
-            _,
             ghg_inputs,
             _,
             grid_times,
@@ -427,7 +426,7 @@ class App(ttk.Window):
 
         # Clear the CLOVER run screen.
         self.run_screen.clover_progress_bar["value"] = 0
-        self.run_screen.clover_progress_bar.configure(bootstyle=SUCCESS)
+        self.run_screen.clover_progress_bar.configure(bootstyle=f"{SUCCESS}-striped")
         self.run_screen.post_run_button.configure(state="disabled")
         self.post_run_screen.pack_forget()
 
@@ -534,6 +533,8 @@ class App(ttk.Window):
         self.configuration_screen.pack_forget()
         BaseScreen.add_screen_moving_forward(self.configuration_screen)
         self.run_screen.pack(fill="both", expand=True)
+        self.run_screen.clover_progress_bar["value"] = 0
+        self.run_screen.clover_progress_bar.configure(bootstyle=f"{SUCCESS}-striped")
         self.run_screen.stdout_data = ""
         self.run_screen.run_with_clover(clover_thread)
 

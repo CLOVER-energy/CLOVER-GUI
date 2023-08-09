@@ -115,7 +115,12 @@ class RunScreen(BaseScreen, show_navigation=True):
             row=2, column=0, columnspan=5, sticky="news", padx=10, pady=5
         )
 
-        self.sub_process_label = ttk.Label(self.sub_process_frame, bootstyle=DARK)
+        self.courier_style = ttk.Style()
+        self.courier_style.configure("Courier.Label", font=("Courier", 16))
+
+        self.sub_process_label = ttk.Label(
+            self.sub_process_frame, bootstyle=f"{DARK}.Courier.Label"
+        )
         self.sub_process_label.grid(row=0, column=0, sticky="news", padx=10, pady=5)
 
         # Add navigation buttons

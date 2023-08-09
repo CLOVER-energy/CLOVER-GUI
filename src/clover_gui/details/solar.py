@@ -320,8 +320,8 @@ class PVFrame(ttk.Frame):
         }
 
         def scalar_azimuthal_orientation(_):
-            self.panel_orientation[self.panel_selected.get()].set(int(
-                self.azimuthal_orientation_slider.get())
+            self.panel_orientation[self.panel_selected.get()].set(
+                int(self.azimuthal_orientation_slider.get())
             )
             self.azimuthal_orientation_entry.update()
 
@@ -340,11 +340,11 @@ class PVFrame(ttk.Frame):
         )
 
         def enter_azimuthal_orientation(_):
-            self.panel_orientation[self.panel_selected.get()].set(int(
-                self.azimuthal_orientation_entry.get())
+            self.panel_orientation[self.panel_selected.get()].set(
+                int(self.azimuthal_orientation_entry.get())
             )
-            self.azimuthal_orientation_slider.set(int(                                   
-                self.panel_orientation[self.panel_selected.get()].get())
+            self.azimuthal_orientation_slider.set(
+                int(self.panel_orientation[self.panel_selected.get()].get())
             )
 
         self.azimuthal_orientation_entry = ttk.Entry(
