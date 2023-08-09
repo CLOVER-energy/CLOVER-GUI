@@ -663,24 +663,27 @@ class DeviceSettingsFrame(ttk.Labelframe):
         self.clean_water_consumption_unit.grid(
             row=7, column=2, padx=10, pady=5, sticky="w"
         )
-        
+
         # Empty row
         self.empty_row = ttk.Label(self.scrollable_frame, text="")
         self.empty_row.grid(row=8, column=0, columnspan=3, padx=10, pady=5, sticky="w")
-        
+
         # Line separator
         self.line_separator = ttk.Separator(self.scrollable_frame, orient="horizontal")
         self.line_separator.grid(
-            row=9, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
+            row=9, column=0, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
 
         # Device Utilisation Header
         # bold_head = ttk.Style()
-        # bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))      
+        # bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))
         self.device_utilisation_header = ttk.Label(
-            self.scrollable_frame, text="Device Utilisation Profile", style=SUCCESS)
+            self.scrollable_frame, text="Device Utilisation Profile", style=SUCCESS
+        )
         self.device_utilisation_header.grid(
-            row=10, column=0, padx=10, pady=5, sticky="w")
-        
+            row=10, column=0, padx=10, pady=5, sticky="w"
+        )
+
         # Device utilisation
         self.csv_entry_frame: CSVEntryFrame = CSVEntryFrame(
             master=self.scrollable_frame,
@@ -776,13 +779,15 @@ class LoadFrame(ttk.Frame):
         self.active_device: GUIDevice = self.devices[0]
 
         # Create the from-file vs auto-genrated entry
+        self.from_file: ttk.BooleanVar = ttk.BooleanVar(self, False)
         self.from_file_button = ttk.Checkbutton(
             self,
             command=self._from_file_callback,
             bootstyle=f"{SUCCESS}-{TOOLBUTTON}",
             text="From an input file",
+            variable=self.from_file,
         )
-        self.fixed_tracking_button.grid(
+        self.from_file_button.grid(
             row=0, column=0, padx=10, pady=5, ipadx=20, sticky="ew"
         )
 
@@ -790,26 +795,41 @@ class LoadFrame(ttk.Frame):
             self,
             command=self._open_load_file,
             bootstyle=f"{SUCCESS}",
-            text="Select file"
+            text="Select file",
+            state=DISABLED,
         )
-        self.open_file_button.grid(row=0, column=1, padx=10, pady=5, ipadx=20, sticky="ew")
+        self.open_file_button.grid(
+            row=0, column=1, padx=10, pady=5, ipadx=20, sticky="ew"
+        )
 
         self.filename: ttk.StringVar = ttk.StringVar(self, "")
         self.load_file_path_entry = ttk.Entry(
             self,
             bootstyle=f"{SUCCESS}-inverted",
             textvariable=self.filename,
-            state=DISABLED=
+            state=DISABLED,
+        )
+        self.load_file_path_entry.grid(
+            row=0, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
+        self.from_utilisations: ttk.BooleanVar = ttk.BooleanVar(self, True)
+        self.generate_loads_button = ttk.Checkbutton(
+            self,
+            command=self._from_utilisations_callback,
+            bootstyle=f"{SUCCESS}-{TOOLBUTTON}",
+            text="From device utilisations",
+            variable=self.from_utilisations,
+        )
+        self.generate_loads_button.grid(
+            row=1, column=0, padx=10, pady=5, ipadx=20, sticky="ew"
         )
 
         # Place a seperator between the two
-        self.separator = ttk.Separator(
-            self.scrollable_scenario_frame, orient="horizontal"
-        )
+        self.separator = ttk.Separator(self, orient="horizontal")
         self.separator.grid(
             row=2, column=0, pady=5, padx=10, columnspan=4, sticky="news"
         )
-
 
         # Create the right-hand frame for adjusting device settings
         self.settings_frame = DeviceSettingsFrame(self, self.set_device_type)
@@ -836,6 +856,59 @@ class LoadFrame(ttk.Frame):
             button.configure(command=lambda device=device: self.select_device(device))
 
         self.select_device(self.devices[0])
+
+    def _from_file_callback(self) -> None:
+        """Function called when the 'from-file button' is depressed."""
+
+        # Update the toggle buttons.
+        self.from_file.set(True)
+        self.from_utilisations.set(False)
+
+        # Update the load button
+        self.open_file_button.configure(state=(_enabled := "enabled"))
+        self.load_file_path_entry.configure(state=_enabled)
+
+        # Update the device frames
+        for child in self.devices_frame.winfo_children():
+            child.configure(state=DISABLED)
+
+        self.add_device_button.configure(state=DISABLED)
+
+        for child in self.settings_frame.scrollable_frame.winfo_children():
+            child.configure(state=DISABLED)
+
+        # for row in self.settings_frame.scrollable_frame.csv_entry_frame.current_cells:
+        #     for cell in row:
+        #         cell.configure(state=DISABLED)
+
+    def _from_utilisations_callback(self) -> None:
+        """Function called when the 'from-utilisation button' is depressed."""
+
+        # Update the toggle buttons.
+        self.from_file.set(False)
+        self.from_utilisations.set(True)
+
+        # Update the load button
+        self.open_file_button.configure(state=DISABLED)
+        self.load_file_path_entry.configure(state=DISABLED)
+
+        # Update the device frames
+        for child in self.devices_frame.winfo_children():
+            child.configure(state="enabled")
+
+        self.add_device_button.configure(state="enabled")
+
+        for child in self.settings_frame.scrollable_frame.winfo_children():
+            child.configure(state="enabled")
+
+        # for row in self.settings_frame.scrollable_frame.csv_entry_frame.current_cells:
+        #     for cell in row:
+        #         cell.configure(state="enabled")
+
+    def _open_load_file(self) -> None:
+        """Function called when the open-load file button is depressed."""
+
+        self.filename.set(tk.filedialog.askopenfilename())
 
     def add_device(
         self,
