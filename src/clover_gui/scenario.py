@@ -337,7 +337,7 @@ class ConfigurationFrame(ttk.Frame):
         self.hot_water_power_label: ttk.Label = ttk.Label(
             self.scrollable_scenario_frame, text="Hot-water demand"
         )
-        self.hot_water_power_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        # self.hot_water_power_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
         self.hot_water_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -350,17 +350,17 @@ class ConfigurationFrame(ttk.Frame):
             ],
             text="",
         )
-        self.hot_water_button.grid(row=4, column=1, pady=5, padx=10, sticky="")
-        self.hot_water_button_tooltip = ToolTip(
-            self.hot_water_button,
-            text="Toggles whether hot-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{DANGER}-{INVERSE}",
-        )
+        # self.hot_water_button.grid(row=4, column=1, pady=5, padx=10, sticky="")
+        # self.hot_water_button_tooltip = ToolTip(
+        #     self.hot_water_button,
+        #     text="Toggles whether hot-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{DANGER}-{INVERSE}",
+        # )
 
         self.clean_water_power_label: ttk.Label = ttk.Label(
             self.scrollable_scenario_frame, text="Clean-water demand"
         )
-        self.clean_water_power_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        # self.clean_water_power_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.clean_water_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -373,12 +373,12 @@ class ConfigurationFrame(ttk.Frame):
             ],
             text="",
         )
-        self.clean_water_button.grid(row=5, column=1, pady=5, padx=10, sticky="")
-        self.clean_water_button_tooltip = ToolTip(
-            self.clean_water_button,
-            text="Toggles whether clean-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{PRIMARY}-{INVERSE}",
-        )
+        # self.clean_water_button.grid(row=5, column=1, pady=5, padx=10, sticky="")
+        # self.clean_water_button_tooltip = ToolTip(
+        #     self.clean_water_button,
+        #     text="Toggles whether clean-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{PRIMARY}-{INVERSE}",
+        # )
 
         self.resource_buttons: dict[ResourceType, ctk.CTkButton] = {
             ResourceType.ELECTRIC: self.electric_button,
@@ -465,12 +465,12 @@ class ConfigurationFrame(ttk.Frame):
             image=self.domestic_button_disabled_image,
             text="",
         )
-        self.hot_water_domestic_button.grid(row=4, column=2, pady=5, padx=10, sticky="")
-        self.hot_water_domestic_button_tooltip = ToolTip(
-            self.hot_water_domestic_button,
-            text="Toggles whether domestic hot-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{INVERSE}-{DANGER}",
-        )
+        # self.hot_water_domestic_button.grid(row=4, column=2, pady=5, padx=10, sticky="")
+        # self.hot_water_domestic_button_tooltip = ToolTip(
+        #     self.hot_water_domestic_button,
+        #     text="Toggles whether domestic hot-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{INVERSE}-{DANGER}",
+        # )
 
         self.clean_water_domestic_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -481,14 +481,14 @@ class ConfigurationFrame(ttk.Frame):
             image=self.domestic_button_disabled_image,
             text="",
         )
-        self.clean_water_domestic_button.grid(
-            row=5, column=2, pady=5, padx=10, sticky=""
-        )
-        self.clean_water_domestic_button_tooltip = ToolTip(
-            self.clean_water_domestic_button,
-            text="Toggles whether domestic clean-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{INVERSE}-{PRIMARY}",
-        )
+        # self.clean_water_domestic_button.grid(
+        #     row=5, column=2, pady=5, padx=10, sticky=""
+        # )
+        # self.clean_water_domestic_button_tooltip = ToolTip(
+        #     self.clean_water_domestic_button,
+        #     text="Toggles whether domestic clean-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{INVERSE}-{PRIMARY}",
+        # )
 
         self.domestic_buttons: dict[ResourceType, ctk.CTkButton] = {
             ResourceType.ELECTRIC: self.electric_domestic_button,
@@ -530,12 +530,12 @@ class ConfigurationFrame(ttk.Frame):
             image=self.commercial_button_disabled_image,
             text="",
         )
-        self.hot_water_commercial_button.grid(row=4, column=3, pady=5, padx=10)
-        self.hot_water_commercial_button_tooltip = ToolTip(
-            self.hot_water_commercial_button,
-            text="Toggles whether commercial hot-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{INVERSE}-{DANGER}",
-        )
+        # self.hot_water_commercial_button.grid(row=4, column=3, pady=5, padx=10)
+        # self.hot_water_commercial_button_tooltip = ToolTip(
+        #     self.hot_water_commercial_button,
+        #     text="Toggles whether commercial hot-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{INVERSE}-{DANGER}",
+        # )
 
         self.clean_water_commercial_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -546,12 +546,12 @@ class ConfigurationFrame(ttk.Frame):
             image=self.commercial_button_disabled_image,
             text="",
         )
-        self.clean_water_commercial_button.grid(row=5, column=3, pady=5, padx=10)
-        self.clean_water_commercial_button_tooltip = ToolTip(
-            self.clean_water_commercial_button,
-            text="Toggles whether commercial clean-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{INVERSE}-{PRIMARY}",
-        )
+        # self.clean_water_commercial_button.grid(row=5, column=3, pady=5, padx=10)
+        # self.clean_water_commercial_button_tooltip = ToolTip(
+        #     self.clean_water_commercial_button,
+        #     text="Toggles whether commercial clean-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{INVERSE}-{PRIMARY}",
+        # )
 
         self.commercial_buttons: dict[ResourceType, ctk.CTkButton] = {
             ResourceType.ELECTRIC: self.electric_commercial_button,
@@ -591,12 +591,12 @@ class ConfigurationFrame(ttk.Frame):
             image=self.public_button_disabled_image,
             text="",
         )
-        self.hot_water_public_button.grid(row=4, column=4, pady=5, padx=10)
-        self.hot_water_public_button_tooltip = ToolTip(
-            self.hot_water_public_button,
-            text="Toggles whether public hot-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{INVERSE}-{DANGER}",
-        )
+        # self.hot_water_public_button.grid(row=4, column=4, pady=5, padx=10)
+        # self.hot_water_public_button_tooltip = ToolTip(
+        #     self.hot_water_public_button,
+        #     text="Toggles whether public hot-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{INVERSE}-{DANGER}",
+        # )
 
         self.clean_water_public_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -607,12 +607,12 @@ class ConfigurationFrame(ttk.Frame):
             image=self.public_button_disabled_image,
             text="",
         )
-        self.clean_water_public_button.grid(row=5, column=4, pady=5, padx=10)
-        self.clean_water_public_button_tooltip = ToolTip(
-            self.clean_water_public_button,
-            text="Toggles whether public clean-water demands are included when generating stochastic demand profiles.",
-            bootstyle=f"{INVERSE}-{PRIMARY}",
-        )
+        # self.clean_water_public_button.grid(row=5, column=4, pady=5, padx=10)
+        # self.clean_water_public_button_tooltip = ToolTip(
+        #     self.clean_water_public_button,
+        #     text="Toggles whether public clean-water demands are included when generating stochastic demand profiles.",
+        #     bootstyle=f"{INVERSE}-{PRIMARY}",
+        # )
 
         self.public_buttons: dict[ResourceType, ctk.CTkButton] = {
             ResourceType.ELECTRIC: self.electric_public_button,
