@@ -160,7 +160,7 @@ class RunScreen(BaseScreen, show_navigation=True):
         )
 
         # Create a buffer for the stdout
-        self.stdout_data: str = ""
+        self.stdout_data: str = " " * 180
 
     def read_output(self, pipe: TextIOWrapper):
         """
@@ -172,7 +172,21 @@ class RunScreen(BaseScreen, show_navigation=True):
             # Windows uses: "\r\n" instead of "\n" for new lines.
             data = data.replace(b"\r\n", b"\n")
             if data:
-                self.stdout_data += (new_data := data.decode())
+                self.stdout_data += (
+                    new_data := "\n".join(
+                        [
+                            entry
+                            for entry in (data.decode().split("\n"))
+                            if (
+                                "hourly computation" not in entry
+                                and "FutureWarning" not in entry
+                                and "return float(" not in entry
+                                and entry != "\n"
+                                and entry != ""
+                            )
+                        ]
+                    )
+                )
 
                 if "100%" in new_data:
                     self.push_progress_bar(20)
