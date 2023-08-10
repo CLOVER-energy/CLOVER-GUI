@@ -441,7 +441,6 @@ class SystemFrame(ttk.Frame):
             """Round the inverter lifetime to the nearest integer."""
 
             self.inverter_lifetime.set(int(self.inverter_lifetime.get()))
-            self.inverter_lifetime_entry.set(self.inverter_lifetime.get())
             self.inverter_lifetime_entry.update()
 
         self.inverter_lifetime_entry = ttk.Entry(
