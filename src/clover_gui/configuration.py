@@ -1473,7 +1473,7 @@ class OptimisationFrame(ttk.Frame):
             ],
         }
 
-    def delete_criterion(self, criterion: ThresholdCriterion) -> None:
+    def delete_criterion(self, criterion_to_delete: ThresholdCriterion) -> None:
         """
         Remove a threshold criterion from the `list` and the screen.
 
@@ -1486,7 +1486,9 @@ class OptimisationFrame(ttk.Frame):
             criterion.grid_forget()
 
         self.threshold_criteria = [
-            entry for entry in self.threshold_criteria if entry is not criterion
+            entry
+            for entry in self.threshold_criteria
+            if entry is not criterion_to_delete
         ]
         del criterion
         self.update_threshold_criteria()
