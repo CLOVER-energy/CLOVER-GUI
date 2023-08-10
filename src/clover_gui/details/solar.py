@@ -274,7 +274,7 @@ class PVFrame(ttk.Frame):
         self.tilt_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
         self.panel_tilt: dict[str, ttk.DoubleVar] = {
-            panel_name: ttk.DoubleVar(self, 22, f"{panel_name}_tilt")
+            panel_name: ttk.IntVar(self, 22, f"{panel_name}_tilt")
             for panel_name in self.panel_name_values
         }
 
@@ -326,7 +326,7 @@ class PVFrame(ttk.Frame):
         )
 
         self.panel_orientation: dict[str, ttk.DoubleVar] = {
-            panel_name: ttk.DoubleVar(self, 180, f"{panel_name}_azimuthal_orientation")
+            panel_name: ttk.IntVar(self, 180, f"{panel_name}_azimuthal_orientation")
             for panel_name in self.panel_name_values
         }
 
@@ -1048,13 +1048,13 @@ class PVFrame(ttk.Frame):
             )
 
             # Panel orientation
-            self.panel_tilt[pv_panel.name] = ttk.DoubleVar(
-                self, pv_panel.tilt if pv_panel.tilt is not None else 0
+            self.panel_tilt[pv_panel.name] = ttk.IntVar(
+                self, int(pv_panel.tilt) if pv_panel.tilt is not None else 0
             )
 
-            self.panel_orientation[pv_panel.name] = ttk.DoubleVar(
+            self.panel_orientation[pv_panel.name] = ttk.IntVar(
                 self,
-                pv_panel.azimuthal_orientation
+                int(pv_panel.azimuthal_orientation)
                 if pv_panel.azimuthal_orientation is not None
                 else 0,
             )

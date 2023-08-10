@@ -115,7 +115,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_transmission(_):
             self.ac_transmission.set(
-                round(max(min(self.ac_transmission.get(), 100), 0)), 0
+                round(max(min(self.ac_transmission.get(), 100), 0), 0)
             )
             self.ac_transmission_entry.update()
 
