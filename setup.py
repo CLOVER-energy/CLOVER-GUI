@@ -31,7 +31,7 @@ except FileNotFoundError:
 
 setup(
     name="CLOVER-GUI",
-    version="1.0.0a3",
+    version="1.0.0a4",
     description="A graphical user interface for CLOVER",
     long_description=long_description,
     author="Ben Winchester and Hamish Beath",
