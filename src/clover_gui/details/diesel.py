@@ -223,6 +223,7 @@ class GeneratorFrame(ttk.Frame):
         }
 
         def scalar_minimum_load(_):
+            self.minimum_load.set(round(self.minimum_load_slider.get()), 0)
             self.minimum_load_entry.update()
 
         self.minimum_load_slider = ttk.Scale(
@@ -239,12 +240,14 @@ class GeneratorFrame(ttk.Frame):
         self.minimum_load_slider.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
         def enter_minimum_load(_):
-            self.minimum_load_entry.set(min(max(self.minimum_load_entry.get(), 0), 100))
+            self.minimum_load_entry.set(
+                round(min(max(self.minimum_load_entry.get(), 0), 100), 2)
+            )
             self.minimum_load[self.diesel_generator_selected.get()].set(
-                self.minimum_load_entry.get()
+                round(self.minimum_load_entry.get(), 2)
             )
             self.minimum_load_slider.set(
-                self.minimum_load[self.diesel_generator_selected.get()].get()
+                round(self.minimum_load[self.diesel_generator_selected.get()].get(), 2)
             )
 
         self.minimum_load_entry = ttk.Entry(
@@ -1042,12 +1045,12 @@ class DieselFrame(ttk.Frame):
         self.diesel_notebook.add(self.generator_frame, text="Generators", sticky="news")
 
         self.heater_frame = HeaterFrame(self)
-        self.diesel_notebook.add(
-            self.heater_frame,
-            text="Space and water heaters",
-            sticky="news",
-            state=DISABLED,
-        )
+        # self.diesel_notebook.add(
+        #     self.heater_frame,
+        #     text="Space and water heaters",
+        #     sticky="news",
+        #     state=DISABLED,
+        # )
 
         # TODO: Add configuration frame widgets and layout
 

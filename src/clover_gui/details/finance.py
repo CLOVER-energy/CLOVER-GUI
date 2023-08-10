@@ -47,18 +47,18 @@ class FinanceFrame(ttk.Frame):
         self.rowconfigure(9, weight=1)
         self.rowconfigure(10, weight=1)
         self.rowconfigure(11, weight=1)
-        self.rowconfigure(12, weight=1)
-        self.rowconfigure(13, weight=1)
-        self.rowconfigure(14, weight=1)
-        self.rowconfigure(15, weight=1)
-        self.rowconfigure(16, weight=1)
-        self.rowconfigure(17, weight=1)
-        self.rowconfigure(18, weight=1)
-        self.rowconfigure(19, weight=1)
-        self.rowconfigure(20, weight=1)
-        self.rowconfigure(21, weight=1)
-        self.rowconfigure(22, weight=1)
-        self.rowconfigure(23, weight=1)
+        # self.rowconfigure(12, weight=1)
+        # self.rowconfigure(13, weight=1)
+        # self.rowconfigure(14, weight=1)
+        # self.rowconfigure(15, weight=1)
+        # self.rowconfigure(16, weight=1)
+        # self.rowconfigure(17, weight=1)
+        # self.rowconfigure(18, weight=1)
+        # self.rowconfigure(19, weight=1)
+        # self.rowconfigure(20, weight=1)
+        # self.rowconfigure(21, weight=1)
+        # self.rowconfigure(22, weight=1)
+        # self.rowconfigure(23, weight=1)
 
         # self.columnconfigure(0, weight=1)
         # self.columnconfigure(1, weight=1)
@@ -82,7 +82,7 @@ class FinanceFrame(ttk.Frame):
         self.discount_rate = ttk.DoubleVar(self, "8.0")
 
         def scalar_discount_rate(_):
-            self.discount_rate.set(max(min(self.discount_rate.get(), 100), 0))
+            self.discount_rate.set(round(max(min(self.discount_rate.get(), 100), 0)), 0)
             self.discount_rate_entry.update()
 
         self.discount_rate_slider = ttk.Scale(
@@ -98,10 +98,9 @@ class FinanceFrame(ttk.Frame):
         self.discount_rate_slider.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
 
         def enter_discount_rate(_):
-            self.discount_rate.set(self.discount_rate_entry.get())
-            self.discount_rate_slider.set(self.discount_rate.get())
-            
-            
+            self.discount_rate.set(round(self.discount_rate_entry.get(), 2))
+            self.discount_rate_slider.set(round(self.discount_rate.get(), 2))
+            self.discount_rate_entry.update()
 
         self.discount_rate_entry = ttk.Entry(
             self,

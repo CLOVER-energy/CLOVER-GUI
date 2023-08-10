@@ -42,11 +42,12 @@ __all__ = ("PreferencesWindow",)
 #   The list of available themes.
 AVAILABLE_THEMES: list[str] = [
     DEFAULT_GUI_THEME,
-    "journal",
-    "cosmo",
-    "minty",
-    "darkly",
-    "vapor",
+    # "journal",
+    # "cosmo",
+    # "minty",
+    # "darkly",
+    "litera",
+    # "vapor",
 ]
 
 

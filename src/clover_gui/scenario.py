@@ -90,7 +90,7 @@ class ConfigurationFrame(ttk.Frame):
         # Style
         bold_head = ttk.Style()
         bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
-        
+
         # Selecting system components
         self.power_generation_label = ttk.Label(
             self.scrollable_scenario_frame, text="Power sources", style="Bold.TLabel"
@@ -99,10 +99,13 @@ class ConfigurationFrame(ttk.Frame):
 
         # Explainer label
         self.explainer_power_generation_label = ttk.Label(
-        self.scrollable_scenario_frame, text="Select power sources \nby toogling the icons\non and off. Detailed\nsettings can be\nadjusted by clicking\nbutton below icons."
+            self.scrollable_scenario_frame,
+            text="Select power sources \nby toogling the icons\non and off. Detailed\nsettings can be\nadjusted by clicking\nbutton below icons.",
         )
-        self.explainer_power_generation_label.grid(row=1, column=0, padx=10, rowspan=2, pady=5, sticky="nsw")
-        
+        self.explainer_power_generation_label.grid(
+            row=1, column=0, padx=10, rowspan=2, pady=5, sticky="nsw"
+        )
+
         self.solar_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
                 file=os.path.join(
@@ -273,7 +276,9 @@ class ConfigurationFrame(ttk.Frame):
         self.empty_line.grid(row=3, column=0, columnspan=5, pady=5, padx=10)
 
         # Horizontal separator
-        self.separator = ttk.Separator(self.scrollable_scenario_frame, orient="horizontal")
+        self.separator = ttk.Separator(
+            self.scrollable_scenario_frame, orient="horizontal"
+        )
         self.separator.grid(row=4, column=0, columnspan=5, pady=5, padx=10, sticky="ew")
 
         # Resource types selection
@@ -331,7 +336,9 @@ class ConfigurationFrame(ttk.Frame):
         }
 
         self.electric_power_label: ttk.Label = ttk.Label(
-            self.scrollable_scenario_frame, text="Electricity demand", style="Bold.TLabel"
+            self.scrollable_scenario_frame,
+            text="Electricity demand",
+            style="Bold.TLabel",
         )
         self.electric_power_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
@@ -346,15 +353,16 @@ class ConfigurationFrame(ttk.Frame):
             ],
             text="",
         )
-        
+
         # Demand explainer
         self.demand_explainer = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Select demand types\nby toogling the icons\non and off.")
-        self.demand_explainer.grid(row=6, column=0, pady=5, rowspan=2, padx=10, sticky="nsw")
-        
-        
-        
+            text="Select demand types\nby toogling the icons\non and off.",
+        )
+        self.demand_explainer.grid(
+            row=6, column=0, pady=5, rowspan=2, padx=10, sticky="nsw"
+        )
+
         self.electric_button.grid(row=6, column=1, pady=5, padx=10, sticky="")
         self.electric_button_tooltip = ToolTip(
             self.electric_button,
@@ -677,13 +685,14 @@ class ConfigurationFrame(ttk.Frame):
 
         # Other scenario settings header
         self.other_settings_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Other Scenario Settings", style="Bold.TLabel"
+            self.scrollable_scenario_frame,
+            text="Other Scenario Settings",
+            style="Bold.TLabel",
         )
         self.other_settings_label.grid(
             row=9, column=0, padx=10, pady=5, columnspan=5, sticky="w"
         )
-        
-        
+
         # Diesel mode
         self.diesel_mode_label = ttk.Label(
             self.scrollable_scenario_frame, text="Diesel mode"

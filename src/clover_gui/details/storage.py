@@ -149,9 +149,12 @@ class BatteryFrame(ttk.Frame):
 
         def scalar_maximum_charge(_):
             self.minimum_charge[self.battery_selected.get()].set(
-                min(
-                    self.maximum_charge[self.battery_selected.get()].get(),
-                    self.minimum_charge[self.battery_selected.get()].get(),
+                round(
+                    min(
+                        self.maximum_charge[self.battery_selected.get()].get(),
+                        self.minimum_charge[self.battery_selected.get()].get(),
+                    ),
+                    0,
                 )
             )
             self.maximum_charge_entry.update()
@@ -171,16 +174,19 @@ class BatteryFrame(ttk.Frame):
 
         def enter_maximum_charge(_):
             self.minimum_charge[self.battery_selected.get()].set(
-                min(
-                    self.maximum_charge[self.battery_selected.get()].get(),
-                    self.minimum_charge[self.battery_selected.get()].get(),
+                round(
+                    min(
+                        self.maximum_charge[self.battery_selected.get()].get(),
+                        self.minimum_charge[self.battery_selected.get()].get(),
+                    ),
+                    2,
                 )
             )
             self.maximum_charge[self.battery_selected.get()].set(
-                self.maximum_charge_entry.get()
+                round(self.maximum_charge_entry.get(), 2)
             )
             self.maximum_charge_slider.set(
-                self.maximum_charge[self.battery_selected.get()].get()
+                round(self.maximum_charge[self.battery_selected.get()].get(), 2)
             )
 
         self.maximum_charge_entry = ttk.Entry(
@@ -207,9 +213,12 @@ class BatteryFrame(ttk.Frame):
 
         def scalar_minimum_charge(_):
             self.maximum_charge[self.battery_selected.get()].set(
-                max(
-                    self.maximum_charge[self.battery_selected.get()].get(),
-                    self.minimum_charge[self.battery_selected.get()].get(),
+                round(
+                    max(
+                        self.maximum_charge[self.battery_selected.get()].get(),
+                        self.minimum_charge[self.battery_selected.get()].get(),
+                    ),
+                    0,
                 )
             )
             self.minimum_charge_entry.update()
@@ -229,12 +238,15 @@ class BatteryFrame(ttk.Frame):
 
         def enter_minimum_charge(_):
             self.minimum_charge[self.battery_selected.get()].set(
-                self.minimum_charge_entry.get()
+                round(self.minimum_charge_entry.get(), 2)
             )
             self.maximum_charge.set(
-                max(
-                    self.maximum_charge[self.battery_selected.get()].get(),
-                    self.minimum_charge[self.battery_selected.get()].get(),
+                round(
+                    max(
+                        self.maximum_charge[self.battery_selected.get()].get(),
+                        self.minimum_charge[self.battery_selected.get()].get(),
+                    ),
+                    2,
                 )
             )
             self.minimum_charge_slider.set(
@@ -287,7 +299,7 @@ class BatteryFrame(ttk.Frame):
 
         def scalar_conversion_efficiency_in(_):
             self.conversion_efficiency_in[self.battery_selected.get()].set(
-                self.conversion_efficiency_in_slider.get()
+                round(self.conversion_efficiency_in_slider.get(), 0)
             )
             self.conversion_efficiency_in_entry.update()
 
@@ -307,10 +319,12 @@ class BatteryFrame(ttk.Frame):
 
         def enter_conversion_efficiency_in(_):
             self.conversion_efficiency_in[self.battery_selected.get()].set(
-                self.conversion_efficiency_in_entry.get()
+                round(self.conversion_efficiency_in_entry.get(), 2)
             )
             self.conversion_efficiency_in_slider.set(
-                self.conversion_efficiency_in[self.battery_selected.get()].get()
+                round(
+                    self.conversion_efficiency_in[self.battery_selected.get()].get(), 2
+                )
             )
 
         self.conversion_efficiency_in_entry = ttk.Entry(
@@ -347,7 +361,7 @@ class BatteryFrame(ttk.Frame):
 
         def scalar_conversion_efficiency_out(_):
             self.conversion_efficiency_out[self.battery_selected.get()].set(
-                self.conversion_efficiency_out_slider.get()
+                round(self.conversion_efficiency_out_slider.get(), 0)
             )
             self.conversion_efficiency_out_entry.update()
 
@@ -367,10 +381,12 @@ class BatteryFrame(ttk.Frame):
 
         def enter_conversion_efficiency_out(_):
             self.conversion_efficiency_out[self.battery_selected.get()].set(
-                self.conversion_efficiency_out_entry.get()
+                round(self.conversion_efficiency_out_entry.get(), 2)
             )
             self.conversion_efficiency_out_slider.set(
-                self.conversion_efficiency_out[self.battery_selected.get()].get()
+                round(
+                    self.conversion_efficiency_out[self.battery_selected.get()].get(), 2
+                )
             )
 
         self.conversion_efficiency_out_entry = ttk.Entry(
@@ -431,7 +447,7 @@ class BatteryFrame(ttk.Frame):
 
         def scalar_lifetime_capacity_loss(_):
             self.lifetime_capacity_loss[self.battery_selected.get()].set(
-                self.lifetime_capacity_loss_slider.get()
+                round(self.lifetime_capacity_loss_slider.get(), 0)
             )
             # self.lifetime_capacity_loss_entry.configure(str(self.lifetime_capacity_loss.get()))
             self.lifetime_capacity_loss_entry.update()
@@ -453,10 +469,10 @@ class BatteryFrame(ttk.Frame):
 
         def enter_lifetime_capacity_loss(_):
             self.lifetime_capacity_loss[self.battery_selected.get()].set(
-                self.lifetime_capacity_loss_entry.get()
+                round(self.lifetime_capacity_loss_entry.get(), 2)
             )
             self.lifetime_capacity_loss_slider.set(
-                self.lifetime_capacity_loss[self.battery_selected.get()].get()
+                round(self.lifetime_capacity_loss[self.battery_selected.get()].get(), 2)
             )
 
         self.lifetime_capacity_loss_entry = ttk.Entry(
@@ -1097,8 +1113,8 @@ class StorageFrame(ttk.Frame):
         self.storage_notebook.add(self.battery_frame, text="Batteries", sticky="news")
 
         self.tank_frame = TankFrame(self)
-        self.storage_notebook.add(
-            self.tank_frame, text="Water tanks", sticky="news", state=DISABLED
-        )
+        # self.storage_notebook.add(
+        #     self.tank_frame, text="Water tanks", sticky="news", state=DISABLED
+        # )
 
         # TODO: Add configuration frame widgets and layout
