@@ -571,7 +571,7 @@ class OptimisationFrame(ttk.Frame):
 
         self.iteration_length_slider = ttk.Scale(
             self.scrollable_optimisation_frame,
-            from_=0,
+            from_=1,
             to=30,
             orient=tk.HORIZONTAL,
             # length=320,
@@ -615,8 +615,8 @@ class OptimisationFrame(ttk.Frame):
 
         self.number_of_iterations_slider = ttk.Scale(
             self.scrollable_optimisation_frame,
-            from_=0,
-            to=5,
+            from_=1,
+            to=self.system_lifetime.get(),
             orient=tk.HORIZONTAL,
             # length=320,
             command=scalarber_of_iterations,
