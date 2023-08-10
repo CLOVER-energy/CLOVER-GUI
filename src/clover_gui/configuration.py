@@ -67,8 +67,8 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.pack(fill="both", expand=True)
 
         # Set the physical distance weights of the rows and columns
-        self.rowconfigure(0, weight=2)  # First row has the header
-        self.rowconfigure(1, weight=1)  # These rows have entries
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
         self.rowconfigure(4, weight=1)
@@ -183,7 +183,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.output_name_label = ttk.Label(self, text="Output name")
         self.output_name_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
-        self.output_name: ttk.StringVar = ttk.DoubleVar(self, "results")
+        self.output_name: ttk.StringVar = ttk.StringVar(self, "results")
         self.output_name_entry = ttk.Entry(
             self, bootstyle=INFO, textvariable=self.output_name
         )
@@ -1822,7 +1822,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             clover_args.extend(
                 [
                     "-o",
-                    self.simulation_frame.output_name.get()
+                    str(self.simulation_frame.output_name.get())
                     + datetime.datetime.now().strftime("_%Y_%m_%d_%H_%M_%S_%f"),
                 ]
             )
