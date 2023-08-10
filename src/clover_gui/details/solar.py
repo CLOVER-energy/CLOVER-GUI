@@ -274,7 +274,9 @@ class PVFrame(ttk.Frame):
         }
 
         def scalar_tilt(_):
-            self.panel_tilt[self.panel_selected.get()].set(int(self.tilt_slider.get()))
+            self.panel_tilt[self.panel_selected.get()].set(
+                round(self.tilt_slider.get(), 0)
+            )
             self.tilt_entry.update()
 
         self.tilt_slider = ttk.Scale(
@@ -292,8 +294,12 @@ class PVFrame(ttk.Frame):
         )
 
         def enter_tilt(_):
-            self.panel_tilt[self.panel_selected.get()].set(int(self.tilt_entry.get()))
-            self.tilt_slider.set(int(self.panel_tilt[self.panel_selected.get()].get()))
+            self.panel_tilt[self.panel_selected.get()].set(
+                round(self.tilt_entry.get(), 2)
+            )
+            self.tilt_slider.set(
+                round(self.panel_tilt[self.panel_selected.get()].get(), 2)
+            )
 
         self.tilt_entry = ttk.Entry(
             self.scrolled_frame,
@@ -321,7 +327,7 @@ class PVFrame(ttk.Frame):
 
         def scalar_azimuthal_orientation(_):
             self.panel_orientation[self.panel_selected.get()].set(
-                int(self.azimuthal_orientation_slider.get())
+                round(self.azimuthal_orientation_slider.get(), 0)
             )
             self.azimuthal_orientation_entry.update()
 
@@ -341,10 +347,10 @@ class PVFrame(ttk.Frame):
 
         def enter_azimuthal_orientation(_):
             self.panel_orientation[self.panel_selected.get()].set(
-                int(self.azimuthal_orientation_entry.get())
+                round(self.azimuthal_orientation_entry.get(), 2)
             )
             self.azimuthal_orientation_slider.set(
-                int(self.panel_orientation[self.panel_selected.get()].get())
+                round(self.panel_orientation[self.panel_selected.get()].get(), 2)
             )
 
         self.azimuthal_orientation_entry = ttk.Entry(
@@ -1228,17 +1234,17 @@ class SolarFrame(ttk.Frame):
         self.solar_notebook.add(self.pv_frame, text="PV panels", sticky="news")
 
         self.pv_t_frame = PVTFrame(self)
-        self.solar_notebook.add(
-            self.pv_t_frame, text="PV-T collectors", sticky="news", state=DISABLED
-        )
+        # self.solar_notebook.add(
+        #     self.pv_t_frame, text="PV-T collectors", sticky="news", state=DISABLED
+        # )
 
         self.solar_thermal_frame = SolarThermalFrame(self)
-        self.solar_notebook.add(
-            self.solar_thermal_frame,
-            text="Solar-thermal collectors",
-            sticky="news",
-            state=DISABLED,
-        )
+        # self.solar_notebook.add(
+        #     self.solar_thermal_frame,
+        #     text="Solar-thermal collectors",
+        #     sticky="news",
+        #     state=DISABLED,
+        # )
 
         # TODO: Add configuration frame widgets and layout
 
