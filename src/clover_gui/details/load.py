@@ -412,12 +412,12 @@ class CSVEntryFrame(ttk.Frame):
                 tmp = ttk.Entry(self, width=cell_width)
                 tmp.bind("<Tab>", self.focus_tab)
                 tmp.bind("<Shift-Tab>", self.focus_sh_tab)
-                tmp.bind("<Return>", self.focus_down)
                 tmp.bind("<Shift-Return>", self.focus_up)
                 tmp.bind("<Shift-Right>", self.focus_right)
                 tmp.bind("<Shift-Left>", self.focus_left)
                 tmp.bind("<Shift-Up>", self.focus_up)
                 tmp.bind("<Shift-Down>", self.focus_down)
+                tmp.bind("<Return>", lambda cell=tmp: self._round(cell))
                 tmp.bind("<Control-a>", self.selectall)
                 tmp.bind("<Control-s>", self.save_file)
                 tmp.insert(END, ary[row][column])
@@ -435,6 +435,20 @@ class CSVEntryFrame(ttk.Frame):
 
         self.current_cells = load_cells
         self.current_cell = self.current_cells[0][0]
+
+    def _round(self, event) -> None:
+        """
+        Round a cell's value.
+
+        :param: cell
+            The cell to round.
+
+        """
+
+        cell = event.widget.focus_get()
+        cell_value = cell.get()
+        cell.delete(0, END)
+        cell.insert(END, str(min(max(float(cell_value), 0), 1)))
 
     def save_cells(self):
         filename = self.filename
@@ -751,15 +765,15 @@ class LoadFrame(ttk.Frame):
         self.device_utilisations_directory: str | None = None
 
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure(1, weight=1, minsize=100)
         self.columnconfigure(2, weight=1, minsize=300)
-        self.columnconfigure(3, weight=2, minsize=300)
+        self.columnconfigure(3, weight=3, minsize=300)
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
-        self.rowconfigure(4, weight=8)
+        self.rowconfigure(4, weight=8, minsize=400)
 
         self.devices = [
             GUIDevice(

@@ -75,7 +75,9 @@ class SystemFrame(ttk.Frame):
         self.ac_transmission = ttk.DoubleVar(self, "92")
 
         def scalar_ac_transmission(_):
-            self.ac_transmission.set(max(min(self.ac_transmission.get(), 100), 0))
+            self.ac_transmission.set(
+                round(max(min(self.ac_transmission.get(), 100), 0)), 0
+            )
             self.ac_transmission_entry.update()
 
         self.ac_transmission_slider = ttk.Scale(
@@ -91,8 +93,8 @@ class SystemFrame(ttk.Frame):
         self.ac_transmission_slider.grid(row=1, column=2, padx=10, pady=5, sticky="ew")
 
         def enter_ac_transmission(_):
-            self.ac_transmission.set(self.ac_transmission_entry.get())
-            self.ac_transmission_slider.set(self.ac_transmission.get())
+            self.ac_transmission.set(round(self.ac_transmission_entry.get(), 2))
+            self.ac_transmission_slider.set(round(self.ac_transmission.get(), 2))
 
         self.ac_transmission_entry = ttk.Entry(
             self,
@@ -113,7 +115,9 @@ class SystemFrame(ttk.Frame):
         self.dc_transmission = ttk.DoubleVar(self, "96")
 
         def scalar_dc_transmission(_):
-            self.dc_transmission.set(max(min(self.dc_transmission.get(), 100), 0))
+            self.dc_transmission.set(
+                round(max(min(self.dc_transmission.get(), 100), 0)), 0
+            )
             self.dc_transmission_entry.update()
 
         self.dc_transmission_slider = ttk.Scale(
@@ -130,8 +134,8 @@ class SystemFrame(ttk.Frame):
         self.dc_transmission_slider.grid(row=2, column=2, padx=10, pady=5, sticky="ew")
 
         def enter_dc_transmission(_):
-            self.dc_transmission.set(self.dc_transmission_entry.get())
-            self.dc_transmission_slider.set(self.dc_transmission.get())
+            self.dc_transmission.set(round(self.dc_transmission_entry.get(), 2))
+            self.dc_transmission_slider.set(round(self.dc_transmission.get()), 2)
 
         self.dc_transmission_entry = ttk.Entry(
             self,
@@ -157,7 +161,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_dc_to_ac_conversion(_):
             self.dc_to_ac_conversion.set(
-                max(min(self.dc_to_ac_conversion.get(), 100), 0)
+                round(max(min(self.dc_to_ac_conversion.get(), 100), 0), 0)
             )
             self.dc_to_ac_conversion_entry.update()
 
@@ -177,8 +181,10 @@ class SystemFrame(ttk.Frame):
         )
 
         def enter_dc_to_ac_conversion(_):
-            self.dc_to_ac_conversion.set(self.dc_to_ac_conversion_entry.get())
-            self.dc_to_ac_conversion_slider.set(self.dc_to_ac_conversion.get())
+            self.dc_to_ac_conversion.set(round(self.dc_to_ac_conversion_entry.get(), 2))
+            self.dc_to_ac_conversion_slider.set(
+                round(self.dc_to_ac_conversion.get(), 2)
+            )
 
         self.dc_to_ac_conversion_entry = ttk.Entry(
             self,
@@ -208,7 +214,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_dc_to_dc_conversion(_):
             self.dc_to_dc_conversion.set(
-                max(min(self.dc_to_dc_conversion.get(), 100), 0)
+                round(max(min(self.dc_to_dc_conversion.get(), 100), 0), 0)
             )
             self.dc_to_dc_conversion_entry.update()
 
@@ -228,8 +234,10 @@ class SystemFrame(ttk.Frame):
         )
 
         def enter_dc_to_dc_conversion(_):
-            self.dc_to_dc_conversion.set(self.dc_to_dc_conversion_entry.get())
-            self.dc_to_dc_conversion_slider.set(self.dc_to_dc_conversion.get())
+            self.dc_to_dc_conversion.set(round(self.dc_to_dc_conversion_entry.get(), 2))
+            self.dc_to_dc_conversion_slider.set(
+                round(self.dc_to_dc_conversion.get(), 2)
+            )
 
         self.dc_to_dc_conversion_entry = ttk.Entry(
             self,
@@ -259,7 +267,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_to_dc_conversion(_):
             self.ac_to_dc_conversion.set(
-                max(min(self.ac_to_dc_conversion.get(), 100), 0)
+                round(max(min(self.ac_to_dc_conversion.get(), 100), 0), 0)
             )
             self.ac_to_dc_conversion_entry.update()
 
@@ -279,8 +287,10 @@ class SystemFrame(ttk.Frame):
         )
 
         def enter_ac_to_dc_conversion(_):
-            self.ac_to_dc_conversion.set(self.ac_to_dc_conversion_entry.get())
-            self.ac_to_dc_conversion_slider.set(self.ac_to_dc_conversion.get())
+            self.ac_to_dc_conversion.set(round(self.ac_to_dc_conversion_entry.get(), 2))
+            self.ac_to_dc_conversion_slider.set(
+                round(self.ac_to_dc_conversion.get(), 2)
+            )
 
         self.ac_to_dc_conversion_entry = ttk.Entry(
             self,
@@ -311,7 +321,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_to_ac_conversion(_):
             self.ac_to_ac_conversion.set(
-                max(min(self.ac_to_ac_conversion.get(), 100), 0)
+                round(max(min(self.ac_to_ac_conversion.get(), 100), 0), 0)
             )
             self.ac_to_ac_conversion_entry.update()
 
@@ -331,8 +341,10 @@ class SystemFrame(ttk.Frame):
         )
 
         def enter_ac_to_ac_conversion(_):
-            self.ac_to_ac_conversion.set(self.ac_to_ac_conversion_entry.get())
-            self.ac_to_ac_conversion_slider.set(self.ac_to_ac_conversion.get())
+            self.ac_to_ac_conversion.set(round(self.ac_to_ac_conversion_entry.get(), 2))
+            self.ac_to_ac_conversion_slider.set(
+                round(self.ac_to_ac_conversion.get(), 2)
+            )
 
         self.ac_to_ac_conversion_entry = ttk.Entry(
             self,
@@ -355,11 +367,20 @@ class SystemFrame(ttk.Frame):
         self.inverter_lifetime_label.grid(row=7, column=1, padx=10, pady=5, sticky="w")
 
         self.inverter_lifetime = ttk.IntVar(self, "10")
+
+        def _round_inverter_lifetime(_) -> None:
+            """Round the inverter lifetime to the nearest integer."""
+
+            self.inverter_lifetime.set(int(self.inverter_lifetime.get()))
+            self.inverter_lifetime_entry.set(self.inverter_lifetime.get())
+            self.inverter_lifetime_entry.update()
+
         self.inverter_lifetime_entry = ttk.Entry(
             self,
             bootstyle=WARNING,
             textvariable=self.inverter_lifetime,
         )
+        self.inverter_lifetime_entry.bind("<Return>", _round_inverter_lifetime)
 
         self.inverter_lifetime_entry.grid(row=7, column=2, padx=10, pady=5, sticky="ew")
 
@@ -430,7 +451,7 @@ class SystemFrame(ttk.Frame):
 
         # Select heat exchanger
         self.heat_exchanger_label = ttk.Label(self, text="AC heat exchanger")
-        self.heat_exchanger_label.grid(row=12, column=1, padx=10, pady=5, sticky="w")
+        # self.heat_exchanger_label.grid(row=12, column=1, padx=10, pady=5, sticky="w")
 
         self.heat_exchanger = ttk.StringVar(self, "")
         self.heat_exchanger_combobox = ttk.Combobox(
@@ -439,9 +460,9 @@ class SystemFrame(ttk.Frame):
             state=DISABLED,
             bootstyle=WARNING,
         )
-        self.heat_exchanger_combobox.grid(
-            row=12, column=2, padx=10, pady=5, sticky="ew"
-        )
+        # self.heat_exchanger_combobox.grid(
+        #     row=12, column=2, padx=10, pady=5, sticky="ew"
+        # )
 
         # Select the grid profile
         self.grid_profile_label = ttk.Label(self, text="Grid profile")
