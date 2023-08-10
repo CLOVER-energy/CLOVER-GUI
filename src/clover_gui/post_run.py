@@ -9,9 +9,11 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
-import ttkbootstrap as ttk
+import tkinter as tk
 
 from typing import Callable
+
+import ttkbootstrap as ttk
 
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
@@ -115,11 +117,6 @@ class PostRunScreen(BaseScreen, show_navigation=True):
             command=open_load_location_post_run,
         )
         self.load_location_button.grid(row=3, column=3, sticky="ew", padx=10, pady=5)
-
-        self.load_location_suffix = ttk.Label(
-            self, text=" that you have already created/configured."
-        )
-        self.load_location_suffix.grid(row=3, column=4, sticky="w", padx=10, pady=5)
 
         self.back_button = ttk.Button(
             self,
