@@ -157,7 +157,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_dc_transmission(_):
             self.dc_transmission.set(
-                round(max(min(self.dc_transmission.get(), 100), 0)), 0
+                round(max(min(self.dc_transmission.get(), 100), 0), 0)
             )
             self.dc_transmission_entry.update()
 
