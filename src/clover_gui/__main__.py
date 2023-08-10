@@ -10,7 +10,7 @@
 ########################################################################################
 
 import os
-import pkgutil
+import pkg_resources
 import ttkbootstrap as ttk
 
 from logging import Logger
@@ -258,8 +258,9 @@ class App(ttk.Window):
         """The path to the data directory."""
 
         if self._data_directory is None:
-            data_directory: str | None = pkgutil.get_data("clovergui", "data")
-            if data_directory is None:
+            try:
+                data_directory: str | None = pkg_resources.resource_filename("clover_gui", "data/")
+            except FileNotFoundError:
                 data_directory = os.path.join("src", "clover_gui", "data")
 
             self._data_directory = data_directory
