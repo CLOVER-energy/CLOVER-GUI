@@ -10,6 +10,7 @@
 ########################################################################################
 
 import ttkbootstrap as ttk
+import tkinter as tk
 
 from clover import ProgrammerJudgementFault
 from clover.fileparser import BATTERY, DIESEL_GENERATOR
@@ -95,6 +96,9 @@ class SystemFrame(ttk.Frame):
         self.scrollable_system_frame.columnconfigure(5, weight=1)
 
         # Transmission and conversion efficiencies header
+        # custom_font = tk.font.nametofont("TkDefaultFont")
+        # custom_font_bold =custom_font.configure(weight="bold")        
+        
         bold_head = ttk.Style()
         bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))
 
