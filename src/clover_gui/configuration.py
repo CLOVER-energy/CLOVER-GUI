@@ -132,7 +132,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         self.years_slider = ttk.Scale(
             self,
-            from_=0,
+            from_=1,
             to=30,
             orient=tk.HORIZONTAL,
             length=320,
