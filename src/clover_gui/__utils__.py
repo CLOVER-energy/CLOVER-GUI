@@ -78,7 +78,7 @@ COSTS: str = "costs"
 
 # Default end year:
 #   The default end year.
-DEFAULT_END_YEAR: int = 2007
+DEFAULT_END_YEAR: int = 2016
 
 # Default GUI theme:
 #   The default theme for the GUI.
@@ -94,7 +94,7 @@ RENEWABLES_NINJA_DATA_PERIOD: int = 9
 
 # Default start year:
 #   The deafult start year.
-DEFAULT_START_YEAR: int = DEFAULT_END_YEAR + RENEWABLES_NINJA_DATA_PERIOD
+DEFAULT_START_YEAR: int = DEFAULT_END_YEAR - RENEWABLES_NINJA_DATA_PERIOD
 
 # Default system lifetime:
 #   The defailt lifetime for the system, in years.
