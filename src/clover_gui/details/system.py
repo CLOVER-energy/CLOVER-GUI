@@ -100,7 +100,7 @@ class SystemFrame(ttk.Frame):
         # custom_font_bold =custom_font.configure(weight="bold")        
         
         bold_head = ttk.Style()
-        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))
+        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
 
         self.efficiencies_header = ttk.Label(
             self.scrollable_system_frame, 
