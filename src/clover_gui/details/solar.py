@@ -165,7 +165,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.nominal_power[self.panel_selected.get()],
         )
         self.nominal_power_entry.grid(
-            row=3, column=1, columnspan=3, padx=10, pady=5, sticky="ew", 
+            row=3,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.nominal_power_unit = ttk.Label(self.scrolled_frame, text="kWp")
@@ -445,7 +450,12 @@ class PVFrame(ttk.Frame):
             state=DISABLED,
         )
         self.reference_temperature_entry.grid(
-            row=10, column=1, columnspan=3, padx=10, pady=5, sticky="ew", 
+            row=10,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.reference_temperature_unit = ttk.Label(
@@ -474,7 +484,12 @@ class PVFrame(ttk.Frame):
             state=DISABLED,
         )
         self.thermal_coefficient_entry.grid(
-            row=11, column=1, columnspan=3, padx=10, pady=5, sticky="ew",
+            row=11,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.thermal_coefficient_unit = ttk.Label(
@@ -498,8 +513,9 @@ class PVFrame(ttk.Frame):
             textvariable=self.costs[self.panel_selected.get()],
         )
         self.cost_entry.grid(
-            row=12, column=1, columnspan=3, padx=10, pady=5, sticky="ew")
-        
+            row=12, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
         self.cost_unit = ttk.Label(self.scrolled_frame, text="$ / panel")
         self.cost_unit.grid(row=12, column=4, padx=10, pady=5, sticky="w")
 
@@ -517,7 +533,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.cost_decrease[self.panel_selected.get()],
         )
         self.cost_decrease_entry.grid(
-            row=13, column=1, columnspan=3, padx=10, pady=5, sticky="ew",
+            row=13,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.cost_decrease_unit = ttk.Label(
@@ -541,7 +562,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.installation_costs[self.panel_selected.get()],
         )
         self.installation_cost_entry.grid(
-            row=14, column=1, columnspan=3, padx=10, pady=5, sticky="ew",
+            row=14,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.installation_cost_unit = ttk.Label(self.scrolled_frame, text="$/panel")
@@ -567,7 +593,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.installation_cost_decrease[self.panel_selected.get()],
         )
         self.installation_cost_decrease_entry.grid(
-            row=15, column=1, columnspan=3, padx=10, pady=5, sticky="ew",
+            row=15,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.installation_cost_decrease_unit = ttk.Label(
@@ -591,7 +622,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.o_and_m_costs[self.panel_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
-            row=16, column=1, columnspan=3, padx=10, pady=5, sticky="ew",
+            row=16,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.o_and_m_costs_unit = ttk.Label(self.scrolled_frame, text="$/year")
@@ -615,7 +651,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.embedded_emissions[self.panel_selected.get()],
         )
         self.embedded_emissions_entry.grid(
-            row=17, column=1, columnspan=3, padx=10, pady=5, sticky="ew",
+            row=17,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.embedded_emissions_unit = ttk.Label(
@@ -641,7 +682,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.annual_emissions_decrease[self.panel_selected.get()],
         )
         self.annual_emissions_decrease_entry.grid(
-            row=18, column=1, columnspan=3, padx=10, pady=5, sticky="ew",
+            row=18,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.annual_emissions_decrease_unit = ttk.Label(
@@ -669,7 +715,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.installation_emissions[self.panel_selected.get()],
         )
         self.installation_emissions_entry.grid(
-            row=19, column=1, columnspan=3, padx=10, pady=5, sticky="ew", 
+            row=19,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.installation_emissions_unit = ttk.Label(
@@ -701,7 +752,12 @@ class PVFrame(ttk.Frame):
             ],
         )
         self.installation_emissions_decrease_entry.grid(
-            row=20, column=1, columnspan=3, padx=10, pady=5, sticky="ew", 
+            row=20,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.installation_emissions_decrease_unit = ttk.Label(
@@ -725,7 +781,12 @@ class PVFrame(ttk.Frame):
             textvariable=self.om_emissions[self.panel_selected.get()],
         )
         self.om_emissions_entry.grid(
-            row=21, column=1, columnspan=3, padx=10, pady=5, sticky="ew", 
+            row=21,
+            column=1,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         self.om_emissions_unit = ttk.Label(self.scrolled_frame, text="kgCO2eq / year")

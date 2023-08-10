@@ -47,7 +47,6 @@ class SystemFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-
         self.rowconfigure(0, weight=1)  # scrolled frame
         self.columnconfigure(0, weight=1)
 
@@ -64,9 +63,6 @@ class SystemFrame(ttk.Frame):
             ipadx=0,
             sticky="news",
         )
-
-
-
 
         self.scrollable_system_frame.rowconfigure(0, weight=1)
         self.scrollable_system_frame.rowconfigure(1, weight=1)
@@ -97,19 +93,22 @@ class SystemFrame(ttk.Frame):
 
         # Transmission and conversion efficiencies header
         # custom_font = tk.font.nametofont("TkDefaultFont")
-        # custom_font_bold =custom_font.configure(weight="bold")        
-        
+        # custom_font_bold =custom_font.configure(weight="bold")
+
         bold_head = ttk.Style()
         bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
 
         self.efficiencies_header = ttk.Label(
-            self.scrollable_system_frame, 
-            text="Transmission and Conversion Efficiencies", style="Bold.TLabel"
-        ) 
+            self.scrollable_system_frame,
+            text="Transmission and Conversion Efficiencies",
+            style="Bold.TLabel",
+        )
         self.efficiencies_header.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-        
+
         # AC transmission efficiency
-        self.ac_transmission_label = ttk.Label(self.scrollable_system_frame, text="AC transmission efficiency")
+        self.ac_transmission_label = ttk.Label(
+            self.scrollable_system_frame, text="AC transmission efficiency"
+        )
         self.ac_transmission_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
         self.ac_transmission = ttk.DoubleVar(self, "92")
@@ -149,7 +148,9 @@ class SystemFrame(ttk.Frame):
         self.ac_transmission_unit.grid(row=1, column=4, padx=10, pady=5, sticky="ew")
 
         # DC transmission efficiency
-        self.dc_transmission_label = ttk.Label(self.scrollable_system_frame, text="DC transmission efficiency")
+        self.dc_transmission_label = ttk.Label(
+            self.scrollable_system_frame, text="DC transmission efficiency"
+        )
         self.dc_transmission_label.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
         self.dc_transmission = ttk.DoubleVar(self, "96")
@@ -237,7 +238,9 @@ class SystemFrame(ttk.Frame):
         )
         self.dc_to_ac_conversion_entry.bind("<Return>", enter_dc_to_ac_conversion)
 
-        self.dc_to_ac_conversion_unit = ttk.Label(self.scrollable_system_frame, text=f"%")
+        self.dc_to_ac_conversion_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"%"
+        )
         self.dc_to_ac_conversion_unit.grid(
             row=3, column=4, padx=10, pady=5, sticky="ew"
         )
@@ -290,7 +293,9 @@ class SystemFrame(ttk.Frame):
         )
         self.dc_to_dc_conversion_entry.bind("<Return>", enter_dc_to_dc_conversion)
 
-        self.dc_to_dc_conversion_unit = ttk.Label(self.scrollable_system_frame, text=f"%")
+        self.dc_to_dc_conversion_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"%"
+        )
         self.dc_to_dc_conversion_unit.grid(
             row=4, column=4, padx=10, pady=5, sticky="ew"
         )
@@ -343,7 +348,9 @@ class SystemFrame(ttk.Frame):
         )
         self.ac_to_dc_conversion_entry.bind("<Return>", enter_ac_to_dc_conversion)
 
-        self.ac_to_dc_conversion_unit = ttk.Label(self.scrollable_system_frame, text=f"%")
+        self.ac_to_dc_conversion_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"%"
+        )
 
         self.ac_to_dc_conversion_unit.grid(
             row=5, column=4, padx=10, pady=5, sticky="ew"
@@ -397,7 +404,9 @@ class SystemFrame(ttk.Frame):
         )
         self.ac_to_ac_conversion_entry.bind("<Return>", enter_ac_to_ac_conversion)
 
-        self.ac_to_ac_conversion_unit = ttk.Label(self.scrollable_system_frame, text=f"%")
+        self.ac_to_ac_conversion_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"%"
+        )
         self.ac_to_ac_conversion_unit.grid(
             row=6, column=4, padx=10, pady=5, sticky="ew"
         )
@@ -416,14 +425,14 @@ class SystemFrame(ttk.Frame):
 
         # Inverter settings header
         self.inverter_header = ttk.Label(
-        self.scrollable_system_frame, 
-        text="Inverter Settings", style="Bold.TLabel"
+            self.scrollable_system_frame, text="Inverter Settings", style="Bold.TLabel"
         )
         self.inverter_header.grid(row=9, column=1, padx=10, pady=5, sticky="w")
 
-        
         # Inverter lifetime
-        self.inverter_lifetime_label = ttk.Label(self.scrollable_system_frame, text="Inverter lifetime")
+        self.inverter_lifetime_label = ttk.Label(
+            self.scrollable_system_frame, text="Inverter lifetime"
+        )
         self.inverter_lifetime_label.grid(row=10, column=1, padx=10, pady=5, sticky="w")
 
         self.inverter_lifetime = ttk.IntVar(self, "10")
@@ -442,15 +451,22 @@ class SystemFrame(ttk.Frame):
         )
         self.inverter_lifetime_entry.bind("<Return>", _round_inverter_lifetime)
 
-        self.inverter_lifetime_entry.grid(row=10, column=2, padx=10, pady=5, sticky="ew")
+        self.inverter_lifetime_entry.grid(
+            row=10, column=2, padx=10, pady=5, sticky="ew"
+        )
 
-        self.inverter_lifetime_unit = ttk.Label(self.scrollable_system_frame, text=f"years")
+        self.inverter_lifetime_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"years"
+        )
         self.inverter_lifetime_unit.grid(row=10, column=3, padx=10, pady=5, sticky="ew")
 
         # Inverter step size
-        self.inverter_step_size_label = ttk.Label(self.scrollable_system_frame, text="Inverter step size")
-        self.inverter_step_size_label.grid(row=11, column=1, padx=10, pady=5, sticky="w")
-
+        self.inverter_step_size_label = ttk.Label(
+            self.scrollable_system_frame, text="Inverter step size"
+        )
+        self.inverter_step_size_label.grid(
+            row=11, column=1, padx=10, pady=5, sticky="w"
+        )
 
         self.inverter_step_size = ttk.IntVar(self, "1")
         self.inverter_step_size_entry = ttk.Entry(
@@ -463,17 +479,20 @@ class SystemFrame(ttk.Frame):
             row=11, column=2, padx=10, pady=5, sticky="ew"
         )
 
-        self.inverter_step_size_unit = ttk.Label(self.scrollable_system_frame, text=f"kW")
-        self.inverter_step_size_unit.grid(row=11, column=3, padx=10, pady=5, sticky="ew")
+        self.inverter_step_size_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"kW"
+        )
+        self.inverter_step_size_unit.grid(
+            row=11, column=3, padx=10, pady=5, sticky="ew"
+        )
 
         # Empty line
         self.empty_row = ttk.Label(self.scrollable_system_frame, text="")
         self.empty_row.grid(row=12, column=1, padx=10, pady=5, sticky="w")
 
-
         # Line separator
         self.horizontal_divider = ttk.Separator(
-        self.scrollable_system_frame, orient=ttk.HORIZONTAL
+            self.scrollable_system_frame, orient=ttk.HORIZONTAL
         )
         # Line divider
         self.horizontal_divider.grid(
@@ -482,11 +501,10 @@ class SystemFrame(ttk.Frame):
 
         # System set-up header
         self.system_header = ttk.Label(
-            self.scrollable_system_frame, 
-            text="System Setup", style="Bold.TLabel"
-        ) 
+            self.scrollable_system_frame, text="System Setup", style="Bold.TLabel"
+        )
         self.system_header.grid(row=14, column=1, padx=10, pady=5, sticky="w")
-        
+
         # Select battery
         self.battery_label = ttk.Label(self.scrollable_system_frame, text="Battery")
         self.battery_label.grid(row=15, column=1, padx=10, pady=5, sticky="w")
@@ -502,7 +520,9 @@ class SystemFrame(ttk.Frame):
         self.battery_combobox.grid(row=15, column=2, padx=10, pady=5, sticky="ew")
 
         # Select diesel generator
-        self.diesel_generator_label = ttk.Label(self.scrollable_system_frame, text="Diesel generator")
+        self.diesel_generator_label = ttk.Label(
+            self.scrollable_system_frame, text="Diesel generator"
+        )
         self.diesel_generator_label.grid(row=16, column=1, padx=10, pady=5, sticky="w")
 
         self.diesel_generator = ttk.StringVar(self, "")
@@ -532,7 +552,9 @@ class SystemFrame(ttk.Frame):
         self.pv_panel_combobox.grid(row=17, column=2, padx=10, pady=5, sticky="ew")
 
         # Select heat exchanger
-        self.heat_exchanger_label = ttk.Label(self.scrollable_system_frame, text="AC heat exchanger")
+        self.heat_exchanger_label = ttk.Label(
+            self.scrollable_system_frame, text="AC heat exchanger"
+        )
         # self.heat_exchanger_label.grid(row=12, column=1, padx=10, pady=5, sticky="w")
 
         self.heat_exchanger = ttk.StringVar(self, "")
@@ -547,7 +569,9 @@ class SystemFrame(ttk.Frame):
         # )
 
         # Select the grid profile
-        self.grid_profile_label = ttk.Label(self.scrollable_system_frame, text="Grid profile")
+        self.grid_profile_label = ttk.Label(
+            self.scrollable_system_frame, text="Grid profile"
+        )
         self.grid_profile_label.grid(row=18, column=1, padx=10, pady=5, sticky="w")
 
         self.grid_profile = ttk.StringVar(self, "")
@@ -563,7 +587,6 @@ class SystemFrame(ttk.Frame):
         # Empty row
         self.empty_row = ttk.Label(self.scrollable_system_frame, text="")
         self.empty_row.grid(row=19, column=1, padx=10, pady=5, sticky="w")
-
 
     def set_system(
         self,
