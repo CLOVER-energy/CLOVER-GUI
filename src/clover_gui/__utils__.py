@@ -82,7 +82,7 @@ DEFAULT_END_YEAR: int = 2007
 
 # Default GUI theme:
 #   The default theme for the GUI.
-DEFAULT_GUI_THEME: str = "litera"
+DEFAULT_GUI_THEME: str = "solar"
 
 # Default renewables.ninja token:
 #   The default text to display for the renewables.ninja token.

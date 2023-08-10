@@ -132,7 +132,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
 
         self.years_slider = ttk.Scale(
             self,
-            from_=0,
+            from_=1,
             to=30,
             orient=tk.HORIZONTAL,
             length=320,
@@ -141,6 +141,8 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             variable=self.simulation_period,
         )
         self.years_slider.grid(row=3, column=2, padx=10, pady=5, sticky="e")
+
+        
 
         # Generate plots
         self.do_plots_button = ttk.Checkbutton(

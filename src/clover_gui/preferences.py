@@ -46,7 +46,7 @@ AVAILABLE_THEMES: list[str] = [
     # "cosmo",
     # "minty",
     # "darkly",
-    "solar",
+    "litera",
     # "vapor",
 ]
 
