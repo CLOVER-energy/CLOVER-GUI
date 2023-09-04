@@ -54,12 +54,17 @@ class ConfigurationFrame(ttk.Frame):
         self.columnconfigure(0, weight=4)
 
         self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=8, minsize=300)
         # self.pack(fill="both", expand=True)
+
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=4)
 
         self.scrollable_scenario_frame = ScrolledFrame(self)
         self.scrollable_scenario_frame.grid(
-            row=0,
+            row=1,
             column=0,
+            columnspan=2,
             padx=10,
             pady=5,
             ipady=0,
@@ -71,6 +76,7 @@ class ConfigurationFrame(ttk.Frame):
         self.scrollable_scenario_frame.columnconfigure(1, weight=1)
         self.scrollable_scenario_frame.columnconfigure(2, weight=1)
         self.scrollable_scenario_frame.columnconfigure(3, weight=1)
+        self.scrollable_scenario_frame.columnconfigure(4, weight=1)
 
         self.scrollable_scenario_frame.rowconfigure(0, weight=1)
         self.scrollable_scenario_frame.rowconfigure(1, weight=1)
@@ -91,16 +97,43 @@ class ConfigurationFrame(ttk.Frame):
         bold_head = ttk.Style()
         bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
 
+        # Scenario information
+        self.scenario_information_label = ttk.Label(
+            self, text="Scenario", style="Bold.TLabel"
+        )
+        self.scenario_information_label.grid(
+            row=0, column=0, padx=20, pady=10, sticky="w"
+        )
+
+        self.scenario_information_text = ttk.Label(
+            self,
+            text="The secnario configures your CLOVER run. Here, you can toggle on "
+            "and off various power-generation sources and sources of demand.\nYou "
+            "should check all the information on this screen before continuing to "
+            "ensure that your system is correctly represented.",
+        )
+        self.scenario_information_text.grid(
+            row=0, column=1, padx=20, pady=10, sticky="ew"
+        )
+
         # Selecting system components
         self.power_generation_label = ttk.Label(
             self.scrollable_scenario_frame, text="Power sources", style="Bold.TLabel"
         )
-        self.power_generation_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.power_generation_label.grid(
+            row=0, column=0, columnspan=5, padx=10, pady=5, sticky="w"
+        )
 
         # Explainer label
         self.explainer_power_generation_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Select power sources \nby toogling the icons\non and off. Detailed\nsettings can be\nadjusted by clicking\nbutton below icons.",
+            text="Select power sources \n"
+            "by toogling the icons\n"
+            "on (green) and off (grey).\n"
+            "Detailed settings can be \n"
+            "adjusted by clicking the\n"
+            "buttons below the \n"
+            "coloured icons.",
         )
         self.explainer_power_generation_label.grid(
             row=1, column=0, padx=10, rowspan=2, pady=5, sticky="nsw"
@@ -129,7 +162,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.solar_images[self.solar_pv_selected.get()],
             text="",
         )
-        self.pv_button.grid(row=1, column=1, pady=5, padx=10)
+        self.pv_button.grid(row=0, column=1, rowspan=2, pady=5, padx=10)
 
         self.pv_tooltip = ToolTip(
             self.pv_button,
@@ -139,7 +172,7 @@ class ConfigurationFrame(ttk.Frame):
 
         self.pv_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
-            text="PV settings",
+            text="Advanced PV settings",
             bootstyle=INFO,
             command=self.open_pv_settings,
         )
@@ -170,7 +203,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.battery_images[self.battery_selected.get()],
             text="",
         )
-        self.battery_button.grid(row=1, column=2, pady=5, padx=10, sticky="")
+        self.battery_button.grid(row=0, column=2, rowspan=2, pady=5, padx=10, sticky="")
 
         self.battery_tooltip = ToolTip(
             self.battery_button,
@@ -180,7 +213,7 @@ class ConfigurationFrame(ttk.Frame):
 
         self.battery_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
-            text="Battery settings",
+            text="Advanced battery\nsettings",
             bootstyle=INFO,
             command=self.open_battery_settings,
         )
@@ -211,7 +244,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.diesel_images[self.diesel_selected.get()],
             text="",
         )
-        self.diesel_button.grid(row=1, column=3, pady=5, padx=10)
+        self.diesel_button.grid(row=0, column=3, rowspan=2, pady=5, padx=10)
 
         self.diesel_tooltip = ToolTip(
             self.diesel_button,
@@ -221,7 +254,7 @@ class ConfigurationFrame(ttk.Frame):
 
         self.diesel_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
-            text="Diesel settings",
+            text="Advanced diesel\nsettings",
             bootstyle=INFO,
             command=self.open_diesel_settings,
         )
@@ -251,7 +284,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.grid_images[self.grid_selected.get()],
             text="",
         )
-        self.grid_button.grid(row=1, column=4, pady=5, padx=10)
+        self.grid_button.grid(row=0, column=4, rowspan=2, pady=5, padx=10)
 
         self.grid_tooltip = ToolTip(
             self.grid_button,
@@ -261,7 +294,7 @@ class ConfigurationFrame(ttk.Frame):
 
         self.grid_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
-            text="Grid settings",
+            text="Advanced grid\nsettings",
             bootstyle=INFO,
             command=self.open_grid_settings,
         )
@@ -269,7 +302,8 @@ class ConfigurationFrame(ttk.Frame):
 
         self.grid_settings_tooltip = ToolTip(
             self.grid_settings_button,
-            text="Opens the detailed settings for configuring the probability of the grid being available.",
+            text="Opens the detailed settings for configuring the probability of the "
+            "grid being available.",
         )
         # Empty line
         self.empty_line = ttk.Label(self.scrollable_scenario_frame, text="")
@@ -340,7 +374,9 @@ class ConfigurationFrame(ttk.Frame):
             text="Electricity demand",
             style="Bold.TLabel",
         )
-        self.electric_power_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        self.electric_power_label.grid(
+            row=5, column=0, columnspan=5, padx=10, pady=5, sticky="w"
+        )
 
         self.electric_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -357,7 +393,12 @@ class ConfigurationFrame(ttk.Frame):
         # Demand explainer
         self.demand_explainer = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Select demand types\nby toogling the icons\non and off.",
+            text="Select demand types\n"
+            "by toogling the icons\n"
+            "on and off. Domestic, \n"
+            "commercial and public\n"
+            "demands can be toggled"
+            "\non and off.",
         )
         self.demand_explainer.grid(
             row=6, column=0, pady=5, rowspan=2, padx=10, sticky="nsw"
@@ -366,7 +407,8 @@ class ConfigurationFrame(ttk.Frame):
         self.electric_button.grid(row=6, column=1, pady=5, padx=10, sticky="")
         self.electric_button_tooltip = ToolTip(
             self.electric_button,
-            text="Toggles whether electric power demands are included when generating stochastic demand profiles.",
+            text="Toggles whether electric power demands are included when generating "
+            "stochastic demand profiles.",
             bootstyle=f"{WARNING}-{INVERSE}",
         )
 
@@ -389,7 +431,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.hot_water_button.grid(row=4, column=1, pady=5, padx=10, sticky="")
         # self.hot_water_button_tooltip = ToolTip(
         #     self.hot_water_button,
-        #     text="Toggles whether hot-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether hot-water demands are included when generating "
+        #     "stochastic demand profiles.",
         #     bootstyle=f"{DANGER}-{INVERSE}",
         # )
 
@@ -412,7 +455,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.clean_water_button.grid(row=5, column=1, pady=5, padx=10, sticky="")
         # self.clean_water_button_tooltip = ToolTip(
         #     self.clean_water_button,
-        #     text="Toggles whether clean-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether clean-water demands are included when generating "
+        #     "stochastic demand profiles.",
         #     bootstyle=f"{PRIMARY}-{INVERSE}",
         # )
 
@@ -488,7 +532,8 @@ class ConfigurationFrame(ttk.Frame):
         self.electric_domestic_button.grid(row=6, column=2, pady=5, padx=10, sticky="")
         self.electric_domestic_button_tooltip = ToolTip(
             self.electric_domestic_button,
-            text="Toggles whether domestic electric demands are included when generating stochastic demand profiles.",
+            text="Toggles whether domestic electric demands are included when "
+            "generating stochastic demand profiles.",
             bootstyle=f"{INVERSE}-{WARNING}",
         )
 
@@ -504,7 +549,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.hot_water_domestic_button.grid(row=4, column=2, pady=5, padx=10, sticky="")
         # self.hot_water_domestic_button_tooltip = ToolTip(
         #     self.hot_water_domestic_button,
-        #     text="Toggles whether domestic hot-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether domestic hot-water demands are included when "
+        #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{DANGER}",
         # )
 
@@ -522,7 +568,8 @@ class ConfigurationFrame(ttk.Frame):
         # )
         # self.clean_water_domestic_button_tooltip = ToolTip(
         #     self.clean_water_domestic_button,
-        #     text="Toggles whether domestic clean-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether domestic clean-water demands are included when "
+        #     generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{PRIMARY}",
         # )
 
@@ -553,7 +600,8 @@ class ConfigurationFrame(ttk.Frame):
         self.electric_commercial_button.grid(row=6, column=3, pady=5, padx=10)
         self.electric_commercial_button_tooltip = ToolTip(
             self.electric_commercial_button,
-            text="Toggles whether commercial electricity demands are included when generating stochastic demand profiles.",
+            text="Toggles whether commercial electricity demands are included when "
+            "generating stochastic demand profiles.",
             bootstyle=f"{INVERSE}-{WARNING}",
         )
 
@@ -569,7 +617,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.hot_water_commercial_button.grid(row=4, column=3, pady=5, padx=10)
         # self.hot_water_commercial_button_tooltip = ToolTip(
         #     self.hot_water_commercial_button,
-        #     text="Toggles whether commercial hot-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether commercial hot-water demands are included when "
+        #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{DANGER}",
         # )
 
@@ -585,7 +634,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.clean_water_commercial_button.grid(row=5, column=3, pady=5, padx=10)
         # self.clean_water_commercial_button_tooltip = ToolTip(
         #     self.clean_water_commercial_button,
-        #     text="Toggles whether commercial clean-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether commercial clean-water demands are included when "
+        #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{PRIMARY}",
         # )
 
@@ -614,7 +664,8 @@ class ConfigurationFrame(ttk.Frame):
         self.electric_public_button.grid(row=6, column=4, pady=5, padx=10)
         self.electric_public_button_tooltip = ToolTip(
             self.electric_public_button,
-            text="Toggles whether public electricity demands are included when generating stochastic demand profiles.",
+            text="Toggles whether public electricity demands are included when "
+            "generating stochastic demand profiles.",
             bootstyle=f"{INVERSE}-{WARNING}",
         )
 
@@ -630,7 +681,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.hot_water_public_button.grid(row=4, column=4, pady=5, padx=10)
         # self.hot_water_public_button_tooltip = ToolTip(
         #     self.hot_water_public_button,
-        #     text="Toggles whether public hot-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether public hot-water demands are included when "
+        #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{DANGER}",
         # )
 
@@ -646,7 +698,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.clean_water_public_button.grid(row=5, column=4, pady=5, padx=10)
         # self.clean_water_public_button_tooltip = ToolTip(
         #     self.clean_water_public_button,
-        #     text="Toggles whether public clean-water demands are included when generating stochastic demand profiles.",
+        #     text="Toggles whether public clean-water demands are included when "
+        #    "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{PRIMARY}",
         # )
 
@@ -693,6 +746,17 @@ class ConfigurationFrame(ttk.Frame):
             row=9, column=0, padx=10, pady=5, columnspan=5, sticky="w"
         )
 
+        self.other_settings_explainer = ttk.Label(
+            self.scrollable_scenario_frame,
+            text="Miscellaneous settings\n"
+            "for scenarios including\n"
+            "grid-prioritisation and\n"
+            "diesel-generator settings.",
+        )
+        self.other_settings_explainer.grid(
+            row=10, column=0, pady=5, rowspan=3, padx=10, sticky="nsw"
+        )
+
         # Diesel mode
         self.diesel_mode_label = ttk.Label(
             self.scrollable_scenario_frame, text="Diesel mode"
@@ -711,12 +775,14 @@ class ConfigurationFrame(ttk.Frame):
             self.scrollable_scenario_frame, text="Diesel threshold"
         )
         self.diesel_backup_threshold_label.grid(
-            row=10, column=0, padx=10, pady=5, sticky="w"
+            row=10, column=1, padx=10, pady=5, sticky="w"
         )
 
-        self.diesel_backup_threshold: ttk.DoubleVar = ttk.DoubleVar(self, 0)
+        self.diesel_backup_threshold: ttk.IntVar = ttk.DoubleVar(self, 0)
 
         def scalar_threshold(_):
+            self.diesel_backup_threshold.set(int(self.diesel_backup_threshold.get()))
+            self.diesel_backup_slider.set(self.diesel_backup_entry.get())
             self.diesel_backup_entry.update()
 
         self.diesel_backup_slider = ttk.Scale(
@@ -728,26 +794,27 @@ class ConfigurationFrame(ttk.Frame):
             command=scalar_threshold,
             variable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_slider.grid(row=10, column=1, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_slider.grid(row=10, column=2, padx=10, pady=5, sticky="ew")
 
         def enter_threshold(_):
             self.diesel_backup_threshold.set(
-                min(max(float(self.diesel_backup_entry.get()), 0), 100)
+                int(min(max(float(self.diesel_backup_entry.get()), 0), 100))
             )
             self.diesel_backup_slider.set(self.diesel_backup_entry.get())
+            self.diesel_backup_entry.update()
 
         self.diesel_backup_entry = ttk.Entry(
             self.scrollable_scenario_frame,
             textvariable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_entry.grid(row=10, column=2, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_entry.grid(row=10, column=3, padx=10, pady=5, sticky="ew")
         self.diesel_backup_entry.bind("<Return>", enter_threshold)
 
         self.diesel_backup_threshold_unit = ttk.Label(
             self.scrollable_scenario_frame, text=f"% of hours"
         )
         self.diesel_backup_threshold_unit.grid(
-            row=10, column=3, padx=10, pady=5, sticky="w"
+            row=10, column=4, padx=10, pady=5, sticky="w"
         )
 
         # Distribution network
@@ -769,14 +836,14 @@ class ConfigurationFrame(ttk.Frame):
             self.scrollable_scenario_frame, text="Distribution network"
         )
         self.distribution_network_label.grid(
-            row=11, column=0, padx=10, pady=5, sticky="w"
+            row=11, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.distribution_network_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
         self.distribution_network_combobox.grid(
-            row=11, column=1, padx=10, pady=5, sticky="w"
+            row=11, column=2, padx=10, pady=5, sticky="w"
         )
         self.distribution_network_combobox["values"] = [
             e.value for e in DistributionNetwork
@@ -789,14 +856,14 @@ class ConfigurationFrame(ttk.Frame):
             text="Prioritise self generation",
         )
         self.prioritise_self_generation_label.grid(
-            row=12, column=0, padx=10, pady=5, sticky="w"
+            row=12, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.prioritise_self_generation_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
         self.prioritise_self_generation_combobox.grid(
-            row=12, column=1, padx=10, pady=5, sticky="w"
+            row=12, column=2, padx=10, pady=5, sticky="w"
         )
         self.prioritise_self_generation_combobox["values"] = ["True", "False"]
         self.prioritise_self_generation_combobox.set("True")

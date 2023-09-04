@@ -263,7 +263,6 @@ class BaseScreen(ttk.Frame):
     def go_back(cls, self) -> None:
         """Go back a screen."""
 
-
         # Return if there is no frame to go back to.
         try:
             previous_frame = cls._backward_journey.pop()

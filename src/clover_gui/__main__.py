@@ -259,7 +259,9 @@ class App(ttk.Window):
 
         if self._data_directory is None:
             try:
-                data_directory: str | None = pkg_resources.resource_filename("clover_gui", "data/")
+                data_directory: str | None = pkg_resources.resource_filename(
+                    "clover_gui", "data/"
+                )
             except FileNotFoundError:
                 data_directory = os.path.join("src", "clover_gui", "data")
 
