@@ -375,7 +375,7 @@ class ConfigurationFrame(ttk.Frame):
         }
 
         self.resource_selected: dict[ResourceType : ttk.BooleanVar] = {
-            ResourceType.ELECTRIC: ttk.BooleanVar(self, value=False),
+            ResourceType.ELECTRIC: ttk.BooleanVar(self, value=True),
             ResourceType.HOT_CLEAN_WATER: ttk.BooleanVar(self, value=False),
             ResourceType.CLEAN_WATER: ttk.BooleanVar(self, value=False),
         }
@@ -399,6 +399,7 @@ class ConfigurationFrame(ttk.Frame):
                 self.resource_selected[ResourceType.ELECTRIC].get()
             ],
             text="",
+            state=DISABLED,
         )
 
         # Demand explainer
@@ -416,12 +417,12 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         self.electric_button.grid(row=6, column=1, pady=5, padx=10, sticky="")
-        self.electric_button_tooltip = ToolTip(
-            self.electric_button,
-            text="Toggles whether electric power demands are included when generating "
-            "stochastic demand profiles.",
-            bootstyle=f"{WARNING}-{INVERSE}",
-        )
+        # self.electric_button_tooltip = ToolTip(
+        #     self.electric_button,
+        #     text="Toggles whether electric power demands are included when generating "
+        #     "stochastic demand profiles.",
+        #     bootstyle=f"{WARNING}-{INVERSE}",
+        # )
 
         self.hot_water_power_label: ttk.Label = ttk.Label(
             self.scrollable_scenario_frame, text="Hot-water demand"
