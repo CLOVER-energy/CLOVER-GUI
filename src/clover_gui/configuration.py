@@ -1687,7 +1687,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.system_lifetime: ttk.IntVar = system_lifetime
 
         self.pack(fill="both", expand=True)
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1, minsize=100)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
         self.columnconfigure(3, weight=10)
@@ -1698,13 +1698,35 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(2, weight=1, minsize=80)
 
         self.location_label = ttk.Label(
-            self, bootstyle=INFO, text=location_name.get().capitalize(), font="80"
+            self,
+            bootstyle=INFO,
+            text=location_name.get().capitalize(),
+            font=("TkDefaultFont", "16", "bold"),
         )
         self.location_label.grid(
-            row=0, column=0, columnspan=4, sticky="ew", padx=60, pady=20
+            row=0, column=0, columnspan=3, sticky="w", padx=(60, 20), pady=20
         )
 
         self.location_name: ttk.Stringvar = location_name
+
+        # Help text
+        self.help_text = ttk.Label(
+            self,
+            bootstyle=INFO,
+            text="1. Configure the scenario for your location below\n"
+            "2. Use the tabs to either\n"
+            "    a. Simulate: Run a simulation for a given lifetime and capacity\n"
+            "    b. Optimise: Run an optimisation to determine the optimum system",
+            font=("TkDefaultFont", "12", "bold"),
+        )
+        self.help_text.grid(
+            row=0, column=3, columnspan=2, sticky="e", padx=(20, 60), pady=20
+        )
+
+        self.notebook_style = ttk.Style()
+        self.notebook_style.configure(
+            "TNotebook.Tab", font=("TkDefaultFont", "14", "bold")
+        )
 
         self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
         self.configuration_notebook.grid(

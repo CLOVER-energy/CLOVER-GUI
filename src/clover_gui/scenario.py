@@ -57,7 +57,7 @@ class ConfigurationFrame(ttk.Frame):
         self.rowconfigure(1, weight=8, minsize=300)
         # self.pack(fill="both", expand=True)
 
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1, minsize=250)
         self.columnconfigure(1, weight=4)
 
         self.scrollable_scenario_frame = ScrolledFrame(self)
@@ -99,7 +99,7 @@ class ConfigurationFrame(ttk.Frame):
 
         # Scenario information
         self.scenario_information_label = ttk.Label(
-            self, text="Scenario", style="Bold.TLabel"
+            self, text="Configure CLOVER", style="Bold.TLabel"
         )
         self.scenario_information_label.grid(
             row=0, column=0, padx=20, pady=10, sticky="w"
@@ -108,9 +108,9 @@ class ConfigurationFrame(ttk.Frame):
         self.scenario_information_text = ttk.Label(
             self,
             text="The secnario configures your CLOVER run. Here, you can toggle on "
-            "and off various power-generation sources and sources of demand.\nYou "
+            "and off various power-generation sources \nand sources of demand. You "
             "should check all the information on this screen before continuing to "
-            "ensure that your system is correctly represented.",
+            "ensure \nthat your system is correctly represented.",
         )
         self.scenario_information_text.grid(
             row=0, column=1, padx=20, pady=10, sticky="ew"
