@@ -351,7 +351,7 @@ class ThresholdCriterion:
 
     _name_to_criterion_map: dict[str, Criterion] | None = None
 
-    _permissable_chevrons: list[str] = sorted(["<", ">"])
+    # _permissable_chevrons: list[str] = sorted(["<", ">"])
 
     _permissable_threshold_criteria: list[str] = sorted(criterion_to_name_map.values())
 
@@ -394,15 +394,15 @@ class ThresholdCriterion:
             parent, bootstyle=INFO, textvariable=self.criterion_name
         )
         self.criterion_name_combobox["values"] = self._permissable_threshold_criteria
+        self.criterion_name_combobox.bind("<<ComboboxSelected>>", self.select_criterion)
 
         self.less_than: ttk.BooleanVar = less_than
         self.less_than_string: ttk.StringVar = ttk.StringVar(
-            parent, "<" if self.less_than else ">"
+            parent, "less than" if self.less_than.get() else "greater than"
         )
-        self.less_than_combobox = ttk.Combobox(
-            parent, bootstyle=INFO, textvariable=self.less_than_string
+        self.less_than_label = ttk.Label(
+            parent, bootstyle=INFO, text=self.less_than_string.get()
         )
-        self.less_than_combobox["values"] = self._permissable_chevrons
 
         self.value: ttk.DoubleVar = value
         self.value_entry = ttk.Entry(parent, bootstyle=INFO, textvariable=self.value)
@@ -447,7 +447,7 @@ class ThresholdCriterion:
         self.criterion_name_combobox.grid(
             row=(25 + self.index), column=0, padx=20, pady=10, sticky="ew"
         )
-        self.less_than_combobox.grid(
+        self.less_than_label.grid(
             row=(25 + self.index), column=1, padx=20, pady=10, sticky="ew"
         )
         self.value_entry.grid(
@@ -461,7 +461,7 @@ class ThresholdCriterion:
         """Remove the varoius items from the screen."""
 
         self.criterion_name_combobox.grid_forget()
-        self.less_than_combobox.grid_forget()
+        self.less_than_label.grid_forget()
         self.value_entry.grid_forget()
         self.delete_criterion_button.grid_forget()
 
@@ -481,6 +481,21 @@ class ThresholdCriterion:
                 value: key for key, value in self.criterion_to_name_map.items()
             }
         return self._name_to_criterion_map
+
+    def select_criterion(self, _) -> None:
+        """Called when the combobox is selected."""
+
+        # Update the less-than variables based on the new variable.
+        self.less_than.set(
+            THRESHOLD_CRITERION_TO_MODE[
+                self.name_to_criterion_map[self.criterion_name_combobox.get()]
+            ]
+            == ThresholdMode.MAXIMUM
+        )
+        self.less_than_string.set(
+            "less than" if self.less_than.get() else "greater than"
+        )
+        self.less_than_label.configure(text=self.less_than_string.get())
 
     def set_index(self, index: int) -> None:
         """
