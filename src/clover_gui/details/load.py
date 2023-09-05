@@ -726,7 +726,7 @@ class DevicesFrame(ScrolledFrame):
         self.device_active_buttons: dict[GUIDevice, ttk.Button] = {
             device: ttk.Checkbutton(
                 self,
-                style=f"{SUCCESS}.{OUTLINE}.{TOOLBUTTON}",
+                style=f"{SUCCESS}.{ROUND}.{TOGGLE}",
                 variable=device.active,
             )
             for device in parent.devices
@@ -1001,7 +1001,7 @@ class LoadFrame(ttk.Frame):
         # Add a new set of buttons for the device
         self.devices_frame.device_active_buttons[device] = ttk.Checkbutton(
             self.devices_frame,
-            style=f"{SUCCESS}.{OUTLINE}.{TOOLBUTTON}",
+            style=f"{SUCCESS}.{ROUND}.{TOGGLE}",
             variable=device.active,
         )
         self.devices_frame.device_active_buttons[device].grid(
