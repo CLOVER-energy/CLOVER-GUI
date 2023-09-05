@@ -203,8 +203,17 @@ class GridFrame(ttk.Frame):
 
         self.update_sliders()
 
+        self.hour_labels: dict[int, ttk.Label] = {}
+
+        for hour in range(24):
+            self.hour_labels[hour] = ttk.Label(
+                self.graph_frame,
+                text=f"{'12' if (twelve_hour:=hour % 12) == 0 else twelve_hour} {'am' if hour < 12 else 'pm'}",
+            )
+            self.hour_labels[hour].grid(row=2, column=hour, sticky="news")
+
         self.x_axis_label = ttk.Label(self.graph_frame, text="Hour of the day")
-        self.x_axis_label.grid(row=2, column=11, columnspan=3, sticky="ew")
+        self.x_axis_label.grid(row=3, column=11, columnspan=3, sticky="ew")
 
         # TODO: Add configuration frame widgets and layout
 
