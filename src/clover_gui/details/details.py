@@ -82,18 +82,38 @@ class DetailsWindow(tk.Toplevel):
         self.rowconfigure(1, weight=6)
 
         self.details_label = ttk.Label(
-            self, bootstyle=SECONDARY, text="Detailed settings", font="80"
+            self,
+            bootstyle=SECONDARY,
+            text="Detailed settings",
+            font=("TkDefaultFont", "16", "bold"),
         )
         self.details_label.grid(row=0, column=0, sticky="w", padx=20, pady=5, ipady=20)
 
-        self.details_notebook = ttk.Notebook(self, bootstyle=f"{SECONDARY}")
+        self.notebook_style = ttk.Style()
+        # self.notebook_style.configure(
+        #     (details_notebook_style_name := "Details.TNotebook.Tab"),
+        #     font=("TkDefaultFont", "14"),
+        # )
+
+        # Define the base style
+        self.notebook_style.configure(
+            "Details.TNotebook.Tab",
+            font=("TkDefaultFont", "12"),
+            width=int(self.winfo_screenwidth() / 8),
+            **{"tabbar.font": ("TkDefaultFont", 14), "tabbar.foreground": "blue"},
+        )
+
+        self.details_notebook = ttk.Notebook(
+            self, bootstyle=f"{SECONDARY}"  # , style="Details.TNotebook.Tab"
+        )
         self.details_notebook.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)
 
-        style = ttk.Style()
-        style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 8))
-
         self.solar_frame = SolarFrame(self.details_notebook, renewables_ninja_token)
-        self.details_notebook.add(self.solar_frame, text="Solar", sticky="news")
+        self.details_notebook.add(
+            self.solar_frame,
+            text="Solar",
+            sticky="news",
+        )
 
         # self.wind_frame = WindFrame(self.details_notebook)
         # self.details_notebook.add(

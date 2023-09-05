@@ -120,36 +120,43 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             row=0, column=2, columnspan=3, padx=20, pady=10, sticky="ew"
         )
 
+        self.capacity_header = ttk.Label(
+            self, text="Component sizes", style="Bold.TLabel"
+        )
+        self.capacity_header.grid(
+            row=1, column=0, columnspan=5, padx=20, pady=10, sticky="w"
+        )
+
         # PV size
         self.pv_size_label = ttk.Label(self, text="PV System Size")
-        self.pv_size_label.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+        self.pv_size_label.grid(row=2, column=0, padx=20, pady=10, sticky="w")
 
         self.pv_size: ttk.DoubleVar = ttk.DoubleVar(self, value=0)
         self.pv_size_entry = ttk.Entry(self, bootstyle=INFO, textvariable=self.pv_size)
         self.pv_size_entry.grid(
-            row=1, column=1, columnspan=2, padx=20, pady=10, sticky="ew", ipadx=20
+            row=2, column=1, columnspan=2, padx=20, pady=10, sticky="ew", ipadx=20
         )
 
         self.pv_size_info = ttk.Label(self, text="kWp")
-        self.pv_size_info.grid(row=1, column=3, sticky="w")
+        self.pv_size_info.grid(row=2, column=3, sticky="w")
 
         # Storage size
         self.storage_size_label = ttk.Label(self, text="Storage Size")
-        self.storage_size_label.grid(row=2, column=0, padx=20, pady=10, sticky="w")
+        self.storage_size_label.grid(row=3, column=0, padx=20, pady=10, sticky="w")
 
         self.storage_size: ttk.DoubleVar = ttk.DoubleVar(self, value=0)
         self.storage_size_entry = ttk.Entry(
             self, bootstyle=INFO, textvariable=self.storage_size
         )
         self.storage_size_entry.grid(
-            row=2, column=1, columnspan=2, padx=20, pady=10, sticky="ew", ipadx=20
+            row=3, column=1, columnspan=2, padx=20, pady=10, sticky="ew", ipadx=20
         )
         self.storage_size_info = ttk.Label(self, text="kWh")
-        self.storage_size_info.grid(row=2, column=3, sticky="w")
+        self.storage_size_info.grid(row=3, column=3, sticky="w")
 
         # Simulation period
         self.simulation_period_label = ttk.Label(self, text="Simulation period")
-        self.simulation_period_label.grid(row=3, column=0, padx=20, pady=10, sticky="w")
+        self.simulation_period_label.grid(row=4, column=0, padx=20, pady=10, sticky="w")
         self.simulation_period = ttk.IntVar(self, 20, "simulation_period")
 
         # self.simulation_period_info = ttk.Label(self, text="Years")
@@ -158,7 +165,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.scalerber = ttk.Label(
             self, text=f"{int(self.simulation_period.get())} years"
         )
-        self.scalerber.grid(row=3, column=3, sticky="w")
+        self.scalerber.grid(row=4, column=3, sticky="w")
 
         def scaler(e):
             self.scalerber.config(
@@ -176,12 +183,23 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             variable=self.simulation_period,
         )
         self.years_slider.grid(
-            row=3, column=1, columnspan=2, padx=20, pady=10, sticky="ew"
+            row=4, column=1, columnspan=2, padx=20, pady=10, sticky="ew"
+        )
+
+        # Horizontal divider
+        self.horizontal_divider = ttk.Separator(self, orient=tk.HORIZONTAL)
+        self.horizontal_divider.grid(
+            row=5, column=0, columnspan=5, padx=20, pady=10, sticky="ew"
+        )
+
+        self.outputs_header = ttk.Label(self, text="Outputs", style="Bold.TLabel")
+        self.outputs_header.grid(
+            row=6, column=0, columnspan=5, padx=20, pady=10, sticky="w"
         )
 
         # Generate plots
         self.generate_plots_label = ttk.Label(self, text="Generate plots")
-        self.generate_plots_label.grid(row=4, column=0, padx=20, pady=10, sticky="w")
+        self.generate_plots_label.grid(row=7, column=0, padx=20, pady=10, sticky="w")
 
         self.generate_plots: ttk.BooleanVar = ttk.BooleanVar(
             self, True, "generate_plots"
@@ -198,7 +216,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             text="ON",
         )
         self.generate_plots_true_button.grid(
-            row=4, column=1, padx=20, pady=10, sticky="ew"
+            row=7, column=1, padx=20, pady=10, sticky="ew"
         )
 
         self.generate_plots_false_button = ttk.Checkbutton(
@@ -209,24 +227,24 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             text="OFF",
         )
         self.generate_plots_false_button.grid(
-            row=4, column=2, padx=20, pady=10, sticky="ew"
+            row=7, column=2, padx=20, pady=10, sticky="ew"
         )
 
         # Output name
         self.output_name_label = ttk.Label(self, text="Output name")
-        self.output_name_label.grid(row=5, column=0, padx=20, pady=10, sticky="w")
+        self.output_name_label.grid(row=8, column=0, padx=20, pady=10, sticky="w")
 
         self.output_name: ttk.StringVar = ttk.StringVar(self, "results")
         self.output_name_entry = ttk.Entry(
             self, bootstyle=INFO, textvariable=self.output_name
         )
         self.output_name_entry.grid(
-            row=5, column=1, columnspan=2, padx=20, pady=10, sticky="ew", ipadx=80
+            row=8, column=1, columnspan=2, padx=20, pady=10, sticky="ew", ipadx=80
         )
 
         # Combines the functions to open the run screen and launch the simulation.
         self.run_simulation_frame = ttk.Frame(self)
-        self.run_simulation_frame.grid(row=6, column=0, columnspan=4)
+        self.run_simulation_frame.grid(row=9, column=0, columnspan=4)
 
         self.run_simulation_frame.columnconfigure(0, weight=4, minsize=800)
         self.run_simulation_frame.columnconfigure(1, weight=1)
@@ -497,24 +515,31 @@ class OptimisationFrame(ttk.Frame):
         # TODO: Add configuration frame widgets and layout
         self.pack(fill="both", expand=True)
 
-        self.rowconfigure(0, weight=20)  # scrolled frame
-        self.rowconfigure(1, weight=1)  # run optimisation button
+        self.rowconfigure(0, weight=1)  # info frame
+        self.rowconfigure(1, weight=20)  # scrolled frame
+        self.rowconfigure(2, weight=1)  # run optimisation button
 
         self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(3, weight=1)
+        self.columnconfigure(4, weight=1)
 
         # Create the scrollable frame and rows
         self.scrollable_optimisation_frame = ScrolledFrame(
             self,
         )
         self.scrollable_optimisation_frame.grid(
-            row=0,
+            row=1,
             column=0,
+            columnspan=5,
             padx=20,
             pady=10,
             ipady=0,
             ipadx=0,
             sticky="news",
         )
+        self.scrollable_optimisation_frame.config(width=30)
 
         # rows
         self.scrollable_optimisation_frame.rowconfigure(0, weight=1)
@@ -578,6 +603,38 @@ class OptimisationFrame(ttk.Frame):
         # self.iterations_frame.columnconfigure(1, weight=10)  # These rows have entries
         # self.iterations_frame.columnconfigure(2, weight=1)  # These rows have entries
         # self.iterations_frame.columnconfigure(3, weight=1)  # These rows have entries
+
+        bold_head = ttk.Style()
+        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))
+
+        # Help text
+        self.help_frame = ttk.Frame(self)
+        self.help_frame.grid(row=0, column=0, columnspan=4, padx=0, sticky="news")
+
+        self.help_frame.columnconfigure(0, weight=1)
+        self.help_frame.columnconfigure(1, weight=1)
+        self.help_frame.columnconfigure(2, weight=1)
+        self.help_frame.columnconfigure(3, weight=1)
+        self.help_frame.columnconfigure(4, weight=1)
+        self.help_frame.rowconfigure(0, weight=1)
+
+        # Help text
+        self.help_text_label = ttk.Label(
+            self.help_frame, text="Optimise a system", style="Bold.TLabel"
+        )
+        self.help_text_label.grid(
+            row=0, column=0, columnspan=2, padx=20, pady=20, sticky="w"
+        )
+
+        self.help_text_content = ttk.Label(
+            self.help_frame,
+            text="You can run an optimisation of the capacity of various components "
+            "within an energy system. Specify the length\nof time for which your "
+            "system will run, along with target and threhold criteria.",
+        )
+        self.help_text_content.grid(
+            row=0, column=2, columnspan=3, padx=20, pady=10, sticky="ew"
+        )
 
         # Warning about number of iterations
         self.iteration_length = ttk.IntVar(self, "5")
@@ -647,9 +704,6 @@ class OptimisationFrame(ttk.Frame):
                 )
 
         # Iteration header
-        bold_head = ttk.Style()
-        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))
-
         self.iteration_header = ttk.Label(
             self.scrollable_optimisation_frame, text="Iterations", style="Bold.TLabel"
         )
@@ -1434,7 +1488,7 @@ class OptimisationFrame(ttk.Frame):
 
         # Combines the functions to open the run screen and launch the simulation.
         self.run_optimisation_frame = ttk.Frame(self)
-        self.run_optimisation_frame.grid(row=5, column=0, columnspan=4)
+        self.run_optimisation_frame.grid(row=2, column=0, columnspan=5)
 
         self.run_optimisation_frame.columnconfigure(0, weight=1, minsize=800)
         self.run_optimisation_frame.columnconfigure(2, weight=1)
@@ -1449,7 +1503,7 @@ class OptimisationFrame(ttk.Frame):
             ),
         )
         self.run_optimisation_button.grid(
-            row=0, column=1, padx=5, pady=10, sticky="es", ipadx=20, ipady=20
+            row=0, column=1, padx=5, pady=10, sticky="es", ipadx=80, ipady=20
         )
 
         # TODO: Add configuration frame widgets and layout
@@ -1762,6 +1816,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.notebook_style.configure(
             "TNotebook.Tab", font=("TkDefaultFont", "14", "bold")
         )
+        self.notebook_style.configure("TScrollbar", width=50)
 
         self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
         self.configuration_notebook.grid(
@@ -1772,7 +1827,11 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         style.configure("TNotebook.Tab", width=int(self.winfo_screenwidth() / 4))
 
         self.configuration_frame = ConfigurationFrame(
-            self.configuration_notebook, data_directory, open_details_window
+            self.configuration_notebook,
+            data_directory,
+            open_details_window,
+            self.pv_button_configuration_callback,
+            self.storage_button_configuration_callback,
         )
         self.configuration_notebook.add(
             self.configuration_frame, text="Configure", sticky="news"
@@ -1900,6 +1959,48 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         self.clover_thread = clover_thread(clover_args)
         self.open_run_screen(self.clover_thread)
+
+    def pv_button_configuration_callback(self, solar_pv_selected: bool) -> None:
+        """
+        Used to toggle the PV buttons on other configuration screens based on scenario.
+
+        :param: solar_pv_selected
+            Whether solar PV is selected.
+
+        """
+
+        if solar_pv_selected:
+            self.simulation_frame.pv_size_entry.configure(state=(_enabled := "enabled"))
+            self.optimisation_frame.pv_max_entry.configure(state=_enabled)
+            self.optimisation_frame.pv_min_entry.configure(state=_enabled)
+            self.optimisation_frame.pv_step_entry.configure(state=_enabled)
+        else:
+            self.simulation_frame.pv_size_entry.configure(state=DISABLED)
+            self.optimisation_frame.pv_max_entry.configure(state=DISABLED)
+            self.optimisation_frame.pv_min_entry.configure(state=DISABLED)
+            self.optimisation_frame.pv_step_entry.configure(state=DISABLED)
+
+    def storage_button_configuration_callback(self, batteries_selected: bool) -> None:
+        """
+        Used to toggle the battery buttons on configuration screens based on scenario.
+
+        :param: batteries_selected
+            Whether batteries are selected.
+
+        """
+
+        if batteries_selected:
+            self.simulation_frame.storage_size_entry.configure(
+                state=(_enabled := "enabled")
+            )
+            self.optimisation_frame.storage_max_entry.configure(state=_enabled)
+            self.optimisation_frame.storage_min_entry.configure(state=_enabled)
+            self.optimisation_frame.storage_step_entry.configure(state=_enabled)
+        else:
+            self.simulation_frame.storage_size_entry.configure(state=DISABLED)
+            self.optimisation_frame.storage_max_entry.configure(state=DISABLED)
+            self.optimisation_frame.storage_min_entry.configure(state=DISABLED)
+            self.optimisation_frame.storage_step_entry.configure(state=DISABLED)
 
     def set_location(self, location_name: str) -> None:
         """

@@ -46,10 +46,21 @@ class ConfigurationFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent, data_directory: str, open_details_window: Callable):
+    def __init__(
+        self,
+        parent,
+        data_directory: str,
+        open_details_window: Callable,
+        pv_button_configuration_callback: Callable,
+        storage_button_configuration_callback: Callable,
+    ):
         super().__init__(parent)
 
         self.open_details_window = open_details_window
+        self.pv_button_configuration_callback = pv_button_configuration_callback
+        self.storage_button_configuration_callback = (
+            storage_button_configuration_callback
+        )
 
         self.columnconfigure(0, weight=4)
 
@@ -938,12 +949,14 @@ class ConfigurationFrame(ttk.Frame):
     def pv_button_callback(self):
         self.solar_pv_selected.set(not self.solar_pv_selected.get())
         self.pv_button.configure(image=self.solar_images[self.solar_pv_selected.get()])
+        self.pv_button_configuration_callback(self.solar_pv_selected.get())
 
     def battery_button_callback(self):
         self.battery_selected.set(not self.battery_selected.get())
         self.battery_button.configure(
             image=self.battery_images[self.battery_selected.get()]
         )
+        self.storage_button_configuration_callback(self.battery_selected.get())
 
     def diesel_button_callback(self):
         self.diesel_selected.set(not self.diesel_selected.get())
@@ -1201,3 +1214,7 @@ class ConfigurationFrame(ttk.Frame):
         self.prioritise_self_generation_combobox.set(
             str(scenario.prioritise_self_generation).capitalize()
         )
+
+        # Update the buttons on the parent frame based on the scenario.
+        self.pv_button_configuration_callback(self.solar_pv_selected.get())
+        self.storage_button_configuration_callback(self.battery_selected.get())
