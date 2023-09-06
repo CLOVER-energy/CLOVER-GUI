@@ -102,6 +102,7 @@ class App(ttk.Window):
         self._data_directory: str | None = None
         self.location_name: ttk.StringVar = ttk.StringVar(self, "")
         self.logger = get_logger("clover_gui", False)
+        self.output_directory_name: ttk.StringVar = ttk.StringVar(self, "")
 
         # Open the settings file
         (
@@ -538,6 +539,7 @@ class App(ttk.Window):
         self.run_screen.pack(fill="both", expand=True)
         self.run_screen.clover_progress_bar["value"] = 0
         self.run_screen.clover_progress_bar.configure(bootstyle=f"{SUCCESS}-striped")
+        self.run_screen.message_text_label.configure(text="Launching CLOVER")
         self.run_screen.stdout_data = ""
         self.run_screen.run_with_clover(clover_thread)
 
@@ -741,14 +743,24 @@ class App(ttk.Window):
         # Load-location
         self.load_location_window: LoadLocationWindow | None = None
 
+        # Post run
+        self.post_run_screen = PostRunScreen(
+            self.open_configuration_frame,
+            self.open_load_location_window,
+            self.open_new_location_frame_post_run,
+            self.output_directory_name,
+        )
+
         # Configuration
         self.configuration_screen = ConfigurationScreen(
             self.data_directory,
             self.location_name,
             self.open_details_window,
+            self.open_run_screen,
+            self.output_directory_name,
             self.save_configuration,
             self.system_lifetime,
-            self.open_run_screen,
+            self.post_run_screen.update_output_directory_name,
         )
         self.configuration_screen.pack_forget()
 
@@ -761,13 +773,6 @@ class App(ttk.Window):
 
         # Run
         self.run_screen = RunScreen(self.data_directory, self.open_post_run_screen)
-
-        # Post run
-        self.post_run_screen = PostRunScreen(
-            self.open_configuration_frame,
-            self.open_load_location_window,
-            self.open_new_location_frame_post_run,
-        )
 
         self.splash.set_progress_bar_progress(100)
 

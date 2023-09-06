@@ -1745,9 +1745,11 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         data_directory: str,
         location_name: ttk.StringVar,
         open_details_window: Callable,
+        open_run_screen: Callable,
+        output_directory_name: ttk.StringVar,
         save_configuration: Callable,
         system_lifetime: ttk.IntVar,
-        open_run_screen: Callable,
+        update_post_run_screen_output_directory_name: Callable,
     ) -> None:
         """
         Instantiate a :class:`ConfigureFrame` instance.
@@ -1761,19 +1763,33 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         :param: open_details_window
             A callable function to open the details screen.
 
+        :param: open_run_screen
+            A callable function to open the run screen.
+
+        :param: output_directory_name
+            The output filename for displaying files once a run has compmleted.
+
         :param: save_configuration
             A callable function to save the configuration.
 
         :param: system_lifetime
             The lifetime of the system, in years.
 
+        :param: update_post_run_screen_output_directory_name
+            Updates the post-run screen with the correct directory to look in for the
+            outputs from the CLOVER run.
+
         """
 
         super().__init__()
 
         self.open_run_screen: Callable = open_run_screen
+        self.output_directory_name: ttk.StringVar = output_directory_name
         self.save_configuration: Callable = save_configuration
         self.system_lifetime: ttk.IntVar = system_lifetime
+        self.update_post_run_screen_output_directory_name: Callable = (
+            update_post_run_screen_output_directory_name
+        )
 
         self.pack(fill="both", expand=True)
         self.columnconfigure(0, weight=1, minsize=100)
@@ -1816,7 +1832,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.notebook_style.configure(
             "TNotebook.Tab", font=("TkDefaultFont", "14", "bold")
         )
-        self.notebook_style.configure("TScrollbar", width=50)
+        # self.notebook_style.configure("TScrollbar", width=50)
 
         self.configuration_notebook = ttk.Notebook(self, bootstyle=f"{INFO}")
         self.configuration_notebook.grid(
@@ -1834,7 +1850,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             self.storage_button_configuration_callback,
         )
         self.configuration_notebook.add(
-            self.configuration_frame, text="Configure", sticky="news
+            self.configuration_frame, text="Configure", sticky="news"
         )
 
         self.simulation_frame = SimulationFrame(
@@ -1946,9 +1962,17 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             clover_args.extend(
                 [
                     "-o",
-                    str(self.simulation_frame.output_name.get())
-                    + datetime.datetime.now().strftime("_%Y_%m_%d_%H_%M_%S_%f"),
+                    (
+                        output_name := str(self.simulation_frame.output_name.get())
+                        + datetime.datetime.now().strftime("_%Y_%m_%d_%H_%M_%S_%f")
+                    ),
                 ]
+            )
+
+            # Set the output filename variable
+            self.output_directory_name.set(output_name)
+            self.update_post_run_screen_output_directory_name(
+                self.output_directory_name.get()
             )
 
         if operating_mode == OperatingMode.OPTIMISATION:

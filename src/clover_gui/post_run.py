@@ -9,6 +9,8 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
+import os
+
 from dataclasses import dataclass
 from typing import Callable
 
@@ -22,6 +24,38 @@ from .__utils__ import BaseScreen
 
 
 __all__ = ("PostRunScreen",)
+
+# Plot base name:
+#   The base name to use for plots.
+PLOT_BASE_NAME: str = f"simulation_1_plots{os.path.sep}" + "{filename}"
+
+# Displayable outputs:
+#   A map between output titles and filenames which can be displayed in the outputs.
+DISAPLYABLE_OUTPUTS: dict[str, str] = {
+    "Summary": "info_file.json",
+    "Annaul electric demand": PLOT_BASE_NAME.format(
+        filename="electric_demand_annual_variation.png"
+    ),
+    "Electric demands by demand type": PLOT_BASE_NAME.format(
+        filename="electric_demands.png"
+    ),
+    "Electric demands by device": PLOT_BASE_NAME.format(
+        filename="electric_device_loads.png"
+    ),
+    "Electric demands by device": PLOT_BASE_NAME.format(
+        filename="electric_device_loads.png"
+    ),
+    "Electric load growth": PLOT_BASE_NAME.format(filename="electric_load_growth.png"),
+    "Electricity availability": PLOT_BASE_NAME.format(
+        filename="electricity_availability_on_average_day.png"
+    ),
+    "Electricity use on average": PLOT_BASE_NAME.format(
+        filename="electricity_use_on_average_day.png"
+    ),
+    "Electricity use on day one": PLOT_BASE_NAME.format(
+        filename="electricity_use_on_first_day.png"
+    ),
+}
 
 
 @dataclass
@@ -40,9 +74,21 @@ class Output:
 
     """
 
-    available: ttk.BooleanVar
     filepath: ttk.StringVar
     title: ttk.StringVar
+    _available: ttk.BooleanVar | None = None
+
+    def __hash__(self) -> int:
+        """Return a hash of the output for sorting and dictionary mappings."""
+
+        return hash(self.filepath.get())
+
+    @property
+    def available(self) -> ttk.BooleanVar:
+        """Return whether the output is available for displaying."""
+
+        if self._available is None:
+            self._available = os.path.isfile(self.filepath.get())
 
 
 class OutputsSelectionFrame(ScrolledFrame):
@@ -53,13 +99,8 @@ class OutputsSelectionFrame(ScrolledFrame):
 
     """
 
-    def __init__(
-        self, parent, select_output: Callable, update_outputs_viewer_frame: Callable
-    ):
+    def __init__(self, parent, select_output: Callable):
         super().__init__(parent)
-
-        # Duplicate functional call
-        self.update_outputs_viewer_frame = update_outputs_viewer_frame
 
         self.output_selected_buttons: dict[Output, ttk.Button] = {
             output: ttk.Button(
@@ -72,21 +113,24 @@ class OutputsSelectionFrame(ScrolledFrame):
         }
 
         # Configure column and row weights
-        for row_index in range(self.output_selected_buttons):
+        for row_index in range(len(self.output_selected_buttons)):
             self.rowconfigure(row_index, weight=1)
 
         self.columnconfigure(0, weight=1)
 
         for index, output in enumerate(self.output_selected_buttons.keys()):
-            (button:=self.output_selected_buttons[output]).grid(row=index, column=0, padx=10, pady=5, sticky="ew")
+            (button := self.output_selected_buttons[output]).grid(
+                row=index, column=0, padx=10, pady=5, sticky="ew"
+            )
 
             # Disable the button if the output isn't available.
-            if not output.available.get():
+            if not output.available:
                 button.configure(state=DISABLED)
                 ToolTip(
                     button,
                     style=f"{INFO}.{OUTLINE}",
-                    text="This output can't be viewed. This is likely due to it not\n""being applicable to the type of CLOVER run you launched.",
+                    text="This output can't be viewed. This is likely due to it not\n"
+                    "being applicable to the type of CLOVER run you launched.",
                 )
 
 
@@ -105,9 +149,13 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         open_configuration_screen: Callable,
         open_load_location_post_run: Callable,
         open_new_location_post_run: Callable,
+        output_directory_name: ttk.StringVar,
     ) -> None:
         """
         Instantiate a :class:`ConfigureFrame` instance.
+
+        :param: location_name
+            The name of the location being simulated or optimised.
 
         :param: open_configuration_screen
             Function that opens the configuration screen.
@@ -118,10 +166,25 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         :param: open_new_location_post_run
             Function that opens the new-location screen post-run.
 
+        :param: output_filename
+            The output filename for displaying files once a run has compmleted.
+
         """
 
         super().__init__()
 
+        self.output_directory_name: ttk.StringVar = output_directory_name
+
+        # Create the list of outputs available for viewing.
+        self.outputs: list[Output] = [
+            Output(
+                ttk.StringVar(self, self._output_filename(output_filename)),
+                ttk.StringVar(self, output_title),
+            )
+            for output_title, output_filename in DISAPLYABLE_OUTPUTS.items()
+        ]
+
+        # Configure the row and column weights.
         self.columnconfigure(0, weight=1)
 
         self.rowconfigure(0, weight=1, minsize=40)
@@ -133,9 +196,7 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.finished_label = ttk.Label(
             self, bootstyle=INFO, text="CLOVER RUN FINISHED", font="80"
         )
-        self.finished_label.grid(
-            row=0, column=0, sticky="ew", padx=60, pady=20
-        )
+        self.finished_label.grid(row=0, column=0, sticky="ew", padx=60, pady=20)
 
         # Next-step options
         self.next_steps_frame = ttk.Frame(self)
@@ -149,9 +210,7 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.next_steps_frame.rowconfigure(0, weight=1)
 
         self.next_steps_label = ttk.Label(self.next_steps_frame, text="Next steps:")
-        self.next_steps_label.grid(
-            row=0, column=0, sticky="ew", padx=(0, 10), pady=5
-        )
+        self.next_steps_label.grid(row=0, column=0, sticky="ew", padx=(0, 10), pady=5)
 
         self.configure_button = ttk.Button(
             self.next_steps_frame,
@@ -175,13 +234,25 @@ class PostRunScreen(BaseScreen, show_navigation=True):
             text="Load a different location",
             command=open_load_location_post_run,
         )
-        self.load_location_button.grid(row=0, column=3, sticky="news", padx=(10, 0), pady=5)
+        self.load_location_button.grid(
+            row=0, column=3, sticky="news", padx=(10, 0), pady=5
+        )
 
         # Output viewer
         self.outputs_frame = ttk.Frame(self)
         self.outputs_frame.grid(row=2, column=0, sticky="news")
 
-        self.
+        self.outputs_frame.columnconfigure(0, weight=1)
+        self.outputs_frame.columnconfigure(1, weight=1)
+
+        self.outputs_frame.rowconfigure(0, weight=1)
+
+        self.outputs_selection_frame = OutputsSelectionFrame(
+            self.outputs_frame, self._select_output
+        )
+        self.outputs_selection_frame.grid(
+            row=0, column=0, sticky="news", padx=(60, 0), pady=5
+        )
 
         # Navigation buttons
         self.bottom_bar_frame = ttk.Frame(self)
@@ -221,6 +292,17 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         )
         self.forward_button.grid(row=0, column=2, padx=20, pady=(10, 20), sticky="news")
 
+    def _output_filename(self, output_filename: str) -> str:
+        """
+        Determine the path to the output file based on the location.
+
+        :param: output_filename
+            The name of the file to find.
+
+        """
+
+        return os.path.join(self.output_directory_name.get(), output_filename)
+
     def _select_output(self, output: Output) -> None:
         """
         Select the output for viewing..
@@ -231,3 +313,18 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         """
 
         pass
+
+    def update_output_directory_name(self, output_directory_name: str) -> None:
+        """
+        Update the output directory path based on the inputs.
+
+        :param: output_directory_name
+            The name of the outputs directory to set.
+
+        """
+
+        # Update the output directory name
+        self.output_directory_name.set(output_directory_name)
+
+        # Re-update all the buttons to reflect the new potential availability
+        # TODO
