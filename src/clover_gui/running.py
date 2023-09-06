@@ -10,15 +10,15 @@
 ########################################################################################
 
 import os
+import re
 import tkinter as tk
 
 from io import TextIOWrapper
 from subprocess import Popen
 from threading import Event, Thread
-from typing import Callable
+from typing import Callable, Pattern
 
 import ttkbootstrap as ttk
-
 
 from clover.scripts.clover import clover_main
 from ttkbootstrap.constants import *
@@ -27,6 +27,64 @@ from ttkbootstrap.scrolled import *
 from .__utils__ import BaseScreen, CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY
 
 __all__ = ("RunScreen",)
+
+# Beginning CLOVER simulation runs regex:
+#   Regex used for determining whether CLOVER simulation runs are finished.
+BEGINNING_CLOVER_RUNS_REGEX: Pattern[str] = re.compile(
+    r"Beginning CLOVER (simulation|optimisation) runs \.*\s*\[\s*(?P<donefail>DONE|FAILED)\s*\]"
+)
+
+# CLOVER Optimisation regex:
+#   Regex used for determining whether CLOVER is running an optimisation.
+CLOVER_OPTIMISATION_REGEX: Pattern[str] = re.compile(
+    r"Beginning CLOVER optimisation runs"
+)
+
+# Done-fail:
+#   Match name for done-fail group.
+DONE_FAIL: str = "donefail"
+
+# Fail:
+#   Keyword used for matching failed steps.
+FAILED: str = "FAILED"
+
+# Inputs file parsing regex:
+#   Regx used for determining whether the input files were parsed successfully or not.
+INPUTS_FILE_PARSING_REGEX: Pattern[str] = re.compile(
+    r"Parsing input files \.*\s*\[\s*(?P<donefail>DONE|FAILED)\s*\]"
+)
+
+# Location verification regex:
+#   Regex used for determining whether the location verification was successful or not.
+LOCATION_VERIFICATION_REGEX: Pattern[str] = re.compile(
+    r"Verifying location information \.*\s*\[\s*(?P<donefail>DONE|FAILED)\s*\]"
+)
+
+# Optimisation regex:
+#   Regex used for determining whether CLOVER is running an optimisation.
+OPTIMISATION_REGEX: Pattern[str] = re.compile(r"optimisations\:")
+
+# Plots regex:
+#   Regex used for determining whether the plots are being generated.
+PLOTS_REGEX: Pattern[str] = re.compile(r"plots\:")
+
+# Profile generation regex:
+#   Regex used for determining whether the profile generation was successful or not.
+PROFILE_GENERATION_REGEX: Pattern[str] = re.compile(
+    r"Generating necessary profiles \.*\s*\[\s*(?P<donefail>DONE|FAILED)\s*\]"
+)
+
+# Renewables ninja error regex:
+#   Regex used for determining whether a renewables.ninja error has occurred.
+RENEWABLES_NINJA_ERROR_REGEX: Pattern[str] = re.compile(r"RenewablesNinjaError\(")
+
+# Saving ouptut files regex:
+#   Regec used for determinng whether CLOVER has begun saving ouptut files.
+SAVING_OUTPUT_FILES_REGEX: Pattern[str] = re.compile(r"saving output files:")
+
+# Simulation regex:
+#   Regex used for determining whether CLOVER is running a simulation.
+SIMULATION_REGEX: Pattern[str] = re.compile(r"Running a simulation with\:")
 
 
 class StoppableThread(Thread):
@@ -94,12 +152,20 @@ class RunScreen(BaseScreen, show_navigation=True):
 
         self.clover_thread: Popen | None = None
 
+        # Create progress text
+        self.message_text_label: ttk.Label = ttk.Label(
+            self, bootstyle=SUCCESS, text="Launching CLOVER", font=("TkDefaultFont", 14)
+        )
+        self.message_text_label.grid(
+            row=1, column=0, columnspan=4, sticky="w", padx=20, pady=5
+        )
+
         # Create a progress bar
         self.clover_progress_bar: ttk.Progressbar = ttk.Progressbar(
             self, bootstyle=f"{SUCCESS}-striped", mode="determinate"
         )
         self.clover_progress_bar.grid(
-            row=1, column=0, columnspan=4, sticky="ew", ipadx=60, padx=20, pady=5
+            row=2, column=0, columnspan=4, sticky="ew", ipadx=60, padx=20, pady=5
         )
 
         # Stop the clover thread with a button.
@@ -107,21 +173,26 @@ class RunScreen(BaseScreen, show_navigation=True):
             self, text="STOP", bootstyle=f"{DANGER}-inverted", command=self.stop
         )
         self.stop_button.grid(
-            row=1, column=4, padx=20, pady=5, ipadx=80, ipady=10, sticky="e"
+            row=1, column=4, rowspan=2, padx=20, pady=5, ipadx=80, ipady=30, sticky="e"
         )
 
         self.sub_process_frame = ScrolledFrame(self)
         self.sub_process_frame.grid(
-            row=2, column=0, columnspan=5, sticky="news", padx=10, pady=5
+            row=3, column=0, columnspan=5, sticky="news", padx=10, pady=5
         )
 
         self.courier_style = ttk.Style()
         self.courier_style.configure("Courier.Label", font=("Courier", 16))
 
         self.sub_process_label = ttk.Label(
-            self.sub_process_frame, bootstyle=f"{DARK}.Courier.Label"
+            self.sub_process_frame,
+            bootstyle=f"{DARK}.Courier.Label",
+            text="",
+            width=300,
         )
-        self.sub_process_label.grid(row=0, column=0, sticky="news", padx=10, pady=5)
+        self.sub_process_label.grid(
+            row=0, column=0, sticky="news", padx=10, pady=5, ipadx=300
+        )
 
         # Add navigation buttons
         self.back_button = ttk.Button(
@@ -130,7 +201,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             bootstyle=f"{PRIMARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_back(self),
         )
-        self.back_button.grid(row=3, column=0, padx=10, pady=5)
+        self.back_button.grid(row=4, column=0, padx=10, pady=5)
 
         self.home_button = ttk.Button(
             self,
@@ -138,7 +209,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             bootstyle=f"{PRIMARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_home(self),
         )
-        self.home_button.grid(row=3, column=1, padx=10, pady=5)
+        self.home_button.grid(row=4, column=1, padx=10, pady=5)
 
         self.forward_button = ttk.Button(
             self,
@@ -146,7 +217,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             bootstyle=f"{PRIMARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_forward(self),
         )
-        self.forward_button.grid(row=3, column=2, padx=10, pady=5)
+        self.forward_button.grid(row=4, column=2, padx=10, pady=5)
 
         self.post_run_button = ttk.Button(
             self,
@@ -156,11 +227,103 @@ class RunScreen(BaseScreen, show_navigation=True):
             state=DISABLED,
         )
         self.post_run_button.grid(
-            row=3, column=4, sticky="e", padx=20, pady=5, ipadx=80, ipady=20
+            row=4, column=4, sticky="e", padx=20, pady=5, ipadx=80, ipady=20
         )
 
         # Create a buffer for the stdout
         self.stdout_data: str = " " * 180
+
+    def _update_progress_bar_and_text(self, new_data: str) -> None:
+        """
+        Update the progress bar and explainer text based on the stdout data.
+
+        :param: new_data
+            The stdout output text.
+
+        """
+
+        if "Copyright" in new_data:
+            self.message_text_label.configure(text="Verifying location")
+
+        # Move the progress bar if location verification completed.
+        if (
+            location_verification_match := re.search(
+                LOCATION_VERIFICATION_REGEX, new_data
+            )
+        ) is not None:
+            if location_verification_match.group(DONE_FAIL) == FAILED:
+                self.message_text_label.configure(
+                    text="Location verification failed. Please check that all input\n"
+                    "files are present. See below for more information",
+                    style=DANGER,
+                )
+            else:
+                self.push_progress_bar(20)
+                self.message_text_label.configure(text="Parsing input files")
+
+        # Move the progress bar if input files were successfully parsed.
+        if (
+            input_file_parsing_match := re.search(INPUTS_FILE_PARSING_REGEX, new_data)
+        ) is not None:
+            if input_file_parsing_match.group(DONE_FAIL) == FAILED:
+                self.message_text_label.configure(
+                    text="Input file parsing failed. Please check that all input \n"
+                    "files are of the correct format. See below for more information",
+                    style=DANGER,
+                )
+            else:
+                self.push_progress_bar(20)
+                self.message_text_label.configure(
+                    text="Generating load profiles and fetching solar data"
+                )
+
+        # Move the progress bar if profiles were generated and fetched correctly.
+        if (
+            profile_generation_match := re.search(PROFILE_GENERATION_REGEX, new_data)
+        ) is not None:
+            if profile_generation_match.group(DONE_FAIL) == FAILED:
+                self.message_text_label.configure(
+                    text="Failed to generate load profiles. See below for more "
+                    "information",
+                    style=DANGER,
+                )
+            else:
+                self.push_progress_bar(20)
+                self.message_text_label.configure(text="Running CLOVER")
+
+        # If renewables ninja failed, display an error.
+        if re.search(RENEWABLES_NINJA_ERROR_REGEX, new_data) is not None:
+            self.message_text_label.configure(
+                text="Error fetching data from renewables.ninja. Please check your "
+                "API \nkey under 'edit > preferences'."
+            )
+
+        # Update the message if a simulation is being run.
+        if re.search(SIMULATION_REGEX, new_data) is not None:
+            self.message_text_label.configure(text="Running a CLOVER simulation")
+
+        # Update the message if an optimisation is being run.
+        if re.search(OPTIMISATION_REGEX, new_data) is not None:
+            self.message_text_label.configure(text="Running a CLOVER optimisation")
+
+        # If CLOVER is generating plots, update the output
+        if re.search(PLOTS_REGEX, new_data) is not None:
+            self.message_text_label.configure(text="Generating plots")
+
+        if re.search(SAVING_OUTPUT_FILES_REGEX, new_data) is not None:
+            self.push_progress_bar(20)
+            self.message_text_label.configure(text="Saving output files")
+
+        if (
+            clover_runs_match := re.search(BEGINNING_CLOVER_RUNS_REGEX, new_data)
+        ) is not None:
+            if clover_runs_match.group(DONE_FAIL) == FAILED:
+                self.message_text_label.configure(
+                    text="CLOVER runs failed. See below for more information."
+                )
+            else:
+                self.push_progress_bar(20)
+                self.message_text_label.configure(text="CLOVER runs completed")
 
     def read_output(self, pipe: TextIOWrapper):
         """
@@ -188,8 +351,7 @@ class RunScreen(BaseScreen, show_navigation=True):
                     )
                 )
 
-                if "100%" in new_data:
-                    self.push_progress_bar(20)
+                self._update_progress_bar_and_text(new_data)
 
                 # Scroll to the bottom
                 self.sub_process_frame.yview_moveto(1)
@@ -248,9 +410,8 @@ class RunScreen(BaseScreen, show_navigation=True):
         self.sub_process_frame.enable_scrolling()
 
         # Enable the post-run button if the run completed successfully.
-        self.push_progress_bar(100)
-
         if clover_return_code == 0:
             self.post_run_button.configure(state="enabled")
+            self.push_progress_bar(100)
         else:
             self.clover_progress_bar.configure(bootstyle=f"{DANGER}-striped")

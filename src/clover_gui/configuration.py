@@ -345,7 +345,7 @@ class ThresholdCriterion:
         Criterion.TOTAL_GHGS: "Total ghgs / kgCO2eq",
         Criterion.TOTAL_SYSTEM_COST: "Total system cost / $",
         Criterion.TOTAL_SYSTEM_GHGS: "Total system ghgs / kgCO2eq",
-        Criterion.TOTAL_COST: "Total_cost / $",
+        Criterion.TOTAL_COST: "Total cost / $",
         Criterion.UNMET_ENERGY_FRACTION: "Unmet energy fraction",
     }
 
@@ -1601,22 +1601,7 @@ class OptimisationFrame(ttk.Frame):
         """Populate the combo box with the set of avialable batteries."""
 
         self.optimisation_criterion_entry["values"] = [
-            "LCUE ($/kWh)",
-            "Emissions intensity (gCO2/kWh)",
-            "Unmet energy fraction",
-            "Blackouts",
-            "Clean water blackouts",
-            "Cumulative cost ($)",
-            "Cumulative ghgs (kgCO2eq)",
-            "Cumulative system cost ($)",
-            "Cumulative system ghgs (kgCO2eq)",
-            "Total_cost ($)",
-            "Total system cost ($)",
-            "Total ghgs (kgCO2eq)",
-            "Total system ghgs (kgCO2eq)",
-            "Kerosene cost mitigated ($)",
-            "Kerosene ghgsm mitigated (kgCO2eq)",
-            "Renewables fraction",
+            str(entry) for entry in ThresholdCriterion.criterion_to_name_map.values()
         ]
 
     def populate_minmax(self) -> None:
