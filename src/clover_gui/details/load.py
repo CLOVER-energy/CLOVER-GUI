@@ -11,6 +11,7 @@
 
 import csv
 import os
+import subprocess
 import tkinter as tk
 
 from typing import Any, Callable
@@ -382,7 +383,7 @@ class CSVEntryFrame(ttk.Frame):
                 load_cells[row].append([])
 
         # Create the labels
-        for row in range(len(ary) + 1):
+        for index, row in enumerate(range(len(ary) + 1)):
             if row == 0:
                 tmp = ttk.Label(
                     self, width=cell_width, bootstyle=f"{SUCCESS}-{INVERSE}", text=""
@@ -395,20 +396,32 @@ class CSVEntryFrame(ttk.Frame):
                     text=(" " if row < 10 else "") + str(row),
                 )
 
-            tmp.grid(padx=2, pady=1, column=0, row=row, sticky="ew")
+            tmp.grid(
+                padx=2,
+                pady=1,
+                column=0,
+                row=row,
+                sticky="ew",
+            )
 
-        for column in range(len(ary[0])):
+        for index, column in enumerate(range(len(ary[0]))):
             tmp = ttk.Label(
                 self,
                 width=cell_width,
                 bootstyle=f"{SUCCESS}-{INVERSE}",
                 text=_MONTHS[column],
             )
-            tmp.grid(padx=2, pady=1, row=0, column=column + 1, sticky="ew")
+            tmp.grid(
+                padx=(2, 2 if index != (len(ary[0]) - 1) else 15),
+                pady=1,
+                row=0,
+                column=column + 1,
+                sticky="ew",
+            )
 
         # Create the new cells
         for row in range(len(ary)):
-            for column in range(len(ary[0])):
+            for index, column in enumerate(range(len(ary[0]))):
                 tmp = ttk.Entry(self, width=cell_width)
                 tmp.bind("<Tab>", self.focus_tab)
                 tmp.bind("<Shift-Tab>", self.focus_sh_tab)
@@ -431,7 +444,13 @@ class CSVEntryFrame(ttk.Frame):
                 tmp.focus_force()
                 self.cell_list.append(tmp)
 
-                tmp.grid(padx=2, pady=1, column=column + 1, row=row + 1, sticky="ew")
+                tmp.grid(
+                    padx=(2, 2 if index != (len(ary[0]) - 1) else 15),
+                    pady=1,
+                    column=column + 1,
+                    row=row + 1,
+                    sticky="ew",
+                )
 
         self.current_cells = load_cells
         self.current_cell = self.current_cells[0][0]
@@ -692,10 +711,31 @@ class DeviceSettingsFrame(ttk.Labelframe):
         # bold_head = ttk.Style()
         # bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 13, "bold"))
         self.device_utilisation_header = ttk.Label(
-            self.scrollable_frame, text="Device Utilisation Profile", style=SUCCESS
+            self.scrollable_frame,
+            text="Device Utilisation Profile",
+            style=SUCCESS,
+            font=("TkDefaultFont", 12, "bold"),
         )
         self.device_utilisation_header.grid(
-            row=10, column=0, padx=10, pady=5, sticky="w"
+            row=10, column=0, padx=10, pady=5, sticky="w", columnspan=3
+        )
+
+        self.edit_file_text = ttk.Label(
+            self.scrollable_frame,
+            text="Edit the device utilisation below or\nin your native CSV editor",
+        )
+        self.edit_file_text.grid(
+            row=11, column=0, padx=10, pady=5, sticky="news", columnspan=2
+        )
+
+        self.edit_file_button = ttk.Button(
+            self.scrollable_frame,
+            command=parent.open_utilisation_profile_file,
+            bootstyle=f"{SUCCESS}",
+            text="Edit file",
+        )
+        self.edit_file_button.grid(
+            row=11, column=2, padx=10, pady=5, ipadx=20, sticky="ew"
         )
 
         # Device utilisation
@@ -703,7 +743,7 @@ class DeviceSettingsFrame(ttk.Labelframe):
             master=self.scrollable_frame,
         )
         self.csv_entry_frame.grid(
-            row=11, column=0, columnspan=3, sticky="news", padx=5, pady=5
+            row=12, column=0, columnspan=3, sticky="news", padx=5, pady=5
         )
 
 
@@ -918,6 +958,18 @@ class LoadFrame(ttk.Frame):
         # for row in self.settings_frame.scrollable_frame.csv_entry_frame.current_cells:
         #     for cell in row:
         #         cell.configure(state="enabled")
+
+    def open_utilisation_profile_file(self) -> None:
+        """
+        Function called when the open-utilisation file button is depressed.
+
+        The open-utilisation button enables a user to edit a device's utilsiation
+        profile in their native CSV editor. When depressed, this button should cause the
+        native CSV editor to load.
+
+        """
+
+        subprocess.Popen(["open", self.settings_frame.csv_entry_frame.filename])
 
     def _open_load_file(self) -> None:
         """Function called when the open-load file button is depressed."""
