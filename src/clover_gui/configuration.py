@@ -1834,7 +1834,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             self.storage_button_configuration_callback,
         )
         self.configuration_notebook.add(
-            self.configuration_frame, text="Configure", sticky="news"
+            self.configuration_frame, text="Configure", sticky="news
         )
 
         self.simulation_frame = SimulationFrame(
