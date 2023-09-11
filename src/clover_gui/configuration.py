@@ -10,14 +10,28 @@
 ########################################################################################
 
 import datetime
+import os
 import tkinter as tk
 
 import ttkbootstrap as ttk
 
 from typing import Callable
 
-from clover import OperatingMode, Simulation
-from clover.__utils__ import ITERATION_LENGTH, MAX, MIN, NUMBER_OF_ITERATIONS, STEP
+from clover import (
+    OperatingMode,
+    OPTIMISATION_OUTPUTS_FOLDER,
+    OUTPUTS_FOLDER,
+    Simulation,
+    SIMULATION_OUTPUTS_FOLDER,
+)
+from clover.__utils__ import (
+    ITERATION_LENGTH,
+    LOCATIONS_FOLDER_NAME,
+    MAX,
+    MIN,
+    NUMBER_OF_ITERATIONS,
+    STEP,
+)
 from clover.fileparser import OPTIMISATIONS
 from clover.optimisation import Optimisation, OptimisationParameters, ThresholdMode
 from clover.optimisation.__utils__ import (
@@ -1972,7 +1986,14 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             # Set the output filename variable
             self.output_directory_name.set(output_name)
             self.update_post_run_screen_output_directory_name(
-                self.output_directory_name.get()
+                os.path.join(
+                    LOCATIONS_FOLDER_NAME,
+                    self.location_name.get(),
+                    SIMULATION_OUTPUTS_FOLDER
+                    if operating_mode == OperatingMode.SIMULATION
+                    else OPTIMISATION_OUTPUTS_FOLDER,
+                    (self.output_directory_name.get()),
+                )
             )
 
         if operating_mode == OperatingMode.OPTIMISATION:

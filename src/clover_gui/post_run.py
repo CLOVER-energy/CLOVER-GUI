@@ -57,6 +57,11 @@ DISAPLYABLE_OUTPUTS: dict[str, str] = {
     ),
 }
 
+OUTPUT_UNAVAILABLE_TOOLTIP_TEXT: str = (
+    "This output can't be viewed. This is likely due to it not being applicable to the "
+    "type of CLOVER run you launched.",
+)
+
 
 @dataclass
 class Output:
@@ -76,7 +81,6 @@ class Output:
 
     filepath: ttk.StringVar
     title: ttk.StringVar
-    _available: ttk.BooleanVar | None = None
 
     def __hash__(self) -> int:
         """Return a hash of the output for sorting and dictionary mappings."""
@@ -87,8 +91,7 @@ class Output:
     def available(self) -> ttk.BooleanVar:
         """Return whether the output is available for displaying."""
 
-        if self._available is None:
-            self._available = os.path.isfile(self.filepath.get())
+        return os.path.isfile(self.filepath.get())
 
 
 class OutputsSelectionFrame(ScrolledFrame):
@@ -99,17 +102,17 @@ class OutputsSelectionFrame(ScrolledFrame):
 
     """
 
-    def __init__(self, parent, select_output: Callable):
+    def __init__(self, parent, outputs: list[Output], select_output: Callable):
         super().__init__(parent)
 
         self.output_selected_buttons: dict[Output, ttk.Button] = {
             output: ttk.Button(
                 self,
                 command=lambda output=output: select_output(output),
-                style=f"{SUCCESS}.{OUTLINE}",
+                style=f"success.Outline.TButton",
                 text=output.title.get().capitalize(),
             )
-            for output in parent.outputs
+            for output in outputs
         }
 
         # Configure column and row weights
@@ -120,7 +123,7 @@ class OutputsSelectionFrame(ScrolledFrame):
 
         for index, output in enumerate(self.output_selected_buttons.keys()):
             (button := self.output_selected_buttons[output]).grid(
-                row=index, column=0, padx=10, pady=5, sticky="ew"
+                row=index, column=0, padx=(10, 40), pady=5, sticky="ew"
             )
 
             # Disable the button if the output isn't available.
@@ -128,9 +131,8 @@ class OutputsSelectionFrame(ScrolledFrame):
                 button.configure(state=DISABLED)
                 ToolTip(
                     button,
-                    style=f"{INFO}.{OUTLINE}",
-                    text="This output can't be viewed. This is likely due to it not\n"
-                    "being applicable to the type of CLOVER run you launched.",
+                    bootstyle=f"{INFO}.{OUTLINE}.TButton",
+                    text=OUTPUT_UNAVAILABLE_TOOLTIP_TEXT,
                 )
 
 
@@ -248,7 +250,7 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.outputs_frame.rowconfigure(0, weight=1)
 
         self.outputs_selection_frame = OutputsSelectionFrame(
-            self.outputs_frame, self._select_output
+            self.outputs_frame, self.outputs, self._select_output
         )
         self.outputs_selection_frame.grid(
             row=0, column=0, sticky="news", padx=(60, 0), pady=5
@@ -292,6 +294,8 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         )
         self.forward_button.grid(row=0, column=2, padx=20, pady=(10, 20), sticky="news")
 
+        self._select_output(self.outputs[0])
+
     def _output_filename(self, output_filename: str) -> str:
         """
         Determine the path to the output file based on the location.
@@ -312,7 +316,20 @@ class PostRunScreen(BaseScreen, show_navigation=True):
 
         """
 
-        pass
+        import pdb
+
+        pdb.set_trace()
+
+        # Make all buttons greyed out in style
+        for button in self.outputs_selection_frame.output_selected_buttons.values():
+            button.configure(style="success.Outline.TButton")
+
+        # Make the currently-selected button green
+        self.outputs_selection_frame.output_selected_buttons[output].configure(
+            style="success.TButton"
+        )
+
+        self.outputs_selection_frame.update()
 
     def update_output_directory_name(self, output_directory_name: str) -> None:
         """
@@ -326,5 +343,39 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         # Update the output directory name
         self.output_directory_name.set(output_directory_name)
 
-        # Re-update all the buttons to reflect the new potential availability
-        # TODO
+        # Update the output directory on all buttons.
+        for output in self.outputs:
+            output.filepath.set(
+                self._output_filename(os.path.basename(output.filepath.get()))
+            )
+
+        for (
+            output,
+            button,
+        ) in self.outputs_selection_frame.output_selected_buttons.items():
+            output.filepath.set(
+                self._output_filename(os.path.basename(output.filepath.get()))
+            )
+            button.configure(command=lambda output=output: self._select_output(output))
+
+    def update_outputs_availability(self) -> None:
+        """Update the buttons for toggling outputs based on their availability."""
+
+        import pdb
+
+        pdb.set_trace()
+
+        for (
+            output,
+            button,
+        ) in self.outputs_selection_frame.output_selected_buttons.items():
+            if not output.available:
+                button.configure(state=DISABLED)
+                ToolTip(
+                    button,
+                    bootstyle=f"{INFO}.{OUTLINE}.TButton",
+                    text=OUTPUT_UNAVAILABLE_TOOLTIP_TEXT,
+                )
+            else:
+                button.configure(state="enabled")
+                ToolTip(button, bootstyle=f"{INFO}.TButton", text="")

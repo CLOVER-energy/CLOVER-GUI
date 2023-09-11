@@ -512,6 +512,7 @@ class App(ttk.Window):
         self.run_screen.pack_forget()
         BaseScreen.add_screen_moving_forward(self.run_screen)
         self.post_run_screen.pack(fill="both", expand=True)
+        self.post_run_screen.update_outputs_availability()
 
     def open_preferences_window(self) -> None:
         """
