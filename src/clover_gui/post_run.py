@@ -9,6 +9,7 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
+import json
 import os
 
 from dataclasses import dataclass
@@ -18,6 +19,7 @@ import ttkbootstrap as ttk
 
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
+from ttkbootstrap.tableview import Tableview
 from ttkbootstrap.tooltip import ToolTip
 
 from .__utils__ import BaseScreen
@@ -136,6 +138,154 @@ class OutputsSelectionFrame(ScrolledFrame):
                 )
 
 
+class OutputsViewerFrame(ScrolledFrame):
+    """Frame used for viewing outputs."""
+
+    def __init__(self, parent) -> None:
+        """
+        A frame used for viewing outputs.
+
+        :param: parent
+            The parent for the frame.
+
+        """
+
+        super().__init__(parent)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=4, minsize=400)
+
+        self.columnconfigure(0, weight=1)
+
+        # Label for the name of the output and a short description of the figure being
+        # displayed or the table being viewed.
+        self.output_name = ttk.Label(
+            self,
+            bootstyle=SUCCESS,
+            text="",
+            font=("TkDefaultFont", "16", "bold"),
+        )
+        self.output_name.grid(row=0, column=0, sticky="news", padx=20, pady=10)
+
+        self.output_description = ttk.Label(
+            self, text="Select an output on the left to begin visualising your results."
+        )
+        self.output_description.grid(row=1, column=0, sticky="news", padx=20, pady=10)
+
+        # Table viewer
+        self.table_output_viewer = Tableview(
+            self,
+            paginated=True,
+            searchable=True,
+            bootstyle=SUCCESS,
+        )
+
+        # Image viewer
+        self.image_output_viewer = ttk.Label(self, text="")
+        self.photo_image: ttk.PhotoImage | None = None
+
+    def display_output(self, output: Output) -> None:
+        """
+        Display the output requested.
+
+        :param: output
+            The output that should be displayed.
+
+        """
+
+        # Update the label for the output
+        self.output_name.configure(text=output.title.get())
+
+        # If a CSV is being viewed, display the output as a table.
+        if output.filepath.get().endswith(".json"):
+            # Remove the image output viewer from the screen.
+            self.image_output_viewer.pack_forget()
+            self.table_output_viewer.grid(
+                row=2, column=0, sticky="news", padx=20, pady=5
+            )
+
+            # Load the data from the file.
+            try:
+                with open(output.filepath.get(), "r", encoding="UTF-8") as output_file:
+                    data = json.load(output_file)
+            except FileNotFoundError:
+                return
+
+            # Parse analysis data to plot from the data.
+            analysis_rows = [
+                (key, value)
+                for key, value in data["simulation_1"]["analysis_results"].items()
+            ]
+            environmental_appraisal = [
+                (key, value)
+                for key, value in data["simulation_1"]["system_appraisal"][
+                    "environmental_appraisal"
+                ].items()
+            ]
+            financial_appraisal = [
+                (key, value)
+                for key, value in data["simulation_1"]["system_appraisal"][
+                    "financial_appraisal"
+                ].items()
+            ]
+            technical_appraisal = [
+                (key, value)
+                for key, value in data["simulation_1"]["system_appraisal"][
+                    "technical_appraisal"
+                ].items()
+            ]
+
+            # Remove the rows from the table view as it is currently.
+            self.table_output_viewer.delete_rows()
+
+            # Add the new rows to the table.
+            self.table_output_viewer.insert_row(
+                values=("Analysis results", "The high-level results of the simulation")
+            )
+            self.table_output_viewer.insert_rows(END, analysis_rows)
+
+            self.table_output_viewer.insert_row(
+                values=(
+                    "Environmental appraisal",
+                    "An environmental impact assessment of the system simulated",
+                )
+            )
+            self.table_output_viewer.insert_rows(END, environmental_appraisal)
+
+            self.table_output_viewer.insert_row(
+                values=(
+                    "Financial appraisal",
+                    "Financial results of the system simulated",
+                )
+            )
+            self.table_output_viewer.insert_rows(END, financial_appraisal)
+
+            self.table_output_viewer.insert_row(
+                values=(
+                    "Technical appraisal",
+                    "Technical results from the simulation run",
+                )
+            )
+            self.table_output_viewer.insert_rows(END, technical_appraisal)
+
+            # Display the table viewer on the screen.
+            self.table_output_viewer.load_table_data()
+
+        # Otherwise, if an image is beind displayed, display these results.
+        if output.filepath.get().endswith(".png"):
+            # Remove the tabl output viewer from the screen.
+            self.table_output_viewer.pack_forget()
+            self.image_output_viewer.grid(
+                row=2, column=0, sticky="news", padx=20, pady=5
+            )
+
+            # Load the image from the file into a ttk PhotoImage.
+            self.photo_image = ttk.PhotoImage(file=output.filepath.get())
+
+            # Set the photo image to be the background of the label.
+            self.image_output_viewer.configure(image=self.photo_image)
+
+
 class PostRunScreen(BaseScreen, show_navigation=True):
     """
     Represents the post-run screen.
@@ -245,15 +395,23 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.outputs_frame.grid(row=2, column=0, sticky="news")
 
         self.outputs_frame.columnconfigure(0, weight=1)
-        self.outputs_frame.columnconfigure(1, weight=1)
+        self.outputs_frame.columnconfigure(1, weight=4)
 
         self.outputs_frame.rowconfigure(0, weight=1)
 
+        # Outputs selection frame
         self.outputs_selection_frame = OutputsSelectionFrame(
             self.outputs_frame, self.outputs, self._select_output
         )
         self.outputs_selection_frame.grid(
             row=0, column=0, sticky="news", padx=(60, 0), pady=5
+        )
+
+        self.outputs_viewer_frame = OutputsViewerFrame(
+            self.outputs_frame,
+        )
+        self.outputs_viewer_frame.grid(
+            row=0, column=1, sticky="news", padx=(0, 60), pady=5
         )
 
         # Navigation buttons
@@ -327,6 +485,9 @@ class PostRunScreen(BaseScreen, show_navigation=True):
             button.configure(style="success.Outline.TButton")
 
         self.outputs_selection_frame.update()
+
+        # Display the output
+        self.outputs_viewer_frame.display_output(selected_output)
 
     def update_output_directory_name(self, output_directory_name: str) -> None:
         """
