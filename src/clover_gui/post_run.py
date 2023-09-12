@@ -307,27 +307,24 @@ class PostRunScreen(BaseScreen, show_navigation=True):
 
         return os.path.join(self.output_directory_name.get(), output_filename)
 
-    def _select_output(self, output: Output) -> None:
+    def _select_output(self, selected_output: Output) -> None:
         """
         Select the output for viewing..
 
-        :param: output
+        :param: selected_output
             The output to select.
 
         """
 
-        import pdb
-
-        pdb.set_trace()
-
         # Make all buttons greyed out in style
-        for button in self.outputs_selection_frame.output_selected_buttons.values():
+        for (
+            output,
+            button,
+        ) in self.outputs_selection_frame.output_selected_buttons.items():
+            if output.filepath.get() == selected_output.filepath.get():
+                button.configure(style="success.TButton")
+                continue
             button.configure(style="success.Outline.TButton")
-
-        # Make the currently-selected button green
-        self.outputs_selection_frame.output_selected_buttons[output].configure(
-            style="success.TButton"
-        )
 
         self.outputs_selection_frame.update()
 
@@ -344,26 +341,31 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.output_directory_name.set(output_directory_name)
 
         # Update the output directory on all buttons.
-        for output in self.outputs:
-            output.filepath.set(
-                self._output_filename(os.path.basename(output.filepath.get()))
+        self.outputs: list[Output] = [
+            Output(
+                ttk.StringVar(self, self._output_filename(output_filename)),
+                ttk.StringVar(self, output_title),
             )
+            for output_title, output_filename in DISAPLYABLE_OUTPUTS.items()
+        ]
 
         for (
             output,
             button,
         ) in self.outputs_selection_frame.output_selected_buttons.items():
-            output.filepath.set(
-                self._output_filename(os.path.basename(output.filepath.get()))
-            )
+            new_output_name: str = [
+                new_output.filepath.get()
+                for new_output in self.outputs
+                if (
+                    os.path.basename(new_output.filepath.get())
+                    == os.path.basename(output.filepath.get())
+                )
+            ][0]
+            output.filepath.set(new_output_name)
             button.configure(command=lambda output=output: self._select_output(output))
 
     def update_outputs_availability(self) -> None:
         """Update the buttons for toggling outputs based on their availability."""
-
-        import pdb
-
-        pdb.set_trace()
 
         for (
             output,
