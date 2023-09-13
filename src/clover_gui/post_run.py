@@ -38,6 +38,9 @@ DISAPLYABLE_OUTPUTS: dict[str, str] = {
     "Annaul electric demand": PLOT_BASE_NAME.format(
         filename="electric_demand_annual_variation.png"
     ),
+    "Grid power availability": PLOT_BASE_NAME.format(
+        filename="grid_availability_heatmap.png"
+    ),
     "Electric demands by demand type": PLOT_BASE_NAME.format(
         filename="electric_demands.png"
     ),
@@ -56,6 +59,18 @@ DISAPLYABLE_OUTPUTS: dict[str, str] = {
     ),
     "Electricity use on day one": PLOT_BASE_NAME.format(
         filename="electricity_use_on_first_day.png"
+    ),
+    "Seasonal electricity supplies": PLOT_BASE_NAME.format(
+        filename="seasonal_electricity_supply_variations.png"
+    ),
+    "Solar PV output heatmap": PLOT_BASE_NAME.format(
+        filename="solar_output_hetamap.png"
+    ),
+    "Solar PV output year one": PLOT_BASE_NAME.format(
+        filename="solar_output_yearly.png"
+    ),
+    "Validation of grid randomisation": PLOT_BASE_NAME.format(
+        filename="grid_availability_randomisation_comparison.png"
     ),
 }
 
@@ -178,11 +193,21 @@ class OutputsViewerFrame(ScrolledFrame):
             paginated=True,
             searchable=True,
             bootstyle=SUCCESS,
+            height=50,
+            autofit=True,
+            pagesize=50,
         )
+        self.table_output_viewer.insert_column(
+            END, "Parameter", width=400, minwidth=400
+        )
+        self.table_output_viewer.insert_column(END, "Value", width=400, minwidth=400)
 
         # Image viewer
         self.image_output_viewer = ttk.Label(self, text="")
         self.photo_image: ttk.PhotoImage | None = None
+
+        # Table rows
+        self.table_rows: list[tuple[str]] = []
 
     def display_output(self, output: Output) -> None:
         """
@@ -199,9 +224,9 @@ class OutputsViewerFrame(ScrolledFrame):
         # If a CSV is being viewed, display the output as a table.
         if output.filepath.get().endswith(".json"):
             # Remove the image output viewer from the screen.
-            self.image_output_viewer.pack_forget()
+            self.image_output_viewer.grid_forget()
             self.table_output_viewer.grid(
-                row=2, column=0, sticky="news", padx=20, pady=5
+                row=1, column=0, sticky="news", padx=20, pady=5
             )
 
             # Load the data from the file.
@@ -211,62 +236,86 @@ class OutputsViewerFrame(ScrolledFrame):
             except FileNotFoundError:
                 return
 
+            self.table_rows = []
+
+            # Parse the technical data.
+            self.table_rows.extend(
+                sorted(
+                    [
+                        (key.replace("_", " ").capitalize(), value)
+                        for key, value in data["simulation_1"]["system_appraisal"][
+                            "technical_appraisal"
+                        ].items()
+                    ],
+                    reverse=True,
+                )
+            )
+            self.table_rows.append(
+                (
+                    "Technical appraisal".upper(),
+                    "Technical results from the simulation run",
+                )
+            )
+
+            # Parse the environmental data.
+            self.table_rows.extend(
+                sorted(
+                    [
+                        (key.replace("_", " ").capitalize(), value)
+                        for key, value in data["simulation_1"]["system_appraisal"][
+                            "environmental_appraisal"
+                        ].items()
+                    ],
+                    reverse=True,
+                )
+            )
+            self.table_rows.append(
+                (
+                    "Environmental appraisal".upper(),
+                    "An environmental impact assessment of the system simulated",
+                )
+            )
+
+            # Parse the financial data.
+            self.table_rows.extend(
+                sorted(
+                    [
+                        (key.replace("_", " ").capitalize(), value)
+                        for key, value in data["simulation_1"]["system_appraisal"][
+                            "financial_appraisal"
+                        ].items()
+                    ],
+                    reverse=True,
+                )
+            )
+            self.table_rows.append(
+                (
+                    "Financial appraisal".upper(),
+                    "Financial results of the system simulated",
+                )
+            )
+
             # Parse analysis data to plot from the data.
-            analysis_rows = [
-                (key, value)
-                for key, value in data["simulation_1"]["analysis_results"].items()
-            ]
-            environmental_appraisal = [
-                (key, value)
-                for key, value in data["simulation_1"]["system_appraisal"][
-                    "environmental_appraisal"
-                ].items()
-            ]
-            financial_appraisal = [
-                (key, value)
-                for key, value in data["simulation_1"]["system_appraisal"][
-                    "financial_appraisal"
-                ].items()
-            ]
-            technical_appraisal = [
-                (key, value)
-                for key, value in data["simulation_1"]["system_appraisal"][
-                    "technical_appraisal"
-                ].items()
-            ]
+            self.table_rows.extend(
+                sorted(
+                    [
+                        (key.replace("_", " ").capitalize(), value)
+                        for key, value in data["simulation_1"][
+                            "analysis_results"
+                        ].items()
+                    ],
+                    reverse=True,
+                )
+            )
+            self.table_rows.append(
+                ("Analysis results".upper(), "The high-level results of the simulation")
+            )
 
             # Remove the rows from the table view as it is currently.
             self.table_output_viewer.delete_rows()
 
             # Add the new rows to the table.
-            self.table_output_viewer.insert_row(
-                values=("Analysis results", "The high-level results of the simulation")
-            )
-            self.table_output_viewer.insert_rows(END, analysis_rows)
-
-            self.table_output_viewer.insert_row(
-                values=(
-                    "Environmental appraisal",
-                    "An environmental impact assessment of the system simulated",
-                )
-            )
-            self.table_output_viewer.insert_rows(END, environmental_appraisal)
-
-            self.table_output_viewer.insert_row(
-                values=(
-                    "Financial appraisal",
-                    "Financial results of the system simulated",
-                )
-            )
-            self.table_output_viewer.insert_rows(END, financial_appraisal)
-
-            self.table_output_viewer.insert_row(
-                values=(
-                    "Technical appraisal",
-                    "Technical results from the simulation run",
-                )
-            )
-            self.table_output_viewer.insert_rows(END, technical_appraisal)
+            self.table_output_viewer.insert_rows(END, self.table_rows)
 
             # Display the table viewer on the screen.
             self.table_output_viewer.load_table_data()
@@ -274,9 +323,9 @@ class OutputsViewerFrame(ScrolledFrame):
         # Otherwise, if an image is beind displayed, display these results.
         if output.filepath.get().endswith(".png"):
             # Remove the tabl output viewer from the screen.
-            self.table_output_viewer.pack_forget()
+            self.table_output_viewer.grid_forget()
             self.image_output_viewer.grid(
-                row=2, column=0, sticky="news", padx=20, pady=5
+                row=1, column=0, sticky="news", padx=20, pady=5
             )
 
             # Load the image from the file into a ttk PhotoImage.
@@ -395,7 +444,7 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.outputs_frame.grid(row=2, column=0, sticky="news")
 
         self.outputs_frame.columnconfigure(0, weight=1)
-        self.outputs_frame.columnconfigure(1, weight=4)
+        self.outputs_frame.columnconfigure(1, weight=4, minsize=600)
 
         self.outputs_frame.rowconfigure(0, weight=1)
 
@@ -542,3 +591,6 @@ class PostRunScreen(BaseScreen, show_navigation=True):
             else:
                 button.configure(state="enabled")
                 ToolTip(button, bootstyle=f"{INFO}.TButton", text="")
+
+        # Display the first output
+        self._select_output(self.outputs[0])
