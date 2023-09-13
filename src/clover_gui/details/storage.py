@@ -149,13 +149,17 @@ class BatteryFrame(ttk.Frame):
 
         def scalar_maximum_charge(_):
             self.minimum_charge[self.battery_selected.get()].set(
-                round(
+                int(
                     min(
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                    0,
                 )
+            )
+            self.minimum_charge_entry.update()
+
+            self.maximum_charge[self.battery_selected.get()].set(
+                int(self.maximum_charge[self.battery_selected.get()].get())
             )
             self.maximum_charge_entry.update()
 
@@ -174,19 +178,21 @@ class BatteryFrame(ttk.Frame):
 
         def enter_maximum_charge(_):
             self.minimum_charge[self.battery_selected.get()].set(
-                round(
+                int(
                     min(
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                    2,
                 )
             )
+            self.minimum_charge_slider.set(
+                self.minimum_charge[self.battery_selected.get()].get()
+            )
             self.maximum_charge[self.battery_selected.get()].set(
-                round(self.maximum_charge_entry.get(), 2)
+                int(self.maximum_charge_entry.get())
             )
             self.maximum_charge_slider.set(
-                round(self.maximum_charge[self.battery_selected.get()].get(), 2)
+                int(self.maximum_charge[self.battery_selected.get()].get())
             )
 
         self.maximum_charge_entry = ttk.Entry(
@@ -213,13 +219,17 @@ class BatteryFrame(ttk.Frame):
 
         def scalar_minimum_charge(_):
             self.maximum_charge[self.battery_selected.get()].set(
-                round(
+                int(
                     max(
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                    0,
                 )
+            )
+            self.maximum_charge_entry.update()
+
+            self.minimum_charge[self.battery_selected.get()].set(
+                int(self.minimum_charge[self.battery_selected.get()].get())
             )
             self.minimum_charge_entry.update()
 
@@ -238,19 +248,21 @@ class BatteryFrame(ttk.Frame):
 
         def enter_minimum_charge(_):
             self.minimum_charge[self.battery_selected.get()].set(
-                round(self.minimum_charge_entry.get(), 2)
+                int(self.minimum_charge_entry.get())
             )
-            self.maximum_charge.set(
-                round(
+            self.maximum_charge[self.battery_selected.get()].set(
+                int(
                     max(
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                    2,
                 )
             )
+            self.maximum_charge_slider.set(
+                self.maximum_charge[self.battery_selected.get()].get()
+            )
             self.minimum_charge_slider.set(
-                self.minimum_charge[self.battery_selected.get()].get()
+                int(self.minimum_charge[self.battery_selected.get()].get())
             )
 
         self.minimum_charge_entry = ttk.Entry(

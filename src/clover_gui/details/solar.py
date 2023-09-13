@@ -300,7 +300,7 @@ class PVFrame(ttk.Frame):
 
         def enter_tilt(_):
             self.panel_tilt[self.panel_selected.get()].set(
-                round(self.tilt_entry.get(), 2)
+                round(float(self.tilt_entry.get()), 2)
             )
             self.tilt_slider.set(
                 round(self.panel_tilt[self.panel_selected.get()].get(), 2)
@@ -352,7 +352,7 @@ class PVFrame(ttk.Frame):
 
         def enter_azimuthal_orientation(_):
             self.panel_orientation[self.panel_selected.get()].set(
-                round(self.azimuthal_orientation_entry.get(), 2)
+                round(float(self.azimuthal_orientation_entry.get()), 2)
             )
             self.azimuthal_orientation_slider.set(
                 round(self.panel_orientation[self.panel_selected.get()].get(), 2)

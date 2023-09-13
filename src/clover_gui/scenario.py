@@ -770,17 +770,17 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Diesel mode
-        self.diesel_mode_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Diesel mode"
-        )
-        # self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
+        # self.diesel_mode_label = ttk.Label(
+        #     self.scrollable_scenario_frame, text="Diesel mode"
+        # )
+        # # self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
 
-        self.diesel_mode_combobox = ttk.Combobox(
-            self.scrollable_scenario_frame, state=DISABLED, width=10
-        )
-        # self.diesel_mode_combobox.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
-        self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
-        self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
+        # self.diesel_mode_combobox = ttk.Combobox(
+        #     self.scrollable_scenario_frame, state=DISABLED, width=10
+        # )
+        # # self.diesel_mode_combobox.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
+        # self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
+        # self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
 
         # Backup threshold
         self.diesel_backup_threshold_label = ttk.Label(
@@ -794,7 +794,6 @@ class ConfigurationFrame(ttk.Frame):
 
         def scalar_threshold(_):
             self.diesel_backup_threshold.set(int(self.diesel_backup_threshold.get()))
-            self.diesel_backup_slider.set(self.diesel_backup_entry.get())
             self.diesel_backup_entry.update()
 
         self.diesel_backup_slider = ttk.Scale(
@@ -810,7 +809,7 @@ class ConfigurationFrame(ttk.Frame):
 
         def enter_threshold(_):
             self.diesel_backup_threshold.set(
-                int(min(max(float(self.diesel_backup_entry.get()), 0), 100))
+                round(min(max(float(self.diesel_backup_entry.get()), 0), 100), 2)
             )
             self.diesel_backup_slider.set(self.diesel_backup_entry.get())
             self.diesel_backup_entry.update()
@@ -917,7 +916,8 @@ class ConfigurationFrame(ttk.Frame):
                         ].get(),
                     },
                     "diesel": {
-                        "mode": self.diesel_mode_combobox.get()
+                        # "mode": self.diesel_mode_combobox.get()
+                        "mode": DieselMode.BACKUP.value
                         if self.diesel_selected.get()
                         else DieselMode.DISABLED.value,
                         DieselMode.BACKUP.value: {
@@ -1198,14 +1198,17 @@ class ConfigurationFrame(ttk.Frame):
 
         # Set the diesel scenario information
         # self.diesel_mode_combobox.set(scenario.diesel_scenario.mode.value)
-        self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
+        # self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
         self.diesel_backup_threshold.set(
-            (
-                scenario.diesel_scenario.backup_threshold
-                if scenario.diesel_scenario.backup_threshold is not None
-                else 0
+            round(
+                (
+                    scenario.diesel_scenario.backup_threshold
+                    if scenario.diesel_scenario.backup_threshold is not None
+                    else 0
+                )
+                * 100,
+                1,
             )
-            * 100
         )
 
         # Set distribution network
