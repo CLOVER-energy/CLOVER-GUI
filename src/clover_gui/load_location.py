@@ -16,7 +16,7 @@ from typing import Callable
 
 import ttkbootstrap as ttk
 
-from clover import LOCATIONS_FOLDER_NAME
+from clover.__utils__ import get_locations_foldername
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
@@ -69,7 +69,10 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         self.load_location_name: ttk.StringVar = ttk.StringVar(self)
 
         self.load_location_combobox = ttk.Combobox(
-            self, bootstyle="primary", textvariable=self.load_location_name
+            self,
+            bootstyle="primary",
+            textvariable=self.load_location_name,
+            state=READONLY,
         )
         self.load_location_combobox.grid(
             row=1, column=1, padx=10, pady=5, sticky="w", ipadx=80
@@ -95,14 +98,16 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
     def populate_available_locations(self) -> None:
         """Populates available locations for selection."""
 
-        if not os.path.isdir(LOCATIONS_FOLDER_NAME):
+        if not os.path.isdir(
+            locations_foldername := get_locations_foldername(),
+        ):
             return
 
         self.load_location_combobox["values"] = sorted(
             [
                 entry
-                for entry in os.listdir(LOCATIONS_FOLDER_NAME)
-                if os.path.isdir(os.path.join(LOCATIONS_FOLDER_NAME, entry))
+                for entry in os.listdir(locations_foldername)
+                if os.path.isdir(os.path.join(locations_foldername, entry))
             ]
         )
         self.load_location_name.set(self.load_location_combobox["values"][0])

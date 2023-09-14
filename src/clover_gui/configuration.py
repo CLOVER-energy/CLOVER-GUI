@@ -25,6 +25,7 @@ from clover import (
     SIMULATION_OUTPUTS_FOLDER,
 )
 from clover.__utils__ import (
+    get_locations_foldername,
     ITERATION_LENGTH,
     LOCATIONS_FOLDER_NAME,
     MAX,
@@ -43,6 +44,7 @@ from clover.optimisation.__utils__ import (
 )
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
+from ttkbootstrap.tooltip import ToolTip
 
 from .__utils__ import BaseScreen, clover_thread
 from .scenario import ConfigurationFrame
@@ -361,6 +363,7 @@ class ThresholdCriterion:
         Criterion.TOTAL_SYSTEM_GHGS: "Total system ghgs / kgCO2eq",
         Criterion.TOTAL_COST: "Total cost / $",
         Criterion.UNMET_ENERGY_FRACTION: "Unmet energy fraction",
+        Criterion.UPTIME: "Uptime",
     }
 
     _name_to_criterion_map: dict[str, Criterion] | None = None
@@ -405,7 +408,10 @@ class ThresholdCriterion:
         # Criterion name and entry
         self.criterion_name: ttk.StringVar = criterion_name
         self.criterion_name_combobox = ttk.Combobox(
-            parent, bootstyle=INFO, textvariable=self.criterion_name
+            parent,
+            bootstyle=INFO,
+            textvariable=self.criterion_name,
+            state=READONLY,
         )
         self.criterion_name_combobox["values"] = self._permissable_threshold_criteria
         self.criterion_name_combobox.bind("<<ComboboxSelected>>", self.select_criterion)
@@ -763,6 +769,12 @@ class OptimisationFrame(ttk.Frame):
         self.iteration_length_slider.grid(
             row=1, column=1, padx=20, pady=10, sticky="ew"
         )
+        self.iteration_length_tooltip = ToolTip(
+            self.iteration_length_label,
+            text="The iteration length is the length of time for which a system will "
+            "run without any component upgrades. After this time, the system will "
+            "consider whether an increase in capacity is needed in order to meet demand.",
+        )
 
         def enter_iteration_length(_):
             self.iteration_length.set(self.iteration_length_entry.get())
@@ -788,6 +800,11 @@ class OptimisationFrame(ttk.Frame):
         )
         self.number_of_iterations_label.grid(
             row=2, column=0, padx=20, pady=10, sticky="w"
+        )
+        self.number_of_iterations_tooltip = ToolTip(
+            self.number_of_iterations_label,
+            text="Each iteration is a period where no upgrades occur. The number of "
+            "iterations corresponds to the number of times new capacity will be installed in the system.",
         )
 
         def scalarber_of_iterations(_):
@@ -1398,6 +1415,7 @@ class OptimisationFrame(ttk.Frame):
             bootstyle=INFO,
             textvariable=self.optimisation_minmax,
             width=15,
+            state=READONLY,
         )
         self.optimisation_minmax_entry.grid(
             row=20, column=0, padx=20, pady=10, sticky="ew", ipadx=20
@@ -1420,6 +1438,7 @@ class OptimisationFrame(ttk.Frame):
             self.scrollable_optimisation_frame,
             bootstyle=INFO,
             textvariable=self.optimisation_criterion,
+            state=READONLY,
         )
         self.optimisation_criterion_entry.grid(
             row=20, column=2, padx=20, pady=10, sticky="ew", ipadx=20
@@ -1987,7 +2006,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             self.output_directory_name.set(output_name)
             self.update_post_run_screen_output_directory_name(
                 os.path.join(
-                    LOCATIONS_FOLDER_NAME,
+                    get_locations_foldername(),
                     self.location_name.get(),
                     SIMULATION_OUTPUTS_FOLDER
                     if operating_mode == OperatingMode.SIMULATION
@@ -2021,6 +2040,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             self.optimisation_frame.pv_step_entry.configure(state=_enabled)
         else:
             self.simulation_frame.pv_size_entry.configure(state=DISABLED)
+            self.simulation_frame.pv_size.set(0)
             self.optimisation_frame.pv_max_entry.configure(state=DISABLED)
             self.optimisation_frame.pv_min_entry.configure(state=DISABLED)
             self.optimisation_frame.pv_step_entry.configure(state=DISABLED)
@@ -2043,6 +2063,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
             self.optimisation_frame.storage_step_entry.configure(state=_enabled)
         else:
             self.simulation_frame.storage_size_entry.configure(state=DISABLED)
+            self.simulation_frame.storage_size.set(0)
             self.optimisation_frame.storage_max_entry.configure(state=DISABLED)
             self.optimisation_frame.storage_min_entry.configure(state=DISABLED)
             self.optimisation_frame.storage_step_entry.configure(state=DISABLED)

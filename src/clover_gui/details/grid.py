@@ -68,7 +68,10 @@ class GridFrame(ttk.Frame):
         }
 
         self.grid_profile_combobox = ttk.Combobox(
-            self, bootstyle=SUCCESS, textvariable=self.grid_profile_name
+            self,
+            bootstyle=SUCCESS,
+            textvariable=self.grid_profile_name,
+            state=READONLY,
         )
         self.grid_profile_combobox.grid(row=0, column=0, padx=10, pady=5, sticky="w")
         self.populate_available_profiles()

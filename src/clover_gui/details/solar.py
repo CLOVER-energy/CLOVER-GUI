@@ -122,7 +122,10 @@ class PVFrame(ttk.Frame):
         self.pv_panel_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         self.pv_panel_combobox = ttk.Combobox(
-            self.scrolled_frame, bootstyle=WARNING, textvariable=self.panel_selected
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.panel_selected,
+            state=READONLY,
         )
         self.pv_panel_combobox.grid(
             row=1, column=1, columnspan=3, padx=10, pady=5, sticky="w", ipadx=60

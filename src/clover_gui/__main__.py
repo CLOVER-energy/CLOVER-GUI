@@ -19,8 +19,8 @@ from subprocess import Popen
 import yaml
 
 from clover import (
+    get_locations_foldername,
     get_logger,
-    LOCATIONS_FOLDER_NAME,
     INPUTS_DIRECTORY,
     parse_input_files,
     read_yaml,
@@ -72,6 +72,10 @@ from .splash_screen import SplashScreenWindow
 from .preferences import PreferencesWindow
 from .post_run import PostRunScreen
 from .running import RunScreen
+
+# Menu-bar fontsize
+#   Fontsize for the items in the menu bar
+MENU_BAR_FONTSIZE: int = 14
 
 # Solar inputs:
 #   Keyword for saving solar inputs information.
@@ -132,24 +136,40 @@ class App(ttk.Window):
         # File menu
         self.file_menu = ttk.Menu(self.menu_bar, tearoff=0)
         self.file_menu.add_command(
-            label="Open", command=self.save_and_open_load_location_window
+            label="Open",
+            command=self.save_and_open_load_location_window,
+            font=("", MENU_BAR_FONTSIZE),
         )
-        self.file_menu.add_command(label="Save", command=self.save_configuration)
+        self.file_menu.add_command(
+            label="Save", command=self.save_configuration, font=("", MENU_BAR_FONTSIZE)
+        )
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Exit", command=self.quit)
-        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
+        self.file_menu.add_command(
+            label="Exit", command=self.quit, font=("", MENU_BAR_FONTSIZE)
+        )
+        self.menu_bar.add_cascade(
+            label="File", menu=self.file_menu, font=("TkDefaultFont", MENU_BAR_FONTSIZE)
+        )
 
         # Edit menu
         self.edit_menu = ttk.Menu(self.menu_bar, tearoff=0)
         self.edit_menu.add_command(
-            label="Preferences", command=self.open_preferences_window
+            label="Preferences",
+            command=self.open_preferences_window,
+            font=("", MENU_BAR_FONTSIZE),
         )
-        self.menu_bar.add_cascade(label="Edit", menu=self.edit_menu)
+        self.menu_bar.add_cascade(
+            label="Edit", menu=self.edit_menu, font=("TkDefaultFont", MENU_BAR_FONTSIZE)
+        )
 
         # Help menu
         self.help_menu = ttk.Menu(self.menu_bar, tearoff=0)
-        self.help_menu.add_command(label="Help", command=open_help_window)
-        self.menu_bar.add_cascade(label="Help", menu=self.help_menu)
+        self.help_menu.add_command(
+            label="Help", command=open_help_window, font=("", MENU_BAR_FONTSIZE)
+        )
+        self.menu_bar.add_cascade(
+            label="Help", menu=self.help_menu, font=("TkDefaultFont", MENU_BAR_FONTSIZE)
+        )
 
         self.config(menu=self.menu_bar)
         self.splash.set_progress_bar_progress(20)
@@ -233,7 +253,7 @@ class App(ttk.Window):
         self.new_location_progress_bar["value"] = 50
 
         self.inputs_directory_relative_path = os.path.join(
-            LOCATIONS_FOLDER_NAME,
+            get_locations_foldername(),
             new_location_name,
             INPUTS_DIRECTORY,
         )
@@ -325,6 +345,7 @@ class App(ttk.Window):
             False,
             None,
             load_location_name,
+            get_locations_foldername(),
             self.logger,
             None,
         )
@@ -338,7 +359,7 @@ class App(ttk.Window):
 
         # Load the PV and battery input files as these are not returned in CLOVER as a whole
         self.inputs_directory_relative_path = os.path.join(
-            LOCATIONS_FOLDER_NAME,
+            get_locations_foldername(),
             load_location_name,
             INPUTS_DIRECTORY,
         )
@@ -385,7 +406,7 @@ class App(ttk.Window):
         self.details_window.load_frame.set_loads(
             device_utilisations,
             os.path.join(
-                LOCATIONS_FOLDER_NAME,
+                get_locations_foldername(),
                 load_location_name,
                 INPUTS_DIRECTORY,
                 DEVICE_UTILISATIONS_INPUT_DIRECTORY,
@@ -541,6 +562,7 @@ class App(ttk.Window):
         self.run_screen.clover_progress_bar["value"] = 0
         self.run_screen.clover_progress_bar.configure(bootstyle=f"{SUCCESS}-striped")
         self.run_screen.message_text_label.configure(text="Launching CLOVER")
+        self.run_screen.post_run_button.configure(state=DISABLED)
         self.run_screen.stdout_data = ""
         self.run_screen.run_with_clover(clover_thread)
 

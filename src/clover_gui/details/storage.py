@@ -86,7 +86,10 @@ class BatteryFrame(ttk.Frame):
         }
 
         self.battery_selected_combobox = ttk.Combobox(
-            self.scrollable_frame, bootstyle=WARNING, textvariable=self.battery_selected
+            self.scrollable_frame,
+            bootstyle=WARNING,
+            textvariable=self.battery_selected,
+            state=READONLY,
         )
         self.battery_selected_combobox.grid(
             row=0, column=1, padx=10, pady=5, sticky="w", ipadx=60

@@ -11,6 +11,7 @@
 
 import csv
 import os
+import platform
 import subprocess
 import tkinter as tk
 
@@ -19,7 +20,6 @@ from typing import Any, Callable
 import pandas as pd
 import ttkbootstrap as ttk
 
-from clover import LOCATIONS_FOLDER_NAME
 from clover.load.load import (
     AVAILABLE,
     DemandType,
@@ -722,7 +722,7 @@ class DeviceSettingsFrame(ttk.Labelframe):
 
         self.edit_file_text = ttk.Label(
             self.scrollable_frame,
-            text="Edit the device utilisation below or\nin your native CSV editor",
+            text="Edit the device utilisation below or in your native CSV editor",
         )
         self.edit_file_text.grid(
             row=11, column=0, padx=10, pady=5, sticky="news", columnspan=2
@@ -734,9 +734,10 @@ class DeviceSettingsFrame(ttk.Labelframe):
             bootstyle=f"{SUCCESS}",
             text="Edit file",
         )
-        self.edit_file_button.grid(
-            row=11, column=2, padx=10, pady=5, ipadx=20, sticky="ew"
-        )
+        if platform.system() != "Windows":
+            self.edit_file_button.grid(
+                row=11, column=2, padx=10, pady=5, ipadx=20, sticky="ew"
+            )
 
         # Device utilisation
         self.csv_entry_frame: CSVEntryFrame = CSVEntryFrame(

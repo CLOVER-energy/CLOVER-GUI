@@ -11,6 +11,8 @@
 
 import json
 import os
+import platform
+import subprocess
 
 from dataclasses import dataclass
 from typing import Callable
@@ -126,7 +128,7 @@ class OutputsSelectionFrame(ScrolledFrame):
             output: ttk.Button(
                 self,
                 command=lambda output=output: select_output(output),
-                style=f"success.Outline.TButton",
+                style=f"info.Outline.TButton",
                 text=output.title.get().capitalize(),
             )
             for output in outputs
@@ -166,33 +168,48 @@ class OutputsViewerFrame(ScrolledFrame):
         """
 
         super().__init__(parent)
+
+        self.output_filepath: ttk.StringVar = ttk.StringVar(self, "")
+
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=4, minsize=400)
 
         self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
 
         # Label for the name of the output and a short description of the figure being
         # displayed or the table being viewed.
         self.output_name = ttk.Label(
             self,
-            bootstyle=SUCCESS,
+            bootstyle=INFO,
             text="",
             font=("TkDefaultFont", "16", "bold"),
         )
         self.output_name.grid(row=0, column=0, sticky="news", padx=20, pady=10)
 
+        self.open_file_button = ttk.Button(
+            self,
+            style="info.Outline.TButton",
+            text="Open file",
+            command=self._open_file,
+        )
+        if platform.system() != "Windows":
+            self.open_file_button.grid(row=0, column=1, sticky="e", padx=20, pady=10)
+
         self.output_description = ttk.Label(
             self, text="Select an output on the left to begin visualising your results."
         )
-        self.output_description.grid(row=1, column=0, sticky="news", padx=20, pady=10)
+        self.output_description.grid(
+            row=1, column=0, columnspan=2, sticky="news", padx=20, pady=10
+        )
 
         # Table viewer
         self.table_output_viewer = Tableview(
             self,
             paginated=True,
             searchable=True,
-            bootstyle=SUCCESS,
+            bootstyle=INFO,
             height=50,
             autofit=True,
             pagesize=50,
@@ -209,6 +226,11 @@ class OutputsViewerFrame(ScrolledFrame):
         # Table rows
         self.table_rows: list[tuple[str]] = []
 
+    def _open_file(self) -> None:
+        """Opens the file that is currently open."""
+
+        subprocess.Popen(["open", self.output_filepath.get()])
+
     def display_output(self, output: Output) -> None:
         """
         Display the output requested.
@@ -220,13 +242,14 @@ class OutputsViewerFrame(ScrolledFrame):
 
         # Update the label for the output
         self.output_name.configure(text=output.title.get())
+        self.output_filepath.set(output.filepath.get())
 
         # If a CSV is being viewed, display the output as a table.
         if output.filepath.get().endswith(".json"):
             # Remove the image output viewer from the screen.
             self.image_output_viewer.grid_forget()
             self.table_output_viewer.grid(
-                row=1, column=0, sticky="news", padx=20, pady=5
+                row=1, column=0, columnspan=2, sticky="news", padx=20, pady=5
             )
 
             # Load the data from the file.
@@ -325,7 +348,7 @@ class OutputsViewerFrame(ScrolledFrame):
             # Remove the tabl output viewer from the screen.
             self.table_output_viewer.grid_forget()
             self.image_output_viewer.grid(
-                row=1, column=0, sticky="news", padx=20, pady=5
+                row=1, column=0, columnspan=2, sticky="news", padx=20, pady=5
             )
 
             # Load the image from the file into a ttk PhotoImage.
@@ -529,9 +552,9 @@ class PostRunScreen(BaseScreen, show_navigation=True):
             button,
         ) in self.outputs_selection_frame.output_selected_buttons.items():
             if output.filepath.get() == selected_output.filepath.get():
-                button.configure(style="success.TButton")
+                button.configure(style="info.TButton")
                 continue
-            button.configure(style="success.Outline.TButton")
+            button.configure(style="info.Outline.TButton")
 
         self.outputs_selection_frame.update()
 
