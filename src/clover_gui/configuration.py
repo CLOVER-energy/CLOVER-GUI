@@ -1556,9 +1556,7 @@ class OptimisationFrame(ttk.Frame):
         )
 
         # Bind the scrolled frame to enable the optimisation button
-        self.scrollable_optimisation_frame.bind(
-            "<Configure>", self._check_scrolled
-        )
+        self.scrollable_optimisation_frame.bind("<Configure>", self._check_scrolled)
 
     def _check_scrolled(self, _) -> None:
         """
