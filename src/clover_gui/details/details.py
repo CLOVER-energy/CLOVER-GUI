@@ -78,6 +78,7 @@ class DetailsWindow(tk.Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.save_and_close)
 
         self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1, minsize=100)
         self.rowconfigure(1, weight=6)
 
@@ -88,6 +89,9 @@ class DetailsWindow(tk.Toplevel):
             font=("TkDefaultFont", "16", "bold"),
         )
         self.details_label.grid(row=0, column=0, sticky="w", padx=20, pady=5, ipady=20)
+
+        self.save_and_close_button = ttk.Button(self, bootstyle="secondary.Outline.TButton", command=self.save_and_close)
+        self.save_and_close_button.grid(row=0, column=1, sticky="e", padx=20, pady=5, ipadx=40, ipady=20)
 
         self.notebook_style = ttk.Style()
         # self.notebook_style.configure(
@@ -106,7 +110,7 @@ class DetailsWindow(tk.Toplevel):
         self.details_notebook = ttk.Notebook(
             self, bootstyle=f"{SECONDARY}"  # , style="Details.TNotebook.Tab"
         )
-        self.details_notebook.grid(row=1, column=0, sticky="nsew", padx=20, pady=5)
+        self.details_notebook.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=20, pady=5)
 
         self.solar_frame = SolarFrame(self.details_notebook, renewables_ninja_token)
         self.details_notebook.add(

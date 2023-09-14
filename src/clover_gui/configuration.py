@@ -1549,12 +1549,30 @@ class OptimisationFrame(ttk.Frame):
             command=lambda operating_mode=OperatingMode.OPTIMISATION: launch_clover_run(
                 operating_mode
             ),
+            state=DISABLED,
         )
         self.run_optimisation_button.grid(
             row=0, column=1, padx=5, pady=10, sticky="es", ipadx=80, ipady=20
         )
 
-        # TODO: Add configuration frame widgets and layout
+        # Bind the scrolled frame to enable the optimisation button
+        self.scrollable_optimisation_frame.bind(
+            "<Configure>", self._check_scrolled
+        )
+
+    def _check_scrolled(self, _) -> None:
+        """
+        Checks whether the optimisation criterion frame has been scrolled.
+
+        Once the optimisation frame has been scrolled to the bottom, the "Run
+        Optimisation" button will be enabled.
+
+        """
+
+        if self.scrollable_optimisation_frame.vscroll.get()[1] == 1.0:
+            self.run_optimisation_button.configure(state="enabled")
+        else:
+            self.run_optimisation_button.configure(state=DISABLED)
 
     @property
     def as_dict(
