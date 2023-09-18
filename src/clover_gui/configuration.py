@@ -316,6 +316,63 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.years_slider.set(self.simulation_period.get())
 
 
+# Criterion-to-name map
+#   A map between the criteria and their nicely-displayed names.
+CRITERION_TO_NAME_MAP: dict[Criterion, str] = {
+    Criterion.BLACKOUTS: "Blackouts fraction",
+    Criterion.CLEAN_WATER_BLACKOUTS: "Clean water blackouts fraction",
+    Criterion.CUMULATIVE_COST: "Cumulative cost / $",
+    Criterion.CUMULATIVE_GHGS: "Cumulative ghgs / kgCO2eq",
+    Criterion.CUMULATIVE_SYSTEM_COST: "Cumulative system cost / $",
+    Criterion.CUMULATIVE_SYSTEM_GHGS: "Cumulative system ghgs / kgCO2eq",
+    Criterion.EMISSIONS_INTENSITY: "Emissions intensity / gCO2/kWh",
+    Criterion.KEROSENE_COST_MITIGATED: "Kerosene cost mitigated / $",
+    Criterion.KEROSENE_GHGS_MITIGATED: "Kerosene ghgs mitigated / kgCO2eq",
+    Criterion.LCUE: "LCUE / $/kWh",
+    Criterion.RENEWABLES_FRACTION: "Renewables fraction",
+    Criterion.TOTAL_GHGS: "Total ghgs / kgCO2eq",
+    Criterion.TOTAL_SYSTEM_COST: "Total system cost / $",
+    Criterion.TOTAL_SYSTEM_GHGS: "Total system ghgs / kgCO2eq",
+    Criterion.TOTAL_COST: "Total cost / $",
+    Criterion.UNMET_ENERGY_FRACTION: "Unmet energy fraction",
+    Criterion.UPTIME: "Uptime",
+}
+
+# Criterion-to-units map
+#   A map between the criteria and their corresponding untis.
+CRITERION_TO_UNITS_MAP: dict[Criterion, str] = {
+    Criterion.BLACKOUTS: "\% of hours",
+    Criterion.CLEAN_WATER_BLACKOUTS: "\% of hours",
+    Criterion.CUMULATIVE_COST: "currency unit",
+    Criterion.CUMULATIVE_GHGS: "kgCO2eq",
+    Criterion.CUMULATIVE_SYSTEM_COST: "currency unit",
+    Criterion.CUMULATIVE_SYSTEM_GHGS: "kgCO2eq",
+    Criterion.EMISSIONS_INTENSITY: "gCO2/kWh",
+    Criterion.KEROSENE_COST_MITIGATED: "currency unit",
+    Criterion.KEROSENE_GHGS_MITIGATED: "kgCO2eq",
+    Criterion.LCUE: "currency/kWh",
+    Criterion.RENEWABLES_FRACTION: "\% of energy used",
+    Criterion.TOTAL_GHGS: "kgCO2eq",
+    Criterion.TOTAL_SYSTEM_COST: "currenty unit",
+    Criterion.TOTAL_SYSTEM_GHGS: "kgCO2eq",
+    Criterion.TOTAL_COST: "currency unit",
+    Criterion.UNMET_ENERGY_FRACTION: "\% of energy used",
+    Criterion.UPTIME: "\% of hours",
+}
+
+# Percentage criteria
+#   Criteria which should have their value adjusted when displayed only so that
+#   users can deal with the numbers in terms of percentages rather than decimal
+#   fractions.
+PERCENTAGE_CRITERIA: list[Criterion] = [
+    Criterion.BLACKOUTS,
+    Criterion.CLEAN_WATER_BLACKOUTS,
+    Criterion.RENEWABLES_FRACTION,
+    Criterion.UNMET_ENERGY_FRACTION,
+    Criterion.UPTIME,
+]
+
+
 class ThresholdCriterion:
     """
     Represents a threshold criterion.
@@ -337,40 +394,17 @@ class ThresholdCriterion:
 
     # Private attributes:
     #
-    # .. attribute:: _criterion_to_name_map
-    #   Map between the name of the criteria and the nice names.
-    #
-    # .. attribute:: _permissable_chevrons
-    #   The `list` of permissable chevrons.
+    # .. attribute:: _name_to_criterion_map
+    #   Map between the name of the criteria and the criteria.
     #
     # .. attribute:: _permissable_threshold_criteria
     #   The `list` of permissable threshold criteria.
-
-    criterion_to_name_map: dict[Criterion, str] = {
-        Criterion.BLACKOUTS: "Blackouts fraction",
-        Criterion.CLEAN_WATER_BLACKOUTS: "Clean water blackouts fraction",
-        Criterion.CUMULATIVE_COST: "Cumulative cost / $",
-        Criterion.CUMULATIVE_GHGS: "Cumulative ghgs / kgCO2eq",
-        Criterion.CUMULATIVE_SYSTEM_COST: "Cumulative system cost / $",
-        Criterion.CUMULATIVE_SYSTEM_GHGS: "Cumulative system ghgs / kgCO2eq",
-        Criterion.EMISSIONS_INTENSITY: "Emissions intensity / gCO2/kWh",
-        Criterion.KEROSENE_COST_MITIGATED: "Kerosene cost mitigated / $",
-        Criterion.KEROSENE_GHGS_MITIGATED: "Kerosene ghgs mitigated / kgCO2eq",
-        Criterion.LCUE: "LCUE / $/kWh",
-        Criterion.RENEWABLES_FRACTION: "Renewables fraction",
-        Criterion.TOTAL_GHGS: "Total ghgs / kgCO2eq",
-        Criterion.TOTAL_SYSTEM_COST: "Total system cost / $",
-        Criterion.TOTAL_SYSTEM_GHGS: "Total system ghgs / kgCO2eq",
-        Criterion.TOTAL_COST: "Total cost / $",
-        Criterion.UNMET_ENERGY_FRACTION: "Unmet energy fraction",
-        Criterion.UPTIME: "Uptime",
-    }
 
     _name_to_criterion_map: dict[str, Criterion] | None = None
 
     # _permissable_chevrons: list[str] = sorted(["<", ">"])
 
-    _permissable_threshold_criteria: list[str] = sorted(criterion_to_name_map.values())
+    _permissable_threshold_criteria: list[str] = sorted(CRITERION_TO_NAME_MAP.values())
 
     def __init__(
         self,
@@ -425,7 +459,22 @@ class ThresholdCriterion:
         )
 
         self.value: ttk.DoubleVar = value
-        self.value_entry = ttk.Entry(parent, bootstyle=INFO, textvariable=self.value)
+        self.percentage_value: ttk.DoubleVar = ttk.DoubleVar(parent, 100 * value.get())
+        self.value_entry = ttk.Entry(
+            parent,
+            bootstyle=INFO,
+            textvariable=self.value
+            if self.name_to_criterion_map[criterion_name.get()]
+            not in PERCENTAGE_CRITERIA
+            else self.percentage_value,
+        )
+        self.value_entry.bind("<<Return>>", self._enter_value)
+
+        self.units_string: ttk.StringVar = ttk.StringVar(
+            parent,
+            CRITERION_TO_UNITS_MAP[self.name_to_criterion_map[criterion_name.get()]],
+        )
+        self.units_label: ttk.Label = ttk.Label(parent, text=self.units_string.get())
 
         self.delete_criterion_button: ttk.Button = ttk.Button(
             parent,
@@ -455,6 +504,17 @@ class ThresholdCriterion:
 
         return self.__str__()
 
+    def _enter_value(self, _=None) -> None:
+        """Callback for when a value is entered."""
+
+        if (
+            self.name_to_criterion_map[self.criterion_name_combobox.get()]
+            in PERCENTAGE_CRITERIA
+        ):
+            self.value.set(self.percentage_value.get())
+        else:
+            self.percentage_value.set(self.value.get())
+
     @classmethod
     def default_threshold_criterion(cls) -> str:
         """Return the default threshold criterion."""
@@ -473,8 +533,11 @@ class ThresholdCriterion:
         self.value_entry.grid(
             row=(25 + self.index), column=2, padx=20, pady=10, sticky="ew"
         )
+        self.units_label.grid(
+            row=(25 + self.index), column=3, padx=20, pady=10, sticky="w"
+        )
         self.delete_criterion_button.grid(
-            row=(25 + self.index), column=3, padx=20, pady=10, sticky="w", ipadx=20
+            row=(25 + self.index), column=4, padx=20, pady=10, sticky="w", ipadx=20
         )
 
     def grid_forget(self) -> None:
@@ -483,6 +546,7 @@ class ThresholdCriterion:
         self.criterion_name_combobox.grid_forget()
         self.less_than_label.grid_forget()
         self.value_entry.grid_forget()
+        self.units_label.grid_forget()
         self.delete_criterion_button.grid_forget()
 
     @classmethod
@@ -498,7 +562,7 @@ class ThresholdCriterion:
 
         if self._name_to_criterion_map is None:
             self._name_to_criterion_map: dict[str, Criterion] = {
-                value: key for key, value in self.criterion_to_name_map.items()
+                value: key for key, value in CRITERION_TO_NAME_MAP.items()
             }
         return self._name_to_criterion_map
 
@@ -508,7 +572,11 @@ class ThresholdCriterion:
         # Update the less-than variables based on the new variable.
         self.less_than.set(
             THRESHOLD_CRITERION_TO_MODE[
-                self.name_to_criterion_map[self.criterion_name_combobox.get()]
+                (
+                    criterion := self.name_to_criterion_map[
+                        self.criterion_name_combobox.get()
+                    ]
+                )
             ]
             == ThresholdMode.MAXIMUM
         )
@@ -516,6 +584,17 @@ class ThresholdCriterion:
             "less than" if self.less_than.get() else "greater than"
         )
         self.less_than_label.configure(text=self.less_than_string.get())
+
+        # Update the value entry based on whether the criterion should have a percentage
+        # displayed or not.
+        if criterion in PERCENTAGE_CRITERIA:
+            self.value_entry.configure(textvariable=self.percentage_value)
+        else:
+            self.value_entry.configure(textvariable=self.value)
+
+        # Update the units based on the new variable.
+        self.units_string.set(CRITERION_TO_UNITS_MAP[criterion])
+        self.units_label.configure(text=self.units_string.get())
 
     def set_index(self, index: int) -> None:
         """
@@ -1650,7 +1729,7 @@ class OptimisationFrame(ttk.Frame):
         """Populate the combo box with the set of avialable batteries."""
 
         self.optimisation_criterion_entry["values"] = [
-            str(entry) for entry in ThresholdCriterion.criterion_to_name_map.values()
+            str(entry) for entry in CRITERION_TO_NAME_MAP.values()
         ]
 
     def populate_minmax(self) -> None:
@@ -1742,9 +1821,7 @@ class OptimisationFrame(ttk.Frame):
 
         # Update optimisation criteria
         for criterion, criterion_mode in optimisation.optimisation_criteria.items():
-            self.optimisation_criterion.set(
-                ThresholdCriterion.criterion_to_name_map[criterion]
-            )
+            self.optimisation_criterion.set(CRITERION_TO_NAME_MAP[criterion])
             self.optimisation_criterion_entry.update()
 
             self.optimisation_minmax.set(criterion_mode.value.capitalize())
@@ -1756,9 +1833,7 @@ class OptimisationFrame(ttk.Frame):
             self.threshold_criteria.append(
                 ThresholdCriterion(
                     self.scrollable_optimisation_frame,
-                    ttk.StringVar(
-                        self, ThresholdCriterion.criterion_to_name_map[criterion]
-                    ),
+                    ttk.StringVar(self, CRITERION_TO_NAME_MAP[criterion]),
                     ttk.BooleanVar(
                         self,
                         THRESHOLD_CRITERION_TO_MODE[criterion] == ThresholdMode.MAXIMUM,
