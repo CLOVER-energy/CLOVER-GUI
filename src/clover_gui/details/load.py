@@ -565,9 +565,20 @@ class DeviceSettingsFrame(ttk.Labelframe):
         self.name_entry = ttk.Entry(
             self.scrollable_frame, textvariable=parent.active_device.name, style=SUCCESS
         )
-        self.name_entry.grid(row=0, column=1, padx=10, pady=5, ipadx=10)
+        self.name_entry.grid(row=0, column=1, padx=10, pady=5, ipadx=10, sticky="ew")
 
         self.name_entry.bind("<Return>", parent.update_button_label)
+
+        # Save device name button
+        self.save_device_name_button = ttk.Button(
+            self.scrollable_frame,
+            bootstyle=f"{SUCCESS}-{TOOLBUTTON}",
+            text="Save",
+            command=parent.update_button_label,
+        )
+        self.save_device_name_button.grid(
+            row=0, column=2, padx=10, pady=5, sticky="w", ipadx=20
+        )
 
         # Device type
         self.device_type_label = ttk.Label(self.scrollable_frame, text="Load type")
@@ -1189,7 +1200,7 @@ class LoadFrame(ttk.Frame):
         self.active_device = self.devices[0]
         self.select_device(self.active_device)
 
-    def update_button_label(self, _) -> None:
+    def update_button_label(self, _=None) -> None:
         """Updates the button label of the active device."""
 
         self.devices_frame.device_selected_buttons[self.active_device].configure(

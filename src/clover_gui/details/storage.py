@@ -118,6 +118,17 @@ class BatteryFrame(ttk.Frame):
         )
         self.battery_name_entry.bind("<Return>", self.enter_battery_name)
 
+        # Save battery name button
+        self.save_battery_name_button = ttk.Button(
+            self.scrollable_frame,
+            bootstyle=f"{WARNING}-{TOOLBUTTON}",
+            text="Save",
+            command=self.enter_battery_name,
+        )
+        self.save_battery_name_button.grid(
+            row=1, column=2, padx=10, pady=5, sticky="w", ipadx=20
+        )
+
         # Battery capacity
         self.battery_capacity_label = ttk.Label(self.scrollable_frame, text="Capacity")
         self.battery_capacity_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
@@ -787,7 +798,7 @@ class BatteryFrame(ttk.Frame):
 
         return batteries
 
-    def enter_battery_name(self, _) -> None:
+    def enter_battery_name(self, _=None) -> None:
         """Called when someone enters a new battery name."""
         self.populate_available_batteries()
 

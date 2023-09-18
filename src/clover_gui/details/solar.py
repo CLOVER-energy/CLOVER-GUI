@@ -150,9 +150,18 @@ class PVFrame(ttk.Frame):
             self.scrolled_frame, bootstyle=WARNING, textvariable=self.panel_selected
         )
         self.panel_name_entry.grid(
-            row=2, column=1, columnspan=3, padx=10, pady=5, sticky="ew", ipadx=50
+            row=2, column=1, columnspan=2, padx=10, pady=5, sticky="ew", ipadx=50
         )
         self.panel_name_entry.bind("<Return>", self.enter_panel_name)
+
+        # Save panel name button
+        self.save_panel_name_button = ttk.Button(
+            self.scrolled_frame,
+            bootstyle=f"{WARNING}-{TOOLBUTTON}",
+            text="Save",
+            command=self.enter_panel_name,
+        )
+        self.save_panel_name_button.grid(row=2, column=3, padx=10, pady=5, sticky="ew")
 
         # Nominal power
         self.nominal_power_label = ttk.Label(self.scrolled_frame, text="Nominal power")
@@ -878,6 +887,9 @@ class PVFrame(ttk.Frame):
         self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
         self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
         self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.tracking[new_name] = ttk.IntVar(self, 0)
 
         # Select the new panel and update the screen
         self.panel_selected = self.panel_name_values[new_name]
@@ -888,7 +900,7 @@ class PVFrame(ttk.Frame):
         # Add the panel to the system frame's list of panels.
         self.add_panel_to_system_frame(new_name)
 
-    def enter_panel_name(self, _) -> None:
+    def enter_panel_name(self, _=None) -> None:
         """Called when someone enters a new panel name."""
 
         self.populate_available_panels()
@@ -961,6 +973,10 @@ class PVFrame(ttk.Frame):
         self.om_emissions = {
             self.panel_name_values[key].get(): value
             for key, value in self.om_emissions.items()
+        }
+        self.tracking = {
+            self.panel_name_values[key].get(): value
+            for key, value in self.tracking.items()
         }
 
         # Update the panel-name values.
@@ -1200,11 +1216,17 @@ class PVFrame(ttk.Frame):
         self.embedded_emissions_entry.configure(
             textvariable=self.embedded_emissions[self.panel_selected.get()]
         )
-        self.om_emissions_entry.configure(
-            textvariable=self.om_emissions[self.panel_selected.get()]
-        )
         self.annual_emissions_decrease_entry.configure(
             textvariable=self.annual_emissions_decrease[self.panel_selected.get()]
+        )
+        self.installation_emissions_entry.configure(
+            textvariable=self.installation_emissions[self.panel_selected.get()]
+        )
+        self.installation_emissions_decrease_entry.configure(
+            textvariable=self.installation_emissions_decrease[self.panel_selected.get()]
+        )
+        self.om_emissions_entry.configure(
+            textvariable=self.om_emissions[self.panel_selected.get()]
         )
 
         # Update the entries
@@ -1223,6 +1245,8 @@ class PVFrame(ttk.Frame):
         self.o_and_m_costs_entry.update()
         self.embedded_emissions_entry.update()
         self.annual_emissions_decrease_entry.update()
+        self.installation_emissions_entry.update()
+        self.installation_emissions_decrease_entry.update()
         self.om_emissions_entry.update()
 
 

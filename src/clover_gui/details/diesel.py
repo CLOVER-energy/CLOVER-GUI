@@ -152,6 +152,17 @@ class GeneratorFrame(ttk.Frame):
             "<Return>", self.enter_diesel_generator_name
         )
 
+        # Save diesel-generator name button
+        self.save_generator_name_button = ttk.Button(
+            self.scrolled_frame,
+            bootstyle=f"{DANGER}-{TOOLBUTTON}",
+            text="Save",
+            command=self.enter_diesel_generator_name,
+        )
+        self.save_generator_name_button.grid(
+            row=1, column=2, padx=10, pady=5, sticky="w", ipadx=20
+        )
+
         # Diesel generator capacity
         self.diesel_generator_capacity_label = ttk.Label(
             self.scrolled_frame, text="Capacity"
@@ -575,7 +586,7 @@ class GeneratorFrame(ttk.Frame):
         # Add the generator to the system frame
         self.add_generator_to_system_frame(new_name)
 
-    def enter_diesel_generator_name(self, _) -> None:
+    def enter_diesel_generator_name(self, _=None) -> None:
         """Called when someone enters a new diesel_generator name."""
         self.populate_available_generators()
 

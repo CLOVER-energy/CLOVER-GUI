@@ -89,6 +89,17 @@ class GridFrame(ttk.Frame):
             "<<ComboboxSelected>>", self.select_grid_profile
         )
 
+        # Save grid-profile name button
+        self.save_profile_name_button = ttk.Button(
+            self,
+            bootstyle=f"{SUCCESS}-{TOOLBUTTON}",
+            text="Save",
+            command=self.enter_grid_profile_name,
+        )
+        self.save_profile_name_button.grid(
+            row=0, column=3, padx=10, pady=5, sticky="w", ipadx=20
+        )
+
         # New profile
         self.new_profile_button = ttk.Button(
             self,
@@ -96,7 +107,7 @@ class GridFrame(ttk.Frame):
             command=self.add_profile,
             text="New grid profile",
         )
-        self.new_profile_button.grid(row=0, column=3, padx=10, pady=5)
+        self.new_profile_button.grid(row=1, column=0, rowspan=3, padx=10, pady=5)
 
         # Grid costs
         self.grid_cost_label = ttk.Label(self, text="Grid Cost")
@@ -331,7 +342,7 @@ class GridFrame(ttk.Frame):
             FINAL_GHGS: self.final_grid_ghgs.get(),
         }
 
-    def enter_grid_profile_name(self, _) -> None:
+    def enter_grid_profile_name(self, _=None) -> None:
         """Called when someone enters a new grid profile name."""
         self.probability_sliders = {
             self.grid_profile_values[key].get(): value
