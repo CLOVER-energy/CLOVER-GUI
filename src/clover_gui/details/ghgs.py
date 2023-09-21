@@ -76,7 +76,7 @@ class GHGFrame(ttk.Frame):
         self.general_om_entry = ttk.Entry(self, textvariable=self.general_om)
         self.general_om_entry.grid(row=1, column=2, sticky="w")
 
-        self.general_om_units = ttk.Label(self, text="kgCO2 p.a.")
+        self.general_om_units = ttk.Label(self, text="kgCO2eq / year.")
         self.general_om_units.grid(row=1, column=3, sticky="w")
 
         # Miscellaneous Emissions
@@ -87,7 +87,7 @@ class GHGFrame(ttk.Frame):
         self.misc_entry = ttk.Entry(self, textvariable=self.misc)
         self.misc_entry.grid(row=2, column=2, sticky="w")
 
-        self.misc_units = ttk.Label(self, text="kgCO2 p.a.")
+        self.misc_units = ttk.Label(self, text="kgCO2eq / year")
         self.misc_units.grid(row=2, column=3, sticky="w")
 
         # GHG Emissions from BOS
@@ -98,7 +98,7 @@ class GHGFrame(ttk.Frame):
         self.bos_entry = ttk.Entry(self, textvariable=self.bos)
         self.bos_entry.grid(row=3, column=2, sticky="w")
 
-        self.bos_units = ttk.Label(self, text="kgCO2/kWp")
+        self.bos_units = ttk.Label(self, text="kgCO2eq / kWp of installed PV")
         self.bos_units.grid(row=3, column=3, sticky="w")
 
         self.bos_decrease_label = ttk.Label(
@@ -110,7 +110,7 @@ class GHGFrame(ttk.Frame):
         self.bos_decrease_entry = ttk.Entry(self, textvariable=self.bos_decrease)
         self.bos_decrease_entry.grid(row=4, column=2, sticky="w")
 
-        self.bos_decrease_units = ttk.Label(self, text="% p.a.")
+        self.bos_decrease_units = ttk.Label(self, text="% / year")
         self.bos_decrease_units.grid(row=4, column=3, sticky="w")
 
         # GHG Emissions from Connection Costs
@@ -121,7 +121,7 @@ class GHGFrame(ttk.Frame):
         self.households_entry = ttk.Entry(self, textvariable=self.households)
         self.households_entry.grid(row=5, column=2, sticky="w")
 
-        self.households_units = ttk.Label(self, text="kgCO2/household")
+        self.households_units = ttk.Label(self, text="kgCO2eq / household")
         self.households_units.grid(row=5, column=3, sticky="w")
 
         # GHG Emissions from Inverter
@@ -132,7 +132,7 @@ class GHGFrame(ttk.Frame):
         self.inverter_entry = ttk.Entry(self, textvariable=self.inverter)
         self.inverter_entry.grid(row=6, column=2, sticky="w")
 
-        self.inverter_units = ttk.Label(self, text="kgCO2/kWp")
+        self.inverter_units = ttk.Label(self, text="kgCO2eq / kWp")
         self.inverter_units.grid(row=6, column=3, sticky="w")
 
         # GHG Emissions inverter decrease
@@ -147,7 +147,7 @@ class GHGFrame(ttk.Frame):
         )
         self.inverter_decrease_entry.grid(row=7, column=2, sticky="w")
 
-        self.inverter_decrease_units = ttk.Label(self, text="% p.a.")
+        self.inverter_decrease_units = ttk.Label(self, text="% / year")
         self.inverter_decrease_units.grid(row=7, column=3, sticky="w")
 
         # GHG Emissions from Kerosene
@@ -158,7 +158,7 @@ class GHGFrame(ttk.Frame):
         self.kerosene_entry = ttk.Entry(self, textvariable=self.kerosene)
         self.kerosene_entry.grid(row=8, column=2, sticky="w")
 
-        self.kerosene_units = ttk.Label(self, text="kgCO2/hour")
+        self.kerosene_units = ttk.Label(self, text="kgCO2eq / hour")
         self.kerosene_units.grid(row=8, column=3, sticky="w")
 
     def set_ghg_inputs(

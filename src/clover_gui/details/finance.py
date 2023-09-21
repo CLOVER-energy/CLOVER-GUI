@@ -77,7 +77,7 @@ class FinanceFrame(ttk.Frame):
         self.header = ttk.Label(self, text="")
 
         # Discount Rate
-        self.discount_rate_label = ttk.Label(self, text="Discount Rate")
+        self.discount_rate_label = ttk.Label(self, text="Discount rate")
         self.discount_rate_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
         self.discount_rate = ttk.DoubleVar(self, 8.0)
 
@@ -127,7 +127,7 @@ class FinanceFrame(ttk.Frame):
         self.general_om_entry.grid(
             row=2, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
-        self.general_om_units_label = ttk.Label(self, text="$/year")
+        self.general_om_units_label = ttk.Label(self, text="$ / year")
         self.general_om_units_label.grid(row=2, column=3, padx=10, pady=5, sticky="w")
 
         # # Misc
@@ -140,7 +140,7 @@ class FinanceFrame(ttk.Frame):
         # self.misc_frame.columnconfigure(2, weight=2, pad=20)
 
         # Capacity Cost
-        self.capacity_cost_label = ttk.Label(self, text="Misc. Capacity Cost")
+        self.capacity_cost_label = ttk.Label(self, text="Misc. capacity cost")
         self.capacity_cost_label.grid(row=3, column=1, padx=10, pady=5, sticky="w")
         self.capacity_cost = ttk.DoubleVar(self, "0.0")
 
@@ -152,13 +152,13 @@ class FinanceFrame(ttk.Frame):
             row=3, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
 
-        self.capacity_cost_units_label = ttk.Label(self, text="$/kWp")
+        self.capacity_cost_units_label = ttk.Label(self, text="$ / kWp installed PV")
         self.capacity_cost_units_label.grid(
             row=3, column=3, padx=10, pady=5, sticky="w"
         )
 
         # Fixed Cost
-        self.fixed_cost_label = ttk.Label(self, text="Misc. Fixed Cost")
+        self.fixed_cost_label = ttk.Label(self, text="Misc. fixed cost")
         self.fixed_cost_label.grid(row=4, column=1, padx=10, pady=5, sticky="w")
         self.fixed_cost = ttk.DoubleVar(self, "0.0")
 
@@ -187,11 +187,11 @@ class FinanceFrame(ttk.Frame):
         self.bos_cost_entry.grid(
             row=5, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
-        self.bos_cost_units_label = ttk.Label(self, text="$/kWp")
+        self.bos_cost_units_label = ttk.Label(self, text="$ / kWp installed PV")
         self.bos_cost_units_label.grid(row=5, column=3, padx=10, pady=5, sticky="w")
 
         # BOS Cost Decrease
-        self.bos_cost_decrease_label = ttk.Label(self, text="BOS Cost Decrease")
+        self.bos_cost_decrease_label = ttk.Label(self, text="BOS cost decrease")
         self.bos_cost_decrease_label.grid(row=6, column=1, padx=10, pady=5, sticky="w")
         self.bos_cost_decrease = ttk.DoubleVar(self, "0.0")
 
@@ -203,14 +203,14 @@ class FinanceFrame(ttk.Frame):
         self.bos_cost_decrease_entry.grid(
             row=6, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
-        self.bos_cost_decrease_units_label = ttk.Label(self, text="%/year")
+        self.bos_cost_decrease_units_label = ttk.Label(self, text="% / year")
         self.bos_cost_decrease_units_label.grid(
             row=6, column=3, padx=10, pady=5, sticky="w"
         )
 
         # Distribution network
         self.distribution_network_infrastructure_cost_label = ttk.Label(
-            self, text="Distribution Network Infrastructure Cost"
+            self, text="Distribution network infrastructure cost"
         )
         self.distribution_network_infrastructure_cost_label.grid(
             row=7, column=1, padx=10, pady=5, sticky="w"
@@ -246,7 +246,7 @@ class FinanceFrame(ttk.Frame):
         # self.columnconfigure(2, weight=2, pad=5)
 
         # Connection Cost
-        self.connection_cost_label = ttk.Label(self, text="Connection Cost")
+        self.connection_cost_label = ttk.Label(self, text="Connection cost")
         self.connection_cost_label.grid(row=8, column=1, padx=10, pady=5, sticky="w")
         self.connection_cost = ttk.DoubleVar(self, "0.0")
 
@@ -258,7 +258,7 @@ class FinanceFrame(ttk.Frame):
         self.connection_cost_entry.grid(
             row=8, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
-        self.connection_cost_units_label = ttk.Label(self, text="$/household")
+        self.connection_cost_units_label = ttk.Label(self, text="$ / household")
         self.connection_cost_units_label.grid(
             row=8, column=3, padx=10, pady=5, sticky="w"
         )
@@ -276,7 +276,7 @@ class FinanceFrame(ttk.Frame):
         # self.columnconfigure(2, weight=2, pad=30)
 
         # Inverter Cost
-        self.inverter_cost_label = ttk.Label(self, text="Inverter Cost")
+        self.inverter_cost_label = ttk.Label(self, text="Inverter cost")
         self.inverter_cost_label.grid(row=9, column=1, padx=10, pady=5, sticky="w")
         self.inverter_cost = ttk.DoubleVar(self, "0.0")
 
@@ -288,14 +288,14 @@ class FinanceFrame(ttk.Frame):
         self.inverter_cost_entry.grid(
             row=9, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
-        self.inverter_cost_units_label = ttk.Label(self, text="$/kW")
+        self.inverter_cost_units_label = ttk.Label(self, text="$ / kW")
         self.inverter_cost_units_label.grid(
             row=9, column=3, padx=10, pady=5, sticky="w"
         )
 
         # Inverter Cost Decrease
         self.inverter_cost_decrease_label = ttk.Label(
-            self, text="Inverter Cost Decrease"
+            self, text="Inverter cost decrease"
         )
         self.inverter_cost_decrease_label.grid(
             row=10, column=1, padx=10, pady=5, sticky="w"
@@ -310,7 +310,7 @@ class FinanceFrame(ttk.Frame):
         self.inverter_cost_decrease_entry.grid(
             row=10, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
-        self.inverter_cost_decrease_units_label = ttk.Label(self, text="%/year")
+        self.inverter_cost_decrease_units_label = ttk.Label(self, text="% / year")
         self.inverter_cost_decrease_units_label.grid(
             row=10, column=3, padx=10, pady=5, sticky="w"
         )
@@ -362,7 +362,7 @@ class FinanceFrame(ttk.Frame):
         # self.columnconfigure(2, weight=1, pad=82)
 
         # Kerosene Cost
-        self.kerosene_cost_label = ttk.Label(self, text="Kerosene Cost")
+        self.kerosene_cost_label = ttk.Label(self, text="Kerosene cost")
         self.kerosene_cost_label.grid(row=11, column=1, padx=10, pady=5, sticky="w")
         self.kerosene_cost = ttk.DoubleVar(self, "0.0")
 
@@ -371,7 +371,7 @@ class FinanceFrame(ttk.Frame):
             row=11, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
 
-        self.kerosene_cost_units_label = ttk.Label(self, text="$/hour")
+        self.kerosene_cost_units_label = ttk.Label(self, text="$ / hour")
         self.kerosene_cost_units_label.grid(
             row=11, column=3, padx=10, pady=5, sticky="w"
         )

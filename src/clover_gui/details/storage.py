@@ -569,7 +569,7 @@ class BatteryFrame(ttk.Frame):
         self.c_rate_charging_unit.grid(row=11, column=2, padx=10, pady=5, sticky="w")
 
         # Cost
-        self.cost_label = ttk.Label(self.scrollable_frame, text="Cost")
+        self.cost_label = ttk.Label(self.scrollable_frame, text="Storage cost")
         self.cost_label.grid(row=12, column=0, padx=10, pady=5, sticky="w")
 
         self.costs: dict[str, ttk.DoubleVar] = {
@@ -583,12 +583,12 @@ class BatteryFrame(ttk.Frame):
         )
         self.cost_entry.grid(row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
-        self.cost_unit = ttk.Label(self.scrollable_frame, text="USD ($)")
+        self.cost_unit = ttk.Label(self.scrollable_frame, text="$ / kWh")
         self.cost_unit.grid(row=12, column=2, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
-            self.scrollable_frame, text="Cost decrease"
+            self.scrollable_frame, text="Storage cost decrease"
         )
         self.cost_decrease_label.grid(row=13, column=0, padx=10, pady=5, sticky="w")
 
@@ -629,12 +629,12 @@ class BatteryFrame(ttk.Frame):
             row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.o_and_m_costs_unit = ttk.Label(self.scrollable_frame, text="USD ($)")
+        self.o_and_m_costs_unit = ttk.Label(self.scrollable_frame, text="$ / kWh / year")
         self.o_and_m_costs_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
-            self.scrollable_frame, text="Embedded emissions"
+            self.scrollable_frame, text="Storage embedded emissions"
         )
         self.embedded_emissions_label.grid(
             row=15, column=0, padx=10, pady=5, sticky="w"
@@ -675,12 +675,12 @@ class BatteryFrame(ttk.Frame):
             row=16, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.om_emissions_unit = ttk.Label(self.scrollable_frame, text="kgCO2eq / year")
+        self.om_emissions_unit = ttk.Label(self.scrollable_frame, text="kgCO2eq / kWh / year")
         self.om_emissions_unit.grid(row=16, column=2, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
-            self.scrollable_frame, text="Annual emissions decrease"
+            self.scrollable_frame, text="Storage embedded emissions decrease"
         )
         self.annual_emissions_decrease_label.grid(
             row=17, column=0, padx=10, pady=5, sticky="w"
