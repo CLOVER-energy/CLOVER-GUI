@@ -235,7 +235,7 @@ class GeneratorFrame(ttk.Frame):
 
         def scalar_minimum_load(_):
             self.minimum_load[self.diesel_generator_selected.get()].set(
-                round(self.minimum_load_slider.get()), 0
+                round(self.minimum_load_slider.get(),1), 
             )
             self.minimum_load_entry.update()
 

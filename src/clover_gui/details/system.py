@@ -115,7 +115,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_transmission(_):
             self.ac_transmission.set(
-                round(max(min(self.ac_transmission.get(), 100), 0), 0)
+                round(max(min(self.ac_transmission.get(), 100), 0), 1)
             )
             self.ac_transmission_entry.update()
 
@@ -157,7 +157,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_dc_transmission(_):
             self.dc_transmission.set(
-                round(max(min(self.dc_transmission.get(), 100), 0), 0)
+                round(max(min(self.dc_transmission.get(), 100), 0), 1)
             )
             self.dc_transmission_entry.update()
 
@@ -202,7 +202,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_dc_to_ac_conversion(_):
             self.dc_to_ac_conversion.set(
-                round(max(min(self.dc_to_ac_conversion.get(), 100), 0), 0)
+                round(max(min(self.dc_to_ac_conversion.get(), 100), 0), 1)
             )
             self.dc_to_ac_conversion_entry.update()
 
@@ -257,7 +257,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_dc_to_dc_conversion(_):
             self.dc_to_dc_conversion.set(
-                round(max(min(self.dc_to_dc_conversion.get(), 100), 0), 0)
+                round(max(min(self.dc_to_dc_conversion.get(), 100), 0), 1)
             )
             self.dc_to_dc_conversion_entry.update()
 
@@ -312,7 +312,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_to_dc_conversion(_):
             self.ac_to_dc_conversion.set(
-                round(max(min(self.ac_to_dc_conversion.get(), 100), 0), 0)
+                round(max(min(self.ac_to_dc_conversion.get(), 100), 0), 1)
             )
             self.ac_to_dc_conversion_entry.update()
 
@@ -368,7 +368,7 @@ class SystemFrame(ttk.Frame):
 
         def scalar_ac_to_ac_conversion(_):
             self.ac_to_ac_conversion.set(
-                round(max(min(self.ac_to_ac_conversion.get(), 100), 0), 0)
+                round(max(min(self.ac_to_ac_conversion.get(), 100), 0), 1)
             )
             self.ac_to_ac_conversion_entry.update()
 

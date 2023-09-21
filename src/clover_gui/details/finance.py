@@ -82,7 +82,7 @@ class FinanceFrame(ttk.Frame):
         self.discount_rate = ttk.DoubleVar(self, 8.0)
 
         def scalar_discount_rate(_):
-            self.discount_rate.set(int(max(min(self.discount_rate.get(), 100), 0)))
+            self.discount_rate.set(round(max(min(self.discount_rate.get(), 100), 0),1))
             self.discount_rate_entry.update()
 
         self.discount_rate_slider = ttk.Scale(

@@ -793,7 +793,7 @@ class ConfigurationFrame(ttk.Frame):
         self.diesel_backup_threshold: ttk.IntVar = ttk.DoubleVar(self, 0)
 
         def scalar_threshold(_):
-            self.diesel_backup_threshold.set(int(self.diesel_backup_threshold.get()))
+            self.diesel_backup_threshold.set(round(self.diesel_backup_threshold.get(),1))
             self.diesel_backup_entry.update()
 
         self.diesel_backup_slider = ttk.Scale(

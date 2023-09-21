@@ -100,7 +100,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             self.latitude_unit.configure(text="degrees North")
 
         def scalar_latitude(_):
-            self.latitude.set(self.latitude_slider.get())
+            self.latitude.set(round(self.latitude_slider.get(),2))
             self.latitude_entry.update()
             update_latitude_unit()
 
@@ -144,7 +144,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             self.longitude_unit.configure(text="degrees East")
 
         def scalar_longitude(_):
-            self.longitude.set(self.longitude_slider.get())
+            self.longitude.set(round(self.longitude_slider.get(),2))
             self.longitude_entry.update()
             update_longitude_unit()
 
