@@ -1014,7 +1014,7 @@ class OptimisationFrame(ttk.Frame):
         )
         self.pv_min_entry.grid(row=6, column=1, padx=20, pady=10, sticky="ew")
 
-        self.pv_min_unit = ttk.Label(self.scrollable_optimisation_frame, text="panels")
+        self.pv_min_unit = ttk.Label(self.scrollable_optimisation_frame, text="kWp")
         self.pv_min_unit.grid(row=6, column=2, padx=20, pady=10, sticky="w")
 
         self.pv_max_label = ttk.Label(self.scrollable_optimisation_frame, text="PV max")
@@ -1026,7 +1026,7 @@ class OptimisationFrame(ttk.Frame):
         )
         self.pv_max_entry.grid(row=6, column=3, padx=20, pady=10, sticky="ew")
 
-        self.pv_max_unit = ttk.Label(self.scrollable_optimisation_frame, text="panels")
+        self.pv_max_unit = ttk.Label(self.scrollable_optimisation_frame, text="kWp")
         self.pv_max_unit.grid(row=6, column=4, padx=20, pady=10, sticky="w")
 
         self.pv_step_label = ttk.Label(
@@ -1042,7 +1042,7 @@ class OptimisationFrame(ttk.Frame):
         )
         self.pv_step_entry.grid(row=7, column=1, padx=20, pady=10, sticky="ew")
 
-        self.pv_step_unit = ttk.Label(self.scrollable_optimisation_frame, text="panels")
+        self.pv_step_unit = ttk.Label(self.scrollable_optimisation_frame, text="kWp")
         self.pv_step_unit.grid(row=7, column=2, padx=20, pady=10, sticky="w")
 
         # Storage step size
@@ -1063,7 +1063,7 @@ class OptimisationFrame(ttk.Frame):
         self.storage_min_entry.grid(row=8, column=1, padx=20, pady=10, sticky="ew")
 
         self.storage_min_unit = ttk.Label(
-            self.scrollable_optimisation_frame, text="batteries"
+            self.scrollable_optimisation_frame, text="kWh"
         )
         self.storage_min_unit.grid(row=8, column=2, padx=20, pady=10, sticky="w")
 
@@ -1081,7 +1081,7 @@ class OptimisationFrame(ttk.Frame):
         self.storage_max_entry.grid(row=8, column=3, padx=20, pady=10, sticky="ew")
 
         self.storage_max_unit = ttk.Label(
-            self.scrollable_optimisation_frame, text="batteries"
+            self.scrollable_optimisation_frame, text="kWh"
         )
         self.storage_max_unit.grid(row=8, column=4, padx=20, pady=10, sticky="w")
 
@@ -1099,7 +1099,7 @@ class OptimisationFrame(ttk.Frame):
         self.storage_step_entry.grid(row=9, column=1, padx=20, pady=10, sticky="ew")
 
         self.storage_step_unit = ttk.Label(
-            self.scrollable_optimisation_frame, text="batteries"
+            self.scrollable_optimisation_frame, text="kWh"
         )
         self.storage_step_unit.grid(row=9, column=2, padx=20, pady=10, sticky="w")
 
