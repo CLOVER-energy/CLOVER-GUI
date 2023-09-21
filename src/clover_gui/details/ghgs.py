@@ -98,7 +98,7 @@ class GHGFrame(ttk.Frame):
         self.bos_entry = ttk.Entry(self, textvariable=self.bos)
         self.bos_entry.grid(row=3, column=2, sticky="w")
 
-        self.bos_units = ttk.Label(self, text="kgCO2eq / kWp of installed PV")
+        self.bos_units = ttk.Label(self, text="kgCO2eq / kWp installed PV")
         self.bos_units.grid(row=3, column=3, sticky="w")
 
         self.bos_decrease_label = ttk.Label(
