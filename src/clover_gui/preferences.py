@@ -137,7 +137,7 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
             textvariable=self.renewables_ninja_token,
         )
         self.renewables_ninja_entry.grid(
-            row=0, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+            row=0, column=1, padx=10, pady=5, sticky="ew", ipadx=65
         )
 
         # System lifetime
@@ -151,7 +151,7 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
             textvariable=self.system_lifetime,
         )
         self.system_lifetime_entry.grid(
-            row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=80
+            row=1, column=1, padx=10, pady=5, sticky="ew", ipadx=65
         )
 
         self.system_lifetime_unit = ttk.Label(
@@ -161,7 +161,7 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         # Start year
         self.start_year_label = ttk.Label(
-            self.renewables_ninja_label_frame, text="Start year"
+            self.renewables_ninja_label_frame, text="Solar data start year"
         )
         self.start_year_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
@@ -181,7 +181,6 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
             from_=MIN_START_YEAR,
             to=MAX_START_YEAR,
             orient=ttk.HORIZONTAL,
-            length=320,
             command=scalar_start_year,
             # bootstyle=WARNING,
             variable=self.start_year,
@@ -204,7 +203,7 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         # End year
         self.end_year_label = ttk.Label(
-            self.renewables_ninja_label_frame, text="End year"
+            self.renewables_ninja_label_frame, text="Solar data end year"
         )
         self.end_year_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
@@ -230,7 +229,6 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
             from_=MIN_START_YEAR + RENEWABLES_NINJA_DATA_PERIOD,
             to=MAX_START_YEAR + RENEWABLES_NINJA_DATA_PERIOD,
             orient=ttk.HORIZONTAL,
-            length=320,
             command=scalar_end_year,
             # bootstyle=WARNING,
             variable=self.end_year,

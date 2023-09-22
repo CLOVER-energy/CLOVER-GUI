@@ -1942,14 +1942,14 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.help_text = ttk.Label(
             self,
             bootstyle=INFO,
-            text="1. Configure the scenario for your location below\n"
+            text="1. selfrio for your location below\n"
             "2. Use the tabs to either\n"
             "    a. Simulate: Run a simulation for a given lifetime and capacity\n"
             "    b. Optimise: Run an optimisation to determine the optimum system",
             font=("TkDefaultFont", "12", "bold"),
         )
         self.help_text.grid(
-            row=0, column=3, columnspan=2, sticky="e", padx=(20, 60), pady=20
+            row=1, column=0, columnspan=4, sticky="w", padx=(20, 60), pady=20
         )
 
         self.notebook_style = ttk.Style()
