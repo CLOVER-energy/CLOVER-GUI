@@ -13,6 +13,7 @@ import datetime
 import os
 import tkinter as tk
 
+import customtkinter as ctk
 import ttkbootstrap as ttk
 
 from typing import Callable
@@ -51,6 +52,10 @@ from .scenario import ConfigurationFrame
 
 
 __all__ = ("ConfigurationScreen",)
+
+# Images directory name:
+#   The name of the images directory.
+_IMAGES_DIRECTORY_NAME: str = "images"
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
@@ -1938,18 +1943,48 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
 
         self.location_name: ttk.Stringvar = location_name
 
-        # Help text
-        self.help_text = ttk.Label(
+        # Helper
+        self.help_image = ttk.PhotoImage(
+            
+            file=os.path.join(
+                data_directory,
+                _IMAGES_DIRECTORY_NAME,
+                "QMark_unhovered.png",
+            ))
+        
+        self.config_help_icon = ttk.Label(
             self,
             bootstyle=INFO,
-            text="1. selfrio for your location below\n"
-            "2. Use the tabs to either\n"
-            "    a. Simulate: Run a simulation for a given lifetime and capacity\n"
-            "    b. Optimise: Run an optimisation to determine the optimum system",
-            font=("TkDefaultFont", "12", "bold"),
+            image=self.help_image,
+            text="",
         )
-        self.help_text.grid(
-            row=1, column=0, columnspan=4, sticky="w", padx=(20, 60), pady=20
+        self.config_tooltip = ToolTip(
+            self.config_help_icon,
+            text="Configure the scenario for your location below within the 'Configure' tab. Then use the 'Simulate' tab to simulate a system for a given lifetime and capacity the or 'Optimise' tab whereby CLOVER will determine the optimum system.",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+        # self.help_button = ctk.CTkButton(
+        #     master=self,
+        #     command=None,
+        #     fg_color="transparent",
+        #     image=self.help_image,
+        #     text="",
+        # )
+        
+        # self.help_text = ttk.Label(
+        #     self,
+        #     bootstyle=INFO,
+        #     text="1. Configure the scenario for your location below\n"
+        #     "2. Use the tabs to either\n"
+        #     "    a. Simulate: Run a simulation for a given lifetime and capacity\n"
+        #     "    b. Optimise: Run an optimisation to determine the optimum system",
+        #     font=("TkDefaultFont", "12", "bold"),
+        # )
+        # self.help_text.grid(
+        #     row=0, column=3, columnspan=2, sticky="e", padx=(20, 60), pady=20
+        # )
+        self.config_help_icon.grid(
+            row=0, column=0, columnspan=3, padx=(60, 20), pady=10, sticky="sw"
         )
 
         self.notebook_style = ttk.Style()
