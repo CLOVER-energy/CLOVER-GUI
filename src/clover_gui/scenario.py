@@ -172,9 +172,9 @@ class ConfigurationFrame(ttk.Frame):
         # Explainer label
         self.explainer_power_generation_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Select power sources \n"
+            text="Select power sources\n"
             "and adjust settings\n"
-            "and components. \n"
+            "and components."
             # "Detailed settings can be \n"
             # "adjusted by clicking the\n"
             # "buttons below the \n"
@@ -185,13 +185,13 @@ class ConfigurationFrame(ttk.Frame):
         )
         self.power_source_used_label = ttk.Label(
             self.scrollable_scenario_frame, text="Toggle power sources\n"
-            " on or off"
+            "on or off"
         )
         self.power_source_used_label.grid(
             row=2, column=0, padx=10, pady=5, sticky="w")
         
         self.power_source_settings_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Open advanced settings \n"
+            self.scrollable_scenario_frame, text="Open advanced settings\n"
             "for each power source"
             # "adjusted by clicking\n"
             # "respective settings buttons\n"
@@ -567,6 +567,22 @@ class ConfigurationFrame(ttk.Frame):
         self.electric_power_label.grid(
             row=7, column=0, columnspan=5, padx=10, pady=5, sticky="w"
         )
+       
+        # Demand type headings
+        self.domestic_demand_header = ttk.Label(
+            self.scrollable_scenario_frame, text="Domestic", 
+        )
+        self.domestic_demand_header.grid(row=7, column=1, padx=10, pady=5, sticky="")
+
+        self.commercial_demand_header = ttk.Label(
+            self.scrollable_scenario_frame, text="Commercial"
+        )
+        self.commercial_demand_header.grid(row=7, column=2, padx=10, pady=5, sticky="")
+
+        self.public_demand_header = ttk.Label(
+            self.scrollable_scenario_frame, text="Public"
+        )
+        self.public_demand_header.grid(row=7, column=3, padx=10, pady=5, sticky="")
 
         self.electric_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -584,10 +600,10 @@ class ConfigurationFrame(ttk.Frame):
         # Demand explainer
         self.demand_explainer = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Select electricity demand\n"
-            "types used. Select\n"
-            "'Demand settings' for,\n"
-            "further options"
+            text="Select electricity\n"
+            "demand types used.\n"
+            "Open Demand settings\n"
+            "for further options"
         )
         self.demand_explainer.grid(
             row=8, column=0, pady=5, padx=10, sticky="nsw"
@@ -595,7 +611,7 @@ class ConfigurationFrame(ttk.Frame):
 
         self.demand_toggle_explainer = ttk.Label(
             self.scrollable_scenario_frame, text="Toggle demand types\n"
-            " on or off"
+            "on or off"
         )
         self.demand_toggle_explainer.grid(
             row=9, column=0, pady=5, rowspan=2, padx=10, sticky="w"
@@ -1073,7 +1089,8 @@ class ConfigurationFrame(ttk.Frame):
         # Self generation
         self.prioritise_self_generation_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Prioritise self generation",
+            text="Prioritise self\n"
+            "generation",
         )
         self.prioritise_self_generation_label.grid(
             row=15, column=1, padx=10, pady=5, sticky="w"
