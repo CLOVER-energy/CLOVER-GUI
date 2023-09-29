@@ -168,12 +168,13 @@ class BatteryFrame(ttk.Frame):
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                1)
+                    1,
+                )
             )
             self.minimum_charge_entry.update()
 
             self.maximum_charge[self.battery_selected.get()].set(
-                round(self.maximum_charge[self.battery_selected.get()].get(),1)
+                round(self.maximum_charge[self.battery_selected.get()].get(), 1)
             )
             self.maximum_charge_entry.update()
 
@@ -197,16 +198,17 @@ class BatteryFrame(ttk.Frame):
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                2)
+                    2,
+                )
             )
             self.minimum_charge_slider.set(
                 self.minimum_charge[self.battery_selected.get()].get()
             )
             self.maximum_charge[self.battery_selected.get()].set(
-                round(self.maximum_charge_entry.get(),2)
+                round(self.maximum_charge_entry.get(), 2)
             )
             self.maximum_charge_slider.set(
-                round(self.maximum_charge[self.battery_selected.get()].get(),2)
+                round(self.maximum_charge[self.battery_selected.get()].get(), 2)
             )
 
         self.maximum_charge_entry = ttk.Entry(
@@ -238,12 +240,13 @@ class BatteryFrame(ttk.Frame):
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                1)
+                    1,
+                )
             )
             self.maximum_charge_entry.update()
 
             self.minimum_charge[self.battery_selected.get()].set(
-                round(self.minimum_charge[self.battery_selected.get()].get(),1)
+                round(self.minimum_charge[self.battery_selected.get()].get(), 1)
             )
             self.minimum_charge_entry.update()
 
@@ -262,7 +265,7 @@ class BatteryFrame(ttk.Frame):
 
         def enter_minimum_charge(_):
             self.minimum_charge[self.battery_selected.get()].set(
-                round(self.minimum_charge_entry.get(),2)
+                round(self.minimum_charge_entry.get(), 2)
             )
             self.maximum_charge[self.battery_selected.get()].set(
                 round(
@@ -270,7 +273,8 @@ class BatteryFrame(ttk.Frame):
                         self.maximum_charge[self.battery_selected.get()].get(),
                         self.minimum_charge[self.battery_selected.get()].get(),
                     ),
-                2)
+                    2,
+                )
             )
             self.maximum_charge_slider.set(
                 self.maximum_charge[self.battery_selected.get()].get()
@@ -629,7 +633,9 @@ class BatteryFrame(ttk.Frame):
             row=14, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.o_and_m_costs_unit = ttk.Label(self.scrollable_frame, text="$ / kWh / year")
+        self.o_and_m_costs_unit = ttk.Label(
+            self.scrollable_frame, text="$ / kWh / year"
+        )
         self.o_and_m_costs_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
@@ -675,7 +681,9 @@ class BatteryFrame(ttk.Frame):
             row=16, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.om_emissions_unit = ttk.Label(self.scrollable_frame, text="kgCO2eq / kWh / year")
+        self.om_emissions_unit = ttk.Label(
+            self.scrollable_frame, text="kgCO2eq / kWh / year"
+        )
         self.om_emissions_unit.grid(row=16, column=2, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
