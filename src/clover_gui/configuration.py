@@ -127,6 +127,7 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.help_frame.columnconfigure(3, weight=1)
         self.help_frame.columnconfigure(4, weight=1)
         self.help_frame.rowconfigure(0, weight=1)
+        self.help_frame.rowconfigure(1, weight=1)
 
         # Help text
         self.help_text_label = ttk.Label(
@@ -135,18 +136,29 @@ class SimulationFrame(BaseScreen, show_navigation=False):
         self.help_text_label.grid(
             row=0, column=0, columnspan=2, padx=20, pady=10, sticky="w"
         )
-
-        self.help_text_content = ttk.Label(
+        self.simulation_help_icon = ttk.Label(
             self.help_frame,
-            text="You can run a simulation of an energy system within CLOVER by "
-            "specifying the capacity of the energy-\ngeneration components and the "
-            "lifetime of your system. Specify whether to generate plots within CLOVER\n"
-            "as well as the output folder name.",
-        )
-        self.help_text_content.grid(
-            row=0, column=2, columnspan=3, padx=20, pady=10, sticky="ew"
+            bootstyle=INFO,
+            image=self.help_image,
+            text="",
         )
 
+        self.simulation_help_tooltip = ToolTip(
+            self.simulation_help_icon,
+            text="You can run a simulation of an energy system within CLOVER by "
+            "specifying the capacity of the energy-generation components and the "
+            "lifetime of your system. Specify whether to generate plots within CLOVER"
+            " as well as the output folder name.",
+            bootstyle=f"{INFO}-{INVERSE}"
+        )
+        self.simulation_help_icon.grid(
+            row=0, column=0, padx=20, pady=10, sticky="e"
+        )
+
+        self.separator = ttk.Separator(self.help_frame)
+        self.separator.grid(row=1, column=0, columnspan=6, sticky="sew", padx=(20, 20))
+        
+        
         self.capacity_header = ttk.Label(
             self, text="Component sizes", style="Bold.TLabel"
         )
@@ -2093,7 +2105,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         #     row=0, column=3, columnspan=2, sticky="e", padx=(20, 60), pady=20
         # )
         self.config_help_icon.grid(
-            row=0, column=0, columnspan=3, padx=(60, 20), pady=10, sticky="sw"
+            row=0, column=0, columnspan=3, padx=(60, 20), pady=10, sticky="e"
         )
 
         self.notebook_style = ttk.Style()
