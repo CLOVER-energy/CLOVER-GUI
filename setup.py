@@ -31,7 +31,7 @@ except FileNotFoundError:
 
 setup(
     name="CLOVER-GUI",
-    version="1.0.0b1",
+    version="1.0.0b2",
     description="A graphical user interface for CLOVER",
     long_description=long_description,
     author="Ben Winchester and Hamish Beath",
@@ -46,7 +46,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        "clover-energy >=5.2.0a4",
+        "clover-energy >=5.2.0a6",
         "customtkinter>=5.2.0",
         "cx-Freeze >=6.15.5",
         "pandas >=1.2.3",
