@@ -67,7 +67,8 @@ class ConfigurationFrame(ttk.Frame):
         self.columnconfigure(0, weight=4)
 
         self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=8, minsize=300)
+        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=8, minsize=300)
         # self.pack(fill="both", expand=True)
 
         self.columnconfigure(0, weight=1, minsize=250)
@@ -75,7 +76,7 @@ class ConfigurationFrame(ttk.Frame):
 
         self.scrollable_scenario_frame = ScrolledFrame(self)
         self.scrollable_scenario_frame.grid(
-            row=1,
+            row=2,
             column=0,
             columnspan=2,
             padx=10,
@@ -108,6 +109,7 @@ class ConfigurationFrame(ttk.Frame):
         self.scrollable_scenario_frame.rowconfigure(14, weight=1)
         self.scrollable_scenario_frame.rowconfigure(15, weight=1)
         self.scrollable_scenario_frame.rowconfigure(16, weight=1)
+        self.scrollable_scenario_frame.rowconfigure(17, weight=1)
 
         # Style
         bold_head = ttk.Style()
@@ -125,7 +127,7 @@ class ConfigurationFrame(ttk.Frame):
             text="",
         )
         self.scenario_information_icon.grid(
-            row=0, column=0, padx=20, pady=10, sticky="ew"
+            row=0, column=0, padx=20, pady=20, sticky="e"
         )
 
         # self.scenario_information_text = ttk.Label(
@@ -147,11 +149,15 @@ class ConfigurationFrame(ttk.Frame):
         #     row=0, column=1, padx=20, pady=10, sticky="ew"
         # )
 
-        # # Horizontal separator
+        # Horizontal separator
         # self.separator = ttk.Separator(
         #     self, orient="horizontal"
         # )
-        # self.separator.grid(row=0, column=1, columnspan=2, pady=5, padx=10, sticky="")
+        # self.separator.grid(row=1, column=0, columnspan=2, pady=5, padx=10, sticky="")
+        
+        self.separator = ttk.Separator(self)
+        self.separator.grid(row=1, column=0, columnspan=2, sticky="ew", padx=(20, 20))
+
 
         # Selecting system components
         self.power_generation_label = ttk.Label(
@@ -162,9 +168,22 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Component labels
-        # self.solar_label = ttk.Label(
-        #     self.scrollable_scenario_frame, text="PV", bootstyle=INFO, style="Bold.TLabel")
-        # self.solar_label.grid(row=0, column=1, rowspan=2, sticky="n")
+        self.solar_label = ttk.Label(
+             self.scrollable_scenario_frame, text="PV")
+        self.solar_label.grid(row=0, column=1, rowspan=2, sticky="")
+
+        self.battery_label = ttk.Label(
+             self.scrollable_scenario_frame, text="Battery")
+        self.battery_label.grid(row=0, column=2, rowspan=2, sticky="")
+
+        self.diesel_label = ttk.Label(
+             self.scrollable_scenario_frame, text="Diesel")
+        self.diesel_label.grid(row=0, column=3, rowspan=2, sticky="")
+
+        self.grid_label = ttk.Label(
+             self.scrollable_scenario_frame, text="Grid")
+        self.grid_label.grid(row=0, column=4, rowspan=2, sticky="")
+
 
         # Explainer label
         self.explainer_power_generation_label = ttk.Label(
@@ -178,13 +197,13 @@ class ConfigurationFrame(ttk.Frame):
             # "coloured icons.",
         )
         self.explainer_power_generation_label.grid(
-            row=1, column=0, padx=10, pady=5, sticky="nsw"
+            row=2, column=0, padx=10, pady=5, sticky="nsw"
         )
         self.power_source_used_label = ttk.Label(
             self.scrollable_scenario_frame, text="Toggle power sources\n"
             " on or off"
         )
-        self.power_source_used_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.power_source_used_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
         self.power_source_settings_label = ttk.Label(
             self.scrollable_scenario_frame, text="Open advanced settings \n"
@@ -193,14 +212,14 @@ class ConfigurationFrame(ttk.Frame):
             # "respective settings buttons\n"
         )
         self.power_source_settings_label.grid(
-            row=3, column=0, padx=10, pady=5, sticky="w"
+            row=4, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.component_selection_label = ttk.Label(
             self.scrollable_scenario_frame, text="Component selection"
         )
         self.component_selection_label.grid(
-            row=4, column=0, padx=10, pady=5, sticky="w"
+            row=5, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.solar_images: dict[bool, ttk.PhotoImage] = {
@@ -226,7 +245,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.solar_images[self.solar_pv_selected.get()],
             text="",
         )
-        self.pv_button.grid(row=0, column=1, rowspan=2, padx=10)
+        self.pv_button.grid(row=1, column=1, rowspan=2, padx=10)
 
         # self.pv_label = ttk.Label(
         #     self.scrollable_scenario_frame,
@@ -268,7 +287,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle="info-square-toggle",
             text="On / Off",
         )
-        self.PV_switch.grid(row=2, column=1, pady=10, sticky="")
+        self.PV_switch.grid(row=3, column=1, pady=10, sticky="")
 
         # PV panel selection
         self.pv_panel = ttk.StringVar(self, "")
@@ -280,7 +299,7 @@ class ConfigurationFrame(ttk.Frame):
             textvariable=self.pv_panel,
             width=5,
         )
-        self.pv_panel_combobox.grid(row=4, column=1, padx=20, pady=5, sticky="ew")
+        self.pv_panel_combobox.grid(row=5, column=1, padx=20, pady=5, sticky="ew")
 
         self.pv_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
@@ -288,7 +307,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle=INFO,
             command=self.open_pv_settings,
         )
-        self.pv_settings_button.grid(row=3, column=1, padx=50, sticky="ew")
+        self.pv_settings_button.grid(row=4, column=1, padx=50, sticky="ew")
 
         self.pv_settings_tooltip = ToolTip(
             self.pv_settings_button,
@@ -315,7 +334,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.battery_images[self.battery_selected.get()],
             text="",
         )
-        self.battery_button.grid(row=0, column=2, rowspan=2, pady=5, padx=10, sticky="")
+        self.battery_button.grid(row=1, column=2, rowspan=2, pady=5, padx=10, sticky="")
 
         self.battery_tooltip = ToolTip(
             self.battery_button,
@@ -350,7 +369,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle="info-square-toggle",
             text="On / Off",
         )
-        self.battery_switch.grid(row=2, column=2, pady=10, sticky="")
+        self.battery_switch.grid(row=3, column=2, pady=10, sticky="")
 
         self.battery_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
@@ -358,7 +377,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle=INFO,
             command=self.open_battery_settings,
         )
-        self.battery_settings_button.grid(row=3, column=2, padx=20)
+        self.battery_settings_button.grid(row=4, column=2, padx=20)
 
         self.battery_settings_tooltip = ToolTip(
             self.battery_settings_button,
@@ -374,7 +393,7 @@ class ConfigurationFrame(ttk.Frame):
             textvariable=self.battery,
             width=5,
         )
-        self.battery_combobox.grid(row=4, column=2, pady=5, padx=30, sticky="ew")
+        self.battery_combobox.grid(row=5, column=2, pady=5, padx=30, sticky="ew")
 
         self.diesel_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
@@ -396,7 +415,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.diesel_images[self.diesel_selected.get()],
             text="",
         )
-        self.diesel_button.grid(row=0, column=3, rowspan=2, pady=5, padx=10)
+        self.diesel_button.grid(row=1, column=3, rowspan=2, pady=5, padx=10)
 
         self.diesel_tooltip = ToolTip(
             self.diesel_button,
@@ -408,7 +427,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle="info-square-toggle",
             text="On / Off",
         )
-        self.diesel_switch.grid(row=2, column=3, pady=10, sticky="")
+        self.diesel_switch.grid(row=3, column=3, pady=10, sticky="")
 
         self.diesel_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
@@ -416,7 +435,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle=INFO,
             command=self.open_diesel_settings,
         )
-        self.diesel_settings_button.grid(row=3, column=3, padx=20)
+        self.diesel_settings_button.grid(row=4, column=3, padx=20)
         self.diesel_settings_tooltip = ToolTip(
             self.diesel_settings_button,
             text="Opens the detailed settings for configuring diesel generators",
@@ -431,7 +450,7 @@ class ConfigurationFrame(ttk.Frame):
             textvariable=self.diesel,
             width=5,
         )
-        self.diesel_combobox.grid(row=4, column=3, pady=5, padx=30, sticky="ew")
+        self.diesel_combobox.grid(row=5, column=3, pady=5, padx=30, sticky="ew")
 
         self.grid_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
@@ -453,7 +472,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.grid_images[self.grid_selected.get()],
             text="",
         )
-        self.grid_button.grid(row=0, column=4, rowspan=2, pady=5, padx=10)
+        self.grid_button.grid(row=1, column=4, rowspan=2, pady=5, padx=10)
 
         self.grid_tooltip = ToolTip(
             self.grid_button,
@@ -465,7 +484,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle="info-square-toggle",
             text="On / Off",
         )
-        self.grid_switch.grid(row=2, column=4, pady=10, sticky="")
+        self.grid_switch.grid(row=3, column=4, pady=10, sticky="")
 
         # Grid selection
         self.grid = ttk.StringVar(self, "")
@@ -477,7 +496,7 @@ class ConfigurationFrame(ttk.Frame):
             textvariable=self.grid,
             width=5,
         )
-        self.grid_combobox.grid(row=4, column=4, pady=5, padx=30, sticky="ew")
+        self.grid_combobox.grid(row=5, column=4, pady=5, padx=30, sticky="ew")
 
         self.grid_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
@@ -485,7 +504,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle=INFO,
             command=self.open_grid_settings,
         )
-        self.grid_settings_button.grid(row=3, column=4, padx=20)
+        self.grid_settings_button.grid(row=4, column=4, padx=20)
 
         self.grid_settings_tooltip = ToolTip(
             self.grid_settings_button,
@@ -494,13 +513,13 @@ class ConfigurationFrame(ttk.Frame):
         )
         # Empty line
         self.empty_line = ttk.Label(self.scrollable_scenario_frame, text="")
-        self.empty_line.grid(row=5, column=0, columnspan=5, pady=5, padx=10)
+        self.empty_line.grid(row=6, column=0, columnspan=5, pady=5, padx=10)
 
         # Horizontal separator
         self.separator = ttk.Separator(
             self.scrollable_scenario_frame, orient="horizontal"
         )
-        self.separator.grid(row=6, column=0, columnspan=5, pady=5, padx=10, sticky="ew")
+        self.separator.grid(row=7, column=0, columnspan=5, pady=5, padx=10, sticky="ew")
 
         # Resource types selection
         self.resource_images: dict[ResourceType, dict[bool, ttk.PhotoImage]] = {
@@ -562,24 +581,24 @@ class ConfigurationFrame(ttk.Frame):
             style="Bold.TLabel",
         )
         self.electric_power_label.grid(
-            row=7, column=0, columnspan=5, padx=10, pady=5, sticky="w"
+            row=8, column=0, columnspan=5, padx=10, pady=5, sticky="w"
         )
        
         # Demand type headings
         self.domestic_demand_header = ttk.Label(
             self.scrollable_scenario_frame, text="Domestic", 
         )
-        self.domestic_demand_header.grid(row=7, column=1, padx=10, pady=5, sticky="")
+        self.domestic_demand_header.grid(row=8, column=1, padx=10, pady=5, sticky="")
 
         self.commercial_demand_header = ttk.Label(
             self.scrollable_scenario_frame, text="Commercial"
         )
-        self.commercial_demand_header.grid(row=7, column=2, padx=10, pady=5, sticky="")
+        self.commercial_demand_header.grid(row=8, column=2, padx=10, pady=5, sticky="")
 
         self.public_demand_header = ttk.Label(
             self.scrollable_scenario_frame, text="Public"
         )
-        self.public_demand_header.grid(row=7, column=3, padx=10, pady=5, sticky="")
+        self.public_demand_header.grid(row=8, column=3, padx=10, pady=5, sticky="")
 
         self.electric_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -602,14 +621,14 @@ class ConfigurationFrame(ttk.Frame):
             "'Demand settings' for,\n"
             "further options",
         )
-        self.demand_explainer.grid(row=8, column=0, pady=5, padx=10, sticky="nsw")
+        self.demand_explainer.grid(row=9, column=0, pady=5, padx=10, sticky="nsw")
 
         self.demand_toggle_explainer = ttk.Label(
             self.scrollable_scenario_frame, text="Toggle demand types\n"
             " on or off"
         )
         self.demand_toggle_explainer.grid(
-            row=9, column=0, pady=5, rowspan=2, padx=10, sticky="w"
+            row=10, column=0, pady=5, rowspan=2, padx=10, sticky="w"
         )
         # self.electric_button.grid(row=8, column=1, pady=5, padx=10, sticky="")
         # self.electric_button_tooltip = ToolTip(
@@ -736,7 +755,7 @@ class ConfigurationFrame(ttk.Frame):
             ],
             text="",
         )
-        self.electric_domestic_button.grid(row=8, column=1, pady=5, padx=10, sticky="")
+        self.electric_domestic_button.grid(row=9, column=1, pady=5, padx=10, sticky="")
         self.electric_domestic_button_tooltip = ToolTip(
             self.electric_domestic_button,
             text="Toggles whether domestic electric demands are included when "
@@ -748,7 +767,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle="info-square-toggle",
             text="On / Off",
         )
-        self.electric_domestic_switch.grid(row=9, column=1, pady=10, sticky="")
+        self.electric_domestic_switch.grid(row=10, column=1, pady=10, sticky="")
 
         self.hot_water_domestic_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -810,7 +829,7 @@ class ConfigurationFrame(ttk.Frame):
             ],
             text="",
         )
-        self.electric_commercial_button.grid(row=8, column=2, pady=5, padx=10)
+        self.electric_commercial_button.grid(row=9, column=2, pady=5, padx=10)
         self.electric_commercial_button_tooltip = ToolTip(
             self.electric_commercial_button,
             text="Toggles whether commercial electricity demands are included when "
@@ -822,7 +841,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle="info-square-toggle",
             text="On / Off",
         )
-        self.electric_commercial_switch.grid(row=9, column=2, pady=10, sticky="")
+        self.electric_commercial_switch.grid(row=10, column=2, pady=10, sticky="")
 
         self.hot_water_commercial_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -880,7 +899,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.public_images[self.public_selected[ResourceType.ELECTRIC].get()],
             text="",
         )
-        self.electric_public_button.grid(row=8, column=3, pady=5, padx=10)
+        self.electric_public_button.grid(row=9, column=3, pady=5, padx=10)
         self.electric_public_button_tooltip = ToolTip(
             self.electric_public_button,
             text="Toggles whether public electricity demands are included when "
@@ -892,7 +911,7 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle="info-square-toggle",
             text="On / Off",
         )
-        self.electric_public_switch.grid(row=9, column=3, pady=10, sticky="")
+        self.electric_public_switch.grid(row=10, column=3, pady=10, sticky="")
 
         self.hot_water_public_button = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
@@ -940,20 +959,20 @@ class ConfigurationFrame(ttk.Frame):
             bootstyle=INFO,
             command=NONE,
         )
-        self.demand_settings_button.grid(row=8, column=4, padx=20)
+        self.demand_settings_button.grid(row=9, column=4, padx=20)
 
         # Row with a horizontal separator
         self.separator = ttk.Separator(
             self.scrollable_scenario_frame, orient="horizontal"
         )
         self.separator.grid(
-            row=11, column=0, pady=5, padx=10, columnspan=5, sticky="news"
+            row=12, column=0, pady=5, padx=10, columnspan=5, sticky="news"
         )
 
         # Empty row
         self.empty_row = ttk.Frame(self.scrollable_scenario_frame)
         self.empty_row.grid(
-            row=10, column=0, pady=5, padx=10, columnspan=5, sticky="news"
+            row=11, column=0, pady=5, padx=10, columnspan=5, sticky="news"
         )
 
         # Diesel scenario information
@@ -976,7 +995,7 @@ class ConfigurationFrame(ttk.Frame):
             style="Bold.TLabel",
         )
         self.other_settings_label.grid(
-            row=12, column=0, padx=10, pady=5, columnspan=5, sticky="w"
+            row=13, column=0, padx=10, pady=5, columnspan=5, sticky="w"
         )
 
         self.other_settings_explainer = ttk.Label(
@@ -987,7 +1006,7 @@ class ConfigurationFrame(ttk.Frame):
             "diesel-generator settings.",
         )
         self.other_settings_explainer.grid(
-            row=13, column=0, pady=5, rowspan=3, padx=10, sticky="nsw"
+            row=14, column=0, pady=5, rowspan=3, padx=10, sticky="nsw"
         )
 
         # Diesel mode
@@ -1008,7 +1027,7 @@ class ConfigurationFrame(ttk.Frame):
             self.scrollable_scenario_frame, text="Diesel threshold"
         )
         self.diesel_backup_threshold_label.grid(
-            row=13, column=1, padx=10, pady=5, sticky="w"
+            row=14, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.diesel_backup_threshold: ttk.IntVar = ttk.DoubleVar(self, 0)
@@ -1028,7 +1047,7 @@ class ConfigurationFrame(ttk.Frame):
             command=scalar_threshold,
             variable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_slider.grid(row=13, column=2, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_slider.grid(row=14, column=2, padx=10, pady=5, sticky="ew")
 
         def enter_threshold(_):
             self.diesel_backup_threshold.set(
@@ -1041,14 +1060,14 @@ class ConfigurationFrame(ttk.Frame):
             self.scrollable_scenario_frame,
             textvariable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_entry.grid(row=13, column=3, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_entry.grid(row=14, column=3, padx=10, pady=5, sticky="ew")
         self.diesel_backup_entry.bind("<Return>", enter_threshold)
 
         self.diesel_backup_threshold_unit = ttk.Label(
             self.scrollable_scenario_frame, text=f"% of hours"
         )
         self.diesel_backup_threshold_unit.grid(
-            row=13, column=4, padx=10, pady=5, sticky="w"
+            row=14, column=4, padx=10, pady=5, sticky="w"
         )
 
         # Distribution network
@@ -1070,14 +1089,14 @@ class ConfigurationFrame(ttk.Frame):
             self.scrollable_scenario_frame, text="Distribution network"
         )
         self.distribution_network_label.grid(
-            row=14, column=1, padx=10, pady=5, sticky="w"
+            row=15, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.distribution_network_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
         self.distribution_network_combobox.grid(
-            row=14, column=2, padx=10, pady=5, sticky="w"
+            row=15, column=2, padx=10, pady=5, sticky="w"
         )
         self.distribution_network_combobox["values"] = [
             e.value for e in DistributionNetwork
@@ -1091,14 +1110,14 @@ class ConfigurationFrame(ttk.Frame):
             "generation",
         )
         self.prioritise_self_generation_label.grid(
-            row=15, column=1, padx=10, pady=5, sticky="w"
+            row=16, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.prioritise_self_generation_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
         self.prioritise_self_generation_combobox.grid(
-            row=15, column=2, padx=10, pady=5, sticky="w"
+            row=16, column=2, padx=10, pady=5, sticky="w"
         )
         self.prioritise_self_generation_combobox["values"] = ["True", "False"]
         self.prioritise_self_generation_combobox.set("True")
