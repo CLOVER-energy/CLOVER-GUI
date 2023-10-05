@@ -533,7 +533,7 @@ class PVFrame(ttk.Frame):
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
-            self.scrolled_frame, text="PV cost decrease"
+            self.scrolled_frame, text="PV cost change"
         )
         self.cost_decrease_label.grid(row=13, column=0, padx=10, pady=5, sticky="w")
 
@@ -556,7 +556,7 @@ class PVFrame(ttk.Frame):
         )
 
         self.cost_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="% decrease / year"
+            self.scrolled_frame, text="%  / year"
         )
         self.cost_decrease_unit.grid(row=13, column=4, padx=10, pady=5, sticky="w")
 
@@ -591,7 +591,7 @@ class PVFrame(ttk.Frame):
 
         # Installation cost decrease
         self.installation_cost_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Installation cost decrease"
+            self.scrolled_frame, text="Installation cost change"
         )
         self.installation_cost_decrease_label.grid(
             row=15, column=0, padx=10, pady=5, sticky="w"
@@ -618,7 +618,7 @@ class PVFrame(ttk.Frame):
         )
 
         self.installation_cost_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="% decrease / year"
+            self.scrolled_frame, text="%  / year"
         )
         self.installation_cost_decrease_unit.grid(
             row=15, column=4, padx=10, pady=5, sticky="w"
@@ -682,7 +682,7 @@ class PVFrame(ttk.Frame):
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
-            self.scrolled_frame, text="PV emissions decrease"
+            self.scrolled_frame, text="PV emissions change"
         )
         self.annual_emissions_decrease_label.grid(
             row=18, column=0, padx=10, pady=5, sticky="w"
@@ -748,7 +748,7 @@ class PVFrame(ttk.Frame):
 
         # Annual installation emissions decrease
         self.installation_emissions_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Installation emissions decrease"
+            self.scrolled_frame, text="Installation emissions change"
         )
         self.installation_emissions_decrease_label.grid(
             row=20, column=0, padx=10, pady=5, sticky="w"
@@ -1126,13 +1126,13 @@ class PVFrame(ttk.Frame):
                 (this_pv_panel_costs := pv_panel_costs[pv_panel.name]).get(COST, 0),
             )
             self.cost_decrease[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_costs.get(COST_DECREASE, 0)
+                self, -(this_pv_panel_costs.get(COST_DECREASE, 0))
             )
             self.installation_costs[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_costs.get(INSTALLATION_COST, 0)
             )
             self.installation_cost_decrease[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_costs.get(INSTALLATION_COST_DECREASE, 0)
+                self, -(this_pv_panel_costs.get(INSTALLATION_COST_DECREASE, 0))
             )
             self.o_and_m_costs[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_costs.get(OM, 0)
@@ -1146,16 +1146,16 @@ class PVFrame(ttk.Frame):
                 ),
             )
             self.annual_emissions_decrease[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_emissions.get(OM_GHGS, 0)
+                self, -(this_pv_panel_emissions.get(GHG_DECREASE, 0))
             )
             self.installation_emissions[pv_panel.name] = ttk.DoubleVar(
                 self, this_pv_panel_emissions.get(INSTALLATION_GHGS, 0)
             )
             self.installation_emissions_decrease[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_emissions.get(INSTALLATION_GHGS_DECREASE, 0)
+                self, -(this_pv_panel_emissions.get(INSTALLATION_GHGS_DECREASE, 0))
             )
             self.om_emissions[pv_panel.name] = ttk.DoubleVar(
-                self, this_pv_panel_emissions.get(GHG_DECREASE, 0)
+                self, this_pv_panel_emissions.get(OM_GHGS, 0)
             )
 
         self.panel_selected = self.panel_name_values[
@@ -1373,23 +1373,23 @@ class SolarFrame(ttk.Frame):
             # Append cost and emissions information
             panel_dict[COSTS] = {
                 COST: self.pv_frame.costs[panel_name].get(),
-                COST_DECREASE: self.pv_frame.cost_decrease[panel_name].get(),
+                COST_DECREASE: -(self.pv_frame.cost_decrease[panel_name].get()),
                 INSTALLATION_COST: self.pv_frame.installation_costs[panel_name].get(),
-                INSTALLATION_COST_DECREASE: self.pv_frame.installation_cost_decrease[
+                INSTALLATION_COST_DECREASE: -(self.pv_frame.installation_cost_decrease[
                     panel_name
-                ].get(),
+                ].get()),
                 OM: self.pv_frame.o_and_m_costs[panel_name].get(),
             }
 
             panel_dict[EMISSIONS] = {
                 GHGS: self.pv_frame.embedded_emissions[panel_name].get(),
-                GHG_DECREASE: self.pv_frame.annual_emissions_decrease[panel_name].get(),
+                GHG_DECREASE: -(self.pv_frame.annual_emissions_decrease[panel_name].get()),
                 INSTALLATION_GHGS: self.pv_frame.installation_emissions[
                     panel_name
                 ].get(),
-                INSTALLATION_GHGS_DECREASE: self.pv_frame.installation_emissions_decrease[
+                INSTALLATION_GHGS_DECREASE: -(self.pv_frame.installation_emissions_decrease[
                     panel_name
-                ].get(),
+                ].get()),
                 OM_GHGS: self.pv_frame.om_emissions[panel_name].get(),
             }
 

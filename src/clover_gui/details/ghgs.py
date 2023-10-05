@@ -69,7 +69,7 @@ class GHGFrame(ttk.Frame):
         self.columnconfigure(4, weight=1)
 
         # General O&M Emissions
-        self.general_om_label = ttk.Label(self, text="General O&M Emissions")
+        self.general_om_label = ttk.Label(self, text="General O&M emissions")
         self.general_om_label.grid(row=1, column=1, sticky="w")
         self.general_om = ttk.DoubleVar(value=0)
 
@@ -80,7 +80,7 @@ class GHGFrame(ttk.Frame):
         self.general_om_units.grid(row=1, column=3, sticky="w")
 
         # Miscellaneous Emissions
-        self.misc_label = ttk.Label(self, text="Miscellaneous Emissions")
+        self.misc_label = ttk.Label(self, text="Miscellaneous emissions")
         self.misc_label.grid(row=2, column=1, sticky="w")
         self.misc = ttk.DoubleVar(value=0)
 
@@ -91,7 +91,7 @@ class GHGFrame(ttk.Frame):
         self.misc_units.grid(row=2, column=3, sticky="w")
 
         # GHG Emissions from BOS
-        self.bos_label = ttk.Label(self, text="GHG Emissions from BOS")
+        self.bos_label = ttk.Label(self, text="GHG emissions from BOS")
         self.bos_label.grid(row=3, column=1, sticky="w")
         self.bos = ttk.DoubleVar(value=0)
 
@@ -102,7 +102,7 @@ class GHGFrame(ttk.Frame):
         self.bos_units.grid(row=3, column=3, sticky="w")
 
         self.bos_decrease_label = ttk.Label(
-            self, text="Decrease in GHG Emissions from BOS"
+            self, text="BOS GHG emissions change"
         )
         self.bos_decrease_label.grid(row=4, column=1, sticky="w")
         self.bos_decrease = ttk.DoubleVar(value=0)
@@ -114,7 +114,7 @@ class GHGFrame(ttk.Frame):
         self.bos_decrease_units.grid(row=4, column=3, sticky="w")
 
         # GHG Emissions from Connection Costs
-        self.households_label = ttk.Label(self, text="GHG Emissions from Connections")
+        self.households_label = ttk.Label(self, text="GHG emissions from connections")
         self.households_label.grid(row=5, column=1, sticky="w")
         self.households = ttk.DoubleVar(value=0)
 
@@ -125,7 +125,7 @@ class GHGFrame(ttk.Frame):
         self.households_units.grid(row=5, column=3, sticky="w")
 
         # GHG Emissions from Inverter
-        self.inverter_label = ttk.Label(self, text="GHG Emissions from Inverter")
+        self.inverter_label = ttk.Label(self, text="GHG emissions from inverter")
         self.inverter_label.grid(row=6, column=1, sticky="w")
         self.inverter = ttk.DoubleVar(value=0)
 
@@ -137,7 +137,7 @@ class GHGFrame(ttk.Frame):
 
         # GHG Emissions inverter decrease
         self.inverter_decrease_label = ttk.Label(
-            self, text="Inverter GHG Emissions decrease"
+            self, text="Inverter GHG emissions change"
         )
         self.inverter_decrease_label.grid(row=7, column=1, sticky="w")
         self.inverter_decrease = ttk.DoubleVar(value=0)
@@ -151,7 +151,7 @@ class GHGFrame(ttk.Frame):
         self.inverter_decrease_units.grid(row=7, column=3, sticky="w")
 
         # GHG Emissions from Kerosene
-        self.kerosene_label = ttk.Label(self, text="GHG Emissions from Kerosene")
+        self.kerosene_label = ttk.Label(self, text="GHG emissions from kerosene")
         self.kerosene_label.grid(row=8, column=1, sticky="w")
         self.kerosene = ttk.DoubleVar(value=0)
 
@@ -186,7 +186,7 @@ class GHGFrame(ttk.Frame):
         self.bos.set(ghg_inputs[ImpactingComponent.BOS.value][GHGS])
         self.bos_entry.update()
 
-        self.bos_decrease.set(ghg_inputs[ImpactingComponent.BOS.value][GHG_DECREASE])
+        self.bos_decrease.set(-(ghg_inputs[ImpactingComponent.BOS.value][GHG_DECREASE]))
         self.bos_decrease_entry.update()
 
         # Household
@@ -200,8 +200,8 @@ class GHGFrame(ttk.Frame):
         self.inverter_entry.update()
 
         self.inverter_decrease.set(
-            ghg_inputs[ImpactingComponent.INVERTER.value][GHG_DECREASE]
-        )
+            -(ghg_inputs[ImpactingComponent.INVERTER.value][GHG_DECREASE]
+        ))
         self.inverter_decrease_entry.update()
 
         # Kerosene
@@ -223,14 +223,14 @@ class GHGFrame(ttk.Frame):
             ImpactingComponent.MISC.value: {GHGS: self.misc.get()},
             ImpactingComponent.BOS.value: {
                 GHGS: self.bos.get(),
-                GHG_DECREASE: self.bos_decrease.get(),
+                GHG_DECREASE: -(self.bos_decrease.get()),
             },
             ImpactingComponent.HOUSEHOLDS.value: {
                 CONNECTION_GHGS: self.households.get(),
             },
             ImpactingComponent.INVERTER.value: {
                 GHGS: self.inverter.get(),
-                GHG_DECREASE: self.inverter_decrease.get(),
+                GHG_DECREASE: -(self.inverter_decrease.get()),
             },
             ImpactingComponent.KEROSENE.value: {GHGS: self.kerosene.get()},
         }
