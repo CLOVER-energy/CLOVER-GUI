@@ -103,7 +103,8 @@ class SystemFrame(ttk.Frame):
             text="Transmission and Conversion Efficiencies",
             style="Bold.TLabel",
         )
-        self.efficiencies_header.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+        self.efficiencies_header.grid(row=0, column=1, padx=10, columnspan=5,
+                                       pady=5, sticky="w")
 
         # AC transmission efficiency
         self.ac_transmission_label = ttk.Label(
@@ -427,7 +428,8 @@ class SystemFrame(ttk.Frame):
         self.inverter_header = ttk.Label(
             self.scrollable_system_frame, text="Inverter Settings", style="Bold.TLabel"
         )
-        self.inverter_header.grid(row=9, column=1, padx=10, pady=5, sticky="w")
+        self.inverter_header.grid(row=9, column=1, columnspan=4,
+                                   padx=10, pady=5, sticky="w")
 
         # Inverter lifetime
         self.inverter_lifetime_label = ttk.Label(
@@ -502,7 +504,8 @@ class SystemFrame(ttk.Frame):
         self.system_header = ttk.Label(
             self.scrollable_system_frame, text="System Setup", style="Bold.TLabel"
         )
-        self.system_header.grid(row=14, column=1, padx=10, pady=5, sticky="w")
+        self.system_header.grid(row=14, column=1, padx=10, columnspan=4,
+                                 pady=5, sticky="w")
 
         # Select battery
         self.battery_label = ttk.Label(self.scrollable_system_frame, text="Battery")

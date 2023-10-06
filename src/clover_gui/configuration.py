@@ -853,7 +853,8 @@ class OptimisationFrame(ttk.Frame):
         self.iteration_header = ttk.Label(
             self.scrollable_optimisation_frame, text="Iterations", style="Bold.TLabel"
         )
-        self.iteration_header.grid(row=0, column=0, padx=20, pady=10, sticky="w")
+        self.iteration_header.grid(row=0, column=0, columnspan=4, 
+                                   padx=20, pady=10, sticky="w")
 
         # Iteration length
         self.iteration_length_label = ttk.Label(
@@ -1553,7 +1554,7 @@ class OptimisationFrame(ttk.Frame):
             style="Bold.TLabel",
         )
         self.optimisation_criterion_label.grid(
-            row=19, column=0, padx=20, pady=10, sticky="w"
+            row=19, column=0, columnspan=4, padx=20, pady=10, sticky="w"
         )
 
         # Optimisation criterion frame
