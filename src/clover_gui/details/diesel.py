@@ -89,7 +89,7 @@ class GeneratorFrame(ttk.Frame):
         self.scrolled_frame.columnconfigure(2, weight=1)  # These rows have entries
         self.scrolled_frame.columnconfigure(3, weight=1)  # These rows have entries
 
-        self.add_generator_to_system_frame: Callable | None = None
+        self.add_generator_to_scenario_frame: Callable | None = None
         self.set_generators_on_system_frame: Callable | None = None
 
         # Diesel generator being selected
@@ -588,7 +588,7 @@ class GeneratorFrame(ttk.Frame):
         self.update_diesel_generator_frame()
 
         # Add the generator to the system frame
-        self.add_generator_to_system_frame(new_name)
+        self.add_generator_to_scenario_frame(new_name)
 
     def enter_diesel_generator_name(self, _=None) -> None:
         """Called when someone enters a new diesel_generator name."""

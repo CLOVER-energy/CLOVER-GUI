@@ -18,10 +18,21 @@ from typing import Callable
 import customtkinter as ctk
 import ttkbootstrap as ttk
 
-from clover import DEFAULT_SCENARIO, DemandType, DieselMode, ResourceType, Scenario
+from clover import (
+    DEFAULT_SCENARIO,
+    DemandType,
+    DieselMode,
+    ProgrammerJudgementFault,
+    ResourceType,
+    Scenario,
+)
 from clover.__utils__ import DistributionNetwork, ELECTRIC_POWER
-from clover.fileparser import BATTERY, DieselMode, NAME, SCENARIOS
+from clover.fileparser import BATTERY, DIESEL_GENERATOR, DieselMode, NAME, SCENARIOS
+from clover.generation.solar import PVPanel
 from clover.impact.finance import ImpactingComponent
+from clover.simulation.diesel import DieselGenerator
+from clover.simulation.energy_system import Minigrid
+from clover.simulation.storage_utils import Battery
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 from ttkbootstrap.tooltip import ToolTip
@@ -430,16 +441,18 @@ class ConfigurationFrame(ttk.Frame):
             text="Opens the detailed settings for configuring diesel generators",
         )
         # Diesel selection
-        self.diesel = ttk.StringVar(self, "")
-        self.diesel_combobox = ttk.Combobox(
+        self.diesel_generator = ttk.StringVar(self, "")
+        self.diesel_generator_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
             values=[],
             state=READONLY,
             bootstyle=INFO,
-            textvariable=self.diesel,
+            textvariable=self.diesel_generator,
             width=5,
         )
-        self.diesel_combobox.grid(row=5, column=3, pady=5, padx=30, sticky="ew")
+        self.diesel_generator_combobox.grid(
+            row=5, column=3, pady=5, padx=30, sticky="ew"
+        )
 
         self.grid_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
@@ -476,16 +489,16 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Grid selection
-        self.grid = ttk.StringVar(self, "")
-        self.grid_combobox = ttk.Combobox(
+        self.grid_profile_name = ttk.StringVar(self, "")
+        self.grid_profile_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
             values=[],
             state=READONLY,
             bootstyle=INFO,
-            textvariable=self.grid,
+            textvariable=self.grid_profile_name,
             width=5,
         )
-        self.grid_combobox.grid(row=5, column=4, pady=5, padx=30, sticky="ew")
+        self.grid_profile_combobox.grid(row=5, column=4, pady=5, padx=30, sticky="ew")
 
         self.grid_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
@@ -1114,8 +1127,24 @@ class ConfigurationFrame(ttk.Frame):
         self.prioritise_self_generation_combobox["values"] = ["True", "False"]
         self.prioritise_self_generation_combobox.set("True")
 
-    def as_dict(
-        self, grid_type: str
+    @property
+    def energy_system_dict(
+        self,
+    ) -> dict[str, list[dict[str, bool | dict[str, float] | list[str] | str]]]:
+        """
+        Outputs the energy-system-related scenario information in `dict` ready to save.
+
+        """
+
+        return {
+            BATTERY: self.battery_combobox.get(),
+            DIESEL_GENERATOR: self.diesel_generator_combobox.get(),
+            "pv_panel": self.pv_panel_combobox.get(),
+        }
+
+    @property
+    def scenarios_dict(
+        self,
     ) -> dict[str, list[dict[str, bool | dict[str, float] | list[str] | str]]]:
         """
         Outputs the scenario information in a `dict` ready for saving.
@@ -1161,7 +1190,7 @@ class ConfigurationFrame(ttk.Frame):
                     },
                     "distribution_network": self.distribution_network_combobox.get(),
                     ImpactingComponent.GRID.value: self.grid_selected.get(),
-                    "grid_type": grid_type,
+                    "grid_type": self.grid_profile_combobox.get(),
                     # FIXME: Implement a fixed inverter size.
                     "fixed_inverter_size": False,
                     "prioritise_self_generation": self.prioritise_self_generation_combobox.get(),
@@ -1170,6 +1199,114 @@ class ConfigurationFrame(ttk.Frame):
                 }
             ]
         }
+
+    def add_battery(self, battery_name: str) -> None:
+        """
+        Add a battery to the list of selectable options.
+
+        :param: battery_name
+            The name of the battery to add.
+
+        """
+
+        self.battery_combobox["values"] = self.battery_combobox["values"] + (
+            battery_name,
+        )
+
+    def add_diesel_generator(self, diesel_generator_name: str) -> None:
+        """
+        Add a diesel generator to the list of selectable options.
+
+        :param: diesel_generator_name
+            The name of the diesel generator to add.
+
+        """
+
+        self.diesel_generator_combobox["values"] = self.diesel_generator_combobox[
+            "values"
+        ] + (diesel_generator_name,)
+
+    def add_pv_panel(self, pv_panel_name: str) -> None:
+        """
+        Add a solar panel to the list of selectable options.
+
+        :param: pv_panel_name
+            The name of the PV panel to add.
+
+        """
+
+        self.pv_panel_combobox["values"] = self.pv_panel_combobox["values"] + (
+            pv_panel_name,
+        )
+
+    def add_grid_profile(self, grid_profile_name: str) -> None:
+        """
+        Add a grid profile to the list of selectable options.
+
+        :param: grid_profile_name
+            The name of the grid profile to add.
+
+        """
+
+        if not isinstance(self.grid_profile_combobox["values"], tuple):
+            self.grid_profile_combobox["values"] = (grid_profile_name,)
+            return
+
+        self.grid_profile_combobox["values"] = self.grid_profile_combobox["values"] + (
+            grid_profile_name,
+        )
+
+    def set_batteries(self, battery_names: list[str]) -> None:
+        """
+        Set the names of the batteries in the combobox.
+
+        :param: battery_names
+            The `list` of battery names to set.
+
+        """
+
+        self.battery_combobox["values"] = battery_names
+        if self.battery_combobox.get() not in battery_names:
+            self.battery_combobox.set(battery_names[0])
+
+    def set_diesel_generators(self, generator_names: list[str]) -> None:
+        """
+        Set the names of the generators in the combobox.
+
+        :param: generator_names
+            The `list` of diesel generator names to set.
+
+        """
+
+        self.diesel_generator_combobox["values"] = generator_names
+        if self.diesel_generator_combobox.get() not in generator_names:
+            self.diesel_generator_combobox.set(generator_names[0])
+
+    def set_pv_panels(self, panel_names: list[str]) -> None:
+        """
+        Set the names of the panel in the combobox.
+
+        :param: panel_names
+            The `list` of panel names to set.
+
+        """
+
+        self.pv_panel_combobox["values"] = panel_names
+        if self.pv_panel_combobox.get() not in panel_names:
+            self.pv_panel_combobox.set(panel_names[0])
+
+    def set_grid_profiles(self, grid_profile_names: list[str]) -> None:
+        """
+        Set the names of the grid profiles in the combobox.
+
+        :param: grid_profile_names
+            The `list` of grid-profile names to set.
+
+        """
+
+        self.grid_profile_combobox[(_values := "values")] = grid_profile_names
+        if self.grid_profile_combobox.get() not in grid_profile_names:
+            self.grid_profile_combobox.set(grid_profile_names[0])
 
     def update_diesel_settings(self) -> None:
         """Updates the diesel settings sliders."""
@@ -1462,3 +1599,68 @@ class ConfigurationFrame(ttk.Frame):
         # Update the buttons on the parent frame based on the scenario.
         self.pv_icon_configuration_callback(self.solar_pv_selected.get())
         self.storage_button_configuration_callback(self.battery_selected.get())
+
+    def set_minigrid(
+        self,
+        batteries: list[Battery],
+        diesel_generators: list[DieselGenerator],
+        grid_profile_name: str,
+        minigrid: Minigrid,
+        pv_panels: list[PVPanel],
+    ) -> None:
+        """
+        Set the minigrid parameters on the system.
+
+        :param: grid_profile_name
+            The name of the grid profile being considered.
+
+        :param: minigrid
+            The :class:`Minigrid` being considered.
+
+        """
+
+        # Update the battery name
+        if minigrid.battery is not None:
+            self.battery.set(minigrid.battery.name)
+        else:
+            self.battery_combobox.configure(state=DISABLED)
+
+        # Update the combobox
+        self.battery_combobox["values"] = [entry.name for entry in batteries]
+        self.battery_combobox.set(self.battery.get())
+
+        # Update the PV-panel name
+        try:
+            if minigrid.pv_panel is not None:
+                self.pv_panel.set(minigrid.pv_panel.name)
+            else:
+                self.pv_panel_combobox.configure(state=DISABLED)
+        except ProgrammerJudgementFault:
+            self.pv_panel.set(minigrid.pv_panels[0].name)
+
+        # Update the combobox
+        self.pv_panel_combobox["values"] = [entry.name for entry in pv_panels]
+        self.pv_panel_combobox.set(self.pv_panel.get())
+
+        # Update the diesel-generator name
+        if minigrid.diesel_generator is not None:
+            self.diesel_generator_combobox.set(minigrid.diesel_generator.name)
+        else:
+            self.diesel_generator_combobox.configure(state=DISABLED)
+
+        # Update the combobox
+        self.diesel_generator_combobox["values"] = [
+            entry.name for entry in diesel_generators
+        ]
+        self.diesel_generator_combobox.set(self.diesel_generator.get())
+
+        # # Update the heat-exchanger name
+        # if minigrid.heat_exchanger is not None:
+        #     self.heat_exchanger.set(minigrid.heat_exchanger.name)
+        #     self.heat_exchanger_combobox.configure(state=READONLY)
+        # else:
+        #     self.heat_exchanger_combobox.configure(state=DISABLED)
+        # self.heat_exchanger_combobox.set(self.heat_exchanger.get())
+
+        # Update the grid profile name
+        self.grid_profile_combobox.set(grid_profile_name)

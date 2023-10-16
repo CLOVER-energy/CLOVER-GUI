@@ -41,7 +41,7 @@ class GridFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.add_grid_profile_to_system_frame: Callable | None = None
+        self.add_grid_profile_to_scenario_frame: Callable | None = None
         self.set_profiles_on_system_frame: Callable | None = None
 
         self.rowconfigure(0, weight=1, minsize=40)
@@ -264,7 +264,7 @@ class GridFrame(ttk.Frame):
         self.grid_profile_values[new_name] = ttk.StringVar(self, new_name)
 
         # Add the new profile to the system frame.
-        self.add_grid_profile_to_system_frame(new_name)
+        self.add_grid_profile_to_scenario_frame(new_name)
 
         # Create new probabilities and sliders
         if seed_profile_probabilities is None:

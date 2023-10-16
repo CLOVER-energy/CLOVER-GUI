@@ -48,12 +48,44 @@ class DetailsWindow(tk.Toplevel):
 
     def __init__(
         self,
+        add_battery_to_scenario_frame,
+        add_diesel_generator_to_scenario_frame,
+        add_grid_profile_to_scenario_frame,
+        add_pv_panel_to_scenario_frame,
+        set_batteries_on_scenario_frame,
+        set_diesel_generators_on_scenario_frame,
+        set_grid_profiles_on_scenario_frame,
+        set_pv_panels_on_scenario_frame,
         system_lifetime: ttk.IntVar,
         renewables_ninja_token: ttk.StringVar,
         save_configuration: Callable,
     ) -> None:
         """
         Instantiate a :class:`DetailsWindow` instance.
+
+        :param: add_battery_to_scenario_frame
+            Add a new battery to the combobox on the scenarios frame.
+
+        :param: add_diesel_generator_to_scenario_frame
+            Add a new diesel generator to the combobox on the scenarios frame.
+
+        :param: add_grid_profile_to_scenario_frame
+            Add a new grid profile to the combobox on the scenarios frame.
+
+        :param: add_pv_panel_to_scenario_frame
+            Add a new PV panel to the combobox on the scenarios frame.
+
+        :param: set_batteries_on_scenario_frame,
+            Set the batteries on the scenarios frame.
+
+        :param: set_diesel_generators_on_scenario_frame,
+            Set the diesel generators on the scenarios frame.
+
+        :param: set_grid_profiles_on_scenario_frame,
+            Set the grid profiles panels on the scenarios frame.
+
+        :param: set_pv_panels_on_scenario_frame,
+            Set the PV panels on the scenarios frame.
 
         :param: system_lifetime
             The lifetime of the system.
@@ -165,31 +197,31 @@ class DetailsWindow(tk.Toplevel):
         self.details_notebook.add(self.system_frame, text="System", sticky="news")
 
         # Update the various frames with the add-panel functions.
-        self.solar_frame.pv_frame.add_panel_to_system_frame = (
-            self.system_frame.add_pv_panel
+        self.solar_frame.pv_frame.add_panel_to_scenario_frame = (
+            add_pv_panel_to_scenario_frame
         )
-        self.storage_frame.battery_frame.add_battery_to_system_frame = (
-            self.system_frame.add_battery
+        self.storage_frame.battery_frame.add_battery_to_scenario_frame = (
+            add_battery_to_scenario_frame
         )
-        self.diesel_frame.generator_frame.add_generator_to_system_frame = (
-            self.system_frame.add_diesel_generator
+        self.diesel_frame.generator_frame.add_generator_to_scenario_frame = (
+            add_diesel_generator_to_scenario_frame
         )
-        self.grid_frame.add_grid_profile_to_system_frame = (
-            self.system_frame.add_grid_profile
+        self.grid_frame.add_grid_profile_to_scenario_frame = (
+            add_grid_profile_to_scenario_frame
         )
 
         # Update the various frames with the set-panel functions.
         self.solar_frame.pv_frame.set_panels_on_system_frame = (
-            self.system_frame.set_pv_panels
+            set_pv_panels_on_scenario_frame
         )
         self.storage_frame.battery_frame.set_batteries_on_system_frame = (
-            self.system_frame.set_batteries
+            set_batteries_on_scenario_frame
         )
         self.diesel_frame.generator_frame.set_generators_on_system_frame = (
-            self.system_frame.set_diesel_generators
+            set_diesel_generators_on_scenario_frame
         )
         self.grid_frame.set_profiles_on_system_frame = (
-            self.system_frame.set_grid_profiles
+            set_grid_profiles_on_scenario_frame
         )
 
     def save_and_close(self) -> None:

@@ -378,6 +378,9 @@ class App(ttk.Window):
 
         # Set all inputs accordingly
         self.configuration_screen.configuration_frame.set_scenarios(scenarios)
+        self.configuration_screen.configuration_frame.set_minigrid(
+            batteries, diesel_generators, scenarios[0].grid_type, minigrid, pv_panels
+        )
         set_progress_bar_progress(200 * percent_fraction)
 
         self.configuration_screen.simulation_frame.set_simulation(simulations[0])
@@ -434,9 +437,7 @@ class App(ttk.Window):
         self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs, self.logger)
         set_progress_bar_progress(1100 * percent_fraction)
 
-        self.details_window.system_frame.set_system(
-            batteries, diesel_generators, scenarios[0].grid_type, minigrid, pv_panels
-        )
+        self.details_window.system_frame.set_system(minigrid)
         set_progress_bar_progress(1200 * percent_fraction)
 
         # Close the load-location window once completed
@@ -483,6 +484,14 @@ class App(ttk.Window):
 
         if self.details_window is None:
             self.details_window: DetailsWindow | None = DetailsWindow(
+                self.configuration_screen.configuration_frame.add_battery,
+                self.configuration_screen.configuration_frame.add_diesel_generator,
+                self.configuration_screen.configuration_frame.add_grid_profile,
+                self.configuration_screen.configuration_frame.add_pv_panel,
+                self.configuration_screen.configuration_frame.set_batteries,
+                self.configuration_screen.configuration_frame.set_diesel_generators,
+                self.configuration_screen.configuration_frame.set_grid_profiles,
+                self.configuration_screen.configuration_frame.set_pv_panels,
                 self.system_lifetime,
                 self.renewables_ninja_token,
                 self.save_configuration,
@@ -648,6 +657,15 @@ class App(ttk.Window):
             yaml.dump(self.details_window.diesel_frame.to_dict(), diesel_inputs_file)
 
         # Save the energy_system information
+        energy_system_information = self.details_window.system_frame.as_dict
+
+        # Update the energy-system information with component selection from the
+        # scenarios screen.
+        energy_system_information.update(
+            self.configuration_screen.configuration_frame.energy_system_dict
+        )
+
+        # Save to-file
         with open(
             self.input_file_info[
                 os.path.basename(ENERGY_SYSTEM_INPUTS_FILE).split(".")[0]
@@ -655,9 +673,7 @@ class App(ttk.Window):
             "w",
             encoding=_encoding,
         ) as energy_system_inputs_file:
-            yaml.dump(
-                self.details_window.system_frame.as_dict, energy_system_inputs_file
-            )
+            yaml.dump(energy_system_information, energy_system_inputs_file)
 
         # Save the finance_inputs information
         finance_outputs = self.details_window.finance_frame.as_dict
@@ -709,9 +725,7 @@ class App(ttk.Window):
             self.input_file_info[SCENARIOS], "w", encoding=_encoding
         ) as scenarios_inputs_file:
             yaml.dump(
-                self.configuration_screen.configuration_frame.as_dict(
-                    self.details_window.system_frame.grid_profile_combobox.get()
-                ),
+                self.configuration_screen.configuration_frame.scenarios_dict,
                 scenarios_inputs_file,
             )
 
@@ -789,7 +803,17 @@ class App(ttk.Window):
 
         # Details
         self.details_window: DetailsWindow | None = DetailsWindow(
-            self.system_lifetime, self.renewables_ninja_token, self.save_configuration
+            self.configuration_screen.configuration_frame.add_battery,
+            self.configuration_screen.configuration_frame.add_diesel_generator,
+            self.configuration_screen.configuration_frame.add_grid_profile,
+            self.configuration_screen.configuration_frame.add_pv_panel,
+            self.configuration_screen.configuration_frame.set_batteries,
+            self.configuration_screen.configuration_frame.set_diesel_generators,
+            self.configuration_screen.configuration_frame.set_grid_profiles,
+            self.configuration_screen.configuration_frame.set_pv_panels,
+            self.system_lifetime,
+            self.renewables_ninja_token,
+            self.save_configuration,
         )
         self.details_window.withdraw()
         self.splash.set_progress_bar_progress(80)

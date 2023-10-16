@@ -63,7 +63,7 @@ class PVFrame(ttk.Frame):
         """
         super().__init__(parent)
 
-        self.add_panel_to_system_frame: Callable | None = None
+        self.add_panel_to_scenario_frame: Callable | None = None
         self.set_panels_on_system_frame: Callable | None = None
 
         self.renewables_ninja_token = renewables_ninja_token
@@ -900,7 +900,7 @@ class PVFrame(ttk.Frame):
         self.update_panel_frame()
 
         # Add the panel to the system frame's list of panels.
-        self.add_panel_to_system_frame(new_name)
+        self.add_panel_to_scenario_frame(new_name)
 
     def enter_panel_name(self, _=None) -> None:
         """Called when someone enters a new panel name."""

@@ -69,7 +69,7 @@ class BatteryFrame(ttk.Frame):
         self.scrollable_frame.columnconfigure(2, weight=1)
         self.scrollable_frame.columnconfigure(3, weight=1)
 
-        self.add_battery_to_system_frame: Callable | None = None
+        self.add_battery_to_scenario_frame: Callable | None = None
         self.set_batteries_on_system_frame: Callable | None = None
 
         # Battery being selected
@@ -755,7 +755,7 @@ class BatteryFrame(ttk.Frame):
         self.update_battery_frame()
 
         # Add the battery to the system frame
-        self.add_battery_to_system_frame(new_name)
+        self.add_battery_to_scenario_frame(new_name)
 
     @property
     def batteries(self) -> list[dict[str, float | dict[str, float]]]:
