@@ -242,6 +242,7 @@ class ConfigurationFrame(ttk.Frame):
             master=self.scrollable_scenario_frame,
             command=self.pv_button_callback,
             fg_color="transparent",
+            hover_color=NONE,
             image=self.solar_images[self.solar_pv_selected.get()],
             text="",
         )
@@ -331,6 +332,7 @@ class ConfigurationFrame(ttk.Frame):
             master=self.scrollable_scenario_frame,
             command=self.battery_button_callback,
             fg_color="transparent",
+            hover_color=NONE,
             image=self.battery_images[self.battery_selected.get()],
             text="",
         )
@@ -412,6 +414,7 @@ class ConfigurationFrame(ttk.Frame):
             master=self.scrollable_scenario_frame,
             command=self.diesel_button_callback,
             fg_color="transparent",
+            hover_color=NONE,
             image=self.diesel_images[self.diesel_selected.get()],
             text="",
         )
@@ -469,6 +472,7 @@ class ConfigurationFrame(ttk.Frame):
             master=self.scrollable_scenario_frame,
             command=self.grid_button_callback,
             fg_color="transparent",
+            hover_color=NONE,
             image=self.grid_images[self.grid_selected.get()],
             text="",
         )
@@ -609,6 +613,7 @@ class ConfigurationFrame(ttk.Frame):
             image=self.resource_images[ResourceType.ELECTRIC][
                 self.resource_selected[ResourceType.ELECTRIC].get()
             ],
+            hover_color=NONE,
             text="",
             state=DISABLED,
         )
@@ -653,6 +658,7 @@ class ConfigurationFrame(ttk.Frame):
                 self.resource_selected[ResourceType.HOT_CLEAN_WATER].get()
             ],
             text="",
+            
         )
         # self.hot_water_button.grid(row=4, column=1, pady=5, padx=10, sticky="")
         # self.hot_water_button_tooltip = ToolTip(
@@ -750,6 +756,7 @@ class ConfigurationFrame(ttk.Frame):
                 self.domestic_button_callback, ResourceType.ELECTRIC
             ),
             fg_color="transparent",
+            hover_color=NONE,
             image=self.domestic_images[
                 self.domestic_selected[ResourceType.ELECTRIC].get()
             ],
@@ -828,6 +835,7 @@ class ConfigurationFrame(ttk.Frame):
                 self.commercial_selected[ResourceType.ELECTRIC].get()
             ],
             text="",
+            hover_color=NONE,
         )
         self.electric_commercial_button.grid(row=9, column=2, pady=5, padx=10)
         self.electric_commercial_button_tooltip = ToolTip(
@@ -898,6 +906,7 @@ class ConfigurationFrame(ttk.Frame):
             fg_color="transparent",
             image=self.public_images[self.public_selected[ResourceType.ELECTRIC].get()],
             text="",
+            hover_color=NONE,
         )
         self.electric_public_button.grid(row=9, column=3, pady=5, padx=10)
         self.electric_public_button_tooltip = ToolTip(

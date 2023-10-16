@@ -296,7 +296,7 @@ class GeneratorFrame(ttk.Frame):
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator cost decrease"
+            self.scrolled_frame, text="Diesel generator cost\nchange"
         )
         self.cost_decrease_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
@@ -316,13 +316,13 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.cost_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="% decrease / year"
+            self.scrolled_frame, text="%  / year"
         )
         self.cost_decrease_unit.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
         # Installation costs
         self.installation_cost_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator installation cost"
+            self.scrolled_frame, text="Diesel generator installation\ncost"
         )
         self.installation_cost_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
 
@@ -348,7 +348,7 @@ class GeneratorFrame(ttk.Frame):
 
         # Cost decrease
         self.installation_cost_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator installation cost decrease"
+            self.scrolled_frame, text="Diesel generator installation\ncost change"
         )
         self.installation_cost_decrease_label.grid(
             row=8, column=0, padx=10, pady=5, sticky="w"
@@ -372,7 +372,7 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.installation_cost_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="% decrease / year"
+            self.scrolled_frame, text="%  / year"
         )
         self.installation_cost_decrease_unit.grid(
             row=8, column=2, padx=10, pady=5, sticky="w"
@@ -402,7 +402,7 @@ class GeneratorFrame(ttk.Frame):
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator embedded emissions"
+            self.scrolled_frame, text="Diesel generator embedded\nemissions"
         )
         self.embedded_emissions_label.grid(
             row=10, column=0, padx=10, pady=5, sticky="w"
@@ -430,7 +430,7 @@ class GeneratorFrame(ttk.Frame):
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator emissions decrease"
+            self.scrolled_frame, text="Diesel generator embedded\nemissions change"
         )
         self.annual_emissions_decrease_label.grid(
             row=11, column=0, padx=10, pady=5, sticky="w"
@@ -494,7 +494,7 @@ class GeneratorFrame(ttk.Frame):
 
         # Annual installation emissions decrease
         self.installation_emissions_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Installation emissions decrease"
+            self.scrolled_frame, text="Diesel installation emissions\nchange"
         )
         self.installation_emissions_decrease_label.grid(
             row=13, column=0, padx=10, pady=5, sticky="w"
@@ -693,23 +693,23 @@ class GeneratorFrame(ttk.Frame):
                         INSTALLATION_COST: self.installation_costs[
                             generator_name
                         ].get(),
-                        INSTALLATION_COST_DECREASE: self.installation_cost_decrease[
+                        INSTALLATION_COST_DECREASE: -(self.installation_cost_decrease[
                             generator_name
-                        ].get(),
+                        ].get()),
                         OM: self.o_and_m_costs[generator_name].get(),
-                        COST_DECREASE: self.cost_decrease[generator_name].get(),
+                        COST_DECREASE: -(self.cost_decrease[generator_name].get()),
                     },
                     EMISSIONS: {
                         GHGS: self.embedded_emissions[generator_name].get(),
-                        GHG_DECREASE: self.annual_emissions_decrease[
+                        GHG_DECREASE: -(self.annual_emissions_decrease[
                             generator_name
-                        ].get(),
+                        ].get()),
                         INSTALLATION_GHGS: self.installation_emissions[
                             generator_name
                         ].get(),
-                        INSTALLATION_GHGS_DECREASE: self.installation_emissions_decrease[
+                        INSTALLATION_GHGS_DECREASE: -(self.installation_emissions_decrease[
                             generator_name
-                        ].get(),
+                        ].get()),
                         OM_GHGS: self.om_emissions[generator_name].get(),
                     },
                 }
@@ -804,13 +804,13 @@ class GeneratorFrame(ttk.Frame):
                 ],
             )
             self.cost_decrease[diesel_generator.name] = ttk.DoubleVar(
-                self, this_generator_costs.get(COST_DECREASE, 0)
+                self, -(this_generator_costs.get(COST_DECREASE, 0))
             )
             self.installation_costs[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_costs.get(INSTALLATION_COST, 0)
             )
             self.installation_cost_decrease[diesel_generator.name] = ttk.DoubleVar(
-                self, this_generator_costs.get(INSTALLATION_COST_DECREASE, 0)
+                self, -(this_generator_costs.get(INSTALLATION_COST_DECREASE, 0))
             )
             self.o_and_m_costs[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_costs.get(OM, 0)
@@ -826,13 +826,13 @@ class GeneratorFrame(ttk.Frame):
                 ).get(GHGS, 0),
             )
             self.annual_emissions_decrease[diesel_generator.name] = ttk.DoubleVar(
-                self, this_generator_emissions.get(OM_GHGS, 0)
+                self, -(this_generator_emissions.get(OM_GHGS, 0))
             )
             self.installation_emissions[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_emissions.get(INSTALLATION_GHGS, 0)
             )
             self.installation_emissions_decrease[diesel_generator.name] = ttk.DoubleVar(
-                self, this_generator_emissions.get(INSTALLATION_GHGS_DECREASE, 0)
+                self, -(this_generator_emissions.get(INSTALLATION_GHGS_DECREASE, 0))
             )
             self.om_emissions[diesel_generator.name] = ttk.DoubleVar(
                 self, this_generator_emissions.get(GHG_DECREASE, 0)
@@ -974,7 +974,7 @@ class DieselFrame(ttk.Frame):
         self.rowconfigure(2, weight=10, minsize=500)
 
         # Diesel Fuel Cost
-        self.diesel_fuel_cost_label = ttk.Label(self, text="Fuel Cost")
+        self.diesel_fuel_cost_label = ttk.Label(self, text="Fuel cost")
         self.diesel_fuel_cost_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
         self.diesel_fuel_cost = ttk.DoubleVar(self, 0)
 
@@ -993,7 +993,7 @@ class DieselFrame(ttk.Frame):
 
         # Diesel Fuel Cost Decrease
         self.diesel_fuel_cost_decrease_label = ttk.Label(
-            self, text="Fuel Cost Decrease"
+            self, text="Fuel cost change"
         )
         self.diesel_fuel_cost_decrease_label.grid(
             row=0, column=3, padx=10, pady=5, sticky="w"
@@ -1008,7 +1008,7 @@ class DieselFrame(ttk.Frame):
         self.diesel_fuel_cost_decrease_entry.grid(
             row=0, column=4, padx=10, pady=5, ipadx=20, sticky="ew"
         )
-        self.diesel_fuel_cost_decrease_units_label = ttk.Label(self, text="%/year")
+        self.diesel_fuel_cost_decrease_units_label = ttk.Label(self, text="% / year")
         self.diesel_fuel_cost_decrease_units_label.grid(
             row=0, column=5, padx=10, pady=5, sticky="w"
         )
@@ -1035,7 +1035,7 @@ class DieselFrame(ttk.Frame):
 
         # Diesel Fuel Emissions Decrease
         self.diesel_fuel_emissions_decrease_label = ttk.Label(
-            self, text="Fuel emissions Decrease"
+            self, text="Fuel emissions change"
         )
         self.diesel_fuel_emissions_decrease_label.grid(
             row=1, column=3, padx=10, pady=5, sticky="w"
@@ -1050,7 +1050,7 @@ class DieselFrame(ttk.Frame):
         self.diesel_fuel_emissions_decrease_entry.grid(
             row=1, column=4, padx=10, pady=5, ipadx=20, sticky="ew"
         )
-        self.diesel_fuel_emissions_decrease_units_label = ttk.Label(self, text="%/year")
+        self.diesel_fuel_emissions_decrease_units_label = ttk.Label(self, text="% / year")
         self.diesel_fuel_emissions_decrease_units_label.grid(
             row=1, column=5, padx=10, pady=5, sticky="w"
         )
@@ -1083,10 +1083,10 @@ class DieselFrame(ttk.Frame):
         """
 
         self.diesel_fuel_cost.set(diesel_fuel_impact.get(COST, 0))
-        self.diesel_fuel_cost_decrease.set(diesel_fuel_impact.get(COST_DECREASE, 0))
+        self.diesel_fuel_cost_decrease.set(-(diesel_fuel_impact.get(COST_DECREASE, 0)))
 
         self.diesel_fuel_emissions.set(diesel_fuel_impact.get(GHGS, 0))
-        self.diesel_fuel_emissions_decrease.set(diesel_fuel_impact.get(GHG_DECREASE, 0))
+        self.diesel_fuel_emissions_decrease.set(-(diesel_fuel_impact.get(GHG_DECREASE, 0)))
 
     def to_dict(self) -> dict[str, dict[str, dict[str, float] | float | str]]:
         """
@@ -1100,9 +1100,9 @@ class DieselFrame(ttk.Frame):
         output_dict = {
             ImpactingComponent.DIESEL_FUEL.value: {
                 COST: self.diesel_fuel_cost.get(),
-                COST_DECREASE: self.diesel_fuel_cost_decrease.get(),
+                COST_DECREASE: -(self.diesel_fuel_cost_decrease.get()),
                 GHGS: self.diesel_fuel_emissions.get(),
-                GHG_DECREASE: self.diesel_fuel_emissions_decrease.get(),
+                GHG_DECREASE: -(self.diesel_fuel_emissions_decrease.get()),
             }
         }
         output_dict.update(self.generator_frame.get_generators())

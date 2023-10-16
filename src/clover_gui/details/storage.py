@@ -592,7 +592,7 @@ class BatteryFrame(ttk.Frame):
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
-            self.scrollable_frame, text="Storage cost decrease"
+            self.scrollable_frame, text="Storage cost change"
         )
         self.cost_decrease_label.grid(row=13, column=0, padx=10, pady=5, sticky="w")
 
@@ -610,7 +610,7 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.cost_decrease_unit = ttk.Label(
-            self.scrollable_frame, text="% decrease / year"
+            self.scrollable_frame, text="%  / year"
         )
         self.cost_decrease_unit.grid(row=13, column=2, padx=10, pady=5, sticky="w")
 
@@ -688,7 +688,7 @@ class BatteryFrame(ttk.Frame):
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
-            self.scrollable_frame, text="Storage embedded emissions decrease"
+            self.scrollable_frame, text="Storage embedded emissions change"
         )
         self.annual_emissions_decrease_label.grid(
             row=17, column=0, padx=10, pady=5, sticky="w"
@@ -792,13 +792,13 @@ class BatteryFrame(ttk.Frame):
             # Append cost and emissions information
             battery_dict[COSTS] = {
                 COST: self.costs[battery_name].get(),
-                COST_DECREASE: self.cost_decrease[battery_name].get(),
+                COST_DECREASE: -(self.cost_decrease[battery_name].get()),
                 OM: self.o_and_m_costs[battery_name].get(),
             }
 
             battery_dict[EMISSIONS] = {
                 GHGS: self.embedded_emissions[battery_name].get(),
-                GHG_DECREASE: self.annual_emissions_decrease[battery_name].get(),
+                GHG_DECREASE: -(self.annual_emissions_decrease[battery_name].get()),
                 OM_GHGS: self.om_emissions[battery_name].get(),
             }
 
@@ -986,7 +986,7 @@ class BatteryFrame(ttk.Frame):
                 self, (this_battery_costs := battery_costs[battery.name]).get(COST, 0)
             )
             self.cost_decrease[battery.name] = ttk.DoubleVar(
-                self, this_battery_costs.get(COST_DECREASE, 0)
+                self, -(this_battery_costs.get(COST_DECREASE, 0))
             )
             self.o_and_m_costs[battery.name] = ttk.DoubleVar(
                 self, this_battery_costs.get(OM, 0)
@@ -1000,10 +1000,10 @@ class BatteryFrame(ttk.Frame):
                 ),
             )
             self.om_emissions[battery.name] = ttk.DoubleVar(
-                self, this_battery_emissions.get(GHG_DECREASE, 0)
+                self, this_battery_emissions.get(OM_GHGS, 0)
             )
             self.annual_emissions_decrease[battery.name] = ttk.DoubleVar(
-                self, this_battery_emissions.get(OM_GHGS, 0)
+                self, -(this_battery_emissions.get(GHG_DECREASE, 0))
             )
 
         self.battery_selected = self.battery_name_values[batteries[0].name]
