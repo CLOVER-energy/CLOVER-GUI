@@ -609,9 +609,7 @@ class BatteryFrame(ttk.Frame):
             row=13, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.cost_decrease_unit = ttk.Label(
-            self.scrollable_frame, text="%  / year"
-        )
+        self.cost_decrease_unit = ttk.Label(self.scrollable_frame, text="%  / year")
         self.cost_decrease_unit.grid(row=13, column=2, padx=10, pady=5, sticky="w")
 
         # OPEX costs

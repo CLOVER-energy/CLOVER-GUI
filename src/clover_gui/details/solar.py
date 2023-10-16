@@ -532,9 +532,7 @@ class PVFrame(ttk.Frame):
         self.cost_unit.grid(row=12, column=4, padx=10, pady=5, sticky="w")
 
         # Cost decrease
-        self.cost_decrease_label = ttk.Label(
-            self.scrolled_frame, text="PV cost change"
-        )
+        self.cost_decrease_label = ttk.Label(self.scrolled_frame, text="PV cost change")
         self.cost_decrease_label.grid(row=13, column=0, padx=10, pady=5, sticky="w")
 
         self.cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -555,9 +553,7 @@ class PVFrame(ttk.Frame):
             sticky="ew",
         )
 
-        self.cost_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="%  / year"
-        )
+        self.cost_decrease_unit = ttk.Label(self.scrolled_frame, text="%  / year")
         self.cost_decrease_unit.grid(row=13, column=4, padx=10, pady=5, sticky="w")
 
         # Installation cost
@@ -1375,21 +1371,23 @@ class SolarFrame(ttk.Frame):
                 COST: self.pv_frame.costs[panel_name].get(),
                 COST_DECREASE: -(self.pv_frame.cost_decrease[panel_name].get()),
                 INSTALLATION_COST: self.pv_frame.installation_costs[panel_name].get(),
-                INSTALLATION_COST_DECREASE: -(self.pv_frame.installation_cost_decrease[
-                    panel_name
-                ].get()),
+                INSTALLATION_COST_DECREASE: -(
+                    self.pv_frame.installation_cost_decrease[panel_name].get()
+                ),
                 OM: self.pv_frame.o_and_m_costs[panel_name].get(),
             }
 
             panel_dict[EMISSIONS] = {
                 GHGS: self.pv_frame.embedded_emissions[panel_name].get(),
-                GHG_DECREASE: -(self.pv_frame.annual_emissions_decrease[panel_name].get()),
+                GHG_DECREASE: -(
+                    self.pv_frame.annual_emissions_decrease[panel_name].get()
+                ),
                 INSTALLATION_GHGS: self.pv_frame.installation_emissions[
                     panel_name
                 ].get(),
-                INSTALLATION_GHGS_DECREASE: -(self.pv_frame.installation_emissions_decrease[
-                    panel_name
-                ].get()),
+                INSTALLATION_GHGS_DECREASE: -(
+                    self.pv_frame.installation_emissions_decrease[panel_name].get()
+                ),
                 OM_GHGS: self.pv_frame.om_emissions[panel_name].get(),
             }
 

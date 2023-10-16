@@ -154,10 +154,9 @@ class ConfigurationFrame(ttk.Frame):
         #     self, orient="horizontal"
         # )
         # self.separator.grid(row=1, column=0, columnspan=2, pady=5, padx=10, sticky="")
-        
+
         self.separator = ttk.Separator(self)
         self.separator.grid(row=1, column=0, columnspan=2, sticky="ew", padx=(20, 20))
-
 
         # Selecting system components
         self.power_generation_label = ttk.Label(
@@ -168,29 +167,22 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Component labels
-        self.solar_label = ttk.Label(
-             self.scrollable_scenario_frame, text="PV")
+        self.solar_label = ttk.Label(self.scrollable_scenario_frame, text="PV")
         self.solar_label.grid(row=0, column=1, rowspan=2, sticky="")
 
-        self.battery_label = ttk.Label(
-             self.scrollable_scenario_frame, text="Battery")
+        self.battery_label = ttk.Label(self.scrollable_scenario_frame, text="Battery")
         self.battery_label.grid(row=0, column=2, rowspan=2, sticky="")
 
-        self.diesel_label = ttk.Label(
-             self.scrollable_scenario_frame, text="Diesel")
+        self.diesel_label = ttk.Label(self.scrollable_scenario_frame, text="Diesel")
         self.diesel_label.grid(row=0, column=3, rowspan=2, sticky="")
 
-        self.grid_label = ttk.Label(
-             self.scrollable_scenario_frame, text="Grid")
+        self.grid_label = ttk.Label(self.scrollable_scenario_frame, text="Grid")
         self.grid_label.grid(row=0, column=4, rowspan=2, sticky="")
-
 
         # Explainer label
         self.explainer_power_generation_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Select power sources \n"
-            "and adjust settings\n"
-            "and components. \n"
+            text="Select power sources \n" "and adjust settings\n" "and components. \n"
             # "Detailed settings can be \n"
             # "adjusted by clicking the\n"
             # "buttons below the \n"
@@ -200,14 +192,13 @@ class ConfigurationFrame(ttk.Frame):
             row=2, column=0, padx=10, pady=5, sticky="nsw"
         )
         self.power_source_used_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Toggle power sources\n"
-            " on or off"
+            self.scrollable_scenario_frame, text="Toggle power sources\n" " on or off"
         )
         self.power_source_used_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
         self.power_source_settings_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Open advanced settings \n"
-            "for each power source"
+            self.scrollable_scenario_frame,
+            text="Open advanced settings \n" "for each power source"
             # "adjusted by clicking\n"
             # "respective settings buttons\n"
         )
@@ -587,10 +578,11 @@ class ConfigurationFrame(ttk.Frame):
         self.electric_power_label.grid(
             row=8, column=0, columnspan=5, padx=10, pady=5, sticky="w"
         )
-       
+
         # Demand type headings
         self.domestic_demand_header = ttk.Label(
-            self.scrollable_scenario_frame, text="Domestic", 
+            self.scrollable_scenario_frame,
+            text="Domestic",
         )
         self.domestic_demand_header.grid(row=8, column=1, padx=10, pady=5, sticky="")
 
@@ -629,8 +621,7 @@ class ConfigurationFrame(ttk.Frame):
         self.demand_explainer.grid(row=9, column=0, pady=5, padx=10, sticky="nsw")
 
         self.demand_toggle_explainer = ttk.Label(
-            self.scrollable_scenario_frame, text="Toggle demand types\n"
-            " on or off"
+            self.scrollable_scenario_frame, text="Toggle demand types\n" " on or off"
         )
         self.demand_toggle_explainer.grid(
             row=10, column=0, pady=5, rowspan=2, padx=10, sticky="w"
@@ -658,7 +649,6 @@ class ConfigurationFrame(ttk.Frame):
                 self.resource_selected[ResourceType.HOT_CLEAN_WATER].get()
             ],
             text="",
-            
         )
         # self.hot_water_button.grid(row=4, column=1, pady=5, padx=10, sticky="")
         # self.hot_water_button_tooltip = ToolTip(
@@ -1115,8 +1105,7 @@ class ConfigurationFrame(ttk.Frame):
         # Self generation
         self.prioritise_self_generation_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Prioritise self\n"
-            "generation",
+            text="Prioritise self\n" "generation",
         )
         self.prioritise_self_generation_label.grid(
             row=16, column=1, padx=10, pady=5, sticky="w"

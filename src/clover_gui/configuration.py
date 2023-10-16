@@ -149,16 +149,13 @@ class SimulationFrame(BaseScreen, show_navigation=False):
             "specifying the capacity of the energy-generation components and the "
             "lifetime of your system. Specify whether to generate plots within CLOVER"
             " as well as the output folder name.",
-            bootstyle=f"{INFO}-{INVERSE}"
+            bootstyle=f"{INFO}-{INVERSE}",
         )
-        self.simulation_help_icon.grid(
-            row=0, column=0, padx=20, pady=10, sticky="e"
-        )
+        self.simulation_help_icon.grid(row=0, column=0, padx=20, pady=10, sticky="e")
 
         self.separator = ttk.Separator(self.help_frame)
         self.separator.grid(row=1, column=0, columnspan=6, sticky="sew", padx=(20, 20))
-        
-        
+
         self.capacity_header = ttk.Label(
             self, text="Component sizes", style="Bold.TLabel"
         )
@@ -853,8 +850,9 @@ class OptimisationFrame(ttk.Frame):
         self.iteration_header = ttk.Label(
             self.scrollable_optimisation_frame, text="Iterations", style="Bold.TLabel"
         )
-        self.iteration_header.grid(row=0, column=0, columnspan=4, 
-                                   padx=20, pady=10, sticky="w")
+        self.iteration_header.grid(
+            row=0, column=0, columnspan=4, padx=20, pady=10, sticky="w"
+        )
 
         # Iteration length
         self.iteration_length_label = ttk.Label(

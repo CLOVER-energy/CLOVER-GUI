@@ -294,9 +294,7 @@ class FinanceFrame(ttk.Frame):
         )
 
         # Inverter Cost Decrease
-        self.inverter_cost_decrease_label = ttk.Label(
-            self, text="Inverter cost change"
-        )
+        self.inverter_cost_decrease_label = ttk.Label(self, text="Inverter cost change")
         self.inverter_cost_decrease_label.grid(
             row=10, column=1, padx=10, pady=5, sticky="w"
         )
@@ -427,8 +425,8 @@ class FinanceFrame(ttk.Frame):
         self.bos_cost_entry.update()
 
         self.bos_cost_decrease.set(
-            -(finance_inputs[ImpactingComponent.BOS.value][COST_DECREASE]
-        ))
+            -(finance_inputs[ImpactingComponent.BOS.value][COST_DECREASE])
+        )
         self.bos_cost_decrease_entry.update()
 
         # Household
@@ -442,8 +440,8 @@ class FinanceFrame(ttk.Frame):
         self.inverter_cost_entry.update()
 
         self.inverter_cost_decrease.set(
-            -(finance_inputs[ImpactingComponent.INVERTER.value][COST_DECREASE]
-        ))
+            -(finance_inputs[ImpactingComponent.INVERTER.value][COST_DECREASE])
+        )
         self.inverter_cost_decrease_entry.update()
 
         # Kerosene

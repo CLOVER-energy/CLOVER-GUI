@@ -101,9 +101,7 @@ class GHGFrame(ttk.Frame):
         self.bos_units = ttk.Label(self, text="kgCO2eq / kWp installed PV")
         self.bos_units.grid(row=3, column=3, sticky="w")
 
-        self.bos_decrease_label = ttk.Label(
-            self, text="BOS GHG emissions change"
-        )
+        self.bos_decrease_label = ttk.Label(self, text="BOS GHG emissions change")
         self.bos_decrease_label.grid(row=4, column=1, sticky="w")
         self.bos_decrease = ttk.DoubleVar(value=0)
 
@@ -200,8 +198,8 @@ class GHGFrame(ttk.Frame):
         self.inverter_entry.update()
 
         self.inverter_decrease.set(
-            -(ghg_inputs[ImpactingComponent.INVERTER.value][GHG_DECREASE]
-        ))
+            -(ghg_inputs[ImpactingComponent.INVERTER.value][GHG_DECREASE])
+        )
         self.inverter_decrease_entry.update()
 
         # Kerosene
