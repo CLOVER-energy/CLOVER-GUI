@@ -52,14 +52,14 @@ class ConfigurationFrame(ttk.Frame):
         data_directory: str,
         help_image: ttk.PhotoImage,
         open_details_window: Callable,
-        pv_button_configuration_callback: Callable,
+        pv_icon_configuration_callback: Callable,
         storage_button_configuration_callback: Callable,
     ):
         super().__init__(parent)
 
         self.help_image = help_image
         self.open_details_window = open_details_window
-        self.pv_button_configuration_callback = pv_button_configuration_callback
+        self.pv_icon_configuration_callback = pv_icon_configuration_callback
         self.storage_button_configuration_callback = (
             storage_button_configuration_callback
         )
@@ -229,15 +229,11 @@ class ConfigurationFrame(ttk.Frame):
         }
         self.solar_pv_selected: ttk.BooleanVar = ttk.BooleanVar(self, value=False)
 
-        self.pv_button = ctk.CTkButton(
+        self.pv_icon = ttk.Label(
             master=self.scrollable_scenario_frame,
-            command=self.pv_button_callback,
-            fg_color="transparent",
-            hover_color=NONE,
             image=self.solar_images[self.solar_pv_selected.get()],
-            text="",
         )
-        self.pv_button.grid(row=1, column=1, rowspan=2, padx=10)
+        self.pv_icon.grid(row=1, column=1, rowspan=2, padx=10)
 
         # self.pv_label = ttk.Label(
         #     self.scrollable_scenario_frame,
@@ -245,12 +241,6 @@ class ConfigurationFrame(ttk.Frame):
         #     bootstyle=INFO,
         # )
         # self.pv_label.grid(row=0, column=1, rowspan=2, sticky="w")
-
-        self.pv_tooltip = ToolTip(
-            self.pv_button,
-            text="Toggle whether PV collectors are present in the system",
-            bootstyle=f"{INFO}-{INVERSE}",
-        )
 
         # # PV On/Off buttons
         # self.PV_true_button = ttk.Checkbutton(
@@ -274,12 +264,20 @@ class ConfigurationFrame(ttk.Frame):
         #     row=2, column=1, padx=60, pady=10, sticky="e"
         # )
         # Battery on off button
-        self.PV_switch = ttk.Checkbutton(
+        self.pv_switch = ttk.Checkbutton(
             self.scrollable_scenario_frame,
             bootstyle="info-square-toggle",
+            command=self.pv_button_callback,
             text="On / Off",
+            variable=self.solar_pv_selected,
         )
-        self.PV_switch.grid(row=3, column=1, pady=10, sticky="")
+        self.pv_switch.grid(row=3, column=1, pady=10, sticky="")
+
+        self.pv_tooltip = ToolTip(
+            self.pv_switch,
+            text="Toggle whether PV collectors are present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
 
         # PV panel selection
         self.pv_panel = ttk.StringVar(self, "")
@@ -319,21 +317,11 @@ class ConfigurationFrame(ttk.Frame):
             ),
         }
         self.battery_selected: ttk.BooleanVar = ttk.BooleanVar(self, value=False)
-        self.battery_button = ctk.CTkButton(
+        self.battery_icon = ttk.Label(
             master=self.scrollable_scenario_frame,
-            command=self.battery_button_callback,
-            fg_color="transparent",
-            hover_color=NONE,
             image=self.battery_images[self.battery_selected.get()],
-            text="",
         )
-        self.battery_button.grid(row=1, column=2, rowspan=2, pady=5, padx=10, sticky="")
-
-        self.battery_tooltip = ToolTip(
-            self.battery_button,
-            text="Toggle whether electric batteries are present in the system",
-            bootstyle=f"{INFO}-{INVERSE}",
-        )
+        self.battery_icon.grid(row=1, column=2, rowspan=2, pady=5, padx=10, sticky="")
 
         # Battery On/Off buttons
         # self.battery_true_button = ttk.Checkbutton(
@@ -360,9 +348,17 @@ class ConfigurationFrame(ttk.Frame):
         self.battery_switch = ttk.Checkbutton(
             self.scrollable_scenario_frame,
             bootstyle="info-square-toggle",
+            command=self.battery_button_callback,
             text="On / Off",
+            variable=self.battery_selected,
         )
         self.battery_switch.grid(row=3, column=2, pady=10, sticky="")
+
+        self.battery_tooltip = ToolTip(
+            self.battery_switch,
+            text="Toggle whether electric batteries are present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
 
         self.battery_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
@@ -401,27 +397,26 @@ class ConfigurationFrame(ttk.Frame):
             ),
         }
         self.diesel_selected: ttk.BooleanVar = ttk.BooleanVar(self, value=False)
-        self.diesel_button = ctk.CTkButton(
+        self.diesel_button = ttk.Label(
             master=self.scrollable_scenario_frame,
-            command=self.diesel_button_callback,
-            fg_color="transparent",
-            hover_color=NONE,
             image=self.diesel_images[self.diesel_selected.get()],
-            text="",
         )
         self.diesel_button.grid(row=1, column=3, rowspan=2, pady=5, padx=10)
 
-        self.diesel_tooltip = ToolTip(
-            self.diesel_button,
-            text="Toggle whether backup diesel power is present in the system",
-            bootstyle=f"{INFO}-{INVERSE}",
-        )
         self.diesel_switch = ttk.Checkbutton(
             self.scrollable_scenario_frame,
             bootstyle="info-square-toggle",
+            command=self.diesel_button_callback,
             text="On / Off",
+            variable=self.diesel_selected,
         )
         self.diesel_switch.grid(row=3, column=3, pady=10, sticky="")
+
+        self.diesel_tooltip = ToolTip(
+            self.diesel_switch,
+            text="Toggle whether backup diesel power is present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
 
         self.diesel_settings_button = ttk.Button(
             self.scrollable_scenario_frame,
@@ -459,27 +454,26 @@ class ConfigurationFrame(ttk.Frame):
             ),
         }
         self.grid_selected: ttk.BooleanVar = ttk.BooleanVar(self, value=False)
-        self.grid_button = ctk.CTkButton(
+        self.grid_icon = ttk.Label(
             master=self.scrollable_scenario_frame,
-            command=self.grid_button_callback,
-            fg_color="transparent",
-            hover_color=NONE,
             image=self.grid_images[self.grid_selected.get()],
-            text="",
         )
-        self.grid_button.grid(row=1, column=4, rowspan=2, pady=5, padx=10)
+        self.grid_icon.grid(row=1, column=4, rowspan=2, pady=5, padx=10)
 
-        self.grid_tooltip = ToolTip(
-            self.grid_button,
-            text="Toggle whether backup a grid connection is present in the system",
-            bootstyle=f"{INFO}-{INVERSE}",
-        )
         self.grid_switch = ttk.Checkbutton(
             self.scrollable_scenario_frame,
             bootstyle="info-square-toggle",
+            command=self.grid_button_callback,
             text="On / Off",
+            variable=self.grid_selected,
         )
         self.grid_switch.grid(row=3, column=4, pady=10, sticky="")
+
+        self.grid_tooltip = ToolTip(
+            self.grid_switch,
+            text="Toggle whether backup a grid connection is present in the system",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
 
         # Grid selection
         self.grid = ttk.StringVar(self, "")
@@ -1189,28 +1183,33 @@ class ConfigurationFrame(ttk.Frame):
             self.diesel_backup_slider.configure(state=DISABLED)
 
     def pv_button_callback(self):
-        self.solar_pv_selected.set(not self.solar_pv_selected.get())
-        self.pv_button.configure(image=self.solar_images[self.solar_pv_selected.get()])
-        self.pv_button_configuration_callback(self.solar_pv_selected.get())
+        """Function called when the PV toggle is pressed"""
+        # Update the icon
+        self.pv_icon.configure(image=self.solar_images[self.solar_pv_selected.get()])
+        self.pv_icon_configuration_callback(self.solar_pv_selected.get())
 
     def battery_button_callback(self):
-        self.battery_selected.set(not self.battery_selected.get())
-        self.battery_button.configure(
+        """Function called when the battery toggle is pressed"""
+        # Update the icon
+        self.battery_icon.configure(
             image=self.battery_images[self.battery_selected.get()]
         )
         self.storage_button_configuration_callback(self.battery_selected.get())
 
     def diesel_button_callback(self):
-        self.diesel_selected.set(not self.diesel_selected.get())
+        """Function called when the diesel toggle is pressed"""
+        # Update the icon
         self.diesel_button.configure(
             image=self.diesel_images[self.diesel_selected.get()]
         )
 
+        # Update the scenario diesel settings pane
         self.update_diesel_settings()
 
     def grid_button_callback(self):
-        self.grid_selected.set(not self.grid_selected.get())
-        self.grid_button.configure(image=self.grid_images[self.grid_selected.get()])
+        """Function called when the grid toggle is pressed"""
+        # Update the icon
+        self.grid_icon.configure(image=self.grid_images[self.grid_selected.get()])
 
     def resource_button_callback(self, resource_type: ResourceType):
         self.resource_selected[resource_type].set(
@@ -1302,10 +1301,10 @@ class ConfigurationFrame(ttk.Frame):
 
         # Power-generation sources
         self.solar_pv_selected.set(scenario.pv)
-        self.pv_button.configure(image=self.solar_images[self.solar_pv_selected.get()])
+        self.pv_icon.configure(image=self.solar_images[self.solar_pv_selected.get()])
 
         self.battery_selected.set(scenario.battery)
-        self.battery_button.configure(
+        self.battery_icon.configure(
             image=self.battery_images[self.battery_selected.get()]
         )
 
@@ -1316,7 +1315,7 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         self.grid_selected.set(scenario.grid)
-        self.grid_button.configure(image=self.grid_images[self.grid_selected.get()])
+        self.grid_icon.configure(image=self.grid_images[self.grid_selected.get()])
 
         # Resource types
         self.resource_selected[ResourceType.ELECTRIC].set(
@@ -1461,5 +1460,5 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Update the buttons on the parent frame based on the scenario.
-        self.pv_button_configuration_callback(self.solar_pv_selected.get())
+        self.pv_icon_configuration_callback(self.solar_pv_selected.get())
         self.storage_button_configuration_callback(self.battery_selected.get())
