@@ -747,33 +747,31 @@ class ConfigurationFrame(ttk.Frame):
             ResourceType.HOT_CLEAN_WATER: ttk.BooleanVar(self, value=False),
             ResourceType.CLEAN_WATER: ttk.BooleanVar(self, value=False),
         }
-        self.electric_domestic_button = ctk.CTkButton(
+        self.electric_domestic_label = ttk.Label(
             master=self.scrollable_scenario_frame,
-            command=functools.partial(
-                self.domestic_button_callback, ResourceType.ELECTRIC
-            ),
-            fg_color="transparent",
-            hover_color=NONE,
             image=self.domestic_images[
                 self.domestic_selected[ResourceType.ELECTRIC].get()
             ],
-            text="",
         )
-        self.electric_domestic_button.grid(row=9, column=1, pady=5, padx=10, sticky="")
+        self.electric_domestic_label.grid(row=9, column=1, pady=5, padx=10, sticky="")
+        self.electric_domestic_switch = ttk.Checkbutton(
+            self.scrollable_scenario_frame,
+            bootstyle="info-square-toggle",
+            command=functools.partial(
+                self.domestic_button_callback, ResourceType.ELECTRIC
+            ),
+            text="On / Off",
+            variable=self.domestic_selected[ResourceType.ELECTRIC],
+        )
+        self.electric_domestic_switch.grid(row=10, column=1, pady=10, sticky="")
         self.electric_domestic_button_tooltip = ToolTip(
-            self.electric_domestic_button,
+            self.electric_domestic_switch,
             text="Toggles whether domestic electric demands are included when "
             "generating stochastic demand profiles.",
             bootstyle=f"{INVERSE}-{WARNING}",
         )
-        self.electric_domestic_switch = ttk.Checkbutton(
-            self.scrollable_scenario_frame,
-            bootstyle="info-square-toggle",
-            text="On / Off",
-        )
-        self.electric_domestic_switch.grid(row=10, column=1, pady=10, sticky="")
 
-        self.hot_water_domestic_button = ctk.CTkButton(
+        self.hot_water_domestic_label = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
             command=functools.partial(
                 self.domestic_button_callback, ResourceType.HOT_CLEAN_WATER
@@ -782,15 +780,15 @@ class ConfigurationFrame(ttk.Frame):
             image=self.domestic_button_disabled_image,
             text="",
         )
-        # self.hot_water_domestic_button.grid(row=4, column=2, pady=5, padx=10, sticky="")
-        # self.hot_water_domestic_button_tooltip = ToolTip(
-        #     self.hot_water_domestic_button,
+        # self.hot_water_domestic_label.grid(row=4, column=2, pady=5, padx=10, sticky="")
+        # self.hot_water_domestic_label_tooltip = ToolTip(
+        #     self.hot_water_domestic_label,
         #     text="Toggles whether domestic hot-water demands are included when "
         #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{DANGER}",
         # )
 
-        self.clean_water_domestic_button = ctk.CTkButton(
+        self.clean_water_domestic_label = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
             command=functools.partial(
                 self.domestic_button_callback, ResourceType.CLEAN_WATER
@@ -799,20 +797,20 @@ class ConfigurationFrame(ttk.Frame):
             image=self.domestic_button_disabled_image,
             text="",
         )
-        # self.clean_water_domestic_button.grid(
+        # self.clean_water_domestic_label.grid(
         #     row=5, column=2, pady=5, padx=10, sticky=""
         # )
-        # self.clean_water_domestic_button_tooltip = ToolTip(
-        #     self.clean_water_domestic_button,
+        # self.clean_water_domestic_label_tooltip = ToolTip(
+        #     self.clean_water_domestic_label,
         #     text="Toggles whether domestic clean-water demands are included when "
         #     generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{PRIMARY}",
         # )
 
-        self.domestic_buttons: dict[ResourceType, ctk.CTkButton] = {
-            ResourceType.ELECTRIC: self.electric_domestic_button,
-            ResourceType.HOT_CLEAN_WATER: self.hot_water_domestic_button,
-            ResourceType.CLEAN_WATER: self.clean_water_domestic_button,
+        self.domestic_labels: dict[ResourceType, ctk.CTkButton] = {
+            ResourceType.ELECTRIC: self.electric_domestic_label,
+            ResourceType.HOT_CLEAN_WATER: self.hot_water_domestic_label,
+            ResourceType.CLEAN_WATER: self.clean_water_domestic_label,
         }
 
         # Commercial buttons
@@ -822,33 +820,31 @@ class ConfigurationFrame(ttk.Frame):
             ResourceType.CLEAN_WATER: ttk.BooleanVar(self, value=False),
         }
 
-        self.electric_commercial_button = ctk.CTkButton(
+        self.electric_commercial_label = ttk.Label(
             master=self.scrollable_scenario_frame,
-            command=functools.partial(
-                self.commercial_button_callback, ResourceType.ELECTRIC
-            ),
-            fg_color="transparent",
             image=self.commercial_images[
                 self.commercial_selected[ResourceType.ELECTRIC].get()
             ],
-            text="",
-            hover_color=NONE,
         )
-        self.electric_commercial_button.grid(row=9, column=2, pady=5, padx=10)
+        self.electric_commercial_label.grid(row=9, column=2, pady=5, padx=10)
+        self.electric_commercial_switch = ttk.Checkbutton(
+            self.scrollable_scenario_frame,
+            bootstyle="info-square-toggle",
+            command=functools.partial(
+                self.commercial_button_callback, ResourceType.ELECTRIC
+            ),
+            text="On / Off",
+            variable=self.commercial_selected[ResourceType.ELECTRIC],
+        )
+        self.electric_commercial_switch.grid(row=10, column=2, pady=10, sticky="")
         self.electric_commercial_button_tooltip = ToolTip(
-            self.electric_commercial_button,
+            self.electric_commercial_switch,
             text="Toggles whether commercial electricity demands are included when "
             "generating stochastic demand profiles.",
             bootstyle=f"{INVERSE}-{WARNING}",
         )
-        self.electric_commercial_switch = ttk.Checkbutton(
-            self.scrollable_scenario_frame,
-            bootstyle="info-square-toggle",
-            text="On / Off",
-        )
-        self.electric_commercial_switch.grid(row=10, column=2, pady=10, sticky="")
 
-        self.hot_water_commercial_button = ctk.CTkButton(
+        self.hot_water_commercial_label = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
             command=functools.partial(
                 self.commercial_button_callback, ResourceType.HOT_CLEAN_WATER
@@ -857,15 +853,15 @@ class ConfigurationFrame(ttk.Frame):
             image=self.commercial_button_disabled_image,
             text="",
         )
-        # self.hot_water_commercial_button.grid(row=4, column=3, pady=5, padx=10)
-        # self.hot_water_commercial_button_tooltip = ToolTip(
-        #     self.hot_water_commercial_button,
+        # self.hot_water_commercial_label.grid(row=4, column=3, pady=5, padx=10)
+        # self.hot_water_commercial_label_tooltip = ToolTip(
+        #     self.hot_water_commercial_label,
         #     text="Toggles whether commercial hot-water demands are included when "
         #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{DANGER}",
         # )
 
-        self.clean_water_commercial_button = ctk.CTkButton(
+        self.clean_water_commercial_label = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
             command=functools.partial(
                 self.commercial_button_callback, ResourceType.CLEAN_WATER
@@ -874,18 +870,18 @@ class ConfigurationFrame(ttk.Frame):
             image=self.commercial_button_disabled_image,
             text="",
         )
-        # self.clean_water_commercial_button.grid(row=5, column=3, pady=5, padx=10)
-        # self.clean_water_commercial_button_tooltip = ToolTip(
-        #     self.clean_water_commercial_button,
+        # self.clean_water_commercial_label.grid(row=5, column=3, pady=5, padx=10)
+        # self.clean_water_commercial_label_tooltip = ToolTip(
+        #     self.clean_water_commercial_label,
         #     text="Toggles whether commercial clean-water demands are included when "
         #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{PRIMARY}",
         # )
 
-        self.commercial_buttons: dict[ResourceType, ctk.CTkButton] = {
-            ResourceType.ELECTRIC: self.electric_commercial_button,
-            ResourceType.HOT_CLEAN_WATER: self.hot_water_commercial_button,
-            ResourceType.CLEAN_WATER: self.clean_water_commercial_button,
+        self.commercial_labels: dict[ResourceType, ctk.CTkButton] = {
+            ResourceType.ELECTRIC: self.electric_commercial_label,
+            ResourceType.HOT_CLEAN_WATER: self.hot_water_commercial_label,
+            ResourceType.CLEAN_WATER: self.clean_water_commercial_label,
         }
 
         # Public buttons
@@ -895,31 +891,29 @@ class ConfigurationFrame(ttk.Frame):
             ResourceType.CLEAN_WATER: ttk.BooleanVar(self, value=False),
         }
 
-        self.electric_public_button = ctk.CTkButton(
+        self.electric_public_label = ttk.Label(
             master=self.scrollable_scenario_frame,
+            image=self.public_images[self.public_selected[ResourceType.ELECTRIC].get()],
+        )
+        self.electric_public_label.grid(row=9, column=3, pady=5, padx=10)
+        self.electric_public_switch = ttk.Checkbutton(
+            self.scrollable_scenario_frame,
+            bootstyle="info-square-toggle",
             command=functools.partial(
                 self.public_button_callback, ResourceType.ELECTRIC
             ),
-            fg_color="transparent",
-            image=self.public_images[self.public_selected[ResourceType.ELECTRIC].get()],
-            text="",
-            hover_color=NONE,
+            text="On / Off",
+            variable=self.public_selected[ResourceType.ELECTRIC],
         )
-        self.electric_public_button.grid(row=9, column=3, pady=5, padx=10)
+        self.electric_public_switch.grid(row=10, column=3, pady=10, sticky="")
         self.electric_public_button_tooltip = ToolTip(
-            self.electric_public_button,
+            self.electric_public_switch,
             text="Toggles whether public electricity demands are included when "
             "generating stochastic demand profiles.",
             bootstyle=f"{INVERSE}-{WARNING}",
         )
-        self.electric_public_switch = ttk.Checkbutton(
-            self.scrollable_scenario_frame,
-            bootstyle="info-square-toggle",
-            text="On / Off",
-        )
-        self.electric_public_switch.grid(row=10, column=3, pady=10, sticky="")
 
-        self.hot_water_public_button = ctk.CTkButton(
+        self.hot_water_public_label = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
             command=functools.partial(
                 self.public_button_callback, ResourceType.HOT_CLEAN_WATER
@@ -928,15 +922,15 @@ class ConfigurationFrame(ttk.Frame):
             image=self.public_button_disabled_image,
             text="",
         )
-        # self.hot_water_public_button.grid(row=4, column=4, pady=5, padx=10)
-        # self.hot_water_public_button_tooltip = ToolTip(
-        #     self.hot_water_public_button,
+        # self.hot_water_public_label.grid(row=4, column=4, pady=5, padx=10)
+        # self.hot_water_public_label_tooltip = ToolTip(
+        #     self.hot_water_public_label,
         #     text="Toggles whether public hot-water demands are included when "
         #     "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{DANGER}",
         # )
 
-        self.clean_water_public_button = ctk.CTkButton(
+        self.clean_water_public_label = ctk.CTkButton(
             master=self.scrollable_scenario_frame,
             command=functools.partial(
                 self.public_button_callback, ResourceType.CLEAN_WATER
@@ -945,18 +939,18 @@ class ConfigurationFrame(ttk.Frame):
             image=self.public_button_disabled_image,
             text="",
         )
-        # self.clean_water_public_button.grid(row=5, column=4, pady=5, padx=10)
-        # self.clean_water_public_button_tooltip = ToolTip(
-        #     self.clean_water_public_button,
+        # self.clean_water_public_label.grid(row=5, column=4, pady=5, padx=10)
+        # self.clean_water_public_label_tooltip = ToolTip(
+        #     self.clean_water_public_label,
         #     text="Toggles whether public clean-water demands are included when "
         #    "generating stochastic demand profiles.",
         #     bootstyle=f"{INVERSE}-{PRIMARY}",
         # )
 
-        self.public_buttons: dict[ResourceType, ctk.CTkButton] = {
-            ResourceType.ELECTRIC: self.electric_public_button,
-            ResourceType.HOT_CLEAN_WATER: self.hot_water_public_button,
-            ResourceType.CLEAN_WATER: self.clean_water_public_button,
+        self.public_labels: dict[ResourceType, ctk.CTkButton] = {
+            ResourceType.ELECTRIC: self.electric_public_label,
+            ResourceType.HOT_CLEAN_WATER: self.hot_water_public_label,
+            ResourceType.CLEAN_WATER: self.clean_water_public_label,
         }
 
         self.demand_settings_button = ttk.Button(
@@ -1349,6 +1343,14 @@ class ConfigurationFrame(ttk.Frame):
         self.grid_icon.configure(image=self.grid_images[self.grid_selected.get()])
 
     def resource_button_callback(self, resource_type: ResourceType):
+        """
+        Callback for when a resource type is toggled on or off.
+
+        :param: resource_type
+            The resource being toggled.
+
+        """
+
         self.resource_selected[resource_type].set(
             not self.resource_selected[resource_type].get()
         )
@@ -1360,58 +1362,73 @@ class ConfigurationFrame(ttk.Frame):
 
         # If loads are enabled, colour these buttons in
         if self.resource_selected[resource_type].get():
-            self.domestic_buttons[resource_type].configure(
+            self.domestic_labels[resource_type].configure(
                 image=self.domestic_images[self.domestic_selected[resource_type].get()]
             )
-            self.commercial_buttons[resource_type].configure(
+            self.commercial_labels[resource_type].configure(
                 image=self.commercial_images[
                     self.commercial_selected[resource_type].get()
                 ]
             )
-            self.public_buttons[resource_type].configure(
+            self.public_labels[resource_type].configure(
                 image=self.public_images[self.public_selected[resource_type].get()]
             )
         else:
-            self.domestic_buttons[resource_type].configure(
+            self.domestic_labels[resource_type].configure(
                 image=self.domestic_button_disabled_image
             )
-            self.commercial_buttons[resource_type].configure(
+            self.commercial_labels[resource_type].configure(
                 image=self.commercial_button_disabled_image
             )
-            self.public_buttons[resource_type].configure(
+            self.public_labels[resource_type].configure(
                 image=self.public_button_disabled_image
             )
 
     def domestic_button_callback(self, resource_type: ResourceType) -> None:
-        # Return if electric loads are not selected
+        """
+        Callback function for when a domestic-load toggle is switched.
+
+        :param: resource_type
+            The resource type to switch the load for.
+
+        """
         if not self.resource_selected[resource_type].get():
             return
-        self.domestic_selected[resource_type].set(
-            not self.domestic_selected[resource_type].get()
-        )
-        self.domestic_buttons[resource_type].configure(
+
+        self.domestic_labels[resource_type].configure(
             image=self.domestic_images[self.domestic_selected[resource_type].get()]
         )
 
     def commercial_button_callback(self, resource_type: ResourceType) -> None:
-        # Return if electric loads are not selected
+        """
+        Callback function for when a commercial-load toggle is switched.
+
+        :param: resource_type
+            The resource type to switch the load for.
+
+        """
+
         if not self.resource_selected[resource_type].get():
             return
-        self.commercial_selected[resource_type].set(
-            not self.commercial_selected[resource_type].get()
-        )
-        self.commercial_buttons[resource_type].configure(
+
+        self.commercial_labels[resource_type].configure(
             image=self.commercial_images[self.commercial_selected[resource_type].get()]
         )
 
     def public_button_callback(self, resource_type: ResourceType) -> None:
+        """
+        Callback function for when a public-load toggle is switched.
+
+        :param: resource_type
+            The resource type to switch the load for.
+
+        """
+
         # Return if electric loads are not selected
         if not self.resource_selected[resource_type].get():
             return
-        self.public_selected[resource_type].set(
-            not self.public_selected[resource_type].get()
-        )
-        self.public_buttons[resource_type].configure(
+
+        self.public_labels[resource_type].configure(
             image=self.public_images[self.public_selected[resource_type].get()]
         )
 
@@ -1493,7 +1510,7 @@ class ConfigurationFrame(ttk.Frame):
             public_selected_variable.set(scenario.demands.public)
 
         # Set the buttons
-        self.electric_domestic_button.configure(
+        self.electric_domestic_label.configure(
             image=(
                 self.domestic_images[
                     self.domestic_selected[ResourceType.ELECTRIC].get()
@@ -1502,7 +1519,7 @@ class ConfigurationFrame(ttk.Frame):
                 else self.domestic_button_disabled_image
             ),
         )
-        self.electric_commercial_button.configure(
+        self.electric_commercial_label.configure(
             image=(
                 self.commercial_images[
                     self.commercial_selected[ResourceType.ELECTRIC].get()
@@ -1511,7 +1528,7 @@ class ConfigurationFrame(ttk.Frame):
                 else self.commercial_button_disabled_image
             ),
         )
-        self.electric_public_button.configure(
+        self.electric_public_label.configure(
             image=(
                 self.public_images[self.public_selected[ResourceType.ELECTRIC].get()]
                 if self.resource_selected[ResourceType.ELECTRIC].get()
@@ -1519,7 +1536,7 @@ class ConfigurationFrame(ttk.Frame):
             ),
         )
 
-        self.hot_water_domestic_button.configure(
+        self.hot_water_domestic_label.configure(
             image=(
                 self.domestic_images[
                     self.domestic_selected[ResourceType.HOT_CLEAN_WATER].get()
@@ -1528,7 +1545,7 @@ class ConfigurationFrame(ttk.Frame):
                 else self.domestic_button_disabled_image
             ),
         )
-        self.hot_water_commercial_button.configure(
+        self.hot_water_commercial_label.configure(
             image=(
                 self.commercial_images[
                     self.commercial_selected[ResourceType.HOT_CLEAN_WATER].get()
@@ -1537,7 +1554,7 @@ class ConfigurationFrame(ttk.Frame):
                 else self.commercial_button_disabled_image
             ),
         )
-        self.hot_water_public_button.configure(
+        self.hot_water_public_label.configure(
             image=(
                 self.public_images[
                     self.public_selected[ResourceType.HOT_CLEAN_WATER].get()
@@ -1547,7 +1564,7 @@ class ConfigurationFrame(ttk.Frame):
             ),
         )
 
-        self.clean_water_domestic_button.configure(
+        self.clean_water_domestic_label.configure(
             image=(
                 self.domestic_images[
                     self.domestic_selected[ResourceType.CLEAN_WATER].get()
@@ -1556,7 +1573,7 @@ class ConfigurationFrame(ttk.Frame):
                 else self.domestic_button_disabled_image
             ),
         )
-        self.clean_water_commercial_button.configure(
+        self.clean_water_commercial_label.configure(
             image=(
                 self.commercial_images[
                     self.commercial_selected[ResourceType.CLEAN_WATER].get()
@@ -1565,7 +1582,7 @@ class ConfigurationFrame(ttk.Frame):
                 else self.commercial_button_disabled_image
             ),
         )
-        self.clean_water_public_button.configure(
+        self.clean_water_public_label.configure(
             image=(
                 self.public_images[self.public_selected[ResourceType.CLEAN_WATER].get()]
                 if self.resource_selected[ResourceType.CLEAN_WATER].get()
