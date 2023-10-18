@@ -179,16 +179,16 @@ class ConfigurationFrame(ttk.Frame):
 
         # Component labels
         self.solar_label = ttk.Label(self.scrollable_scenario_frame, text="PV")
-        self.solar_label.grid(row=0, column=1, rowspan=2, sticky="")
+        self.solar_label.grid(row=0, column=1, rowspan=2, sticky="", pady=5)
 
         self.battery_label = ttk.Label(self.scrollable_scenario_frame, text="Battery")
-        self.battery_label.grid(row=0, column=2, rowspan=2, sticky="")
+        self.battery_label.grid(row=0, column=2, rowspan=2, sticky="", pady=5)
 
         self.diesel_label = ttk.Label(self.scrollable_scenario_frame, text="Diesel")
-        self.diesel_label.grid(row=0, column=3, rowspan=2, sticky="")
+        self.diesel_label.grid(row=0, column=3, rowspan=2, sticky="", pady=5)
 
         self.grid_label = ttk.Label(self.scrollable_scenario_frame, text="Grid")
-        self.grid_label.grid(row=0, column=4, rowspan=2, sticky="")
+        self.grid_label.grid(row=0, column=4, rowspan=2, sticky="", pady=5)
 
         # Explainer label
         self.explainer_power_generation_label = ttk.Label(

@@ -52,13 +52,14 @@ class DetailsWindow(tk.Toplevel):
         add_diesel_generator_to_scenario_frame,
         add_grid_profile_to_scenario_frame,
         add_pv_panel_to_scenario_frame,
+        data_directory: str,
+        renewables_ninja_token: ttk.StringVar,
+        save_configuration: Callable,
         set_batteries_on_scenario_frame,
         set_diesel_generators_on_scenario_frame,
         set_grid_profiles_on_scenario_frame,
         set_pv_panels_on_scenario_frame,
         system_lifetime: ttk.IntVar,
-        renewables_ninja_token: ttk.StringVar,
-        save_configuration: Callable,
     ) -> None:
         """
         Instantiate a :class:`DetailsWindow` instance.
@@ -75,6 +76,15 @@ class DetailsWindow(tk.Toplevel):
         :param: add_pv_panel_to_scenario_frame
             Add a new PV panel to the combobox on the scenarios frame.
 
+        :param: data_directory
+            The name of the data directory.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
+
+        :param: save_configuration
+            Function for saving the configuration.
+
         :param: set_batteries_on_scenario_frame,
             Set the batteries on the scenarios frame.
 
@@ -89,12 +99,6 @@ class DetailsWindow(tk.Toplevel):
 
         :param: system_lifetime
             The lifetime of the system.
-
-        :param: renewables_ninja_token
-            The renewables.ninja API token for the user.
-
-        :param: save_configuration
-            Function for saving the configuration.
 
         """
 
@@ -153,7 +157,7 @@ class DetailsWindow(tk.Toplevel):
             row=1, column=0, columnspan=2, sticky="nsew", padx=20, pady=5
         )
 
-        self.solar_frame = SolarFrame(self.details_notebook, renewables_ninja_token)
+        self.solar_frame = SolarFrame(self.details_notebook, data_directory, renewables_ninja_token)
         self.details_notebook.add(
             self.solar_frame,
             text="Solar",

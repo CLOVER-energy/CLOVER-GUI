@@ -318,6 +318,21 @@ class OutputsViewerFrame(ScrolledFrame):
                 )
             )
 
+            # Parse the evaluated criteria data.
+            self.table_rows.extend(
+                sorted(
+                    [
+                        (key.replace("_", " ").capitalize() if key != "lcue" else "LCUE (Leveilised cost of electricity) / USD/kWh", value)
+                        for key, value in data["simulation_1"]["system_appraisal"][
+                            "criteria"
+                        ].items()
+                    ],
+                    reverse=True,
+                )
+            )
+            self.table_rows.append(
+                ("Evalued critera".upper(), "Performance and financial characteristics"))
+
             # Parse analysis data to plot from the data.
             self.table_rows.extend(
                 sorted(

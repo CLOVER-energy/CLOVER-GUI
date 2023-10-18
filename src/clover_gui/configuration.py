@@ -790,7 +790,7 @@ class OptimisationFrame(ttk.Frame):
             self, False, "warning_text_displayed"
         )
         self.warning_text.grid(
-            row=3, column=0, columnspan=3, padx=20, pady=10, sticky="ew"
+            row=3, column=0, columnspan=5, padx=20, pady=10, sticky="ew"
         )
 
         def update_optimisation_time_warning() -> None:

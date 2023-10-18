@@ -488,13 +488,14 @@ class App(ttk.Window):
                 self.configuration_screen.configuration_frame.add_diesel_generator,
                 self.configuration_screen.configuration_frame.add_grid_profile,
                 self.configuration_screen.configuration_frame.add_pv_panel,
+                self.data_directory,
+                self.renewables_ninja_token,
+                self.save_configuration,
                 self.configuration_screen.configuration_frame.set_batteries,
                 self.configuration_screen.configuration_frame.set_diesel_generators,
                 self.configuration_screen.configuration_frame.set_grid_profiles,
                 self.configuration_screen.configuration_frame.set_pv_panels,
                 self.system_lifetime,
-                self.renewables_ninja_token,
-                self.save_configuration,
             )
         else:
             self.details_window.deiconify()
@@ -807,13 +808,14 @@ class App(ttk.Window):
             self.configuration_screen.configuration_frame.add_diesel_generator,
             self.configuration_screen.configuration_frame.add_grid_profile,
             self.configuration_screen.configuration_frame.add_pv_panel,
+            self.data_directory,
+            self.renewables_ninja_token,
+            self.save_configuration,
             self.configuration_screen.configuration_frame.set_batteries,
             self.configuration_screen.configuration_frame.set_diesel_generators,
             self.configuration_screen.configuration_frame.set_grid_profiles,
             self.configuration_screen.configuration_frame.set_pv_panels,
             self.system_lifetime,
-            self.renewables_ninja_token,
-            self.save_configuration,
         )
         self.details_window.withdraw()
         self.splash.set_progress_bar_progress(80)
