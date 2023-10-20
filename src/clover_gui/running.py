@@ -134,6 +134,7 @@ class RunScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
         self.rowconfigure(3, weight=1)
+        self.rowconfigure(4, weight=1, minsize=80)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -195,39 +196,77 @@ class RunScreen(BaseScreen, show_navigation=True):
         )
 
         # Add navigation buttons
+        self.bottom_bar_frame = ttk.Frame(self)
+        self.bottom_bar_frame.grid(
+            row=4, column=0, columnspan=5, sticky="news", pady=20
+        )
+
+        self.bottom_bar_frame.columnconfigure(0, weight=1)
+        self.bottom_bar_frame.columnconfigure(1, weight=1)
+        self.bottom_bar_frame.columnconfigure(2, weight=1)
+        self.bottom_bar_frame.columnconfigure(3, weight=10, minsize=400)
+        self.bottom_bar_frame.columnconfigure(4, weight=1)
+
+        self.back_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "back_arrow.png",
+            )
+        )
         self.back_button = ttk.Button(
-            self,
-            text="Back",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            self.bottom_bar_frame,
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_back(self),
+            image=self.back_button_image,
         )
-        self.back_button.grid(row=4, column=0, padx=10, pady=5)
+        self.back_button.grid(
+            row=0, column=0, padx=(60, 20), pady=(10, 0), ipadx=18, sticky="news"
+        )
 
+        self.home_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "home_icon.png",
+            )
+        )
         self.home_button = ttk.Button(
-            self,
-            text="Home",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            self.bottom_bar_frame,
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_home(self),
+            image=self.home_button_image,
         )
-        self.home_button.grid(row=4, column=1, padx=10, pady=5)
+        self.home_button.grid(
+            row=0, column=1, padx=20, pady=(10, 0), ipadx=18, sticky="news"
+        )
 
-        self.forward_button = ttk.Button(
-            self,
-            text="Forward",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
-            command=lambda self=self: BaseScreen.go_forward(self),
+        self.forward_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "forward_arrow.png",
+            )
         )
-        self.forward_button.grid(row=4, column=2, padx=10, pady=5)
+        self.forward_button = ttk.Button(
+            self.bottom_bar_frame,
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
+            command=lambda self=self: BaseScreen.go_forward(self),
+            image=self.forward_button_image,
+        )
+        self.forward_button.grid(
+            row=0, column=2, padx=20, pady=(10, 0), ipadx=18, sticky="news"
+        )
 
         self.post_run_button = ttk.Button(
-            self,
+            self.bottom_bar_frame,
             bootstyle=SUCCESS,
             text="View outputs",
             command=self.open_post_run_screen,
             state=DISABLED,
         )
         self.post_run_button.grid(
-            row=4, column=4, sticky="e", padx=20, pady=5, ipadx=80, ipady=20
+            row=0, column=4, sticky="e", padx=20, pady=5, ipadx=80, ipady=20
         )
 
         # Create a buffer for the stdout

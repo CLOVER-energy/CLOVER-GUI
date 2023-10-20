@@ -234,7 +234,7 @@ class App(ttk.Window):
             self.new_location_frame, bootstyle=f"{SUCCESS}-striped", mode="determinate"
         )
         self.new_location_progress_bar.grid(
-            row=7, column=0, columnspan=7, pady=5, padx=10, sticky="ew"
+            row=6, column=1, columnspan=5, pady=5, padx=10, sticky="ew"
         )
         self.new_location_progress_bar.start()
         self.new_location_progress_bar["value"] = 0
@@ -773,7 +773,9 @@ class App(ttk.Window):
 
         # New-location
         self.new_location_frame = NewLocationScreen(
-            self.splash, self.new_location_callback
+            self.splash,
+            self.new_location_callback,
+            self.data_directory,
         )
         self.new_location_frame.pack_forget()
         self.splash.set_progress_bar_progress(60)
@@ -783,6 +785,7 @@ class App(ttk.Window):
 
         # Post run
         self.post_run_screen = PostRunScreen(
+            self.data_directory,
             self.open_configuration_frame,
             self.open_load_location_window,
             self.open_new_location_frame_post_run,

@@ -24,7 +24,7 @@ from ttkbootstrap.scrolled import *
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap.tooltip import ToolTip
 
-from .__utils__ import BaseScreen
+from .__utils__ import BaseScreen, IMAGES_DIRECTORY
 
 
 __all__ = ("PostRunScreen",)
@@ -322,7 +322,12 @@ class OutputsViewerFrame(ScrolledFrame):
             self.table_rows.extend(
                 sorted(
                     [
-                        (key.replace("_", " ").capitalize() if key != "lcue" else "LCUE (Leveilised cost of electricity) / USD/kWh", value)
+                        (
+                            key.replace("_", " ").capitalize()
+                            if key != "lcue"
+                            else "LCUE (Leveilised cost of electricity) / USD/kWh",
+                            value,
+                        )
                         for key, value in data["simulation_1"]["system_appraisal"][
                             "criteria"
                         ].items()
@@ -331,7 +336,8 @@ class OutputsViewerFrame(ScrolledFrame):
                 )
             )
             self.table_rows.append(
-                ("Evalued critera".upper(), "Performance and financial characteristics"))
+                ("Evalued critera".upper(), "Performance and financial characteristics")
+            )
 
             # Parse analysis data to plot from the data.
             self.table_rows.extend(
@@ -385,6 +391,7 @@ class PostRunScreen(BaseScreen, show_navigation=True):
 
     def __init__(
         self,
+        data_directory: str,
         open_configuration_screen: Callable,
         open_load_location_post_run: Callable,
         open_new_location_post_run: Callable,
@@ -393,8 +400,8 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         """
         Instantiate a :class:`ConfigureFrame` instance.
 
-        :param: location_name
-            The name of the location being simulated or optimised.
+        :param: data_directory
+            The path to the directory containing data.
 
         :param: open_configuration_screen
             Function that opens the configuration screen.
@@ -426,10 +433,10 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         # Configure the row and column weights.
         self.columnconfigure(0, weight=1)
 
-        self.rowconfigure(0, weight=1, minsize=40)
-        self.rowconfigure(1, weight=1, minsize=40)
-        self.rowconfigure(2, weight=1, minsize=550)
-        self.rowconfigure(3, weight=1, minsize=80)
+        self.rowconfigure(0, weight=1, minsize=20)
+        self.rowconfigure(1, weight=1, minsize=20)
+        self.rowconfigure(2, weight=1, minsize=500)
+        self.rowconfigure(3, weight=2, minsize=80)
 
         # Finished label
         self.finished_label = ttk.Label(
@@ -508,36 +515,57 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.bottom_bar_frame.columnconfigure(0, weight=1)
         self.bottom_bar_frame.columnconfigure(1, weight=1)
         self.bottom_bar_frame.columnconfigure(2, weight=1)
-        self.bottom_bar_frame.columnconfigure(3, weight=10)
+        self.bottom_bar_frame.columnconfigure(3, weight=10, minsize=400)
         self.bottom_bar_frame.columnconfigure(4, weight=1)
 
         self.bottom_bar_frame.rowconfigure(0, weight=1)
 
+        self.back_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "back_arrow.png",
+            )
+        )
         self.back_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Back",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_back(self),
+            image=self.back_button_image,
         )
         self.back_button.grid(
-            row=0, column=0, padx=(60, 20), pady=(10, 20), sticky="news"
+            row=0, column=0, padx=(60, 20), pady=(10, 0), sticky="new"
         )
 
+        self.home_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "home_icon.png",
+            )
+        )
         self.home_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Home",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_home(self),
+            image=self.home_button_image,
         )
-        self.home_button.grid(row=0, column=1, padx=20, pady=(10, 20), sticky="news")
+        self.home_button.grid(row=0, column=1, padx=20, pady=(10, 0), sticky="new")
 
+        self.forward_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "forward_arrow.png",
+            )
+        )
         self.forward_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Forward",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_forward(self),
+            image=self.forward_button_image,
         )
-        self.forward_button.grid(row=0, column=2, padx=20, pady=(10, 20), sticky="news")
+        self.forward_button.grid(row=0, column=2, padx=20, pady=(10, 0), sticky="new")
 
         self._select_output(self.outputs[0])
 

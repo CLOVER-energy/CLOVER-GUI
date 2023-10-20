@@ -344,7 +344,7 @@ class CSVEntryFrame(ttk.Frame):
         # Create the file if it does not exist already, e.g., a new device.
         if not os.path.isfile(filename):
             with open(filename, "w", encoding="UTF-8") as new_csvfile:
-                new_csvfile.write("\n".join(["," * 11] * 24))
+                new_csvfile.write("\n".join(["0," * 11 + "0"] * 24))
 
         # get array size & get contents of rows
         with open(filename, "r", encoding="UTF-8") as csvfile:

@@ -157,7 +157,9 @@ class DetailsWindow(tk.Toplevel):
             row=1, column=0, columnspan=2, sticky="nsew", padx=20, pady=5
         )
 
-        self.solar_frame = SolarFrame(self.details_notebook, data_directory, renewables_ninja_token)
+        self.solar_frame = SolarFrame(
+            self.details_notebook, data_directory, renewables_ninja_token
+        )
         self.details_notebook.add(
             self.solar_frame,
             text="Solar",

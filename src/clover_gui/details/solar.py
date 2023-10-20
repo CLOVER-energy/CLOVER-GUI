@@ -39,7 +39,7 @@ from ..__utils__ import COSTS, EMISSIONS, PANELS
 
 # Images directory name:
 #   The name of the images directory.
-_IMAGES_DIRECTORY_NAME: str = "images"
+_IMAGES_DIRECTORY: str = "images"
 
 
 __all__ = ("SolarFrame",)
@@ -55,7 +55,9 @@ class PVFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent, data_directory: str, renewables_ninja_token: ttk.StringVar):
+    def __init__(
+        self, parent, data_directory: str, renewables_ninja_token: ttk.StringVar
+    ):
         """
         Instantiate a :class:`PVFrame` instance.
 
@@ -77,7 +79,7 @@ class PVFrame(ttk.Frame):
         self.help_image = ttk.PhotoImage(
             file=os.path.join(
                 data_directory,
-                _IMAGES_DIRECTORY_NAME,
+                _IMAGES_DIRECTORY,
                 "QMark_unhovered.png",
             )
         )
@@ -134,7 +136,9 @@ class PVFrame(ttk.Frame):
         }
 
         self.pv_panel_label = ttk.Label(self.scrolled_frame, text="Panel to configure")
-        self.pv_panel_label.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.pv_panel_label.grid(
+            row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.pv_panel_combobox = ttk.Combobox(
             self.scrolled_frame,
@@ -159,7 +163,9 @@ class PVFrame(ttk.Frame):
 
         # Panel name
         self.panel_name_label = ttk.Label(self.scrolled_frame, text="Panel name")
-        self.panel_name_label.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.panel_name_label.grid(
+            row=2, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.panel_name_entry = ttk.Entry(
             self.scrolled_frame, bootstyle=WARNING, textvariable=self.panel_selected
@@ -180,7 +186,9 @@ class PVFrame(ttk.Frame):
 
         # Nominal power
         self.nominal_power_label = ttk.Label(self.scrolled_frame, text="Nominal power")
-        self.nominal_power_label.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.nominal_power_label.grid(
+            row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.nominal_power: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 1, f"{panel_name}_nominal_power")
@@ -205,7 +213,9 @@ class PVFrame(ttk.Frame):
 
         # Lifetime
         self.lifetime_label = ttk.Label(self.scrolled_frame, text="Lifetime")
-        self.lifetime_label.grid(row=4, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.lifetime_label.grid(
+            row=4, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.panel_lifetimes: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 20, f"{panel_name}_lifetime")
@@ -253,7 +263,9 @@ class PVFrame(ttk.Frame):
 
         # Tracking
         self.tracking_label = ttk.Label(self.scrolled_frame, text="Tracking")
-        self.tracking_label.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.tracking_label.grid(
+            row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.tracking: dict[str, ttk.IntVar] = {
             panel_name: ttk.IntVar(self, 0, f"{panel_name}_tracking")
@@ -358,7 +370,9 @@ class PVFrame(ttk.Frame):
             image=self.help_image,
             text="",
         )
-        self.azimuthal_orientation_help.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
+        self.azimuthal_orientation_help.grid(
+            row=8, column=1, padx=10, pady=5, sticky="ew"
+        )
         self.azimuthal_orientation_help_tooltip = ToolTip(
             self.azimuthal_orientation_help,
             bootstyle=f"{INFO}-{INVERSE}",
@@ -545,7 +559,9 @@ class PVFrame(ttk.Frame):
 
         # Cost
         self.cost_label = ttk.Label(self.scrolled_frame, text="PV cost")
-        self.cost_label.grid(row=12, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.cost_label.grid(
+            row=12, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.costs: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_cost")
@@ -565,7 +581,9 @@ class PVFrame(ttk.Frame):
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(self.scrolled_frame, text="PV cost change")
-        self.cost_decrease_label.grid(row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.cost_decrease_label.grid(
+            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.cost_decrease: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_cost_decrease")
@@ -592,7 +610,9 @@ class PVFrame(ttk.Frame):
         self.installation_cost_label = ttk.Label(
             self.scrolled_frame, text="Installation cost"
         )
-        self.installation_cost_label.grid(row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.installation_cost_label.grid(
+            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.installation_costs: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_installation_cost")
@@ -654,7 +674,9 @@ class PVFrame(ttk.Frame):
 
         # OPEX costs
         self.opex_costs_label = ttk.Label(self.scrolled_frame, text="OPEX (O&M) costs")
-        self.opex_costs_label.grid(row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.opex_costs_label.grid(
+            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_o_and_m_costs")
@@ -813,7 +835,9 @@ class PVFrame(ttk.Frame):
 
         # O&M emissions
         self.om_emissions_label = ttk.Label(self.scrolled_frame, text="O&M emissions")
-        self.om_emissions_label.grid(row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        self.om_emissions_label.grid(
+            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         self.om_emissions: dict[str, ttk.DoubleVar] = {
             panel_name: ttk.DoubleVar(self, 0, f"{panel_name}_o_and_m_ghgs")
@@ -1332,7 +1356,9 @@ class SolarFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent, data_directory: str, renewables_ninja_token: ttk.StringVar):
+    def __init__(
+        self, parent, data_directory: str, renewables_ninja_token: ttk.StringVar
+    ):
         """
         Instantiate a :class:`PVFrame` instance.
 

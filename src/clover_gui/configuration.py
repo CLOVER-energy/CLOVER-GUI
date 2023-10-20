@@ -47,15 +47,11 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 from ttkbootstrap.tooltip import ToolTip
 
-from .__utils__ import BaseScreen, clover_thread
+from .__utils__ import BaseScreen, clover_thread, IMAGES_DIRECTORY
 from .scenario import ConfigurationFrame
 
 
 __all__ = ("ConfigurationScreen",)
-
-# Images directory name:
-#   The name of the images directory.
-_IMAGES_DIRECTORY_NAME: str = "images"
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
@@ -2067,7 +2063,7 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.help_image = ttk.PhotoImage(
             file=os.path.join(
                 data_directory,
-                _IMAGES_DIRECTORY_NAME,
+                IMAGES_DIRECTORY,
                 "QMark_unhovered.png",
             )
         )
@@ -2161,29 +2157,50 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
         self.bottom_bar_frame.columnconfigure(3, weight=10)
         self.bottom_bar_frame.columnconfigure(4, weight=1)
 
+        self.back_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "back_arrow.png",
+            )
+        )
         self.back_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Back",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_back(self),
+            image=self.back_button_image,
         )
         self.back_button.grid(
             row=0, column=0, padx=(60, 20), pady=(10, 20), sticky="news"
         )
 
+        self.home_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "home_icon.png",
+            )
+        )
         self.home_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Home",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_home(self),
+            image=self.home_button_image,
         )
         self.home_button.grid(row=0, column=1, padx=20, pady=(10, 20), sticky="news")
 
+        self.forward_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "forward_arrow.png",
+            )
+        )
         self.forward_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Forward",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_forward(self),
+            image=self.forward_button_image,
         )
         self.forward_button.grid(row=0, column=2, padx=20, pady=(10, 20), sticky="news")
 

@@ -43,7 +43,7 @@ __all__ = ("ConfigurationFrame",)
 
 # Images directory name:
 #   The name of the images directory.
-_IMAGES_DIRECTORY_NAME: str = "images"
+_IMAGES_DIRECTORY: str = "images"
 
 
 class ConfigurationFrame(ttk.Frame):
@@ -228,13 +228,13 @@ class ConfigurationFrame(ttk.Frame):
             True: ttk.PhotoImage(
                 file=os.path.join(
                     data_directory,
-                    _IMAGES_DIRECTORY_NAME,
+                    _IMAGES_DIRECTORY,
                     "solar_gui_selected.png",
                 )
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "solar_gui_disabled.png"
+                    data_directory, _IMAGES_DIRECTORY, "solar_gui_disabled.png"
                 )
             ),
         }
@@ -318,12 +318,12 @@ class ConfigurationFrame(ttk.Frame):
         self.battery_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "battery_gui_selected.png"
+                    data_directory, _IMAGES_DIRECTORY, "battery_gui_selected.png"
                 )
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "battery_gui_disabled.png"
+                    data_directory, _IMAGES_DIRECTORY, "battery_gui_disabled.png"
                 )
             ),
         }
@@ -398,12 +398,12 @@ class ConfigurationFrame(ttk.Frame):
         self.diesel_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "diesel_gui_selected.png"
+                    data_directory, _IMAGES_DIRECTORY, "diesel_gui_selected.png"
                 )
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "diesel_gui_disabled.png"
+                    data_directory, _IMAGES_DIRECTORY, "diesel_gui_disabled.png"
                 )
             ),
         }
@@ -457,12 +457,12 @@ class ConfigurationFrame(ttk.Frame):
         self.grid_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "grid_gui_selected.png"
+                    data_directory, _IMAGES_DIRECTORY, "grid_gui_selected.png"
                 )
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "grid_gui_disabled.png"
+                    data_directory, _IMAGES_DIRECTORY, "grid_gui_disabled.png"
                 )
             ),
         }
@@ -529,14 +529,14 @@ class ConfigurationFrame(ttk.Frame):
                 True: ttk.PhotoImage(
                     file=os.path.join(
                         data_directory,
-                        _IMAGES_DIRECTORY_NAME,
+                        _IMAGES_DIRECTORY,
                         "electric_gui_selected_filled.png",
                     )
                 ),
                 False: ttk.PhotoImage(
                     file=os.path.join(
                         data_directory,
-                        _IMAGES_DIRECTORY_NAME,
+                        _IMAGES_DIRECTORY,
                         "electric_gui_selected_outline.png",
                     )
                 ),
@@ -545,14 +545,14 @@ class ConfigurationFrame(ttk.Frame):
                 True: ttk.PhotoImage(
                     file=os.path.join(
                         data_directory,
-                        _IMAGES_DIRECTORY_NAME,
+                        _IMAGES_DIRECTORY,
                         "hot_water_gui_selected_filled.png",
                     )
                 ),
                 False: ttk.PhotoImage(
                     file=os.path.join(
                         data_directory,
-                        _IMAGES_DIRECTORY_NAME,
+                        _IMAGES_DIRECTORY,
                         "hot_water_gui_selected_outline.png",
                     )
                 ),
@@ -698,13 +698,13 @@ class ConfigurationFrame(ttk.Frame):
         self.domestic_images: dict[bool, ttk.PhotoImage] = {
             True: ttk.PhotoImage(
                 file=os.path.join(
-                    data_directory, _IMAGES_DIRECTORY_NAME, "domestic_gui_selected.png"
+                    data_directory, _IMAGES_DIRECTORY, "domestic_gui_selected.png"
                 )
             ),
             False: ttk.PhotoImage(
                 file=os.path.join(
                     data_directory,
-                    _IMAGES_DIRECTORY_NAME,
+                    _IMAGES_DIRECTORY,
                     "domestic_gui_disabled.png",
                 )
             ),
@@ -957,7 +957,7 @@ class ConfigurationFrame(ttk.Frame):
             self.scrollable_scenario_frame,
             text="Demand settings",
             bootstyle=INFO,
-            command=NONE,
+            command=self.open_load_settings,
         )
         self.demand_settings_button.grid(row=9, column=4, padx=20)
 
@@ -1443,6 +1443,9 @@ class ConfigurationFrame(ttk.Frame):
 
     def open_grid_settings(self) -> None:
         self.open_details_window(4)
+
+    def open_load_settings(self) -> None:
+        self.open_details_window(2)
 
     def set_scenarios(self, scenarios: list[Scenario]) -> None:
         """

@@ -9,6 +9,7 @@
 # For more information, contact: benedict.winchester@gmail.com                         #
 ########################################################################################
 
+import os
 import tkinter as tk
 
 from typing import Callable
@@ -19,7 +20,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 
-from .__utils__ import BaseScreen
+from .__utils__ import BaseScreen, IMAGES_DIRECTORY
 from .splash_screen import SplashScreenWindow
 
 
@@ -34,7 +35,10 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
     """
 
     def __init__(
-        self, splash_screen: SplashScreenWindow, create_location_callback: Callable
+        self,
+        splash_screen: SplashScreenWindow,
+        create_location_callback: Callable,
+        data_directory: str,
     ) -> None:
         """
         Instantiate a :class:`NewLocationScreen` instance.
@@ -44,6 +48,9 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
 
         :param: create_location_callback:
             The callback function for when a new location is created.
+
+        :param: data_directory
+            The path to the data directory.
 
         """
 
@@ -60,7 +67,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.rowconfigure(4, weight=1)
         self.rowconfigure(5, weight=1)
         self.rowconfigure(6, weight=1)
-        self.rowconfigure(7, weight=1, pad=20)
+        self.rowconfigure(7, weight=1)
 
         self.columnconfigure(0, weight=1)  # First three have forward, home, back
         self.columnconfigure(1, weight=1)
@@ -199,7 +206,9 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.warning_text_label = ttk.Label(
             self, text="", bootstyle=DANGER, state=DISABLED
         )
-        self.warning_text_label.grid(row=5, column=4, columnspan=2, sticky="w")
+        self.warning_text_label.grid(
+            row=5, column=1, columnspan=4, sticky="w", padx=(20, 20), pady=20
+        )
 
         self.create_location_button = ttk.Button(
             self,
@@ -208,7 +217,7 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
             command=create_location_callback,
         )
         self.create_location_button.grid(
-            row=6,
+            row=5,
             column=5,
             columnspan=2,
             padx=5,
@@ -219,34 +228,57 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         )
 
         self.bottom_bar_frame = ttk.Frame(self)
-        self.bottom_bar_frame.grid(row=7, column=0, columnspan=7, sticky="news")
+        self.bottom_bar_frame.grid(row=7, column=0, columnspan=7, sticky="news", pady=0)
 
         self.bottom_bar_frame.columnconfigure(0, weight=1)
         self.bottom_bar_frame.columnconfigure(1, weight=1)
         self.bottom_bar_frame.columnconfigure(2, weight=1)
-        self.bottom_bar_frame.columnconfigure(3, weight=10)
+        self.bottom_bar_frame.columnconfigure(3, weight=10, minsize=400)
         self.bottom_bar_frame.columnconfigure(4, weight=1)
 
+        self.back_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "back_arrow.png",
+            )
+        )
         self.back_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Back",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_back(self),
+            image=self.back_button_image,
         )
-        self.back_button.grid(row=0, column=0, padx=10, pady=5)
+        self.back_button.grid(
+            row=0, column=0, padx=(60, 20), pady=(10, 0), sticky="news"
+        )
 
+        self.home_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "home_icon.png",
+            )
+        )
         self.home_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Home",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_home(self),
+            image=self.home_button_image,
         )
-        self.home_button.grid(row=0, column=1, padx=10, pady=5)
+        self.home_button.grid(row=0, column=1, padx=20, pady=(10, 0), sticky="news")
 
+        self.forward_button_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                IMAGES_DIRECTORY,
+                "forward_arrow.png",
+            )
+        )
         self.forward_button = ttk.Button(
             self.bottom_bar_frame,
-            text="Forward",
-            bootstyle=f"{PRIMARY}-{OUTLINE}",
+            bootstyle=f"{SECONDARY}-{OUTLINE}",
             command=lambda self=self: BaseScreen.go_forward(self),
+            image=self.forward_button_image,
         )
-        self.forward_button.grid(row=0, column=2, padx=10, pady=5)
+        self.forward_button.grid(row=0, column=2, padx=20, pady=(10, 0), sticky="news")
