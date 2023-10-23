@@ -1024,7 +1024,7 @@ class DieselFrame(ttk.Frame):
         self.diesel_fuel_emissions_entry.grid(
             row=1, column=1, padx=10, pady=5, ipadx=20, sticky="ew"
         )
-        self.diesel_fuel_emissions_units_label = ttk.Label(self, text="$/litre")
+        self.diesel_fuel_emissions_units_label = ttk.Label(self, text="kgCO2eq/litre")
         self.diesel_fuel_emissions_units_label.grid(
             row=1, column=2, padx=10, pady=5, sticky="w"
         )
