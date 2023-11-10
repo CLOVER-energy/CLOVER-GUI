@@ -12,7 +12,7 @@
 import ttkbootstrap as ttk
 import tkinter as tk
 
-from clover import ProgrammerJudgementFault
+from clover import Location, ProgrammerJudgementFault
 from clover.generation.solar import PVPanel
 from clover.impact.finance import ImpactingComponent
 from clover.impact.__utils__ import LIFETIME, SIZE_INCREMENT
@@ -80,8 +80,6 @@ class SystemFrame(ttk.Frame):
         self.scrollable_system_frame.rowconfigure(14, weight=1)
         self.scrollable_system_frame.rowconfigure(15, weight=1)
         self.scrollable_system_frame.rowconfigure(16, weight=1)
-        self.scrollable_system_frame.rowconfigure(17, weight=1)
-        self.scrollable_system_frame.rowconfigure(18, weight=1)
 
         self.scrollable_system_frame.columnconfigure(0, weight=1)
         self.scrollable_system_frame.columnconfigure(1, weight=1)
@@ -488,6 +486,84 @@ class SystemFrame(ttk.Frame):
             row=11, column=3, padx=10, pady=5, sticky="ew"
         )
 
+        # Empty row
+        self.empty_row = ttk.Label(self.scrollable_system_frame, text="")
+        self.empty_row.grid(row=12, column=1, padx=10, pady=5, sticky="w")
+
+        # Line separator
+        self.horizontal_divider = ttk.Separator(
+            self.scrollable_system_frame, orient=ttk.HORIZONTAL
+        )
+        self.horizontal_divider.grid(
+            row=13, column=1, columnspan=7, padx=10, pady=5, sticky="ew"
+        )
+
+        # Households settings header
+        self.households_header = ttk.Label(
+            self.scrollable_system_frame, text="Households/community Settings", style="Bold.TLabel"
+        )
+        self.households_header.grid(
+            row=14, column=1, columnspan=4, padx=10, pady=5, sticky="w"
+        )
+
+        # Household size and community growth rate
+        self.community_size_label = ttk.Label(
+            self.scrollable_system_frame, text="Community size"
+        )
+        self.community_size_label.grid(row=15, column=1, padx=10, pady=5, sticky="w")
+
+        self.community_size = ttk.IntVar(self, 100)
+
+        def _round_community_size(_) -> None:
+            """Round the community size lifetime to the nearest integer."""
+
+            self.community_size.set(int(self.community_size.get()))
+            self.community_size_entry.update()
+
+        self.community_size_entry = ttk.Entry(
+            self.scrollable_system_frame,
+            bootstyle=WARNING,
+            textvariable=self.community_size,
+        )
+        self.community_size_entry.bind("<Return>", _round_community_size)
+
+        self.community_size_entry.grid(
+            row=15, column=2, padx=10, pady=5, sticky="ew"
+        )
+
+        self.community_size_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"households"
+        )
+        self.community_size_unit.grid(row=15, column=3, padx=10, pady=5, sticky="ew")
+
+        # Commnuity growth rate
+        self.community_growth_rate_label = ttk.Label(
+            self.scrollable_system_frame, text="Community growth rate"
+        )
+        self.community_growth_rate_label.grid(
+            row=16, column=1, padx=10, pady=5, sticky="w"
+        )
+
+        self.community_growth_rate = ttk.DoubleVar(self, 1)
+        self.community_growth_rate_entry = ttk.Entry(
+            self.scrollable_system_frame,
+            bootstyle=WARNING,
+            textvariable=self.community_growth_rate,
+        )
+
+        self.community_growth_rate_entry.grid(
+            row=16, column=2, padx=10, pady=5, sticky="ew"
+        )
+
+        self.community_growth_rate_unit = ttk.Label(
+            self.scrollable_system_frame, text=f"% growth per year"
+        )
+        self.community_growth_rate_unit.grid(
+            row=16, column=3, padx=10, pady=5, sticky="ew"
+        )
+
+
+
         # # Empty line
         # self.empty_row = ttk.Label(self.scrollable_system_frame, text="")
         # self.empty_row.grid(row=12, column=1, padx=10, pady=5, sticky="w")
@@ -594,6 +670,7 @@ class SystemFrame(ttk.Frame):
 
     def set_system(
         self,
+        location: Location,
         minigrid: Minigrid,
     ) -> None:
         """
@@ -689,8 +766,15 @@ class SystemFrame(ttk.Frame):
         self.inverter_step_size.set(minigrid.inverter.size_increment)
         self.inverter_step_size_entry.update()
 
+        # Update the community information
+        self.community_size.set(location.community_size)
+        self.community_size_entry.update()
+
+        self.community_growth_rate.set(100 * location.community_growth_rate)
+        self.community_growth_rate_entry.update()
+
     @property
-    def as_dict(self) -> dict[str, dict[str, float] | float | str]:
+    def minigrid_dict(self) -> dict[str, dict[str, float] | float | str]:
         """
         Return the energy-system information as a `dict`.
 
@@ -715,4 +799,19 @@ class SystemFrame(ttk.Frame):
                 LIFETIME: int(self.inverter_lifetime.get()),
                 SIZE_INCREMENT: self.inverter_step_size.get(),
             },
+        }
+
+    @property
+    def location_dict(self) -> dict[str, dict[str, float] | float | str]:
+        """
+        Return the location information as a `dict`.
+
+        :returns:
+            The information as a `dict` ready for saving.
+
+        """
+
+        return {
+            "community_size": self.community_size.get(),
+            "community_growth_rate": 0.01 * self.community_growth_rate.get(),
         }

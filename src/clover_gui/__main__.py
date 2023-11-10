@@ -22,6 +22,7 @@ from clover import (
     get_locations_foldername,
     get_logger,
     INPUTS_DIRECTORY,
+    Location,
     parse_input_files,
     read_yaml,
 )
@@ -104,6 +105,7 @@ class App(ttk.Window):
 
         # Set attributes
         self._data_directory: str | None = None
+        self.location: Location | None = None
         self.location_name: ttk.StringVar = ttk.StringVar(self, "")
         self.logger = get_logger("clover_gui", False)
         self.output_directory_name: ttk.StringVar = ttk.StringVar(self, "")
@@ -333,7 +335,7 @@ class App(ttk.Window):
             ghg_inputs,
             _,
             grid_times,
-            _,
+            location,
             optimisation_inputs,
             optimisations,
             scenarios,
@@ -356,6 +358,10 @@ class App(ttk.Window):
         finance_inputs[ImpactingComponent.GRID.value].update(
             ghg_inputs[ImpactingComponent.GRID.value]
         )
+
+        # Save the location and update the max-years variable
+        self.location = location
+        self.location.max_years = 30
 
         # Load the PV and battery input files as these are not returned in CLOVER as a whole
         self.inputs_directory_relative_path = os.path.join(
@@ -437,7 +443,7 @@ class App(ttk.Window):
         self.details_window.ghgs_frame.set_ghg_inputs(ghg_inputs, self.logger)
         set_progress_bar_progress(1100 * percent_fraction)
 
-        self.details_window.system_frame.set_system(minigrid)
+        self.details_window.system_frame.set_system(location, minigrid)
         set_progress_bar_progress(1200 * percent_fraction)
 
         # Close the load-location window once completed
@@ -628,9 +634,18 @@ class App(ttk.Window):
         if self.location_name.get() == "":
             return
 
+        # Save the location information
+        location_dict = self.location.as_dict
+        location_dict.update(self.details_window.system_frame.location_dict)
+
+        with open(
+            self.input_file_info["location_inputs"], "w", encoding=(_encoding := "utf-8")) as location_inputs_file:
+            yaml.dump(
+                location_dict, location_inputs_file)
+
         # Save the battery information
         with open(
-            self.input_file_info[BATTERIES], "w", encoding=(_encoding := "utf-8")
+            self.input_file_info[BATTERIES], "w", encoding=_encoding
         ) as battery_inputs_file:
             yaml.dump(
                 self.details_window.storage_frame.battery_frame.batteries,
@@ -658,7 +673,7 @@ class App(ttk.Window):
             yaml.dump(self.details_window.diesel_frame.to_dict(), diesel_inputs_file)
 
         # Save the energy_system information
-        energy_system_information = self.details_window.system_frame.as_dict
+        energy_system_information = self.details_window.system_frame.minigrid_dict
 
         # Update the energy-system information with component selection from the
         # scenarios screen.

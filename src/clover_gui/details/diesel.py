@@ -94,7 +94,7 @@ class GeneratorFrame(ttk.Frame):
 
         # Diesel generator being selected
         self.diesel_generator_selected_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator to model"
+            self.scrolled_frame, text="Diesel generator to\nconfigure"
         )
         self.diesel_generator_selected_label.grid(
             row=0, column=0, padx=10, pady=5, sticky="w"

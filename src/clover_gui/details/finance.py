@@ -152,9 +152,9 @@ class FinanceFrame(ttk.Frame):
             row=3, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
 
-        self.capacity_cost_units_label = ttk.Label(self, text="$ / kWp installed PV")
+        self.capacity_cost_units_label = ttk.Label(self, text="$ / kWp installed PV + kW installed diesel")
         self.capacity_cost_units_label.grid(
-            row=3, column=3, padx=10, pady=5, sticky="w"
+            row=3, column=3, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         # Fixed Cost

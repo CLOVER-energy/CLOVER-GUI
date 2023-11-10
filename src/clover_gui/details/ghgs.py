@@ -87,7 +87,7 @@ class GHGFrame(ttk.Frame):
         self.misc_entry = ttk.Entry(self, textvariable=self.misc)
         self.misc_entry.grid(row=2, column=2, sticky="w")
 
-        self.misc_units = ttk.Label(self, text="kgCO2eq / year")
+        self.misc_units = ttk.Label(self, text="kgCO2eq / kWp installed PV + kW installed diesel")
         self.misc_units.grid(row=2, column=3, sticky="w")
 
         # GHG Emissions from BOS
@@ -123,14 +123,14 @@ class GHGFrame(ttk.Frame):
         self.households_units.grid(row=5, column=3, sticky="w")
 
         # GHG Emissions from Inverter
-        self.inverter_label = ttk.Label(self, text="GHG emissions from inverter")
+        self.inverter_label = ttk.Label(self, text="GHG emissions from inverter(s)")
         self.inverter_label.grid(row=6, column=1, sticky="w")
         self.inverter = ttk.DoubleVar(value=0)
 
         self.inverter_entry = ttk.Entry(self, textvariable=self.inverter)
         self.inverter_entry.grid(row=6, column=2, sticky="w")
 
-        self.inverter_units = ttk.Label(self, text="kgCO2eq / kWp")
+        self.inverter_units = ttk.Label(self, text="kgCO2eq / kW")
         self.inverter_units.grid(row=6, column=3, sticky="w")
 
         # GHG Emissions inverter decrease
