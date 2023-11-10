@@ -46,7 +46,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        "clover-energy >=5.2.0a6",
+        "clover-energy >=5.2.0b1",
         "customtkinter>=5.2.0",
         "cx-Freeze >=6.15.5",
         "pandas >=1.2.3",
