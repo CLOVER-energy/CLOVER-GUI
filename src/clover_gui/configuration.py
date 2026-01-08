@@ -345,7 +345,7 @@ CRITERION_TO_NAME_MAP: dict[Criterion, str] = {
     Criterion.KEROSENE_COST_MITIGATED: "Kerosene cost mitigated / $",
     Criterion.KEROSENE_GHGS_MITIGATED: "Kerosene ghgs mitigated / kgCO2eq",
     Criterion.LCUE: "LCUE / $/kWh",
-    Criterion.RENEWABLES_FRACTION: "Renewables fraction",
+    Criterion.RENEWABLES_ELECTRICITY_FRACTION: "Renewables fraction",
     Criterion.TOTAL_GHGS: "Total ghgs / kgCO2eq",
     Criterion.TOTAL_SYSTEM_COST: "Total system cost / $",
     Criterion.TOTAL_SYSTEM_GHGS: "Total system ghgs / kgCO2eq",
@@ -367,7 +367,7 @@ CRITERION_TO_UNITS_MAP: dict[Criterion, str] = {
     Criterion.KEROSENE_COST_MITIGATED: "currency unit",
     Criterion.KEROSENE_GHGS_MITIGATED: "kgCO2eq",
     Criterion.LCUE: "currency/kWh",
-    Criterion.RENEWABLES_FRACTION: "\% of energy used",
+    Criterion.RENEWABLES_ELECTRICITY_FRACTION: "\% of energy used",
     Criterion.TOTAL_GHGS: "kgCO2eq",
     Criterion.TOTAL_SYSTEM_COST: "currenty unit",
     Criterion.TOTAL_SYSTEM_GHGS: "kgCO2eq",
@@ -383,7 +383,7 @@ CRITERION_TO_UNITS_MAP: dict[Criterion, str] = {
 PERCENTAGE_CRITERIA: list[Criterion] = [
     Criterion.BLACKOUTS,
     Criterion.CLEAN_WATER_BLACKOUTS,
-    Criterion.RENEWABLES_FRACTION,
+    Criterion.RENEWABLES_ELECTRICITY_FRACTION,
     Criterion.UNMET_ENERGY_FRACTION,
     Criterion.UPTIME,
 ]

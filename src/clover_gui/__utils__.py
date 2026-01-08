@@ -70,7 +70,7 @@ CLOVER_ICON_IMAGE: str = "clover_logo.png"
 
 # CLOVER splash-screen image:
 #   The name of the CLOVER splash-screen image.
-CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_5_2.png"
+CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_6_0_alpha.png"
 
 # Costs:
 #   Keyword for costs.
