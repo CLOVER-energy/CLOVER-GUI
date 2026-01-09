@@ -55,7 +55,6 @@ __all__ = ("ConfigurationScreen",)
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
-
     """
     Represents the simulation frame.
 
@@ -479,10 +478,12 @@ class ThresholdCriterion:
         self.value_entry = ttk.Entry(
             parent,
             bootstyle=INFO,
-            textvariable=self.value
-            if self.name_to_criterion_map[criterion_name.get()]
-            not in PERCENTAGE_CRITERIA
-            else self.percentage_value,
+            textvariable=(
+                self.value
+                if self.name_to_criterion_map[criterion_name.get()]
+                not in PERCENTAGE_CRITERIA
+                else self.percentage_value
+            ),
         )
         self.value_entry.bind("<<Return>>", self._enter_value)
 
@@ -2274,9 +2275,11 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
                 os.path.join(
                     get_locations_foldername(),
                     self.location_name.get(),
-                    SIMULATION_OUTPUTS_FOLDER
-                    if operating_mode == OperatingMode.SIMULATION
-                    else OPTIMISATION_OUTPUTS_FOLDER,
+                    (
+                        SIMULATION_OUTPUTS_FOLDER
+                        if operating_mode == OperatingMode.SIMULATION
+                        else OPTIMISATION_OUTPUTS_FOLDER
+                    ),
                     (self.output_directory_name.get()),
                 )
             )

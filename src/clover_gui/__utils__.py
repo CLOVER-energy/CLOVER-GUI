@@ -400,7 +400,11 @@ def parse_diesel_inputs(
 def parse_solar_inputs(
     inputs_directory_relative_path: str,
     logger: Logger,
-) -> tuple[list[PVPanel], dict[str, float], dict[str, float],]:
+) -> tuple[
+    list[PVPanel],
+    dict[str, float],
+    dict[str, float],
+]:
     """
     Parses the solar inputs file.
 

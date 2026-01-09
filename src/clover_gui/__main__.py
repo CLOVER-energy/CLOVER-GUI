@@ -639,9 +639,11 @@ class App(ttk.Window):
         location_dict.update(self.details_window.system_frame.location_dict)
 
         with open(
-            self.input_file_info["location_inputs"], "w", encoding=(_encoding := "utf-8")) as location_inputs_file:
-            yaml.dump(
-                location_dict, location_inputs_file)
+            self.input_file_info["location_inputs"],
+            "w",
+            encoding=(_encoding := "utf-8"),
+        ) as location_inputs_file:
+            yaml.dump(location_dict, location_inputs_file)
 
         # Save the battery information
         with open(
@@ -693,9 +695,9 @@ class App(ttk.Window):
 
         # Save the finance_inputs information
         finance_outputs = self.details_window.finance_frame.as_dict
-        finance_outputs[
-            ImpactingComponent.GRID.value
-        ] = self.details_window.grid_frame.impact_information
+        finance_outputs[ImpactingComponent.GRID.value] = (
+            self.details_window.grid_frame.impact_information
+        )
         with open(
             self.input_file_info[os.path.basename(FINANCE_INPUTS_FILE).split(".")[0]],
             "w",
@@ -705,9 +707,9 @@ class App(ttk.Window):
 
         # Save the ghg_inputs information
         ghg_outputs = self.details_window.ghgs_frame.as_dict
-        ghg_outputs[
-            ImpactingComponent.GRID.value
-        ] = self.details_window.grid_frame.impact_information
+        ghg_outputs[ImpactingComponent.GRID.value] = (
+            self.details_window.grid_frame.impact_information
+        )
         with open(
             self.input_file_info[os.path.basename(GHG_INPUTS_FILE).split(".")[0]],
             "w",
