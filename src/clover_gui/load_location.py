@@ -115,8 +115,6 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         )
         self.load_location_name.set(self.load_location_combobox["values"][0])
 
-        print(self.load_location_combobox["values"])
-
     def select_location(self, _) -> None:
         """Selects the location specified."""
 

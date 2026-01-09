@@ -21,7 +21,12 @@ from typing import Any, DefaultDict
 import ttkbootstrap as ttk
 
 from clover import read_yaml
-from clover.fileparser import DIESEL_CONSUMPTION, DIESEL_GENERATORS, MINIMUM_LOAD
+from clover.fileparser import (
+    CAPACITY,
+    DIESEL_CONSUMPTION,
+    DIESEL_GENERATORS,
+    MINIMUM_LOAD,
+)
 from clover.simulation.diesel import DieselGenerator
 from clover.generation.solar import PVPanel, SolarPanelType
 from clover.scripts.clover import clover_main
@@ -384,7 +389,12 @@ def parse_diesel_inputs(
     logger.info("Diesel inputs successfully parsed.")
 
     diesel_generators: list[DieselGenerator] = [
-        DieselGenerator(entry[DIESEL_CONSUMPTION], entry[MINIMUM_LOAD], entry[_NAME])
+        DieselGenerator(
+            entry.get(CAPACITY, 1),
+            entry[DIESEL_CONSUMPTION],
+            entry[MINIMUM_LOAD],
+            entry[_NAME],
+        )
         for entry in diesel_inputs[DIESEL_GENERATORS]
     ]
     diesel_generator_costs: dict[str, dict[str, float]] = {
