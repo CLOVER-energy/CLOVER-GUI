@@ -26,7 +26,7 @@ from clover import (
     ResourceType,
     Scenario,
 )
-from clover.__utils__ import DistributionNetwork, ELECTRIC_POWER
+from clover.__utils__ import DistributionNetwork, ELECTRIC_POWER, PrioritisationStrategy
 from clover.fileparser import BATTERY, DIESEL_GENERATOR, DieselMode, NAME, SCENARIOS
 from clover.generation.solar import PVPanel
 from clover.impact.finance import ImpactingComponent
@@ -1104,22 +1104,70 @@ class ConfigurationFrame(ttk.Frame):
         self.distribution_network_combobox.set(DistributionNetwork.DC.value)
 
         # Self generation
-        self.prioritise_self_generation_label = ttk.Label(
+        self.prioritisation_strategy_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Prioritise self\n" "generation",
+            text="Prioritisation strategy",
         )
-        self.prioritise_self_generation_label.grid(
+        self.prioritisation_strategy_label.grid(
             row=16, column=1, padx=10, pady=5, sticky="w"
         )
 
-        self.prioritise_self_generation_combobox = ttk.Combobox(
+        self.prioritisation_strategy_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
-        self.prioritise_self_generation_combobox.grid(
-            row=16, column=2, padx=10, pady=5, sticky="w"
+        self.prioritisation_strategy_combobox.grid(
+            row=16, column=2, padx=10, pady=5, sticky="ew"
         )
-        self.prioritise_self_generation_combobox["values"] = ["True", "False"]
-        self.prioritise_self_generation_combobox.set("True")
+        self.prioritisation_strategy_combobox["values"] = [
+            e.value.replace("_", " ").capitalize() for e in PrioritisationStrategy
+        ]
+        self.prioritisation_strategy_combobox.set(
+            PrioritisationStrategy.SELF_CONSUMPTION.value.replace("_", " ").capitalize()
+        )
+
+        self.prioritisation_strategy_information_icon = ttk.Label(
+            self.scrollable_scenario_frame,
+            state=READONLY,
+            bootstyle=INFO,
+            image=self.help_image,
+            text="",
+        )
+        self.prioritisation_strategy_information_icon.grid(
+            row=16, column=3, padx=20, pady=20, sticky="w"
+        )
+        self.scenario_information_tooltip = ToolTip(
+            self.prioritisation_strategy_information_icon,
+            text="CLOVER contains four prioritisation strategies. Select the one that "
+            "is most appropriate to the scenario that you want to run:\n"
+            f"{PrioritisationStrategy.GRID_PRIORITISATION.value.replace('_', ' ').capitalize()}: "
+            "Power will be taken from the national-grid network first and foremost, "
+            "with PV panels and battery storage only meeting demand if the national-"
+            "grid network is not available to meet demand. If the grid is available, "
+            "any installed PV panels will charge any installed battery storage but the "
+            "batteries won't be charged from the national-grid network;\n"
+            f"{PrioritisationStrategy.SELF_CONSUMPTION.value.replace('_', ' ').capitalize()}: "
+            "All locally-generated power will be consumed before any power is taken "
+            "from the national-grid network. PV power will be used to power the "
+            "system, with battery storage then used and, finally, power taken from the "
+            "national-grid network if the local assets are unable to meet demand;\n"
+            f"{PrioritisationStrategy.STORAGE_AS_BACKUP_SERVICE.value.replace('_', ' ').capitalize()}: "
+            "Battery storage will be used as a backup for if power from the grid is "
+            "not available. If grid-sourced power is available, this will be consumed. "
+            "PV power will be used to power the system with any excess used to charge "
+            "battery storage. If power is available from the national-grid network, "
+            "the battery storage will be charged c-rates depending;\n"
+            f"{PrioritisationStrategy.STORAGE_AS_SOLAR_BACKUP.value.replace('_', ' ').capitalize()}: "
+            "Battery storage will be used as a backup for if power from the grid is "
+            "not available and the PV panels are unable to meet demand. Battery "
+            "storage will only be charged if there is excess PV power and will not be "
+            "charged from the national-grid network.",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
+    GRID_PRIORITISATION = "grid_prioritisation"
+    SELF_CONSUMPTION = "self_consumption"
+    STORAGE_AS_BACKUP_SERVICE = "storage_as_backup_service"
+    STORAGE_AS_SOLAR_BACKUP = "storage_as_solar_backup"
 
     @property
     def energy_system_dict(
@@ -1189,7 +1237,9 @@ class ConfigurationFrame(ttk.Frame):
                     "grid_type": self.grid_profile_combobox.get(),
                     # FIXME: Implement a fixed inverter size.
                     "fixed_inverter_size": False,
-                    "prioritise_self_generation": self.prioritise_self_generation_combobox.get(),
+                    "prioritisation_strategy": self.prioritisation_strategy_combobox.get()
+                    .replace(" ", "_")
+                    .lower(),
                     ImpactingComponent.PV.value: self.solar_pv_selected.get(),
                     "resource_types": resource_types,
                 }
@@ -1614,8 +1664,8 @@ class ConfigurationFrame(ttk.Frame):
         self.distribution_network_combobox.set(scenario.distribution_network.value)
 
         # Set self-prioritisation
-        self.prioritise_self_generation_combobox.set(
-            str(scenario.prioritise_self_generation).capitalize()
+        self.prioritisation_strategy_combobox.set(
+            scenario.prioritisation_strategy.value.replace("_", " ").capitalize()
         )
 
         # Update the buttons on the parent frame based on the scenario.

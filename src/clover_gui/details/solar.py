@@ -1417,11 +1417,14 @@ class SolarFrame(ttk.Frame):
 
         for panel_name in self.pv_frame.panel_name_values:
             panel_dict = PVPanel(
+                0,
+                0,
                 int(self.pv_frame.panel_orientation[panel_name].get()),
+                0,
+                0,
                 self.pv_frame.panel_lifetimes[panel_name].get(),
                 panel_name,
                 self.pv_frame.nominal_power[panel_name].get(),
-                True,
                 self.pv_frame.reference_efficiencies[panel_name].get() / 100,
                 self.pv_frame.reference_temperature[panel_name].get(),
                 self.pv_frame.thermal_coefficient[panel_name].get(),

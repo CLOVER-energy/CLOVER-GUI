@@ -14,6 +14,8 @@ import tkinter as tk
 
 import ttkbootstrap as ttk
 
+from logging import Logger
+
 from clover.impact.finance import *
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *

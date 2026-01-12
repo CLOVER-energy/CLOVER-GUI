@@ -328,22 +328,24 @@ class App(ttk.Window):
 
         # Parse input files
         (
-            _,
+            converters,
             device_utilisations,
             minigrid,
             finance_inputs,
             ghg_inputs,
-            _,
+            global_settings_inputs,
             grid_times,
             location,
             optimisation_inputs,
             optimisations,
             scenarios,
             simulations,
-            electric_load_profile,
-            _,
+            total_clean_water_load_profile,
+            total_electric_load_profile,
+            water_source_times,
             input_file_info,
         ) = parse_input_files(
+            None,
             False,
             None,
             load_location_name,
