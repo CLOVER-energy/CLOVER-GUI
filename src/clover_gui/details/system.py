@@ -500,7 +500,9 @@ class SystemFrame(ttk.Frame):
 
         # Households settings header
         self.households_header = ttk.Label(
-            self.scrollable_system_frame, text="Households/community Settings", style="Bold.TLabel"
+            self.scrollable_system_frame,
+            text="Households/community Settings",
+            style="Bold.TLabel",
         )
         self.households_header.grid(
             row=14, column=1, columnspan=4, padx=10, pady=5, sticky="w"
@@ -527,9 +529,7 @@ class SystemFrame(ttk.Frame):
         )
         self.community_size_entry.bind("<Return>", _round_community_size)
 
-        self.community_size_entry.grid(
-            row=15, column=2, padx=10, pady=5, sticky="ew"
-        )
+        self.community_size_entry.grid(row=15, column=2, padx=10, pady=5, sticky="ew")
 
         self.community_size_unit = ttk.Label(
             self.scrollable_system_frame, text=f"households"
@@ -561,8 +561,6 @@ class SystemFrame(ttk.Frame):
         self.community_growth_rate_unit.grid(
             row=16, column=3, padx=10, pady=5, sticky="ew"
         )
-
-
 
         # # Empty line
         # self.empty_row = ttk.Label(self.scrollable_system_frame, text="")

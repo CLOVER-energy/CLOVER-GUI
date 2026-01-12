@@ -107,7 +107,10 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
             [
                 entry
                 for entry in os.listdir(locations_foldername)
-                if os.path.isdir(os.path.join(locations_foldername, entry))
+                if (
+                    os.path.isdir(os.path.join(locations_foldername, entry))
+                    and not entry.startswith(".")
+                )
             ]
         )
         self.load_location_name.set(self.load_location_combobox["values"][0])

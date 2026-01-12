@@ -193,7 +193,7 @@ class ConfigurationFrame(ttk.Frame):
         # Explainer label
         self.explainer_power_generation_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Select power sources \n" "and adjust settings\n" "and components. \n"
+            text="Select power sources \n" "and adjust settings\n" "and components. \n",
             # "Detailed settings can be \n"
             # "adjusted by clicking the\n"
             # "buttons below the \n"
@@ -209,7 +209,7 @@ class ConfigurationFrame(ttk.Frame):
 
         self.power_source_settings_label = ttk.Label(
             self.scrollable_scenario_frame,
-            text="Open advanced settings \n" "for each power source"
+            text="Open advanced settings \n" "for each power source",
             # "adjusted by clicking\n"
             # "respective settings buttons\n"
         )
@@ -1175,9 +1175,11 @@ class ConfigurationFrame(ttk.Frame):
                     },
                     "diesel": {
                         # "mode": self.diesel_mode_combobox.get()
-                        "mode": DieselMode.BACKUP.value
-                        if self.diesel_selected.get()
-                        else DieselMode.DISABLED.value,
+                        "mode": (
+                            DieselMode.BACKUP.value
+                            if self.diesel_selected.get()
+                            else DieselMode.DISABLED.value
+                        ),
                         DieselMode.BACKUP.value: {
                             "threshold": float(self.diesel_backup_threshold.get()) / 100
                         },

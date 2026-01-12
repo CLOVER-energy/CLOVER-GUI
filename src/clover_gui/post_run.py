@@ -323,9 +323,11 @@ class OutputsViewerFrame(ScrolledFrame):
                 sorted(
                     [
                         (
-                            key.replace("_", " ").capitalize()
-                            if key != "lcue"
-                            else "LCUE (Leveilised cost of electricity) / USD/kWh",
+                            (
+                                key.replace("_", " ").capitalize()
+                                if key != "lcue"
+                                else "LCUE (Leveilised cost of electricity) / USD/kWh"
+                            ),
                             value,
                         )
                         for key, value in data["simulation_1"]["system_appraisal"][

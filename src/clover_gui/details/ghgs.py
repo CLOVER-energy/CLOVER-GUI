@@ -87,7 +87,9 @@ class GHGFrame(ttk.Frame):
         self.misc_entry = ttk.Entry(self, textvariable=self.misc)
         self.misc_entry.grid(row=2, column=2, sticky="w")
 
-        self.misc_units = ttk.Label(self, text="kgCO2eq / kWp installed PV + kW installed diesel")
+        self.misc_units = ttk.Label(
+            self, text="kgCO2eq / kWp installed PV + kW installed diesel"
+        )
         self.misc_units.grid(row=2, column=3, sticky="w")
 
         # GHG Emissions from BOS

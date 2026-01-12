@@ -21,7 +21,12 @@ from typing import Any, DefaultDict
 import ttkbootstrap as ttk
 
 from clover import read_yaml
-from clover.fileparser import DIESEL_CONSUMPTION, DIESEL_GENERATORS, MINIMUM_LOAD
+from clover.fileparser import (
+    CAPACITY,
+    DIESEL_CONSUMPTION,
+    DIESEL_GENERATORS,
+    MINIMUM_LOAD,
+)
 from clover.simulation.diesel import DieselGenerator
 from clover.generation.solar import PVPanel, SolarPanelType
 from clover.scripts.clover import clover_main
@@ -70,7 +75,7 @@ CLOVER_ICON_IMAGE: str = "clover_logo.png"
 
 # CLOVER splash-screen image:
 #   The name of the CLOVER splash-screen image.
-CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_5_2.png"
+CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_6_0_alpha.png"
 
 # Costs:
 #   Keyword for costs.
@@ -384,7 +389,12 @@ def parse_diesel_inputs(
     logger.info("Diesel inputs successfully parsed.")
 
     diesel_generators: list[DieselGenerator] = [
-        DieselGenerator(entry[DIESEL_CONSUMPTION], entry[MINIMUM_LOAD], entry[_NAME])
+        DieselGenerator(
+            entry.get(CAPACITY, 1),
+            entry[DIESEL_CONSUMPTION],
+            entry[MINIMUM_LOAD],
+            entry[_NAME],
+        )
         for entry in diesel_inputs[DIESEL_GENERATORS]
     ]
     diesel_generator_costs: dict[str, dict[str, float]] = {
@@ -400,7 +410,11 @@ def parse_diesel_inputs(
 def parse_solar_inputs(
     inputs_directory_relative_path: str,
     logger: Logger,
-) -> tuple[list[PVPanel], dict[str, float], dict[str, float],]:
+) -> tuple[
+    list[PVPanel],
+    dict[str, float],
+    dict[str, float],
+]:
     """
     Parses the solar inputs file.
 

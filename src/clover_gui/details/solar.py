@@ -1131,9 +1131,11 @@ class PVFrame(ttk.Frame):
 
             self.panel_orientation[pv_panel.name] = ttk.IntVar(
                 self,
-                int(pv_panel.azimuthal_orientation)
-                if pv_panel.azimuthal_orientation is not None
-                else 0,
+                (
+                    int(pv_panel.azimuthal_orientation)
+                    if pv_panel.azimuthal_orientation is not None
+                    else 0
+                ),
             )
 
             # Tracking

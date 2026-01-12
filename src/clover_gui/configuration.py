@@ -55,7 +55,6 @@ __all__ = ("ConfigurationScreen",)
 
 
 class SimulationFrame(BaseScreen, show_navigation=False):
-
     """
     Represents the simulation frame.
 
@@ -345,7 +344,7 @@ CRITERION_TO_NAME_MAP: dict[Criterion, str] = {
     Criterion.KEROSENE_COST_MITIGATED: "Kerosene cost mitigated / $",
     Criterion.KEROSENE_GHGS_MITIGATED: "Kerosene ghgs mitigated / kgCO2eq",
     Criterion.LCUE: "LCUE / $/kWh",
-    Criterion.RENEWABLES_FRACTION: "Renewables fraction",
+    Criterion.RENEWABLES_ELECTRICITY_FRACTION: "Renewables fraction",
     Criterion.TOTAL_GHGS: "Total ghgs / kgCO2eq",
     Criterion.TOTAL_SYSTEM_COST: "Total system cost / $",
     Criterion.TOTAL_SYSTEM_GHGS: "Total system ghgs / kgCO2eq",
@@ -367,7 +366,7 @@ CRITERION_TO_UNITS_MAP: dict[Criterion, str] = {
     Criterion.KEROSENE_COST_MITIGATED: "currency unit",
     Criterion.KEROSENE_GHGS_MITIGATED: "kgCO2eq",
     Criterion.LCUE: "currency/kWh",
-    Criterion.RENEWABLES_FRACTION: "\% of energy used",
+    Criterion.RENEWABLES_ELECTRICITY_FRACTION: "\% of energy used",
     Criterion.TOTAL_GHGS: "kgCO2eq",
     Criterion.TOTAL_SYSTEM_COST: "currenty unit",
     Criterion.TOTAL_SYSTEM_GHGS: "kgCO2eq",
@@ -383,7 +382,7 @@ CRITERION_TO_UNITS_MAP: dict[Criterion, str] = {
 PERCENTAGE_CRITERIA: list[Criterion] = [
     Criterion.BLACKOUTS,
     Criterion.CLEAN_WATER_BLACKOUTS,
-    Criterion.RENEWABLES_FRACTION,
+    Criterion.RENEWABLES_ELECTRICITY_FRACTION,
     Criterion.UNMET_ENERGY_FRACTION,
     Criterion.UPTIME,
 ]
@@ -479,10 +478,12 @@ class ThresholdCriterion:
         self.value_entry = ttk.Entry(
             parent,
             bootstyle=INFO,
-            textvariable=self.value
-            if self.name_to_criterion_map[criterion_name.get()]
-            not in PERCENTAGE_CRITERIA
-            else self.percentage_value,
+            textvariable=(
+                self.value
+                if self.name_to_criterion_map[criterion_name.get()]
+                not in PERCENTAGE_CRITERIA
+                else self.percentage_value
+            ),
         )
         self.value_entry.bind("<<Return>>", self._enter_value)
 
@@ -2274,9 +2275,11 @@ class ConfigurationScreen(BaseScreen, show_navigation=True):
                 os.path.join(
                     get_locations_foldername(),
                     self.location_name.get(),
-                    SIMULATION_OUTPUTS_FOLDER
-                    if operating_mode == OperatingMode.SIMULATION
-                    else OPTIMISATION_OUTPUTS_FOLDER,
+                    (
+                        SIMULATION_OUTPUTS_FOLDER
+                        if operating_mode == OperatingMode.SIMULATION
+                        else OPTIMISATION_OUTPUTS_FOLDER
+                    ),
                     (self.output_directory_name.get()),
                 )
             )

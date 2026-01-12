@@ -107,7 +107,6 @@ class StoppableThread(Thread):
 
 
 class RunScreen(BaseScreen, show_navigation=True):
-
     """
     Represents the Run Screen.
 
