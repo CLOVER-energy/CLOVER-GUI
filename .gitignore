@@ -167,3 +167,6 @@ locations/
 
 # Settings files
 ./global_settings.yaml
+
+# Backup files
+*.bak
