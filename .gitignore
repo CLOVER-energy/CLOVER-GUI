@@ -168,5 +168,8 @@ locations/
 # Settings files
 ./global_settings.yaml
 
+# VSCode files
+.vscode/
+
 # Backup files
 *.bak
