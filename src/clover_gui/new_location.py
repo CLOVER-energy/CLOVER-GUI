@@ -20,7 +20,12 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
 
-from .__utils__ import BaseScreen, IMAGES_DIRECTORY
+from .__utils__ import (
+    BaseScreen,
+    BIG_BUTTON_FONTSIZE,
+    IMAGES_DIRECTORY,
+    MAIN_TEXT_FONTSIZE,
+)
 from .splash_screen import SplashScreenWindow
 
 
@@ -78,7 +83,10 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.columnconfigure(6, weight=1)
 
         self.label = ttk.Label(
-            self, text="Create a new location", style=SUCCESS, font=80
+            self,
+            font=("", BIG_BUTTON_FONTSIZE),
+            text="Create a new location",
+            style=SUCCESS,
         )
         self.label.grid(row=0, column=0, columnspan=6, pady=10)
 
@@ -204,7 +212,10 @@ class NewLocationScreen(BaseScreen, show_navigation=True):
         self.time_zone_unit.grid(row=4, column=5, padx=10, pady=5, sticky="w")
 
         self.warning_text_label = ttk.Label(
-            self, text="", bootstyle=DANGER, state=DISABLED
+            self,
+            text="",
+            bootstyle=DANGER,
+            state=DISABLED,
         )
         self.warning_text_label.grid(
             row=5, column=1, columnspan=4, sticky="w", padx=(20, 20), pady=20

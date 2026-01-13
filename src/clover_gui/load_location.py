@@ -20,7 +20,7 @@ from clover.__utils__ import get_locations_foldername
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
-from .__utils__ import BaseScreen, LOAD_LOCATION_GEOMETRY
+from .__utils__ import BaseScreen, BIG_BUTTON_FONTSIZE, LOAD_LOCATION_GEOMETRY
 
 __all__ = ("LoadLocationWindow",)
 
@@ -59,7 +59,9 @@ class LoadLocationScreen(BaseScreen, show_navigation=False):
         self.rowconfigure(3, weight=1)
 
         self.label = ttk.Label(
-            self, text="Load an existing location", style=f"{PRIMARY}", font=80
+            self,
+            text="Load an existing location",
+            style=f"{PRIMARY}",
         )
         self.label.grid(row=0, column=0, columnspan=2, pady=10)
 

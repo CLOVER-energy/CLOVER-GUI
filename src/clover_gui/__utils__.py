@@ -20,7 +20,7 @@ from typing import Any, DefaultDict
 
 import ttkbootstrap as ttk
 
-from clover import read_yaml
+from clover import __version__, read_yaml
 from clover.fileparser import (
     CAPACITY,
     DIESEL_CONSUMPTION,
@@ -35,10 +35,12 @@ from clover.simulation.storage_utils import Battery
 __all__ = (
     "BaseScreen",
     "BATTERIES",
-    "CLOVER_SPLASH_SCREEN_IMAGE",
+    "BIG_BUTTON_FONTSIZE",
+    "clover_splash_screen_image",
     "clover_thread",
     "COSTS",
     "DEFAULT_END_YEAR",
+    "DEFAULT_FONTSIZE",
     "DEFAULT_GUI_THEME",
     "DEFAULT_RENEWABLES_NINJA_TOKEN",
     "DEFAULT_START_YEAR",
@@ -46,9 +48,11 @@ __all__ = (
     "DEVIES",
     "EMISSIONS",
     "END_YEAR",
+    "FONTSIZE",
     "GLOBAL_SETTINGS_FILEPATH",
     "IMAGES_DIRECTORY",
     "LOAD_LOCATION_GEOMETRY",
+    "MAIN_TEXT_FONTSIZE",
     "MAIN_WINDOW_GEOMETRY",
     "RENEWABLES_NINJA_TOKEN",
     "PANELS",
@@ -69,13 +73,17 @@ BATTERIES: str = "batteries"
 #   The battery inputs file.
 BATTERY_INPUTS_FILE: str = os.path.join("simulation", "battery_inputs.yaml")
 
+# Big-button fontsize.
+#   Fontsize for big buttons.
+BIG_BUTTON_FONTSIZE: int = 80
+
 # Clover icon image:
 #   The name of the CLOVER icon to use.
 CLOVER_ICON_IMAGE: str = "clover_logo.png"
 
 # CLOVER splash-screen image:
 #   The name of the CLOVER splash-screen image.
-CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_6_0_alpha.png"
+CLOVER_SPLASH_SCREEN_IMAGE: str = "clover_splash_screen_{version}.png"
 
 # Costs:
 #   Keyword for costs.
@@ -84,6 +92,10 @@ COSTS: str = "costs"
 # Default end year:
 #   The default end year.
 DEFAULT_END_YEAR: int = 2016
+
+# Default fontsize:
+#   The default fontsize for the GUI.
+DEFAULT_FONTSIZE: int = 14
 
 # Default GUI theme:
 #   The default theme for the GUI.
@@ -129,6 +141,10 @@ EMISSIONS: str = "emissions"
 #   Keyword for end year.
 END_YEAR: str = "end_year"
 
+# Fontsize:
+#   Kwarg for parsing the fontsize information.
+FONTSIZE: str = "fontsize"
+
 # Global settings filepath:
 #   Path to the global-settings file.
 GLOBAL_SETTINGS_FILEPATH: str = "global_settings.yaml"
@@ -145,6 +161,10 @@ LOAD_LOCATION_GEOMETRY: str = "800x600"
 #   The locations input file.
 LOCATIONS_INPUT_FILE: str = os.path.join("location_data", "location_inputs.yaml")
 
+# Main-text fontsize:
+#   The fontsize for the main text.
+MAIN_TEXT_FONTSIZE: int = 12
+
 # Main-window geometry:
 #   The geometry to use for the main window, specified in width and height.
 MAIN_WINDOW_GEOMETRY: str = "1260x800"
@@ -152,6 +172,10 @@ MAIN_WINDOW_GEOMETRY: str = "1260x800"
 # Max start year:
 #   The maximum start year for renewables.ninja.
 MAX_START_YEAR: int = 2007
+
+# Menu-bar fontsize
+#   Fontsize for the items in the menu bar
+MENU_BAR_FONTSIZE: int = 14
 
 # Min start year:
 #   The minimum start year for renewables.ninja.
@@ -196,6 +220,16 @@ _NAME: str = "name"
 # Time zone:
 #   Keyword for time zone.
 _TIME_ZONE: str = "time_zone"
+
+
+clover_splash_screen_image: str = CLOVER_SPLASH_SCREEN_IMAGE.format(
+    version="_".join(__version__.split("a")[0].split(".")[:2])
+    + (
+        f"_alpha_{__version__.split('a')[1]}"
+        if "a" in __version__
+        else (f"_beta_{__version__.split('b')[1]}" if "b" in __version__ else None)
+    )
+)
 
 
 class BaseScreen(ttk.Frame):

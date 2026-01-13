@@ -124,7 +124,10 @@ class GridFrame(ttk.Frame):
         self.grid_cost_units_label.grid(row=1, column=3, padx=10, pady=5, sticky="w")
 
         # Initial Grid Emissions
-        self.initial_grid_ghgs_label = ttk.Label(self, text="Initial Grid Emissions")
+        self.initial_grid_ghgs_label = ttk.Label(
+            self,
+            text="Initial Grid Emissions",
+        )
         self.initial_grid_ghgs_label.grid(row=2, column=1, sticky="w", padx=10, pady=5)
         self.initial_grid_ghgs = ttk.DoubleVar(value=0)
 
@@ -139,7 +142,10 @@ class GridFrame(ttk.Frame):
         self.initial_grid_ghgs_units.grid(row=2, column=3, padx=10, pady=5, sticky="w")
 
         # Final Grid Emissions
-        self.final_grid_ghgs_label = ttk.Label(self, text="Final Grid Emissions")
+        self.final_grid_ghgs_label = ttk.Label(
+            self,
+            text="Final Grid Emissions",
+        )
         self.final_grid_ghgs_label.grid(row=3, column=1, padx=10, pady=5, sticky="w")
         self.final_grid_ghgs = ttk.DoubleVar(value=0)
 
@@ -226,7 +232,10 @@ class GridFrame(ttk.Frame):
             )
             self.hour_labels[hour].grid(row=2, column=hour, sticky="news")
 
-        self.x_axis_label = ttk.Label(self.graph_frame, text="Hour of the day")
+        self.x_axis_label = ttk.Label(
+            self.graph_frame,
+            text="Hour of the day",
+        )
         self.x_axis_label.grid(row=3, column=11, columnspan=3, sticky="ew")
 
         # TODO: Add configuration frame widgets and layout
@@ -440,7 +449,7 @@ class GridFrame(ttk.Frame):
     def update_graph_frame_label(self) -> None:
         self.graph_frame.configure(
             text="Hourly probability of grid availability for grid "
-            f"'{self.grid_profile_name.get().capitalize()}'."
+            f"'{self.grid_profile_name.get().capitalize()}'.",
         )
 
     def update_sliders(self) -> None:

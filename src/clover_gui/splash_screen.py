@@ -17,7 +17,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
-from .__utils__ import CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY
+from .__utils__ import clover_splash_screen_image, IMAGES_DIRECTORY
 
 __all__ = ("SplashScreenWindow",)
 
@@ -46,7 +46,7 @@ class SplashScreenWindow(tk.Toplevel):
         self.title("CLOVER-GUI Splash")
         self.background_image = tk.PhotoImage(
             file=os.path.join(
-                data_directory, IMAGES_DIRECTORY, CLOVER_SPLASH_SCREEN_IMAGE
+                data_directory, IMAGES_DIRECTORY, clover_splash_screen_image
             )
         )
         self.background_image = self.background_image.subsample(2)

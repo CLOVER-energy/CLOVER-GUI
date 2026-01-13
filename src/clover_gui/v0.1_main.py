@@ -44,7 +44,7 @@ MODE: str = "System"
 #         self.sidebar_frame.grid_rowconfigure(4, weight=1)
 #         self.logo_label = customtkinter.CTkLabel(
 #             self.sidebar_frame,
-#             text="CustomTkinter",
+#              text="CustomTkinter",
 #             font=customtkinter.CTkFont(size=20, weight="bold"),
 #         )
 #         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
@@ -61,7 +61,7 @@ MODE: str = "System"
 #         )
 #         self.sidebar_button_3.grid(row=4, column=0, padx=20, pady=10)
 #         self.appearance_mode_label = customtkinter.CTkLabel(
-#             self.sidebar_frame, text="Appearance Mode:", anchor="w"
+#             self.sidebar_frame,  text="Appearance Mode:", anchor="w"
 #         )
 #         self.appearance_mode_label.grid(row=6, column=0, padx=20, pady=(10, 0))
 #         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(
@@ -71,7 +71,7 @@ MODE: str = "System"
 #         )
 #         self.appearance_mode_optionemenu.grid(row=7, column=0, padx=20, pady=(10, 10))
 #         self.scaling_label = customtkinter.CTkLabel(
-#             self.sidebar_frame, text="UI Scaling:", anchor="w"
+#             self.sidebar_frame,  text="UI Scaling:", anchor="w"
 #         )
 #         self.scaling_label.grid(row=8, column=0, padx=20, pady=(10, 0))
 #         self.scaling_optionemenu = customtkinter.CTkOptionMenu(
@@ -82,7 +82,7 @@ MODE: str = "System"
 #         self.scaling_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 20))
 
 #         # create main entry and button
-#         self.entry = customtkinter.CTkEntry(self, placeholder_text="CTkEntry")
+#         self.entry = customtkinter.CTkEntry(self, placeholder_ text="CTkEntry")
 #         self.entry.grid(
 #             row=4, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew"
 #         )
@@ -125,12 +125,12 @@ MODE: str = "System"
 #         self.combobox_1.grid(row=1, column=0, padx=20, pady=(10, 10))
 #         self.string_input_button = customtkinter.CTkButton(
 #             self.tabview.tab("CTkTabview"),
-#             text="Open CTkInputDialog",
+#              text="Open CTkInputDialog",
 #             command=self.open_input_dialog_event,
 #         )
 #         self.string_input_button.grid(row=3, column=0, padx=20, pady=(10, 10))
 #         self.label_tab_2 = customtkinter.CTkLabel(
-#             self.tabview.tab("Tab 2"), text="CTkLabel on Tab 2"
+#             self.tabview.tab("Tab 2"),  text="CTkLabel on Tab 2"
 #         )
 #         self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
 
@@ -141,7 +141,7 @@ MODE: str = "System"
 #         )
 #         self.radio_var = tkinter.IntVar(value=0)
 #         self.label_radio_group = customtkinter.CTkLabel(
-#             master=self.radiobutton_frame, text="CTkRadioButton Group:"
+#             master=self.radiobutton_frame,  text="CTkRadioButton Group:"
 #         )
 #         self.label_radio_group.grid(
 #             row=0, column=2, columnspan=1, padx=10, pady=10, sticky=""
@@ -203,7 +203,7 @@ MODE: str = "System"
 
 #         # create scrollable frame
 #         self.scrollable_frame = customtkinter.CTkScrollableFrame(
-#             self, label_text="CTkScrollableFrame"
+#             self, label_ text="CTkScrollableFrame"
 #         )
 #         self.scrollable_frame.grid(
 #             row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew"
@@ -212,7 +212,7 @@ MODE: str = "System"
 #         self.scrollable_frame_switches = []
 #         for i in range(100):
 #             switch = customtkinter.CTkSwitch(
-#                 master=self.scrollable_frame, text=f"CTkSwitch {i}"
+#                 master=self.scrollable_frame,  text=f"CTkSwitch {i}"
 #             )
 #             switch.grid(row=i, column=0, padx=10, pady=(0, 20))
 #             self.scrollable_frame_switches.append(switch)
@@ -230,7 +230,7 @@ MODE: str = "System"
 #         self.checkbox_3.grid(row=4, column=0, pady=20, padx=20, sticky="n")
 
 #         # set default values
-#         self.sidebar_button_3.configure(state=DISABLED, text="Disabled CTkButton")
+#         self.sidebar_button_3.configure(state=DISABLED,  text="Disabled CTkButton")
 #         self.checkbox_3.configure(state=DISABLED)
 #         self.checkbox_1.select()
 #         self.scrollable_frame_switches[0].select()
@@ -255,7 +255,7 @@ MODE: str = "System"
 
 #     def open_input_dialog_event(self) -> None:
 #         dialog = customtkinter.CTkInputDialog(
-#             text="Type in a number:", title="CTkInputDialog"
+#              text="Type in a number:", title="CTkInputDialog"
 #         )
 #         print("CTkInputDialog:", dialog.get_input())
 
@@ -295,7 +295,7 @@ MODE: str = "System"
 #     customtkinter.set_appearance_mode(MODE)
 #     customtkinter.set_default_color_theme(COLOR_THEME)
 
-#     button = customtkinter.CTkButton(master=root_window, text="Hello World!")
+#     button = customtkinter.CTkButton(master=root_window,  text="Hello World!")
 #     button.place(relx=0.5, rely=0.5, anchor=CENTER)
 
 #     root_window.mainloop()
@@ -312,7 +312,11 @@ class BatterySettingsWindow(customtkinter.CTkToplevel):
         self.geometry("400x300")
         self.grid(row=3, column=3, columnspan=3, pady=20, padx=60, sticky="")
 
-        self.label = customtkinter.CTkLabel(self, text="Electric battery settings")
+        self.label = customtkinter.CTkLabel(
+            self,
+            
+            text="Electric battery settings",
+        )
         self.label.grid(row=0, column=0, columnspan=3, padx=20, pady=20)
 
         self.protocol("WM_DELETE_WINDOW", self.withdraw)
@@ -327,7 +331,11 @@ class PVSettingsWindow(customtkinter.CTkToplevel):
         self.frame = customtkinter.CTkFrame(self)
         self.frame.grid(padx=60, pady=20, sticky="")
 
-        self.label = customtkinter.CTkLabel(self.frame, text="Solar PV settings")
+        self.label = customtkinter.CTkLabel(
+            self.frame,
+            
+            text="Solar PV settings",
+        )
         self.label.grid(row=0, column=0, columnspan=5, padx=20, pady=20)
 
         self.protocol("WM_DELETE_WINDOW", self.withdraw)
@@ -501,6 +509,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
         label_1 = customtkinter.CTkLabel(
             master=self,
             justify=customtkinter.CENTER,
+            
             text="Scenario specification page",
         )
         label_1.grid(row=0, column=0, columnspan=4, pady=10, padx=10)
@@ -526,12 +535,16 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=pv_button_callback,
             fg_color="transparent",
             image=solar_images[solar_pv_selected.get()],
+            
             text="",
         )
         pv_button.grid(row=1, column=0, pady=10, padx=10)
 
         self.pv_settings = customtkinter.CTkButton(
-            self, text="PV settings", command=self.open_pv_settings
+            self,
+            
+            text="PV settings",
+            command=self.open_pv_settings,
         )
         self.pv_settings.grid(row=2, column=0, padx=20)
         self.pv_settings_window = None
@@ -554,12 +567,16 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=battery_button_callback,
             fg_color="transparent",
             image=battery_images[battery_selected.get()],
+            
             text="",
         )
         battery_button.grid(row=1, column=1, pady=10, padx=10, sticky="")
 
         self.battery_settings = customtkinter.CTkButton(
-            self, text="Battery settings", command=self.open_battery_settings
+            self,
+            
+            text="Battery settings",
+            command=self.open_battery_settings,
         )
         self.battery_settings.grid(row=2, column=1, padx=20)
         self.battery_settings_window = None
@@ -580,6 +597,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=diesel_button_callback,
             fg_color="transparent",
             image=diesel_images[diesel_selected.get()],
+            
             text="",
         )
         diesel_button.grid(row=1, column=2, pady=10, padx=10)
@@ -598,6 +616,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=grid_button_callback,
             fg_color="transparent",
             image=grid_images[grid_selected.get()],
+            
             text="",
         )
         grid_button.grid(row=1, column=3, pady=10, padx=10)
@@ -655,6 +674,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             image=resource_images[ResourceType.ELECTRIC][
                 resource_selected[ResourceType.ELECTRIC].get()
             ],
+            
             text="",
         )
         electric_button.grid(row=3, column=0, pady=10, padx=10, sticky="")
@@ -665,6 +685,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             image=resource_images[ResourceType.HOT_WATER][
                 resource_selected[ResourceType.HOT_WATER].get()
             ],
+            
             text="",
         )
         hot_water_button.grid(row=4, column=0, pady=10, padx=10, sticky="")
@@ -677,6 +698,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             image=resource_images[ResourceType.COLD_WATER][
                 resource_selected[ResourceType.COLD_WATER].get()
             ],
+            
             text="",
         )
         cold_water_button.grid(row=5, column=0, pady=10, padx=10, sticky="")
@@ -739,6 +761,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(domestic_button_callback, ResourceType.ELECTRIC),
             fg_color="transparent",
             image=domestic_images[domestic_selected[ResourceType.ELECTRIC].get()],
+            
             text="",
         )
         electric_domestic_button.grid(row=3, column=1, pady=10, padx=10, sticky="")
@@ -748,6 +771,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(domestic_button_callback, ResourceType.HOT_WATER),
             fg_color="transparent",
             image=domestic_button_disabled_image,
+            
             text="",
         )
         hot_water_domestic_button.grid(row=4, column=1, pady=10, padx=10, sticky="")
@@ -759,6 +783,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=domestic_button_disabled_image,
+            
             text="",
         )
         cold_water_domestic_button.grid(row=5, column=1, pady=10, padx=10, sticky="")
@@ -782,6 +807,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=commercial_images[commercial_selected[ResourceType.ELECTRIC].get()],
+            
             text="",
         )
         electric_commercial_button.grid(row=3, column=2, pady=10, padx=10)
@@ -793,6 +819,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=commercial_button_disabled_image,
+            
             text="",
         )
         hot_water_commercial_button.grid(row=4, column=2, pady=10, padx=10)
@@ -804,6 +831,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=commercial_button_disabled_image,
+            
             text="",
         )
         cold_water_commercial_button.grid(row=5, column=2, pady=10, padx=10)
@@ -825,6 +853,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(public_button_callback, ResourceType.ELECTRIC),
             fg_color="transparent",
             image=public_images[public_selected[ResourceType.ELECTRIC].get()],
+            
             text="",
         )
         electric_public_button.grid(row=3, column=3, pady=10, padx=10)
@@ -834,6 +863,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(public_button_callback, ResourceType.HOT_WATER),
             fg_color="transparent",
             image=public_button_disabled_image,
+            
             text="",
         )
         hot_water_public_button.grid(row=4, column=3, pady=10, padx=10)
@@ -843,6 +873,7 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(public_button_callback, ResourceType.COLD_WATER),
             fg_color="transparent",
             image=public_button_disabled_image,
+            
             text="",
         )
         cold_water_public_button.grid(row=5, column=3, pady=10, padx=10)
@@ -852,7 +883,11 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ResourceType.COLD_WATER: cold_water_public_button,
         }
 
-        entry_1 = customtkinter.CTkEntry(master=self, placeholder_text="CTkEntry")
+        entry_1 = customtkinter.CTkEntry(
+            master=self,
+            placeholder_
+            text="CTkEntry",
+        )
         entry_1.grid(row=6, columnspan=4, column=0, pady=10, padx=10)
 
         optionmenu_1 = customtkinter.CTkOptionMenu(
@@ -886,7 +921,11 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
         radiobutton_2.grid(row=11, columnspan=4, column=0, pady=10, padx=10)
 
         switch_1 = customtkinter.CTkSwitch(
-            master=self, text="the switch", onvalue=True, offvalue=False
+            master=self,
+            
+            text="the switch",
+            onvalue=True,
+            offvalue=False,
         )
         switch_1.grid(row=12, columnspan=4, column=0, pady=10, padx=10)
 

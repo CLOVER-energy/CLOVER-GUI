@@ -74,7 +74,8 @@ class BatteryFrame(ttk.Frame):
 
         # Battery being selected
         self.battery_selected_label = ttk.Label(
-            self.scrollable_frame, text="Battery to configure"
+            self.scrollable_frame,
+            text="Battery to configure",
         )
         self.battery_selected_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
@@ -107,7 +108,10 @@ class BatteryFrame(ttk.Frame):
         self.new_battery_button.grid(row=0, column=2, padx=10, pady=5, ipadx=80)
 
         # Battery name
-        self.battery_name_label = ttk.Label(self.scrollable_frame, text="Battery name")
+        self.battery_name_label = ttk.Label(
+            self.scrollable_frame,
+            text="Battery name",
+        )
         self.battery_name_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         self.battery_name_entry = ttk.Entry(
@@ -130,7 +134,10 @@ class BatteryFrame(ttk.Frame):
         )
 
         # Battery capacity
-        self.battery_capacity_label = ttk.Label(self.scrollable_frame, text="Capacity")
+        self.battery_capacity_label = ttk.Label(
+            self.scrollable_frame,
+            text="Capacity",
+        )
         self.battery_capacity_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
         self.battery_capacities: dict[str, ttk.DoubleVar] = {
@@ -147,12 +154,16 @@ class BatteryFrame(ttk.Frame):
             row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.battery_capacity_unit = ttk.Label(self.scrollable_frame, text="kWh")
+        self.battery_capacity_unit = ttk.Label(
+            self.scrollable_frame,
+            text="kWh",
+        )
         self.battery_capacity_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
 
         # Maximum charge
         self.maximum_charge_label = ttk.Label(
-            self.scrollable_frame, text="Maximum state of charge"
+            self.scrollable_frame,
+            text="Maximum state of charge",
         )
         self.maximum_charge_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
@@ -224,7 +235,8 @@ class BatteryFrame(ttk.Frame):
 
         # Minimum charge
         self.minimum_charge_label = ttk.Label(
-            self.scrollable_frame, text="Minimum state of charge"
+            self.scrollable_frame,
+            text="Minimum state of charge",
         )
         self.minimum_charge_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
@@ -295,7 +307,10 @@ class BatteryFrame(ttk.Frame):
         self.minimum_charge_unit.grid(row=4, column=3, padx=10, pady=5, sticky="ew")
 
         # Leakage
-        self.leakage_label = ttk.Label(self.scrollable_frame, text="Leakage")
+        self.leakage_label = ttk.Label(
+            self.scrollable_frame,
+            text="Leakage",
+        )
         self.leakage_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.leakage: dict[str, ttk.DoubleVar] = {
@@ -309,12 +324,16 @@ class BatteryFrame(ttk.Frame):
         )
         self.leakage_entry.grid(row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
-        self.leakage_unit = ttk.Label(self.scrollable_frame, text="% / hour")
+        self.leakage_unit = ttk.Label(
+            self.scrollable_frame,
+            text="% / hour",
+        )
         self.leakage_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
 
         # Conversion efficiency in
         self.conversion_efficiency_in_label = ttk.Label(
-            self.scrollable_frame, text="Conversion efficiency in"
+            self.scrollable_frame,
+            text="Conversion efficiency in",
         )
         self.conversion_efficiency_in_label.grid(
             row=6, column=0, padx=10, pady=5, sticky="w"
@@ -376,7 +395,8 @@ class BatteryFrame(ttk.Frame):
 
         # Conversion Efficiency (Output)
         self.conversion_efficiency_out_label = ttk.Label(
-            self.scrollable_frame, text="Conversion efficiency out"
+            self.scrollable_frame,
+            text="Conversion efficiency out",
         )
         self.conversion_efficiency_out_label.grid(
             row=7, column=0, padx=10, pady=5, sticky="w"
@@ -440,7 +460,8 @@ class BatteryFrame(ttk.Frame):
 
         # Cycle lifetime
         self.cycle_lifetime_label = ttk.Label(
-            self.scrollable_frame, text="Cycle lifetime"
+            self.scrollable_frame,
+            text="Cycle lifetime",
         )
         self.cycle_lifetime_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
 
@@ -457,12 +478,16 @@ class BatteryFrame(ttk.Frame):
             row=8, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.cycle_lifetime_unit = ttk.Label(self.scrollable_frame, text="cycles")
+        self.cycle_lifetime_unit = ttk.Label(
+            self.scrollable_frame,
+            text="cycles",
+        )
         self.cycle_lifetime_unit.grid(row=8, column=2, padx=10, pady=5, sticky="w")
 
         # Lifetime capacity loss
         self.lifetime_capacity_loss_label = ttk.Label(
-            self.scrollable_frame, text="Lifetime capacity loss"
+            self.scrollable_frame,
+            text="Lifetime capacity loss",
         )
         self.lifetime_capacity_loss_label.grid(
             row=9, column=0, padx=10, pady=5, sticky="w"
@@ -522,7 +547,8 @@ class BatteryFrame(ttk.Frame):
 
         # C-rate discharging
         self.c_rate_discharging_label = ttk.Label(
-            self.scrollable_frame, text="C-rate discharging"
+            self.scrollable_frame,
+            text="C-rate discharging",
         )
         self.c_rate_discharging_label.grid(
             row=10, column=0, padx=10, pady=5, sticky="w"
@@ -544,13 +570,15 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.c_rate_discharging_unit = ttk.Label(
-            self.scrollable_frame, text="fraction of capacity / hour"
+            self.scrollable_frame,
+            text="fraction of capacity / hour",
         )
         self.c_rate_discharging_unit.grid(row=10, column=2, padx=10, pady=5, sticky="w")
 
         # C-rate charging
         self.c_rate_charging_label = ttk.Label(
-            self.scrollable_frame, text="C-rate charging"
+            self.scrollable_frame,
+            text="C-rate charging",
         )
         self.c_rate_charging_label.grid(row=11, column=0, padx=10, pady=5, sticky="w")
 
@@ -568,12 +596,16 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.c_rate_charging_unit = ttk.Label(
-            self.scrollable_frame, text="fraction of  capacity / hour"
+            self.scrollable_frame,
+            text="fraction of  capacity / hour",
         )
         self.c_rate_charging_unit.grid(row=11, column=2, padx=10, pady=5, sticky="w")
 
         # Cost
-        self.cost_label = ttk.Label(self.scrollable_frame, text="Storage cost")
+        self.cost_label = ttk.Label(
+            self.scrollable_frame,
+            text="Storage cost",
+        )
         self.cost_label.grid(row=12, column=0, padx=10, pady=5, sticky="w")
 
         self.costs: dict[str, ttk.DoubleVar] = {
@@ -587,12 +619,16 @@ class BatteryFrame(ttk.Frame):
         )
         self.cost_entry.grid(row=12, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
-        self.cost_unit = ttk.Label(self.scrollable_frame, text="$ / kWh")
+        self.cost_unit = ttk.Label(
+            self.scrollable_frame,
+            text="$ / kWh",
+        )
         self.cost_unit.grid(row=12, column=2, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
-            self.scrollable_frame, text="Storage cost change"
+            self.scrollable_frame,
+            text="Storage cost change",
         )
         self.cost_decrease_label.grid(row=13, column=0, padx=10, pady=5, sticky="w")
 
@@ -609,12 +645,16 @@ class BatteryFrame(ttk.Frame):
             row=13, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.cost_decrease_unit = ttk.Label(self.scrollable_frame, text="%  / year")
+        self.cost_decrease_unit = ttk.Label(
+            self.scrollable_frame,
+            text="%  / year",
+        )
         self.cost_decrease_unit.grid(row=13, column=2, padx=10, pady=5, sticky="w")
 
         # OPEX costs
         self.opex_costs_label = ttk.Label(
-            self.scrollable_frame, text="OPEX (O&M) costs"
+            self.scrollable_frame,
+            text="OPEX (O&M) costs",
         )
         self.opex_costs_label.grid(row=14, column=0, padx=10, pady=5, sticky="w")
 
@@ -632,13 +672,15 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.o_and_m_costs_unit = ttk.Label(
-            self.scrollable_frame, text="$ / kWh / year"
+            self.scrollable_frame,
+            text="$ / kWh / year",
         )
         self.o_and_m_costs_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
-            self.scrollable_frame, text="Storage embedded emissions"
+            self.scrollable_frame,
+            text="Storage embedded emissions",
         )
         self.embedded_emissions_label.grid(
             row=15, column=0, padx=10, pady=5, sticky="w"
@@ -658,12 +700,16 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.embedded_emissions_unit = ttk.Label(
-            self.scrollable_frame, text="kgCO2eq / unit"
+            self.scrollable_frame,
+            text="kgCO2eq / unit",
         )
         self.embedded_emissions_unit.grid(row=15, column=2, padx=10, pady=5, sticky="w")
 
         # O&M emissions
-        self.om_emissions_label = ttk.Label(self.scrollable_frame, text="O&M emissions")
+        self.om_emissions_label = ttk.Label(
+            self.scrollable_frame,
+            text="O&M emissions",
+        )
         self.om_emissions_label.grid(row=16, column=0, padx=10, pady=5, sticky="w")
 
         self.om_emissions: dict[str, ttk.DoubleVar] = {
@@ -680,13 +726,15 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.om_emissions_unit = ttk.Label(
-            self.scrollable_frame, text="kgCO2eq / kWh / year"
+            self.scrollable_frame,
+            text="kgCO2eq / kWh / year",
         )
         self.om_emissions_unit.grid(row=16, column=2, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
-            self.scrollable_frame, text="Storage embedded emissions change"
+            self.scrollable_frame,
+            text="Storage embedded emissions change",
         )
         self.annual_emissions_decrease_label.grid(
             row=17, column=0, padx=10, pady=5, sticky="w"
@@ -706,7 +754,8 @@ class BatteryFrame(ttk.Frame):
         )
 
         self.annual_emissions_decrease_unit = ttk.Label(
-            self.scrollable_frame, text="% / year"
+            self.scrollable_frame,
+            text="% / year",
         )
         self.annual_emissions_decrease_unit.grid(
             row=17, column=2, padx=10, pady=5, sticky="w"
@@ -1142,11 +1191,15 @@ class StorageFrame(ttk.Frame):
         self.storage_notebook.grid(row=0, column=0, padx=20, pady=10, sticky="news")
 
         self.battery_frame = BatteryFrame(self)
-        self.storage_notebook.add(self.battery_frame, text="Batteries", sticky="news")
+        self.storage_notebook.add(
+            self.battery_frame,
+            text="Batteries",
+            sticky="news",
+        )
 
         self.tank_frame = TankFrame(self)
         # self.storage_notebook.add(
-        #     self.tank_frame, text="Water tanks", sticky="news", state=DISABLED
+        #     self.tank_frame,  text="Water tanks", sticky="news", state=DISABLED
         # )
 
         # TODO: Add configuration frame widgets and layout

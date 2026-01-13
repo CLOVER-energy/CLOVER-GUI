@@ -37,6 +37,7 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 from ttkbootstrap.tooltip import ToolTip
 
+from .__utils__ import MAIN_TEXT_FONTSIZE
 
 __all__ = ("ConfigurationFrame",)
 
@@ -128,7 +129,9 @@ class ConfigurationFrame(ttk.Frame):
 
         # Scenario information helper
         self.scenario_label = ttk.Label(
-            self, text="Configure your CLOVER scenario", style="Bold.TLabel"
+            self,
+            text="Configure your CLOVER scenario",
+            style="Bold.TLabel",
         )
         self.scenario_label.grid(row=0, column=0, padx=20, pady=10, sticky="ew")
         self.scenario_information_icon = ttk.Label(
@@ -143,7 +146,7 @@ class ConfigurationFrame(ttk.Frame):
 
         # self.scenario_information_text = ttk.Label(
         #     self,
-        #     text="The secnario configures your CLOVER run. Here, you can toggle on "
+        #      text="The secnario configures your CLOVER run. Here, you can toggle on "
         #     "and off various power-generation sources \nand sources of demand. You "
         #     "should check all the information on this screen before continuing to "
         #     "ensure \nthat your system is correctly represented.",
@@ -171,23 +174,37 @@ class ConfigurationFrame(ttk.Frame):
 
         # Selecting system components
         self.power_generation_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Power sources", style="Bold.TLabel"
+            self.scrollable_scenario_frame,
+            text="Power sources",
+            style="Bold.TLabel",
         )
         self.power_generation_label.grid(
             row=0, column=0, columnspan=5, padx=10, pady=5, sticky="w"
         )
 
         # Component labels
-        self.solar_label = ttk.Label(self.scrollable_scenario_frame, text="PV")
+        self.solar_label = ttk.Label(
+            self.scrollable_scenario_frame,
+            text="PV",
+        )
         self.solar_label.grid(row=0, column=1, rowspan=2, sticky="", pady=5)
 
-        self.battery_label = ttk.Label(self.scrollable_scenario_frame, text="Battery")
+        self.battery_label = ttk.Label(
+            self.scrollable_scenario_frame,
+            text="Battery",
+        )
         self.battery_label.grid(row=0, column=2, rowspan=2, sticky="", pady=5)
 
-        self.diesel_label = ttk.Label(self.scrollable_scenario_frame, text="Diesel")
+        self.diesel_label = ttk.Label(
+            self.scrollable_scenario_frame,
+            text="Diesel",
+        )
         self.diesel_label.grid(row=0, column=3, rowspan=2, sticky="", pady=5)
 
-        self.grid_label = ttk.Label(self.scrollable_scenario_frame, text="Grid")
+        self.grid_label = ttk.Label(
+            self.scrollable_scenario_frame,
+            text="Grid",
+        )
         self.grid_label.grid(row=0, column=4, rowspan=2, sticky="", pady=5)
 
         # Explainer label
@@ -203,7 +220,8 @@ class ConfigurationFrame(ttk.Frame):
             row=2, column=0, padx=10, pady=5, sticky="nsw"
         )
         self.power_source_used_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Toggle power sources\n" " on or off"
+            self.scrollable_scenario_frame,
+            text="Toggle power sources\n" " on or off",
         )
         self.power_source_used_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
@@ -218,7 +236,8 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         self.component_selection_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Component selection"
+            self.scrollable_scenario_frame,
+            text="Component selection",
         )
         self.component_selection_label.grid(
             row=5, column=0, padx=10, pady=5, sticky="w"
@@ -248,7 +267,7 @@ class ConfigurationFrame(ttk.Frame):
 
         # self.pv_label = ttk.Label(
         #     self.scrollable_scenario_frame,
-        #     text="PV",
+        #      text="PV",
         #     bootstyle=INFO,
         # )
         # self.pv_label.grid(row=0, column=1, rowspan=2, sticky="w")
@@ -259,7 +278,6 @@ class ConfigurationFrame(ttk.Frame):
         #     variable=self.solar_pv_selected,
         #     command=self.pv_button_callback,
         #     bootstyle=f"{INFO}-{TOOLBUTTON}",
-        #     text="ON",
         # )
         # self.PV_true_button.grid(
         #     row=2, column=1, padx=60, pady=10, sticky="w"
@@ -269,7 +287,6 @@ class ConfigurationFrame(ttk.Frame):
         #     variable=self.solar_pv_selected,
         #     command=self.pv_button_callback,
         #     bootstyle=f"{INFO}-{TOOLBUTTON}",
-        #     text="OFF",
         # )
         # self.PV_false_button.grid(
         #     row=2, column=1, padx=60, pady=10, sticky="e"
@@ -340,7 +357,6 @@ class ConfigurationFrame(ttk.Frame):
         #     variable=self.solar_pv_selected,
         #     command=self.pv_button_callback,
         #     bootstyle=f"{INFO}-{TOOLBUTTON}",
-        #     text="ON",
         # )
         # self.battery_true_button.grid(
         #     row=2, column=2, padx=70, pady=10, sticky="w"
@@ -350,7 +366,6 @@ class ConfigurationFrame(ttk.Frame):
         #     variable=self.solar_pv_selected,
         #     command=self.pv_button_callback,
         #     bootstyle=f"{INFO}-{TOOLBUTTON}",
-        #     text="OFF",
         # )
         # self.battery_false_button.grid(
         #     row=2, column=2, padx=70, pady=10, sticky="e"
@@ -514,7 +529,10 @@ class ConfigurationFrame(ttk.Frame):
             "grid being available.",
         )
         # Empty line
-        self.empty_line = ttk.Label(self.scrollable_scenario_frame, text="")
+        self.empty_line = ttk.Label(
+            self.scrollable_scenario_frame,
+            text="",
+        )
         self.empty_line.grid(row=6, column=0, columnspan=5, pady=5, padx=10)
 
         # Horizontal separator
@@ -594,12 +612,14 @@ class ConfigurationFrame(ttk.Frame):
         self.domestic_demand_header.grid(row=8, column=1, padx=10, pady=5, sticky="")
 
         self.commercial_demand_header = ttk.Label(
-            self.scrollable_scenario_frame, text="Commercial"
+            self.scrollable_scenario_frame,
+            text="Commercial",
         )
         self.commercial_demand_header.grid(row=8, column=2, padx=10, pady=5, sticky="")
 
         self.public_demand_header = ttk.Label(
-            self.scrollable_scenario_frame, text="Public"
+            self.scrollable_scenario_frame,
+            text="Public",
         )
         self.public_demand_header.grid(row=8, column=3, padx=10, pady=5, sticky="")
 
@@ -628,7 +648,8 @@ class ConfigurationFrame(ttk.Frame):
         self.demand_explainer.grid(row=9, column=0, pady=5, padx=10, sticky="nsw")
 
         self.demand_toggle_explainer = ttk.Label(
-            self.scrollable_scenario_frame, text="Toggle demand types\n" " on or off"
+            self.scrollable_scenario_frame,
+            text="Toggle demand types\n" " on or off",
         )
         self.demand_toggle_explainer.grid(
             row=10, column=0, pady=5, rowspan=2, padx=10, sticky="w"
@@ -642,7 +663,8 @@ class ConfigurationFrame(ttk.Frame):
         # )
 
         self.hot_water_power_label: ttk.Label = ttk.Label(
-            self.scrollable_scenario_frame, text="Hot-water demand"
+            self.scrollable_scenario_frame,
+            text="Hot-water demand",
         )
         # self.hot_water_power_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
@@ -666,7 +688,8 @@ class ConfigurationFrame(ttk.Frame):
         # )
 
         self.clean_water_power_label: ttk.Label = ttk.Label(
-            self.scrollable_scenario_frame, text="Clean-water demand"
+            self.scrollable_scenario_frame,
+            text="Clean-water demand",
         )
         # self.clean_water_power_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
@@ -977,7 +1000,7 @@ class ConfigurationFrame(ttk.Frame):
 
         # Diesel scenario information
         # self.diesel_label_frame = ttk.Labelframe(
-        #     self.scrollable_scenario_frame, bootstyle=DANGER, text="Diesel"
+        #     self.scrollable_scenario_frame, bootstyle=DANGER,  text="Diesel"
         # )
         # self.diesel_label_frame.grid(
         #     row=6, column=0, padx=10, pady=5, columnspan=5, sticky="news"
@@ -1011,7 +1034,7 @@ class ConfigurationFrame(ttk.Frame):
 
         # Diesel mode
         # self.diesel_mode_label = ttk.Label(
-        #     self.scrollable_scenario_frame, text="Diesel mode"
+        #     self.scrollable_scenario_frame,  text="Diesel mode"
         # )
         # # self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
 
@@ -1024,7 +1047,8 @@ class ConfigurationFrame(ttk.Frame):
 
         # Backup threshold
         self.diesel_backup_threshold_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Diesel threshold"
+            self.scrollable_scenario_frame,
+            text="Diesel threshold",
         )
         self.diesel_backup_threshold_label.grid(
             row=14, column=1, padx=10, pady=5, sticky="w"
@@ -1064,7 +1088,8 @@ class ConfigurationFrame(ttk.Frame):
         self.diesel_backup_entry.bind("<Return>", enter_threshold)
 
         self.diesel_backup_threshold_unit = ttk.Label(
-            self.scrollable_scenario_frame, text=f"% of hours"
+            self.scrollable_scenario_frame,
+            text=f"% of hours",
         )
         self.diesel_backup_threshold_unit.grid(
             row=14, column=4, padx=10, pady=5, sticky="w"
@@ -1074,7 +1099,7 @@ class ConfigurationFrame(ttk.Frame):
         # self.generation_and_distribution_label_frame = ttk.Labelframe(
         #     self.scrollable_scenario_frame,
         #     bootstyle=SUCCESS,
-        #     text="Generation and distribution",
+        #      text="Generation and distribution",
         # )
         # self.generation_and_distribution_label_frame.grid(
         #     row=8, column=0, padx=10, pady=5, sticky="news", columnspan=5
@@ -1086,7 +1111,8 @@ class ConfigurationFrame(ttk.Frame):
         # self.generation_and_distribution_label_frame.columnconfigure(3, weight=1)
 
         self.distribution_network_label = ttk.Label(
-            self.scrollable_scenario_frame, text="Distribution network"
+            self.scrollable_scenario_frame,
+            text="Distribution network",
         )
         self.distribution_network_label.grid(
             row=15, column=1, padx=10, pady=5, sticky="w"

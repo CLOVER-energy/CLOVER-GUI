@@ -20,6 +20,8 @@ from clover.impact.finance import *
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
+from ..__utils__ import MAIN_TEXT_FONTSIZE
+
 
 __all__ = ("FinanceFrame",)
 
@@ -133,7 +135,7 @@ class FinanceFrame(ttk.Frame):
         self.general_om_units_label.grid(row=2, column=3, padx=10, pady=5, sticky="w")
 
         # # Misc
-        # self.misc_frame = ttk.Labelframe(self, text="Misc. Costs", bootstyle=PRIMARY)
+        # self.misc_frame = ttk.Labelframe(self,  text="Misc. Costs", bootstyle=PRIMARY)
         # self.misc_frame.grid(
         #     row=3, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
         # )
@@ -155,7 +157,8 @@ class FinanceFrame(ttk.Frame):
         )
 
         self.capacity_cost_units_label = ttk.Label(
-            self, text="$ / kWp installed PV + kW installed diesel"
+            self,
+            text="$ / kWp installed PV + kW installed diesel",
         )
         self.capacity_cost_units_label.grid(
             row=3, column=3, columnspan=2, padx=10, pady=5, sticky="w"
@@ -191,7 +194,10 @@ class FinanceFrame(ttk.Frame):
         self.bos_cost_entry.grid(
             row=5, column=2, padx=10, pady=5, ipadx=40, sticky="ew"
         )
-        self.bos_cost_units_label = ttk.Label(self, text="$ / kWp installed PV")
+        self.bos_cost_units_label = ttk.Label(
+            self,
+            text="$ / kWp installed PV",
+        )
         self.bos_cost_units_label.grid(row=5, column=3, padx=10, pady=5, sticky="w")
 
         # BOS Cost Decrease
@@ -214,7 +220,8 @@ class FinanceFrame(ttk.Frame):
 
         # Distribution network
         self.distribution_network_infrastructure_cost_label = ttk.Label(
-            self, text="Distribution network\ninfrastructure cost"
+            self,
+            text="Distribution network\ninfrastructure cost",
         )
         self.distribution_network_infrastructure_cost_label.grid(
             row=7, column=1, padx=10, pady=5, sticky="w"
@@ -239,7 +246,7 @@ class FinanceFrame(ttk.Frame):
 
         # # Households
         # self = ttk.Labelframe(
-        #     self, text="Households", bootstyle=PRIMARY
+        #     self,  text="Households", bootstyle=PRIMARY
         # )
         # self.grid(
         #     row=8, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
@@ -269,7 +276,7 @@ class FinanceFrame(ttk.Frame):
 
         # # Inverter
         # self = ttk.Labelframe(
-        #     self, text="Inverter", bootstyle=WARNING
+        #     self,  text="Inverter", bootstyle=WARNING
         # )
         # self.grid(
         #     row=9, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
@@ -298,7 +305,10 @@ class FinanceFrame(ttk.Frame):
         )
 
         # Inverter Cost Decrease
-        self.inverter_cost_decrease_label = ttk.Label(self, text="Inverter cost change")
+        self.inverter_cost_decrease_label = ttk.Label(
+            self,
+            text="Inverter cost change",
+        )
         self.inverter_cost_decrease_label.grid(
             row=10, column=1, padx=10, pady=5, sticky="w"
         )
@@ -318,7 +328,7 @@ class FinanceFrame(ttk.Frame):
         )
 
         # # Inverter Lifetime
-        # self.inverter_lifetime_label = ttk.Label(self, text="Inverter Lifetime")
+        # self.inverter_lifetime_label = ttk.Label(self,  text="Inverter Lifetime")
         # self.inverter_lifetime_label.grid(row=20, column=1, padx=10, pady=5, sticky="w")
         # self.inverter_lifetime = ttk.DoubleVar(self, "0.0")
 
@@ -326,14 +336,14 @@ class FinanceFrame(ttk.Frame):
         #     self, bootstyle=DANGER, textvariable=self.inverter_lifetime
         # )
         # self.inverter_lifetime_entry.grid(row=20, column=2, padx=10, pady=5, sticky="ew")
-        # self.inverter_lifetime_units_label = ttk.Label(self, text="years")
+        # self.inverter_lifetime_units_label = ttk.Label(self,  text="years")
         # self.inverter_lifetime_units_label.grid(
         #     row=20, column=3, padx=10, pady=5, sticky="w"
         # )
 
         # # Inverter Size Increment
         # self.inverter_size_increment_label = ttk.Label(
-        #     self, text="Inverter Size Increment"
+        #     self,  text="Inverter Size Increment"
         # )
         # self.inverter_size_increment_label.grid(
         #     row=21, column=1, padx=10, pady=5, sticky="w"
@@ -346,14 +356,14 @@ class FinanceFrame(ttk.Frame):
         # self.inverter_size_increment_entry.grid(
         #     row=21, column=2, padx=10, pady=5, sticky="ew"
         # )
-        # self.inverter_size_increment_units_label = ttk.Label(self, text="kW")
+        # self.inverter_size_increment_units_label = ttk.Label(self,  text="kW")
         # self.inverter_size_increment_units_label.grid(
         #     row=21, column=3, padx=10, pady=5, sticky="w"
         # )
 
         # # Kerosene
         # self = ttk.Labelframe(
-        #     self, text="Kerosene", bootstyle=DANGER
+        #     self,  text="Kerosene", bootstyle=DANGER
         # )
         # self.grid(
         #     row=10, column=1, columnspan=3, padx=10, pady=5, sticky="ew"

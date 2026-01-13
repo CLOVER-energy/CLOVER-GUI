@@ -35,6 +35,8 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 from ttkbootstrap.tableview import Tableview
 
+from ..__utils__ import MAIN_TEXT_FONTSIZE
+
 __all__ = ("LoadFrame",)
 
 
@@ -386,7 +388,10 @@ class CSVEntryFrame(ttk.Frame):
         for index, row in enumerate(range(len(ary) + 1)):
             if row == 0:
                 tmp = ttk.Label(
-                    self, width=cell_width, bootstyle=f"{SUCCESS}-{INVERSE}", text=""
+                    self,
+                    width=cell_width,
+                    bootstyle=f"{SUCCESS}-{INVERSE}",
+                    text="",
                 )
             else:
                 tmp = ttk.Label(
@@ -532,7 +537,11 @@ class DeviceSettingsFrame(ttk.Labelframe):
             Callable function to call when setting the device type.
 
         """
-        super().__init__(parent, text="Device settings", style=SUCCESS)
+        super().__init__(
+            parent,
+            text="Device settings",
+            style=SUCCESS,
+        )
 
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -558,7 +567,9 @@ class DeviceSettingsFrame(ttk.Labelframe):
 
         # Device name
         self.name_label = ttk.Label(
-            self.scrollable_frame, text="Device name", style=SUCCESS
+            self.scrollable_frame,
+            text="Device name",
+            style=SUCCESS,
         )
         self.name_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
@@ -581,7 +592,10 @@ class DeviceSettingsFrame(ttk.Labelframe):
         )
 
         # Device type
-        self.device_type_label = ttk.Label(self.scrollable_frame, text="Load type")
+        self.device_type_label = ttk.Label(
+            self.scrollable_frame,
+            text="Load type",
+        )
         self.device_type_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
 
         self.device_type_combobox = ttk.Combobox(
@@ -598,7 +612,8 @@ class DeviceSettingsFrame(ttk.Labelframe):
 
         # Electric Power
         self.electric_power_label = ttk.Label(
-            self.scrollable_frame, text="Electric Power"
+            self.scrollable_frame,
+            text="Electric Power",
         )
         self.electric_power_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
@@ -610,12 +625,16 @@ class DeviceSettingsFrame(ttk.Labelframe):
             row=2, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
-        self.electric_power_unit = ttk.Label(self.scrollable_frame, text="W (Watts)")
+        self.electric_power_unit = ttk.Label(
+            self.scrollable_frame,
+            text="W (Watts)",
+        )
         self.electric_power_unit.grid(row=2, column=2, padx=10, pady=5, sticky="w")
 
         # Initial Ownership
         self.initial_ownership_label = ttk.Label(
-            self.scrollable_frame, text="Initial Ownership"
+            self.scrollable_frame,
+            text="Initial Ownership",
         )
         self.initial_ownership_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
@@ -628,13 +647,15 @@ class DeviceSettingsFrame(ttk.Labelframe):
         )
 
         self.initial_ownership_unit = ttk.Label(
-            self.scrollable_frame, text="devices / household"
+            self.scrollable_frame,
+            text="devices / household",
         )
         self.initial_ownership_unit.grid(row=3, column=2, padx=10, pady=5, sticky="w")
 
         # Final Ownership
         self.final_ownership_label = ttk.Label(
-            self.scrollable_frame, text="Final Ownership"
+            self.scrollable_frame,
+            text="Final Ownership",
         )
         self.final_ownership_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
@@ -647,12 +668,16 @@ class DeviceSettingsFrame(ttk.Labelframe):
         )
 
         self.final_ownership_unit = ttk.Label(
-            self.scrollable_frame, text="devices / household"
+            self.scrollable_frame,
+            text="devices / household",
         )
         self.final_ownership_unit.grid(row=4, column=2, padx=10, pady=5, sticky="w")
 
         # Innovation
-        self.innovation_label = ttk.Label(self.scrollable_frame, text="Innovation")
+        self.innovation_label = ttk.Label(
+            self.scrollable_frame,
+            text="Innovation",
+        )
         self.innovation_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.innovation_entry = ttk.Entry(
@@ -662,11 +687,17 @@ class DeviceSettingsFrame(ttk.Labelframe):
             row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
-        self.innovation_unit = ttk.Label(self.scrollable_frame, text="innovation_units")
+        self.innovation_unit = ttk.Label(
+            self.scrollable_frame,
+            text="innovation_units",
+        )
         self.innovation_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
 
         # Imitation
-        self.imitation_label = ttk.Label(self.scrollable_frame, text="Imitation")
+        self.imitation_label = ttk.Label(
+            self.scrollable_frame,
+            text="Imitation",
+        )
         self.imitation_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
         self.imitation_entry = ttk.Entry(
@@ -676,12 +707,16 @@ class DeviceSettingsFrame(ttk.Labelframe):
             row=6, column=1, padx=10, pady=5, sticky="ew", ipadx=10
         )
 
-        self.imitation_unit = ttk.Label(self.scrollable_frame, text="imitation unit")
+        self.imitation_unit = ttk.Label(
+            self.scrollable_frame,
+            text="imitation unit",
+        )
         self.imitation_unit.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
         # Clean Water Consumption
         self.clean_water_consumption_label = ttk.Label(
-            self.scrollable_frame, text="Clean Water Consumption"
+            self.scrollable_frame,
+            text="Clean Water Consumption",
         )
         self.clean_water_consumption_label.grid(
             row=7, column=0, padx=10, pady=5, sticky="w"
@@ -702,7 +737,10 @@ class DeviceSettingsFrame(ttk.Labelframe):
         )
 
         self.clean_water_consumption_unit = ttk.Label(
-            self.scrollable_frame, text="litres / hour", style=SUCCESS, state=DISABLED
+            self.scrollable_frame,
+            text="litres / hour",
+            style=SUCCESS,
+            state=DISABLED,
         )
         self.clean_water_consumption_unit.grid(
             row=7, column=2, padx=10, pady=5, sticky="w"
@@ -1204,7 +1242,7 @@ class LoadFrame(ttk.Frame):
         """Updates the button label of the active device."""
 
         self.devices_frame.device_selected_buttons[self.active_device].configure(
-            text=self.active_device.name.get().capitalize()
+            text=self.active_device.name.get().capitalize(),
         )
         self.active_device.name.set(self.active_device.name.get().replace(" ", "_"))
         self.settings_frame.csv_entry_frame.update_device_name(

@@ -24,7 +24,12 @@ from ttkbootstrap.scrolled import *
 from ttkbootstrap.tableview import Tableview
 from ttkbootstrap.tooltip import ToolTip
 
-from .__utils__ import BaseScreen, IMAGES_DIRECTORY
+from .__utils__ import (
+    BaseScreen,
+    BIG_BUTTON_FONTSIZE,
+    IMAGES_DIRECTORY,
+    MAIN_TEXT_FONTSIZE,
+)
 
 
 __all__ = ("PostRunScreen",)
@@ -198,7 +203,8 @@ class OutputsViewerFrame(ScrolledFrame):
             self.open_file_button.grid(row=0, column=1, sticky="e", padx=20, pady=10)
 
         self.output_description = ttk.Label(
-            self, text="Select an output on the left to begin visualising your results."
+            self,
+            text="Select an output on the left to begin visualising your results.",
         )
         self.output_description.grid(
             row=1, column=0, columnspan=2, sticky="news", padx=20, pady=10
@@ -442,7 +448,10 @@ class PostRunScreen(BaseScreen, show_navigation=True):
 
         # Finished label
         self.finished_label = ttk.Label(
-            self, bootstyle=INFO, text="CLOVER RUN FINISHED", font="80"
+            self,
+            bootstyle=INFO,
+            font=("", BIG_BUTTON_FONTSIZE),
+            text="CLOVER RUN FINISHED",
         )
         self.finished_label.grid(row=0, column=0, sticky="ew", padx=60, pady=20)
 
@@ -457,7 +466,10 @@ class PostRunScreen(BaseScreen, show_navigation=True):
 
         self.next_steps_frame.rowconfigure(0, weight=1)
 
-        self.next_steps_label = ttk.Label(self.next_steps_frame, text="Next steps:")
+        self.next_steps_label = ttk.Label(
+            self.next_steps_frame,
+            text="Next steps:",
+        )
         self.next_steps_label.grid(row=0, column=0, sticky="ew", padx=(0, 10), pady=5)
 
         self.configure_button = ttk.Button(
@@ -658,7 +670,11 @@ class PostRunScreen(BaseScreen, show_navigation=True):
                 )
             else:
                 button.configure(state="enabled")
-                ToolTip(button, bootstyle=f"{INFO}.TButton", text="")
+                ToolTip(
+                    button,
+                    bootstyle=f"{INFO}.TButton",
+                    text="",
+                )
 
         # Display the first output
         self._select_output(self.outputs[0])

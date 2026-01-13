@@ -24,7 +24,12 @@ from clover.scripts.clover import clover_main
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
-from .__utils__ import BaseScreen, CLOVER_SPLASH_SCREEN_IMAGE, IMAGES_DIRECTORY
+from .__utils__ import (
+    BaseScreen,
+    clover_splash_screen_image,
+    IMAGES_DIRECTORY,
+    MAIN_TEXT_FONTSIZE,
+)
 
 __all__ = ("RunScreen",)
 
@@ -143,7 +148,7 @@ class RunScreen(BaseScreen, show_navigation=True):
 
         self.running_image = tk.PhotoImage(
             file=os.path.join(
-                data_directory, IMAGES_DIRECTORY, CLOVER_SPLASH_SCREEN_IMAGE
+                data_directory, IMAGES_DIRECTORY, clover_splash_screen_image
             )
         )
         self.running_image = self.running_image.subsample(2)
@@ -154,7 +159,9 @@ class RunScreen(BaseScreen, show_navigation=True):
 
         # Create progress text
         self.message_text_label: ttk.Label = ttk.Label(
-            self, bootstyle=SUCCESS, text="Launching CLOVER", font=("TkDefaultFont", 14)
+            self,
+            bootstyle=SUCCESS,
+            text="Launching CLOVER",
         )
         self.message_text_label.grid(
             row=1, column=0, columnspan=4, sticky="w", padx=20, pady=5
@@ -170,7 +177,10 @@ class RunScreen(BaseScreen, show_navigation=True):
 
         # Stop the clover thread with a button.
         self.stop_button = ttk.Button(
-            self, text="STOP", bootstyle=f"{DANGER}-inverted", command=self.stop
+            self,
+            text="STOP",
+            bootstyle=f"{DANGER}-inverted",
+            command=self.stop,
         )
         self.stop_button.grid(
             row=1, column=4, rowspan=2, padx=20, pady=5, ipadx=80, ipady=30, sticky="e"
@@ -297,7 +307,9 @@ class RunScreen(BaseScreen, show_navigation=True):
                 )
             else:
                 self.push_progress_bar(20)
-                self.message_text_label.configure(text="Parsing input files")
+                self.message_text_label.configure(
+                    text="Parsing input files",
+                )
 
         # Move the progress bar if input files were successfully parsed.
         if (
@@ -312,7 +324,7 @@ class RunScreen(BaseScreen, show_navigation=True):
             else:
                 self.push_progress_bar(20)
                 self.message_text_label.configure(
-                    text="Generating load profiles and fetching solar data"
+                    text="Generating load profiles and fetching solar data",
                 )
 
         # Move the progress bar if profiles were generated and fetched correctly.
@@ -333,16 +345,20 @@ class RunScreen(BaseScreen, show_navigation=True):
         if re.search(RENEWABLES_NINJA_ERROR_REGEX, new_data) is not None:
             self.message_text_label.configure(
                 text="Error fetching data from renewables.ninja. Please check your "
-                "API \nkey under 'edit > preferences'."
+                "API \nkey under 'edit > preferences'.",
             )
 
         # Update the message if a simulation is being run.
         if re.search(SIMULATION_REGEX, new_data) is not None:
-            self.message_text_label.configure(text="Running a CLOVER simulation")
+            self.message_text_label.configure(
+                text="Running a CLOVER simulation",
+            )
 
         # Update the message if an optimisation is being run.
         if re.search(OPTIMISATION_REGEX, new_data) is not None:
-            self.message_text_label.configure(text="Running a CLOVER optimisation")
+            self.message_text_label.configure(
+                text="Running a CLOVER optimisation",
+            )
 
         # If CLOVER is generating plots, update the output
         if re.search(PLOTS_REGEX, new_data) is not None:
@@ -357,11 +373,13 @@ class RunScreen(BaseScreen, show_navigation=True):
         ) is not None:
             if clover_runs_match.group(DONE_FAIL) == FAILED:
                 self.message_text_label.configure(
-                    text="CLOVER runs failed. See below for more information."
+                    text="CLOVER runs failed. See below for more information.",
                 )
             else:
                 self.push_progress_bar(20)
-                self.message_text_label.configure(text="CLOVER runs completed")
+                self.message_text_label.configure(
+                    text="CLOVER runs completed",
+                )
 
     def read_output(self, pipe: TextIOWrapper):
         """
@@ -435,7 +453,8 @@ class RunScreen(BaseScreen, show_navigation=True):
     def show_stdout(self):
         """Read `self.stdout_data` and put the data in the GUI."""
         self.sub_process_label.config(
-            text=self.stdout_data.strip("\n"), bootstyle=f"dark-inverse"
+            text=self.stdout_data.strip("\n"),
+            bootstyle=f"dark-inverse",
         )
         self.after(1, self.show_stdout)
 

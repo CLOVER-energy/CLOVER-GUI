@@ -43,6 +43,8 @@ from clover.simulation.diesel import DieselGenerator
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
+from ..__utils__ import MAIN_TEXT_FONTSIZE
+
 
 __all__ = ("DieselFrame",)
 
@@ -94,7 +96,8 @@ class GeneratorFrame(ttk.Frame):
 
         # Diesel generator being selected
         self.diesel_generator_selected_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator to\nconfigure"
+            self.scrolled_frame,
+            text="Diesel generator to\nconfigure",
         )
         self.diesel_generator_selected_label.grid(
             row=0, column=0, padx=10, pady=5, sticky="w"
@@ -134,7 +137,8 @@ class GeneratorFrame(ttk.Frame):
 
         # Diesel generator name
         self.diesel_generator_name_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator name"
+            self.scrolled_frame,
+            text="Diesel generator name",
         )
         self.diesel_generator_name_label.grid(
             row=1, column=0, padx=10, pady=5, sticky="w"
@@ -165,7 +169,8 @@ class GeneratorFrame(ttk.Frame):
 
         # Diesel generator capacity
         self.diesel_generator_capacity_label = ttk.Label(
-            self.scrolled_frame, text="Capacity"
+            self.scrolled_frame,
+            text="Capacity",
         )
         self.diesel_generator_capacity_label.grid(
             row=2, column=0, padx=10, pady=5, sticky="w"
@@ -197,7 +202,8 @@ class GeneratorFrame(ttk.Frame):
 
         # Fuel consumption
         self.fuel_consumption_label = ttk.Label(
-            self.scrolled_frame, text="Fuel consumption"
+            self.scrolled_frame,
+            text="Fuel consumption",
         )
         self.fuel_consumption_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
@@ -216,13 +222,15 @@ class GeneratorFrame(ttk.Frame):
         self.fuel_consumption_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
         self.fuel_consumption_unit = ttk.Label(
-            self.scrolled_frame, text=f"litres / kW-hour"
+            self.scrolled_frame,
+            text=f"litres / kW-hour",
         )
         self.fuel_consumption_unit.grid(row=3, column=2, padx=10, pady=5, sticky="ew")
 
         # Minimum load
         self.minimum_load_label = ttk.Label(
-            self.scrolled_frame, text="Minimum capacity factor"
+            self.scrolled_frame,
+            text="Minimum capacity factor",
         )
         self.minimum_load_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
@@ -271,11 +279,17 @@ class GeneratorFrame(ttk.Frame):
         self.minimum_load_entry.grid(row=4, column=2, padx=10, pady=5, sticky="ew")
         self.minimum_load_entry.bind("<Return>", enter_minimum_load)
 
-        self.minimum_load_unit = ttk.Label(self.scrolled_frame, text=f"% of capacity")
+        self.minimum_load_unit = ttk.Label(
+            self.scrolled_frame,
+            text=f"% of capacity",
+        )
         self.minimum_load_unit.grid(row=4, column=3, padx=10, pady=5, sticky="ew")
 
         # Cost
-        self.cost_label = ttk.Label(self.scrolled_frame, text="Diesel generator cost")
+        self.cost_label = ttk.Label(
+            self.scrolled_frame,
+            text="Diesel generator cost",
+        )
         self.cost_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.costs: dict[str, ttk.DoubleVar] = {
@@ -291,12 +305,16 @@ class GeneratorFrame(ttk.Frame):
         )
         self.cost_entry.grid(row=5, column=1, padx=10, pady=5, sticky="ew", ipadx=80)
 
-        self.cost_unit = ttk.Label(self.scrolled_frame, text="$ / kW")
+        self.cost_unit = ttk.Label(
+            self.scrolled_frame,
+            text="$ / kW",
+        )
         self.cost_unit.grid(row=5, column=2, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator cost\nchange"
+            self.scrolled_frame,
+            text="Diesel generator cost\nchange",
         )
         self.cost_decrease_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
 
@@ -315,12 +333,16 @@ class GeneratorFrame(ttk.Frame):
             row=6, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.cost_decrease_unit = ttk.Label(self.scrolled_frame, text="%  / year")
+        self.cost_decrease_unit = ttk.Label(
+            self.scrolled_frame,
+            text="%  / year",
+        )
         self.cost_decrease_unit.grid(row=6, column=2, padx=10, pady=5, sticky="w")
 
         # Installation costs
         self.installation_cost_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator installation\ncost"
+            self.scrolled_frame,
+            text="Diesel generator installation\ncost",
         )
         self.installation_cost_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
 
@@ -340,13 +362,15 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.installation_cost_unit = ttk.Label(
-            self.scrolled_frame, text="$ / kW installed"
+            self.scrolled_frame,
+            text="$ / kW installed",
         )
         self.installation_cost_unit.grid(row=7, column=2, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.installation_cost_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator installation\ncost change"
+            self.scrolled_frame,
+            text="Diesel generator installation\ncost change",
         )
         self.installation_cost_decrease_label.grid(
             row=8, column=0, padx=10, pady=5, sticky="w"
@@ -370,14 +394,18 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.installation_cost_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="%  / year"
+            self.scrolled_frame,
+            text="%  / year",
         )
         self.installation_cost_decrease_unit.grid(
             row=8, column=2, padx=10, pady=5, sticky="w"
         )
 
         # OPEX costs
-        self.opex_costs_label = ttk.Label(self.scrolled_frame, text="OPEX (O&M) costs")
+        self.opex_costs_label = ttk.Label(
+            self.scrolled_frame,
+            text="OPEX (O&M) costs",
+        )
         self.opex_costs_label.grid(row=9, column=0, padx=10, pady=5, sticky="w")
 
         self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
@@ -395,12 +423,16 @@ class GeneratorFrame(ttk.Frame):
             row=9, column=1, padx=10, pady=5, sticky="ew", ipadx=80
         )
 
-        self.o_and_m_costs_unit = ttk.Label(self.scrolled_frame, text="$ / kW / year")
+        self.o_and_m_costs_unit = ttk.Label(
+            self.scrolled_frame,
+            text="$ / kW / year",
+        )
         self.o_and_m_costs_unit.grid(row=9, column=2, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator embedded\nemissions"
+            self.scrolled_frame,
+            text="Diesel generator embedded\nemissions",
         )
         self.embedded_emissions_label.grid(
             row=10, column=0, padx=10, pady=5, sticky="w"
@@ -422,13 +454,15 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.embedded_emissions_unit = ttk.Label(
-            self.scrolled_frame, text="kgCO2eq / kW"
+            self.scrolled_frame,
+            text="kgCO2eq / kW",
         )
         self.embedded_emissions_unit.grid(row=10, column=2, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Diesel generator embedded\nemissions change"
+            self.scrolled_frame,
+            text="Diesel generator embedded\nemissions change",
         )
         self.annual_emissions_decrease_label.grid(
             row=11, column=0, padx=10, pady=5, sticky="w"
@@ -452,7 +486,8 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.annual_emissions_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="% / year"
+            self.scrolled_frame,
+            text="% / year",
         )
         self.annual_emissions_decrease_unit.grid(
             row=11, column=2, padx=10, pady=5, sticky="w"
@@ -460,7 +495,8 @@ class GeneratorFrame(ttk.Frame):
 
         # Embedded installation emissions
         self.installation_emissions_label = ttk.Label(
-            self.scrolled_frame, text="Diesel installation emissions"
+            self.scrolled_frame,
+            text="Diesel installation emissions",
         )
         self.installation_emissions_label.grid(
             row=12, column=0, padx=10, pady=5, sticky="w"
@@ -484,7 +520,8 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.installation_emissions_unit = ttk.Label(
-            self.scrolled_frame, text="kgCO2eq / kW installed"
+            self.scrolled_frame,
+            text="kgCO2eq / kW installed",
         )
         self.installation_emissions_unit.grid(
             row=12, column=2, padx=10, pady=5, sticky="w"
@@ -492,7 +529,8 @@ class GeneratorFrame(ttk.Frame):
 
         # Annual installation emissions decrease
         self.installation_emissions_decrease_label = ttk.Label(
-            self.scrolled_frame, text="Diesel installation emissions\nchange"
+            self.scrolled_frame,
+            text="Diesel installation emissions\nchange",
         )
         self.installation_emissions_decrease_label.grid(
             row=13, column=0, padx=10, pady=5, sticky="w"
@@ -516,14 +554,18 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.installation_emissions_decrease_unit = ttk.Label(
-            self.scrolled_frame, text="% / year"
+            self.scrolled_frame,
+            text="% / year",
         )
         self.installation_emissions_decrease_unit.grid(
             row=13, column=2, padx=10, pady=5, sticky="w"
         )
 
         # O&M emissions
-        self.om_emissions_label = ttk.Label(self.scrolled_frame, text="O&M emissions")
+        self.om_emissions_label = ttk.Label(
+            self.scrolled_frame,
+            text="O&M emissions",
+        )
         self.om_emissions_label.grid(row=14, column=0, padx=10, pady=5, sticky="w")
 
         self.om_emissions: dict[str, ttk.DoubleVar] = {
@@ -542,7 +584,8 @@ class GeneratorFrame(ttk.Frame):
         )
 
         self.om_emissions_unit = ttk.Label(
-            self.scrolled_frame, text="kgCO2eq / kW / year"
+            self.scrolled_frame,
+            text="kgCO2eq / kW / year",
         )
         self.om_emissions_unit.grid(row=14, column=2, padx=10, pady=5, sticky="w")
 
@@ -1031,7 +1074,8 @@ class DieselFrame(ttk.Frame):
 
         # Diesel Fuel Emissions Decrease
         self.diesel_fuel_emissions_decrease_label = ttk.Label(
-            self, text="Fuel emissions change"
+            self,
+            text="Fuel emissions change",
         )
         self.diesel_fuel_emissions_decrease_label.grid(
             row=1, column=3, padx=10, pady=5, sticky="w"
@@ -1059,12 +1103,16 @@ class DieselFrame(ttk.Frame):
         )
 
         self.generator_frame = GeneratorFrame(self)
-        self.diesel_notebook.add(self.generator_frame, text="Generators", sticky="news")
+        self.diesel_notebook.add(
+            self.generator_frame,
+            text="Generators",
+            sticky="news",
+        )
 
         self.heater_frame = HeaterFrame(self)
         # self.diesel_notebook.add(
         #     self.heater_frame,
-        #     text="Space and water heaters",
+        #      text="Space and water heaters",
         #     sticky="news",
         #     state=DISABLED,
         # )

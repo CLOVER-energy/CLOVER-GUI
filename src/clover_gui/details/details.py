@@ -168,39 +168,67 @@ class DetailsWindow(tk.Toplevel):
 
         # self.wind_frame = WindFrame(self.details_notebook)
         # self.details_notebook.add(
-        #     self.wind_frame, text="Wind", sticky="news", state=DISABLED
+        #     self.wind_frame,  text="Wind", sticky="news", state=DISABLED
         # )
 
         self.storage_frame = StorageFrame(self.details_notebook)
-        self.details_notebook.add(self.storage_frame, text="Storage", sticky="news")
+        self.details_notebook.add(
+            self.storage_frame,
+            text="Storage",
+            sticky="news",
+        )
 
         self.load_frame = LoadFrame(self.details_notebook)
-        self.details_notebook.add(self.load_frame, text="Load", sticky="news")
+        self.details_notebook.add(
+            self.load_frame,
+            text="Load",
+            sticky="news",
+        )
 
         # self.conversion_frame = ConversionFrame(self.details_notebook)
         # self.details_notebook.add(
-        #     self.conversion_frame, text="Convert", sticky="news", state=DISABLED
+        #     self.conversion_frame,  text="Convert", sticky="news", state=DISABLED
         # )
 
         # self.transmission_frame = TransmissionFrame(self.details_notebook)
         # self.details_notebook.add(
-        #     self.transmission_frame, text="Transmit.", sticky="news", state=DISABLED
+        #     self.transmission_frame,  text="Transmit.", sticky="news", state=DISABLED
         # )
 
         self.diesel_frame = DieselFrame(self.details_notebook)
-        self.details_notebook.add(self.diesel_frame, text="Diesel", sticky="news")
+        self.details_notebook.add(
+            self.diesel_frame,
+            text="Diesel",
+            sticky="news",
+        )
 
         self.grid_frame = GridFrame(self.details_notebook)
-        self.details_notebook.add(self.grid_frame, text="Grid", sticky="news")
+        self.details_notebook.add(
+            self.grid_frame,
+            text="Grid",
+            sticky="news",
+        )
 
         self.finance_frame = FinanceFrame(self.details_notebook)
-        self.details_notebook.add(self.finance_frame, text="Finance", sticky="news")
+        self.details_notebook.add(
+            self.finance_frame,
+            text="Finance",
+            sticky="news",
+        )
 
         self.ghgs_frame = GHGFrame(self.details_notebook)
-        self.details_notebook.add(self.ghgs_frame, text="GHGs", sticky="news")
+        self.details_notebook.add(
+            self.ghgs_frame,
+            text="GHGs",
+            sticky="news",
+        )
 
         self.system_frame = SystemFrame(self.details_notebook)
-        self.details_notebook.add(self.system_frame, text="System", sticky="news")
+        self.details_notebook.add(
+            self.system_frame,
+            text="System",
+            sticky="news",
+        )
 
         # Update the various frames with the add-panel functions.
         self.solar_frame.pv_frame.add_panel_to_scenario_frame = (

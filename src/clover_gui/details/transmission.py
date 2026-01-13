@@ -14,6 +14,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import *
 
+from ..__utils__ import MAIN_TEXT_FONTSIZE
 
 __all__ = ("TransmissionFrame",)
 

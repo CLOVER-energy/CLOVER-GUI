@@ -45,6 +45,7 @@ from .__utils__ import (
     BATTERIES,
     CLOVER_ICON_IMAGE,
     DEFAULT_END_YEAR,
+    DEFAULT_FONTSIZE,
     DEFAULT_GUI_THEME,
     DEFAULT_RENEWABLES_NINJA_TOKEN,
     DEFAULT_START_YEAR,
@@ -52,9 +53,11 @@ from .__utils__ import (
     DEVICES,
     DIESEL,
     END_YEAR,
+    FONTSIZE,
     GLOBAL_SETTINGS_FILEPATH,
     IMAGES_DIRECTORY,
     MAIN_WINDOW_GEOMETRY,
+    MENU_BAR_FONTSIZE,
     parse_battery_inputs,
     parse_diesel_inputs,
     parse_solar_inputs,
@@ -73,10 +76,6 @@ from .splash_screen import SplashScreenWindow
 from .preferences import PreferencesWindow
 from .post_run import PostRunScreen
 from .running import RunScreen
-
-# Menu-bar fontsize
-#   Fontsize for the items in the menu bar
-MENU_BAR_FONTSIZE: int = 14
 
 # Solar inputs:
 #   Keyword for saving solar inputs information.
@@ -113,16 +112,19 @@ class App(ttk.Window):
         # Open the settings file
         (
             end_year,
+            fontsize,
             renewables_ninja_token,
             start_year,
             system_lifetime,
             theme,
         ) = self.read_global_settings(self.logger)
         self.end_year = end_year
+        self.font_size = fontsize
         self.renewables_ninja_token = renewables_ninja_token
         self.start_year = start_year
         self.system_lifetime = system_lifetime
         self.theme = theme
+        self.default_font = ttk.font.nametofont("TkDefaultFont")
         self.style.theme_use(self.theme.get())
 
         # Setup the CLOVER-GUI application so that exiting causes data to be saved.
@@ -228,7 +230,7 @@ class App(ttk.Window):
 
         if len(warning_messages) > 0:
             self.new_location_frame.warning_text_label.configure(
-                text=f"Missing new-location {', '.join(warning_messages)}."
+                text=f"Missing new-location {', '.join(warning_messages)}.",
             )
             return
 
@@ -248,7 +250,7 @@ class App(ttk.Window):
             self.logger.error("New location name already used.")
             self.new_location_frame.warning_text_label.configure(
                 text=f"Failed to create '{new_location_name}'. Check that the location "
-                "does not already exist."
+                "does not already exist.",
             )
             return
 
@@ -561,8 +563,10 @@ class App(ttk.Window):
         if self.preferences_window is None:
             self.preferences_window: PreferencesWindow | None = PreferencesWindow(
                 self.end_year,
+                self.font_size,
                 self.renewables_ninja_token,
                 self.select_theme,
+                self.set_fontsize,
                 self.start_year,
                 self.system_lifetime,
                 self.theme,
@@ -586,7 +590,9 @@ class App(ttk.Window):
 
     def read_global_settings(
         self, logger: Logger
-    ) -> tuple[ttk.IntVar, ttk.StringVar, ttk.IntVar, ttk.IntVar, ttk.StringVar]:
+    ) -> tuple[
+        ttk.IntVar, ttk.IntVar, ttk.StringVar, ttk.IntVar, ttk.IntVar, ttk.StringVar
+    ]:
         """
         Read the global settings.
 
@@ -604,6 +610,7 @@ class App(ttk.Window):
         except FileNotFoundError:
             return (
                 ttk.IntVar(self, DEFAULT_END_YEAR),
+                ttk.IntVar(self, DEFAULT_FONTSIZE),
                 ttk.StringVar(self, DEFAULT_RENEWABLES_NINJA_TOKEN),
                 ttk.IntVar(self, DEFAULT_START_YEAR),
                 ttk.IntVar(self, DEFAULT_SYSTEM_LIFETIME),
@@ -612,6 +619,7 @@ class App(ttk.Window):
 
         return (
             ttk.IntVar(self, global_settings_yaml.get(END_YEAR, DEFAULT_END_YEAR)),
+            ttk.IntVar(self, global_settings_yaml.get(FONTSIZE, DEFAULT_FONTSIZE)),
             ttk.StringVar(
                 self,
                 global_settings_yaml.get(
@@ -772,6 +780,10 @@ class App(ttk.Window):
     def select_theme(self, theme: str) -> None:
         """Set the theme for the window."""
         self.style.theme_use(theme)
+
+    def set_fontsize(self, fontsize: int) -> None:
+        """Set the fontsize for the window."""
+        self.default_font.configure(size=fontsize)
 
     def setup(self) -> None:
         """

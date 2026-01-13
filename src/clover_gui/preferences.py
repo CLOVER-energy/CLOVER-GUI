@@ -25,9 +25,12 @@ from .__utils__ import (
     BaseScreen,
     DEFAULT_GUI_THEME,
     END_YEAR,
+    FONTSIZE,
     GLOBAL_SETTINGS_FILEPATH,
     LOAD_LOCATION_GEOMETRY,
     MAX_START_YEAR,
+    MAIN_TEXT_FONTSIZE,
+    MENU_BAR_FONTSIZE,
     MIN_START_YEAR,
     RENEWABLES_NINJA_TOKEN,
     RENEWABLES_NINJA_DATA_PERIOD,
@@ -65,8 +68,10 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
         self,
         parent,
         end_year: ttk.IntVar,
+        font_size: ttk.IntVar,
         renewables_ninja_token: ttk.StringVar,
         select_theme: Callable,
+        set_fontsize: Callable,
         start_year: ttk.IntVar,
         system_lifetime: ttk.IntVar,
         theme: ttk.StringVar,
@@ -79,6 +84,9 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         :param: end_year
             The end year for fetching renewables.ninja data.
+
+        :param: font_size
+            The current fontsize.
 
         :param: renewables_ninja_token
             The renewables.ninja API token for the user.
@@ -100,8 +108,10 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
         super().__init__(parent)
 
         self.end_year = end_year
+        self.font_size = font_size
         self.renewables_ninja_token = renewables_ninja_token
         self.select_theme = select_theme
+        self.set_fontsize = set_fontsize
         self.start_year = start_year
         self.system_lifetime = system_lifetime
         self.theme = theme
@@ -111,7 +121,8 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         # Renewables ninja settings
         self.renewables_ninja_label_frame = ttk.Labelframe(
-            self, text="Renewables ninja settings"
+            self,
+            text="Renewables ninja settings",
         )
         self.renewables_ninja_label_frame.grid(
             row=0, column=0, sticky="news", padx=20, pady=5
@@ -128,7 +139,8 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         # API token
         self.renewables_ninja_label = ttk.Label(
-            self.renewables_ninja_label_frame, text="Renewables ninja API token"
+            self.renewables_ninja_label_frame,
+            text="Renewables ninja API token",
         )
         self.renewables_ninja_label.grid(row=0, column=0, sticky="w", padx=10, pady=5)
 
@@ -142,7 +154,8 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         # System lifetime
         self.system_lifetime_label = ttk.Label(
-            self.renewables_ninja_label_frame, text="System lifetime"
+            self.renewables_ninja_label_frame,
+            text="System lifetime",
         )
         self.system_lifetime_label.grid(row=1, column=0, sticky="w", padx=10, pady=5)
 
@@ -155,13 +168,15 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
         )
 
         self.system_lifetime_unit = ttk.Label(
-            self.renewables_ninja_label_frame, text="years"
+            self.renewables_ninja_label_frame,
+            text="years",
         )
         self.system_lifetime_unit.grid(row=1, column=2, sticky="w", padx=10, pady=5)
 
         # Start year
         self.start_year_label = ttk.Label(
-            self.renewables_ninja_label_frame, text="Solar data start year"
+            self.renewables_ninja_label_frame,
+            text="Solar data start year",
         )
         self.start_year_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
@@ -203,7 +218,8 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
 
         # End year
         self.end_year_label = ttk.Label(
-            self.renewables_ninja_label_frame, text="Solar data end year"
+            self.renewables_ninja_label_frame,
+            text="Solar data end year",
         )
         self.end_year_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
@@ -261,7 +277,10 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
         self.graphical_label_frame.columnconfigure(1, weight=1)
         self.graphical_label_frame.columnconfigure(2, weight=1)
 
-        self.theme_label = ttk.Label(self.graphical_label_frame, text="Theme")
+        self.theme_label = ttk.Label(
+            self.graphical_label_frame,
+            text="Theme",
+        )
         self.theme_label.grid(row=0, column=0, sticky="ew", padx=10, pady=5)
 
         self.theme_combobox = ttk.Combobox(
@@ -270,6 +289,23 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
         self.theme_combobox.grid(row=0, column=1, padx=10, pady=5, sticky="w", ipadx=60)
         self.theme_combobox.bind("<<ComboboxSelected>>", self.combobox_theme_select)
         self.populate_themes()
+
+        self.font_size_label = ttk.Label(
+            self.graphical_label_frame,
+            text="Font size",
+        )
+        self.font_size_label.grid(row=1, column=0, sticky="ew", padx=10, pady=5)
+
+        self.fontsize_combobox = ttk.Combobox(
+            self.graphical_label_frame, textvariable=self.font_size, state=READONLY
+        )
+        self.fontsize_combobox.grid(
+            row=1, column=1, padx=10, pady=5, sticky="w", ipadx=60
+        )
+        self.fontsize_combobox.bind(
+            "<<ComboboxSelected>>", self.combobox_fontsize_select
+        )
+        self.fontsize_combobox["values"] = sorted(list(range(10, 17)))
 
     def combobox_theme_select(self, _) -> None:
         """Select the theme from the combobox."""
@@ -280,6 +316,11 @@ class PreferencesScreen(BaseScreen, show_navigation=False):
         """Populate the combobox with themes."""
 
         self.theme_combobox["values"] = AVAILABLE_THEMES
+
+    def combobox_fontsize_select(self, _) -> None:
+        """Select the theme from the combobox."""
+
+        self.set_fontsize(self.fontsize_combobox.get())
 
 
 class PreferencesWindow(tk.Toplevel):
@@ -296,8 +337,10 @@ class PreferencesWindow(tk.Toplevel):
     def __init__(
         self,
         end_year: ttk.IntVar,
+        font_size: ttk.IntVar,
         renewables_ninja_token: ttk.StringVar,
         select_theme: Callable,
+        set_fontsize: Callable,
         start_year: ttk.IntVar,
         system_lifetime: ttk.IntVar,
         theme: str,
@@ -307,6 +350,9 @@ class PreferencesWindow(tk.Toplevel):
 
         :param: end_year
             The end year for fetching renewables.ninja data.
+
+        :param: font_size
+            The current fontsize.
 
         :param: renewables_ninja_token
             The renewables.ninja API token for the user.
@@ -336,15 +382,20 @@ class PreferencesWindow(tk.Toplevel):
         self.rowconfigure(1, weight=10)
 
         self.preferences_label = ttk.Label(
-            self, bootstyle=SECONDARY, text="Preferences", font="80"
+            self,
+            bootstyle=SECONDARY,
+            font=("", MENU_BAR_FONTSIZE),
+            text="Preferences",
         )
         self.preferences_label.grid(row=0, column=0, sticky="w", padx=20, pady=5)
 
         self.preferences_screen = PreferencesScreen(
             self,
             end_year,
+            font_size,
             renewables_ninja_token,
             select_theme,
+            set_fontsize,
             start_year,
             system_lifetime,
             theme,
@@ -363,6 +414,7 @@ class PreferencesWindow(tk.Toplevel):
             yaml.dump(
                 {
                     END_YEAR: self.preferences_screen.end_year.get(),
+                    FONTSIZE: self.preferences_screen.fontsize_combobox.get(),
                     RENEWABLES_NINJA_TOKEN: self.preferences_screen.renewables_ninja_token.get(),
                     START_YEAR: self.preferences_screen.start_year.get(),
                     SYSTEM_LIFETIME: self.preferences_screen.system_lifetime.get(),
