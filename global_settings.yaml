@@ -1,5 +1,6 @@
 end_year: 2016
+fontsize: '16'
 renewables_ninja_token: 41423a644e37306d21a8983b6a20917f3bacc756
 start_year: 2007
 system_lifetime: 30
-theme: litera
+theme: solar
