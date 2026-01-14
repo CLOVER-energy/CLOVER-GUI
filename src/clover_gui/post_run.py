@@ -26,9 +26,9 @@ from ttkbootstrap.tooltip import ToolTip
 
 from .__utils__ import (
     BaseScreen,
-    BIG_BUTTON_FONTSIZE,
     IMAGES_DIRECTORY,
     MAIN_TEXT_FONTSIZE,
+    MENU_BAR_FONTSIZE,
 )
 
 
@@ -450,7 +450,7 @@ class PostRunScreen(BaseScreen, show_navigation=True):
         self.finished_label = ttk.Label(
             self,
             bootstyle=INFO,
-            font=("", BIG_BUTTON_FONTSIZE),
+            font="80",
             text="CLOVER RUN FINISHED",
         )
         self.finished_label.grid(row=0, column=0, sticky="ew", padx=60, pady=20)

@@ -120,12 +120,20 @@ class App(ttk.Window):
         ) = self.read_global_settings(self.logger)
         self.end_year = end_year
         self.font_size = fontsize
+        self.default_font = ttk.font.nametofont("TkDefaultFont")
+        self.default_font.configure(size=fontsize.get())
         self.renewables_ninja_token = renewables_ninja_token
         self.start_year = start_year
         self.system_lifetime = system_lifetime
         self.theme = theme
-        self.default_font = ttk.font.nametofont("TkDefaultFont")
         self.style.theme_use(self.theme.get())
+
+        # Courier and monospace styles
+        self.courier_style = ttk.Style()
+        self.monospace_style = ttk.Style()
+
+        self.courier_style.theme_use(self.theme.get())
+        self.monospace_style.theme_use(self.theme.get())
 
         # Setup the CLOVER-GUI application so that exiting causes data to be saved.
         self.protocol("WM_DELETE_WINDOW", self.save_and_withdraw)
@@ -583,7 +591,9 @@ class App(ttk.Window):
         self.run_screen.pack(fill="both", expand=True)
         self.run_screen.clover_progress_bar["value"] = 0
         self.run_screen.clover_progress_bar.configure(bootstyle=f"{SUCCESS}-striped")
-        self.run_screen.message_text_label.configure(text="Launching CLOVER")
+        self.run_screen.message_text_label.configure(
+            text="Launching CLOVER", style="CourierSuccess.TLabel"
+        )
         self.run_screen.post_run_button.configure(state=DISABLED)
         self.run_screen.stdout_data = ""
         self.run_screen.run_with_clover(clover_thread)
@@ -780,6 +790,8 @@ class App(ttk.Window):
     def select_theme(self, theme: str) -> None:
         """Set the theme for the window."""
         self.style.theme_use(theme)
+        # self.courier_style.theme_use(theme)
+        # self.monospace_style.theme_use(theme)
 
     def set_fontsize(self, fontsize: int) -> None:
         """Set the fontsize for the window."""
@@ -855,7 +867,12 @@ class App(ttk.Window):
         self.splash.set_progress_bar_progress(80)
 
         # Run
-        self.run_screen = RunScreen(self.data_directory, self.open_post_run_screen)
+        self.run_screen = RunScreen(
+            self.courier_style,
+            self.data_directory,
+            self.monospace_style,
+            self.open_post_run_screen,
+        )
 
         self.splash.set_progress_bar_progress(100)
 

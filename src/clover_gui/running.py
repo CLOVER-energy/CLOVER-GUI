@@ -119,7 +119,13 @@ class RunScreen(BaseScreen, show_navigation=True):
 
     """
 
-    def __init__(self, data_directory: str, open_post_run_screen: Callable) -> None:
+    def __init__(
+        self,
+        courier_style: ttk.Style,
+        data_directory: str,
+        monospace_style: ttk.Style,
+        open_post_run_screen: Callable,
+    ) -> None:
         """
         Instantiate a :class:`RunFrame` instance.
 
@@ -132,6 +138,8 @@ class RunScreen(BaseScreen, show_navigation=True):
 
         super().__init__()
 
+        self.courier_style = courier_style
+        self.monospace_style = monospace_style
         self.open_post_run_screen = open_post_run_screen
 
         self.rowconfigure(0, weight=1)
@@ -157,10 +165,28 @@ class RunScreen(BaseScreen, show_navigation=True):
 
         self.clover_thread: Popen | None = None
 
+        self.courier_style.configure("Courier.Label", font=("Courier New", 16))
+        self.courier_style.configure(
+            "CourierPrimary.TLabel",
+            font=("Courier New", 16),
+            foreground=self.courier_style.colors.primary,
+        )
+        self.courier_style.configure(
+            "CourierSuccess.TLabel",
+            font=("Courier New", 16),
+            foreground=self.courier_style.colors.success,
+        )
+        self.courier_style.configure(
+            "CourierDanger.TLabel",
+            font=("Courier New", 16),
+            foreground=self.courier_style.colors.danger,
+        )
+
         # Create progress text
         self.message_text_label: ttk.Label = ttk.Label(
             self,
-            bootstyle=SUCCESS,
+            # bootstyle=SUCCESS,
+            style="CourierSuccess.TLabel",
             text="Launching CLOVER",
         )
         self.message_text_label.grid(
@@ -191,12 +217,16 @@ class RunScreen(BaseScreen, show_navigation=True):
             row=3, column=0, columnspan=5, sticky="news", padx=10, pady=5
         )
 
-        self.courier_style = ttk.Style()
-        self.courier_style.configure("Courier.Label", font=("Courier", 16))
-
+        self.monospace_style.configure("Monospace.Label", font=("TkFixedFont", 11))
+        self.monospace_style.configure(
+            "MonospaceDark.TLabel",
+            font=("TkFixedFont", 16),
+            foreground=self.courier_style.colors.light,  # Use light text
+            background=self.courier_style.colors.dark,  # Use dark background
+        )
         self.sub_process_label = ttk.Label(
             self.sub_process_frame,
-            bootstyle=f"{DARK}.Courier.Label",
+            style="MonospaceDark.TLabel",
             text="",
             width=300,
         )
@@ -292,6 +322,7 @@ class RunScreen(BaseScreen, show_navigation=True):
 
         if "Copyright" in new_data:
             self.message_text_label.configure(text="Verifying location")
+            self.clover_progress_bar.configure(bootstyle=f"{SUCCESS}-striped")
 
         # Move the progress bar if location verification completed.
         if (
@@ -454,7 +485,7 @@ class RunScreen(BaseScreen, show_navigation=True):
         """Read `self.stdout_data` and put the data in the GUI."""
         self.sub_process_label.config(
             text=self.stdout_data.strip("\n"),
-            bootstyle=f"dark-inverse",
+            # bootstyle=f"dark-inverse",
         )
         self.after(1, self.show_stdout)
 
@@ -469,6 +500,10 @@ class RunScreen(BaseScreen, show_navigation=True):
         # Enable the post-run button if the run completed successfully.
         if clover_return_code == 0:
             self.post_run_button.configure(state="enabled")
+            self.message_text_label.configure(style="CourierSuccess.TLabel")
             self.push_progress_bar(100)
         else:
             self.clover_progress_bar.configure(bootstyle=f"{DANGER}-striped")
+            self.message_text_label.configure(
+                text="CLOVER run stopped", style="CourierDanger.TLabel"
+            )
