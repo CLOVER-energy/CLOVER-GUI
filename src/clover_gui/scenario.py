@@ -1033,17 +1033,18 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Diesel mode
-        # self.diesel_mode_label = ttk.Label(
-        #     self.scrollable_scenario_frame,  text="Diesel mode"
-        # )
-        # # self.diesel_mode_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
+        self.diesel_mode_label = ttk.Label(
+            self.scrollable_scenario_frame, text="Diesel mode"
+        )
+        self.diesel_mode_label.grid(row=14, column=1, padx=10, pady=5, sticky="w")
 
-        # self.diesel_mode_combobox = ttk.Combobox(
-        #     self.scrollable_scenario_frame, state=DISABLED, width=10
-        # )
-        # # self.diesel_mode_combobox.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
-        # self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
-        # self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
+        self.diesel_mode_combobox = ttk.Combobox(
+            self.scrollable_scenario_frame, state=DISABLED, width=10
+        )
+        self.diesel_mode_combobox.grid(row=14, column=2, padx=10, pady=5, sticky="ew")
+        self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
+        self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
+        # self.criterion_name_combobox.bind("<<ComboboxSelected>>", self.select_diesel_mode)
 
         # Backup threshold
         self.diesel_backup_threshold_label = ttk.Label(
@@ -1051,7 +1052,7 @@ class ConfigurationFrame(ttk.Frame):
             text="Diesel threshold",
         )
         self.diesel_backup_threshold_label.grid(
-            row=14, column=1, padx=10, pady=5, sticky="w"
+            row=15, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.diesel_backup_threshold: ttk.IntVar = ttk.DoubleVar(self, 0)
@@ -1071,7 +1072,7 @@ class ConfigurationFrame(ttk.Frame):
             command=scalar_threshold,
             variable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_slider.grid(row=14, column=2, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_slider.grid(row=15, column=2, padx=10, pady=5, sticky="ew")
 
         def enter_threshold(_):
             self.diesel_backup_threshold.set(
@@ -1084,7 +1085,7 @@ class ConfigurationFrame(ttk.Frame):
             self.scrollable_scenario_frame,
             textvariable=self.diesel_backup_threshold,
         )
-        self.diesel_backup_entry.grid(row=14, column=3, padx=10, pady=5, sticky="ew")
+        self.diesel_backup_entry.grid(row=15, column=3, padx=10, pady=5, sticky="ew")
         self.diesel_backup_entry.bind("<Return>", enter_threshold)
 
         self.diesel_backup_threshold_unit = ttk.Label(
@@ -1092,7 +1093,7 @@ class ConfigurationFrame(ttk.Frame):
             text=f"% of hours",
         )
         self.diesel_backup_threshold_unit.grid(
-            row=14, column=4, padx=10, pady=5, sticky="w"
+            row=15, column=4, padx=10, pady=5, sticky="w"
         )
 
         # Distribution network
@@ -1115,14 +1116,14 @@ class ConfigurationFrame(ttk.Frame):
             text="Distribution network",
         )
         self.distribution_network_label.grid(
-            row=15, column=1, padx=10, pady=5, sticky="w"
+            row=16, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.distribution_network_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
         self.distribution_network_combobox.grid(
-            row=15, column=2, padx=10, pady=5, sticky="w"
+            row=16, column=2, padx=10, pady=5, sticky="w"
         )
         self.distribution_network_combobox["values"] = [
             e.value for e in DistributionNetwork
@@ -1135,14 +1136,14 @@ class ConfigurationFrame(ttk.Frame):
             text="Prioritisation strategy",
         )
         self.prioritisation_strategy_label.grid(
-            row=16, column=1, padx=10, pady=5, sticky="w"
+            row=17, column=1, padx=10, pady=5, sticky="w"
         )
 
         self.prioritisation_strategy_combobox = ttk.Combobox(
             self.scrollable_scenario_frame,
         )
         self.prioritisation_strategy_combobox.grid(
-            row=16, column=2, padx=10, pady=5, sticky="ew"
+            row=17, column=2, padx=10, pady=5, sticky="ew"
         )
         self.prioritisation_strategy_combobox["values"] = [
             e.value.replace("_", " ").capitalize() for e in PrioritisationStrategy
@@ -1159,7 +1160,7 @@ class ConfigurationFrame(ttk.Frame):
             text="",
         )
         self.prioritisation_strategy_information_icon.grid(
-            row=16, column=3, padx=20, pady=20, sticky="w"
+            row=17, column=3, padx=20, pady=20, sticky="w"
         )
         self.scenario_information_tooltip = ToolTip(
             self.prioritisation_strategy_information_icon,
