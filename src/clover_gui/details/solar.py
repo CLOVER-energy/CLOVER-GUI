@@ -656,7 +656,7 @@ class PVFrame(_BaseSolarFrame):
         # Cost
         self.cost_label = ttk.Label(
             self.scrolled_frame,
-            text="PV cost",
+            text="Module cost",
         )
         self.cost_label.grid(
             row=12, column=0, columnspan=2, padx=10, pady=5, sticky="w"
@@ -684,7 +684,7 @@ class PVFrame(_BaseSolarFrame):
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
             self.scrolled_frame,
-            text="PV cost change",
+            text="Module cost change",
         )
         self.cost_decrease_label.grid(
             row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
@@ -1779,6 +1779,349 @@ class PVTFrame(_BaseSolarFrame):
             row=6, column=6, padx=(15, 20), pady=5, sticky="w"
         )
 
+        # Cost
+        self.cost_label = ttk.Label(
+            self.scrolled_frame,
+            text="Collector cost",
+        )
+        self.cost_label.grid(
+            row=12, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.costs: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(self, 0, f"{collector_name}_cost")
+            for collector_name in self.collector_name_values
+        }
+        self.cost_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.costs[self.collector_selected.get()],
+        )
+        self.cost_entry.grid(
+            row=12, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
+        self.cost_unit = ttk.Label(
+            self.scrolled_frame,
+            text="$ / kWp",
+        )
+        self.cost_unit.grid(row=12, column=5, padx=10, pady=5, sticky="w")
+
+        # Cost decrease
+        self.cost_decrease_label = ttk.Label(
+            self.scrolled_frame,
+            text="Collector cost change",
+        )
+        self.cost_decrease_label.grid(
+            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.cost_decrease: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(self, 0, f"{collector_name}_cost_decrease")
+            for collector_name in self.collector_name_values
+        }
+        self.cost_decrease_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.cost_decrease[self.collector_selected.get()],
+        )
+        self.cost_decrease_entry.grid(
+            row=13,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.cost_decrease_unit = ttk.Label(
+            self.scrolled_frame,
+            text="%  / year",
+        )
+        self.cost_decrease_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
+
+        # Installation cost
+        self.installation_cost_label = ttk.Label(
+            self.scrolled_frame,
+            text="Installation cost",
+        )
+        self.installation_cost_label.grid(
+            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_costs: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(
+                self, 0, f"{collector_name}_installation_cost"
+            )
+            for collector_name in self.collector_name_values
+        }
+        self.installation_cost_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_costs[self.collector_selected.get()],
+        )
+        self.installation_cost_entry.grid(
+            row=14,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.installation_cost_unit = ttk.Label(
+            self.scrolled_frame,
+            text="$ / kWp installed",
+        )
+        self.installation_cost_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
+
+        # Installation cost decrease
+        self.installation_cost_decrease_label = ttk.Label(
+            self.scrolled_frame,
+            text="Installation cost change",
+        )
+        self.installation_cost_decrease_label.grid(
+            row=15, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_cost_decrease: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(
+                self, 0, f"{collector_name}_installation_cost_decrease"
+            )
+            for collector_name in self.collector_name_values
+        }
+        self.installation_cost_decrease_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_cost_decrease[self.collector_selected.get()],
+        )
+        self.installation_cost_decrease_entry.grid(
+            row=15,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.installation_cost_decrease_unit = ttk.Label(
+            self.scrolled_frame,
+            text="%  / year",
+        )
+        self.installation_cost_decrease_unit.grid(
+            row=15, column=5, padx=10, pady=5, sticky="w"
+        )
+
+        # OPEX costs
+        self.opex_costs_label = ttk.Label(
+            self.scrolled_frame,
+            text="OPEX (O&M) costs",
+        )
+        self.opex_costs_label.grid(
+            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(self, 0, f"{collector_name}_o_and_m_costs")
+            for collector_name in self.collector_name_values
+        }
+        self.o_and_m_costs_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.o_and_m_costs[self.collector_selected.get()],
+        )
+        self.o_and_m_costs_entry.grid(
+            row=16,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.o_and_m_costs_unit = ttk.Label(
+            self.scrolled_frame,
+            text="$ / kWp / year",
+        )
+        self.o_and_m_costs_unit.grid(row=16, column=5, padx=10, pady=5, sticky="w")
+
+        # Embedded emissions
+        self.embedded_emissions_label = ttk.Label(
+            self.scrolled_frame,
+            text="PV embedded emissions",
+        )
+        self.embedded_emissions_label.grid(
+            row=17, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.embedded_emissions: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(self, 0, f"{collector_name}_ghgs")
+            for collector_name in self.collector_name_values
+        }
+        self.embedded_emissions_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.embedded_emissions[self.collector_selected.get()],
+        )
+        self.embedded_emissions_entry.grid(
+            row=17,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.embedded_emissions_unit = ttk.Label(
+            self.scrolled_frame,
+            text="kgCO2eq / kWp",
+        )
+        self.embedded_emissions_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
+
+        # Annual emissions decrease
+        self.annual_emissions_decrease_label = ttk.Label(
+            self.scrolled_frame,
+            text="PV emissions change",
+        )
+        self.annual_emissions_decrease_label.grid(
+            row=18, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.annual_emissions_decrease: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(self, 0, f"{collector_name}_ghgs_decrease")
+            for collector_name in self.collector_name_values
+        }
+        self.annual_emissions_decrease_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.annual_emissions_decrease[self.collector_selected.get()],
+        )
+        self.annual_emissions_decrease_entry.grid(
+            row=18,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.annual_emissions_decrease_unit = ttk.Label(
+            self.scrolled_frame,
+            text="% / year",
+        )
+        self.annual_emissions_decrease_unit.grid(
+            row=18, column=5, padx=10, pady=5, sticky="w"
+        )
+
+        # Embedded installation emissions
+        self.installation_emissions_label = ttk.Label(
+            self.scrolled_frame,
+            text="Installation emissions",
+        )
+        self.installation_emissions_label.grid(
+            row=19, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_emissions: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(
+                self, 0, f"{collector_name}_installation_ghgs"
+            )
+            for collector_name in self.collector_name_values
+        }
+        self.installation_emissions_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_emissions[self.collector_selected.get()],
+        )
+        self.installation_emissions_entry.grid(
+            row=19,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.installation_emissions_unit = ttk.Label(
+            self.scrolled_frame,
+            text="kgCO2eq / kWp",
+        )
+        self.installation_emissions_unit.grid(
+            row=19, column=5, padx=10, pady=5, sticky="w"
+        )
+
+        # Annual installation emissions decrease
+        self.installation_emissions_decrease_label = ttk.Label(
+            self.scrolled_frame,
+            text="Installation emissions change",
+        )
+        self.installation_emissions_decrease_label.grid(
+            row=20, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.installation_emissions_decrease: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(
+                self, 0, f"{collector_name}_installation_ghgs_decrease"
+            )
+            for collector_name in self.collector_name_values
+        }
+        self.installation_emissions_decrease_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.installation_emissions_decrease[
+                self.collector_selected.get()
+            ],
+        )
+        self.installation_emissions_decrease_entry.grid(
+            row=20,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.installation_emissions_decrease_unit = ttk.Label(
+            self.scrolled_frame,
+            text="% / year",
+        )
+        self.installation_emissions_decrease_unit.grid(
+            row=20, column=5, padx=10, pady=5, sticky="w"
+        )
+
+        # O&M emissions
+        self.om_emissions_label = ttk.Label(
+            self.scrolled_frame,
+            text="O&M emissions",
+        )
+        self.om_emissions_label.grid(
+            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.om_emissions: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(self, 0, f"{collector_name}_o_and_m_ghgs")
+            for collector_name in self.collector_name_values
+        }
+        self.om_emissions_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.om_emissions[self.collector_selected.get()],
+        )
+        self.om_emissions_entry.grid(
+            row=21,
+            column=2,
+            columnspan=3,
+            padx=10,
+            pady=5,
+            sticky="ew",
+        )
+
+        self.om_emissions_unit = ttk.Label(
+            self.scrolled_frame,
+            text="kgCO2eq / kWp / year",
+        )
+        self.om_emissions_unit.grid(row=21, column=5, padx=10, pady=5, sticky="w")
+
     def add_collector(self) -> None:
         """Called when a user presses the new-collector button."""
 
@@ -1786,7 +2129,7 @@ class PVTFrame(_BaseSolarFrame):
         new_name = "New collector {suffix}"
         index = 0
         suffix = ""
-        while new_name.format(suffix=suffix) in self.collector_name_values_name_values:
+        while new_name.format(suffix=suffix) in self.collector_name_values:
             index += 1
             suffix = f"({index})"
 
@@ -1802,21 +2145,21 @@ class PVTFrame(_BaseSolarFrame):
         # self.reference_efficiencies[new_name] = ttk.DoubleVar(self, 0.015)
         # self.reference_temperature[new_name] = ttk.DoubleVar(self, 25)
         # self.thermal_coefficient[new_name] = ttk.DoubleVar(self, 0.56)
-        # self.costs[new_name] = ttk.DoubleVar(self, 0)
-        # self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
-        # self.installation_costs[new_name] = ttk.DoubleVar(self, 0)
-        # self.installation_cost_decrease[new_name] = ttk.DoubleVar(self, 0)
-        # self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
-        # self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
-        # self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
-        # self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
-        # self.installation_emissions[new_name] = ttk.DoubleVar(self, 0)
-        # self.installation_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.costs[new_name] = ttk.DoubleVar(self, 0)
+        self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_costs[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
+        self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_emissions[new_name] = ttk.DoubleVar(self, 0)
+        self.installation_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
         self.tracking[new_name] = ttk.IntVar(self, 0)
 
         # # Select the new panel and update the screen
         self.collector_selected = self.collector_name_values[new_name]
-        self.pv_collector_combobox.configure(textvariable=self.collector_selected)
+        self.pv_t_collector_combobox.configure(textvariable=self.collector_selected)
         self.collector_name_entry.configure(textvariable=self.collector_selected)
         self.update_collector_frame()
 
@@ -1853,46 +2196,46 @@ class PVTFrame(_BaseSolarFrame):
         #     self.panel_name_values[key].get(): value
         #     for key, value in self.thermal_coefficient.items()
         # }
-        # self.costs = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.costs.items()
-        # }
-        # self.cost_decrease = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.cost_decrease.items()
-        # }
-        # self.installation_costs = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.installation_costs.items()
-        # }
-        # self.installation_cost_decrease = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.installation_cost_decrease.items()
-        # }
-        # self.o_and_m_costs = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.o_and_m_costs.items()
-        # }
-        # self.embedded_emissions = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.embedded_emissions.items()
-        # }
-        # self.annual_emissions_decrease = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.annual_emissions_decrease.items()
-        # }
-        # self.installation_emissions = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.installation_emissions.items()
-        # }
-        # self.installation_emissions_decrease = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.installation_emissions_decrease.items()
-        # }
-        # self.om_emissions = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.om_emissions.items()
-        # }
+        self.costs = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.costs.items()
+        }
+        self.cost_decrease = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.cost_decrease.items()
+        }
+        self.installation_costs = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.installation_costs.items()
+        }
+        self.installation_cost_decrease = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.installation_cost_decrease.items()
+        }
+        self.o_and_m_costs = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.o_and_m_costs.items()
+        }
+        self.embedded_emissions = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.embedded_emissions.items()
+        }
+        self.annual_emissions_decrease = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.annual_emissions_decrease.items()
+        }
+        self.installation_emissions = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.installation_emissions.items()
+        }
+        self.installation_emissions_decrease = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.installation_emissions_decrease.items()
+        }
+        self.om_emissions = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.om_emissions.items()
+        }
         self.tracking = {
             self.collector_name_values[key].get(): value
             for key, value in self.tracking.items()
@@ -1935,7 +2278,80 @@ class PVTFrame(_BaseSolarFrame):
         self._tracking_callback()
 
         # Update the variables being displayed.
-        self.update_panel_frame()
+        self.update_collector_frame()
+
+    def update_collector_frame(self) -> None:
+        """
+        Updates the entries so that the correct variables are displayed on the screen.
+
+        """
+
+        self.lifetime_entry.configure(
+            textvariable=self.collector_lifetimes[self.collector_selected.get()]
+        )
+        self.lifetime_slider.configure(
+            variable=self.collector_lifetimes[self.collector_selected.get()]
+        )
+        self.tilt_entry.configure(
+            textvariable=self.collector_tilt[self.collector_selected.get()]
+        )
+        self.tilt_slider.configure(
+            variable=self.collector_tilt[self.collector_selected.get()]
+        )
+        self.azimuthal_orientation_entry.configure(
+            textvariable=self.collector_orientation[self.collector_selected.get()]
+        )
+        self.azimuthal_orientation_slider.configure(
+            variable=self.collector_orientation[self.collector_selected.get()]
+        )
+        self.cost_entry.configure(
+            textvariable=self.costs[self.collector_selected.get()]
+        )
+        self.cost_decrease_entry.configure(
+            textvariable=self.cost_decrease[self.collector_selected.get()]
+        )
+        self.installation_cost_entry.configure(
+            textvariable=self.installation_costs[self.collector_selected.get()]
+        )
+        self.installation_cost_decrease_entry.configure(
+            textvariable=self.installation_cost_decrease[self.collector_selected.get()]
+        )
+        self.o_and_m_costs_entry.configure(
+            textvariable=self.o_and_m_costs[self.collector_selected.get()]
+        )
+        self.embedded_emissions_entry.configure(
+            textvariable=self.embedded_emissions[self.collector_selected.get()]
+        )
+        self.annual_emissions_decrease_entry.configure(
+            textvariable=self.annual_emissions_decrease[self.collector_selected.get()]
+        )
+        self.installation_emissions_entry.configure(
+            textvariable=self.installation_emissions[self.collector_selected.get()]
+        )
+        self.installation_emissions_decrease_entry.configure(
+            textvariable=self.installation_emissions_decrease[
+                self.collector_selected.get()
+            ]
+        )
+        self.om_emissions_entry.configure(
+            textvariable=self.om_emissions[self.collector_selected.get()]
+        )
+
+        # Update the entries
+        self.lifetime_entry.update()
+        self.lifetime_slider.update()
+        self.tilt_entry.update()
+        self.tilt_slider.update()
+        self.azimuthal_orientation_entry.update()
+        self.azimuthal_orientation_slider.update()
+        self.cost_entry.update()
+        self.cost_decrease_entry.update()
+        self.o_and_m_costs_entry.update()
+        self.embedded_emissions_entry.update()
+        self.annual_emissions_decrease_entry.update()
+        self.installation_emissions_entry.update()
+        self.installation_emissions_decrease_entry.update()
+        self.om_emissions_entry.update()
 
 
 class SolarThermalFrame(_BaseSolarFrame):
@@ -2016,8 +2432,8 @@ class SolarThermalFrame(_BaseSolarFrame):
         self.collector_selected = ttk.StringVar(value="sheet-and-tube")
         self.collector_name_values = {
             "FPC": self.collector_selected,
-            (panel_name := "ETC"): ttk.StringVar(self, panel_name),
-            (panel_name := "PTC"): ttk.StringVar(self, panel_name),
+            (collector_name := "ETC"): ttk.StringVar(self, collector_name),
+            (collector_name := "PTC"): ttk.StringVar(self, collector_name),
         }
 
         self.collector_label = ttk.Label(
