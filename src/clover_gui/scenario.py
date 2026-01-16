@@ -1038,13 +1038,14 @@ class ConfigurationFrame(ttk.Frame):
         )
         self.diesel_mode_label.grid(row=14, column=1, padx=10, pady=5, sticky="w")
 
+        self.diesel_mode: ttk.StringVar = ttk.StringVar(self, "")
         self.diesel_mode_combobox = ttk.Combobox(
-            self.scrollable_scenario_frame, state=DISABLED, width=10
+            self.scrollable_scenario_frame, state=DISABLED, width=10, textvariable=self.diesel_mode
         )
         self.diesel_mode_combobox.grid(row=14, column=2, padx=10, pady=5, sticky="ew")
-        self.diesel_mode_combobox["values"] = [e.value for e in DieselMode]
-        self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
-        # self.criterion_name_combobox.bind("<<ComboboxSelected>>", self.select_diesel_mode)
+        self.diesel_mode_combobox["values"] = [e.value.capitalize().replace("_", " ") for e in DieselMode if e != DieselMode.DISABLED]
+        self.diesel_mode_combobox.set(self.diesel_mode.get())
+        self.diesel_mode_combobox.bind("<<ComboboxSelected>>", self.select_diesel_mode)
 
         # Backup threshold
         self.diesel_backup_threshold_label = ttk.Label(
@@ -1251,7 +1252,7 @@ class ConfigurationFrame(ttk.Frame):
                     "diesel": {
                         # "mode": self.diesel_mode_combobox.get()
                         "mode": (
-                            DieselMode.BACKUP.value
+                            self.diesel_mode.get().replace(" ", "_").lower()
                             if self.diesel_selected.get()
                             else DieselMode.DISABLED.value
                         ),
@@ -1329,6 +1330,19 @@ class ConfigurationFrame(ttk.Frame):
             grid_profile_name,
         )
 
+    def select_diesel_mode(self, _) -> None:
+        """
+        Update units in sliders for when the diesel mode is selected.
+
+        """
+
+        match DieselMode(self.diesel_mode_combobox.get().replace(" ", "_").lower()):
+            case DieselMode.BACKUP:
+                self.diesel_backup_threshold_unit.configure(text=f"% of hours")
+
+            case DieselMode.BACKUP_UNMET:
+                self.diesel_backup_threshold_unit.configure(text=f"% of load")
+
     def set_batteries(self, battery_names: list[str]) -> None:
         """
         Set the names of the batteries in the combobox.
@@ -1388,9 +1402,13 @@ class ConfigurationFrame(ttk.Frame):
         if self.diesel_selected.get():
             self.diesel_backup_entry.configure(state="enabled")
             self.diesel_backup_slider.configure(state="enabled")
+            self.diesel_mode_label.configure(state="enabled")
+            self.diesel_mode_combobox.configure(state="enabled")
         else:
             self.diesel_backup_entry.configure(state=DISABLED)
             self.diesel_backup_slider.configure(state=DISABLED)
+            self.diesel_mode_label.configure(state=DISABLED)
+            self.diesel_mode_combobox.configure(state=DISABLED)
 
     def pv_button_callback(self):
         """Function called when the PV toggle is pressed"""
@@ -1673,8 +1691,7 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Set the diesel scenario information
-        # self.diesel_mode_combobox.set(scenario.diesel_scenario.mode.value)
-        # self.diesel_mode_combobox.set(DieselMode.BACKUP.value)
+        self.diesel_mode.set(scenario.diesel_scenario.mode.value.capitalize().replace("_", " "))
         self.diesel_backup_threshold.set(
             round(
                 (
