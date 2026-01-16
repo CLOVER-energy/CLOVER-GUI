@@ -1040,10 +1040,17 @@ class ConfigurationFrame(ttk.Frame):
 
         self.diesel_mode: ttk.StringVar = ttk.StringVar(self, "")
         self.diesel_mode_combobox = ttk.Combobox(
-            self.scrollable_scenario_frame, state=DISABLED, width=10, textvariable=self.diesel_mode
+            self.scrollable_scenario_frame,
+            state=DISABLED,
+            width=10,
+            textvariable=self.diesel_mode,
         )
         self.diesel_mode_combobox.grid(row=14, column=2, padx=10, pady=5, sticky="ew")
-        self.diesel_mode_combobox["values"] = [e.value.capitalize().replace("_", " ") for e in DieselMode if e != DieselMode.DISABLED]
+        self.diesel_mode_combobox["values"] = [
+            e.value.capitalize().replace("_", " ")
+            for e in DieselMode
+            if e != DieselMode.DISABLED
+        ]
         self.diesel_mode_combobox.set(self.diesel_mode.get())
         self.diesel_mode_combobox.bind("<<ComboboxSelected>>", self.select_diesel_mode)
 
@@ -1691,7 +1698,9 @@ class ConfigurationFrame(ttk.Frame):
         )
 
         # Set the diesel scenario information
-        self.diesel_mode.set(scenario.diesel_scenario.mode.value.capitalize().replace("_", " "))
+        self.diesel_mode.set(
+            scenario.diesel_scenario.mode.value.capitalize().replace("_", " ")
+        )
         self.diesel_backup_threshold.set(
             round(
                 (

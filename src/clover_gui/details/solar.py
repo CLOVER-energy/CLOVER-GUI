@@ -1384,13 +1384,300 @@ class PVTFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent):
+    def __init__(
+        self, parent, data_directory: str, renewables_ninja_token: ttk.StringVar
+    ):
+        """
+        Instantiate a :class:`PVTFrame` instance.
+
+        :param: parent
+            The parent frame.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
+
+
+        """
+
         super().__init__(parent)
 
         self.label = ttk.Label(self, text="PV-T frame")
         self.label.grid(row=0, column=0)
 
-        # TODO: Add configuration frame widgets and layout
+        self.add_collector_to_scenario_frame: Callable | None = None
+        self.set_panels_on_system_frame: Callable | None = None
+
+        self.renewables_ninja_token = renewables_ninja_token
+
+        self.help_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                _IMAGES_DIRECTORY,
+                "QMark_unhovered.png",
+            )
+        )
+
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self.scrolled_frame = ScrolledFrame(
+            self,
+            # bootstyle=f"{WARNING}-inverted"
+        )
+        self.scrolled_frame.grid(row=0, column=0, padx=10, pady=5, sticky="news")
+
+        self.scrolled_frame.rowconfigure(0, weight=1)
+        self.scrolled_frame.rowconfigure(1, weight=1)
+        self.scrolled_frame.rowconfigure(2, weight=1)
+        self.scrolled_frame.rowconfigure(3, weight=1)
+
+        self.scrolled_frame.columnconfigure(0, weight=5)
+        self.scrolled_frame.columnconfigure(1, weight=4)
+        self.scrolled_frame.columnconfigure(2, weight=3)
+        self.scrolled_frame.columnconfigure(3, weight=3)
+        self.scrolled_frame.columnconfigure(4, weight=3)
+        self.scrolled_frame.columnconfigure(5, weight=1)
+        self.scrolled_frame.columnconfigure(6, weight=1)
+
+        self.renewables_ninja_token_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=f"{WARNING}-inverted",
+            state=DISABLED,
+            textvariable=self.renewables_ninja_token,
+        )
+        self.renewables_ninja_token_entry.grid(
+            row=0, column=2, columnspan=4, padx=10, pady=5, sticky="ew", ipadx=60
+        )
+
+        # Panel selected
+        self.collector_selected = ttk.StringVar(value="sheet-and-tube")
+        self.collector_name_values = {
+            "sheet-and-tube": self.collector_selected,
+            (panel_name := "sheet-and-channel"): ttk.StringVar(self, panel_name),
+            (panel_name := "PV-air"): ttk.StringVar(self, panel_name),
+        }
+
+        self.collector_label = ttk.Label(
+            self.scrolled_frame,
+            text="Collector to configure",
+        )
+        self.collector_label.grid(
+            row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.pv_t_collector_combobox = ttk.Combobox(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.collector_selected,
+            state=READONLY,
+        )
+        self.pv_t_collector_combobox.grid(
+            row=1, column=2, columnspan=3, padx=10, pady=5, sticky="w", ipadx=60
+        )
+        self.pv_t_collector_combobox.bind(
+            "<<ComboboxSelected>>", self.select_pv_t_collector
+        )
+        self.populate_available_collectors()
+
+        # New panel
+        self.new_collector_button = ttk.Button(
+            self.scrolled_frame,
+            bootstyle=f"{WARNING}-{OUTLINE}",
+            command=self.add_collector,
+            text="New collector",
+        )
+        self.new_collector_button.grid(row=1, column=5, padx=10, pady=5, ipadx=40)
+
+        # Panel name
+        self.collector_name_label = ttk.Label(
+            self.scrolled_frame,
+            text="Collector name",
+        )
+        self.collector_name_label.grid(
+            row=2, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.collector_name_entry = ttk.Entry(
+            self.scrolled_frame, bootstyle=WARNING, textvariable=self.collector_selected
+        )
+        self.collector_name_entry.grid(
+            row=2, column=2, columnspan=2, padx=10, pady=5, sticky="ew", ipadx=50
+        )
+        self.collector_name_entry.bind("<Return>", self.enter_collector_name)
+
+        # Save panel name button
+        self.save_collector_name_button = ttk.Button(
+            self.scrolled_frame,
+            bootstyle=f"{WARNING}-{TOOLBUTTON}",
+            text="Save",
+            command=self.enter_collector_name,
+        )
+        self.save_collector_name_button.grid(
+            row=2, column=4, padx=10, pady=5, sticky="ew"
+        )
+
+    def add_collector(self) -> None:
+        """Called when a user presses the new-collector button."""
+
+        # Determine the new name
+        new_name = "New collector {suffix}"
+        index = 0
+        suffix = ""
+        while new_name.format(suffix=suffix) in self.panel_name_values:
+            index += 1
+            suffix = f"({index})"
+
+        new_name = new_name.format(suffix=suffix)
+
+        self.collector_name_values[new_name] = ttk.StringVar(self, new_name)
+        self.populate_available_collectors()
+
+        # Update all the mappings stored
+        # self.nominal_power[new_name] = ttk.DoubleVar(self, 1)
+        # self.panel_lifetimes[new_name] = ttk.DoubleVar(self, 15)
+        # self.panel_tilt[new_name] = ttk.DoubleVar(self, 0)
+        # self.panel_orientation[new_name] = ttk.DoubleVar(self, 180)
+        # self.reference_efficiencies[new_name] = ttk.DoubleVar(self, 0.015)
+        # self.reference_temperature[new_name] = ttk.DoubleVar(self, 25)
+        # self.thermal_coefficient[new_name] = ttk.DoubleVar(self, 0.56)
+        # self.costs[new_name] = ttk.DoubleVar(self, 0)
+        # self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_costs[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
+        # self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
+        # self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
+        # self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_emissions[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.tracking[new_name] = ttk.IntVar(self, 0)
+
+        # # Select the new panel and update the screen
+        # self.panel_selected = self.panel_name_values[new_name]
+        # self.pv_panel_combobox.configure(textvariable=self.panel_selected)
+        # self.panel_name_entry.configure(textvariable=self.panel_selected)
+        # self.update_panel_frame()
+
+        # Add the panel to the system frame's list of panels.
+        self.add_collector_to_scenario_frame(new_name)
+
+    def enter_collector_name(self, _=None) -> None:
+        """Called when someone enters a new collector name."""
+
+        self.populate_available_collectors()
+
+        # # Update all the mappings stored
+        # self.nominal_power = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.nominal_power.items()
+        # }
+        # self.panel_lifetimes = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.panel_lifetimes.items()
+        # }
+        # self.panel_tilt = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.panel_tilt.items()
+        # }
+        # self.panel_orientation = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.panel_orientation.items()
+        # }
+        # self.reference_efficiencies = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.reference_efficiencies.items()
+        # }
+        # self.reference_temperature = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.reference_temperature.items()
+        # }
+        # self.thermal_coefficient = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.thermal_coefficient.items()
+        # }
+        # self.costs = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.costs.items()
+        # }
+        # self.cost_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.cost_decrease.items()
+        # }
+        # self.installation_costs = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_costs.items()
+        # }
+        # self.installation_cost_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_cost_decrease.items()
+        # }
+        # self.o_and_m_costs = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.o_and_m_costs.items()
+        # }
+        # self.embedded_emissions = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.embedded_emissions.items()
+        # }
+        # self.annual_emissions_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.annual_emissions_decrease.items()
+        # }
+        # self.installation_emissions = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_emissions.items()
+        # }
+        # self.installation_emissions_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_emissions_decrease.items()
+        # }
+        # self.om_emissions = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.om_emissions.items()
+        # }
+        # self.tracking = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.tracking.items()
+        # }
+
+        # # Update the panel-name values.
+        # self.panel_name_values = {
+        #     entry.get(): entry for entry in self.panel_name_values.values()
+        # }
+
+        # # Update the panel name values in the system frame.
+        # self.set_panels_on_system_frame(list(self.panel_name_values.keys()))
+
+    def populate_available_collectors(self) -> None:
+        """Populate the combo box with the set of avialable panels."""
+
+        self.pv_t_collector_combobox["values"] = [
+            entry.get() for entry in self.collector_name_values.values()
+        ]
+
+    def select_pv_t_collector(self, _) -> None:
+        """Select the PV-T collector."""
+
+        # Determine the collector name pre- and post-selection
+        previous_collector_name: str = {
+            (entry == self.collector_selected): key
+            for key, entry in self.collector_name_values.items()
+        }[True]
+        selected_collector_name: str = self.pv_t_collector_combobox.get()
+
+        # Reset the value of the old variable
+        self.collector_name_values[previous_collector_name].set(previous_collector_name)
+
+        # Set the variable to be the new selected variable
+        self.collector_selected = self.collector_name_values[selected_collector_name]
+        self.pv_t_collector_combobox.configure(textvariable=self.collector_selected)
+        self.collector_name_entry.configure(textvariable=self.collector_selected)
+
+        # Update the tracking
+        self._tracking_callback()
+
+        # Update the variables being displayed.
+        self.update_panel_frame()
 
 
 class SolarThermalFrame(ttk.Frame):
@@ -1403,13 +1690,301 @@ class SolarThermalFrame(ttk.Frame):
 
     """
 
-    def __init__(self, parent):
+    def __init__(
+        self, parent, data_directory: str, renewables_ninja_token: ttk.StringVar
+    ):
+        """
+        Instantiate a :class:`SolarThermalFrame` instance.
+
+        :param: parent
+            The parent frame.
+
+        :param: renewables_ninja_token
+            The renewables.ninja API token for the user.
+
+
+        """
         super().__init__(parent)
 
         self.label = ttk.Label(self, text="Solar-thermal frame")
         self.label.grid(row=0, column=0)
 
-        # TODO: Add configuration frame widgets and layout
+        self.add_collector_to_scenario_frame: Callable | None = None
+        self.set_panels_on_system_frame: Callable | None = None
+
+        self.renewables_ninja_token = renewables_ninja_token
+
+        self.help_image = ttk.PhotoImage(
+            file=os.path.join(
+                data_directory,
+                _IMAGES_DIRECTORY,
+                "QMark_unhovered.png",
+            )
+        )
+
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        self.scrolled_frame = ScrolledFrame(
+            self,
+            # bootstyle=f"{WARNING}-inverted"
+        )
+        self.scrolled_frame.grid(row=0, column=0, padx=10, pady=5, sticky="news")
+
+        self.scrolled_frame.rowconfigure(0, weight=1)
+        self.scrolled_frame.rowconfigure(1, weight=1)
+        self.scrolled_frame.rowconfigure(2, weight=1)
+        self.scrolled_frame.rowconfigure(3, weight=1)
+
+        self.scrolled_frame.columnconfigure(0, weight=5)
+        self.scrolled_frame.columnconfigure(1, weight=4)
+        self.scrolled_frame.columnconfigure(2, weight=3)
+        self.scrolled_frame.columnconfigure(3, weight=3)
+        self.scrolled_frame.columnconfigure(4, weight=3)
+        self.scrolled_frame.columnconfigure(5, weight=1)
+        self.scrolled_frame.columnconfigure(6, weight=1)
+
+        self.renewables_ninja_token_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=f"{WARNING}-inverted",
+            state=DISABLED,
+            textvariable=self.renewables_ninja_token,
+        )
+        self.renewables_ninja_token_entry.grid(
+            row=0, column=2, columnspan=4, padx=10, pady=5, sticky="ew", ipadx=60
+        )
+
+        # Panel selected
+        self.collector_selected = ttk.StringVar(value="sheet-and-tube")
+        self.collector_name_values = {
+            "FPC": self.collector_selected,
+            (panel_name := "ETC"): ttk.StringVar(self, panel_name),
+            (panel_name := "PTC"): ttk.StringVar(self, panel_name),
+        }
+
+        self.collector_label = ttk.Label(
+            self.scrolled_frame,
+            text="Collector to configure",
+        )
+        self.collector_label.grid(
+            row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.solar_thermal_collector_combobox = ttk.Combobox(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.collector_selected,
+            state=READONLY,
+        )
+        self.solar_thermal_collector_combobox.grid(
+            row=1, column=2, columnspan=3, padx=10, pady=5, sticky="w", ipadx=60
+        )
+        self.solar_thermal_collector_combobox.bind(
+            "<<ComboboxSelected>>", self.select_solar_thermal_collector
+        )
+        self.populate_available_collectors()
+
+        # New panel
+        self.new_collector_button = ttk.Button(
+            self.scrolled_frame,
+            bootstyle=f"{WARNING}-{OUTLINE}",
+            command=self.add_collector,
+            text="New collector",
+        )
+        self.new_collector_button.grid(row=1, column=5, padx=10, pady=5, ipadx=40)
+
+        # Panel name
+        self.collector_name_label = ttk.Label(
+            self.scrolled_frame,
+            text="Collector name",
+        )
+        self.collector_name_label.grid(
+            row=2, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.collector_name_entry = ttk.Entry(
+            self.scrolled_frame, bootstyle=WARNING, textvariable=self.collector_selected
+        )
+        self.collector_name_entry.grid(
+            row=2, column=2, columnspan=2, padx=10, pady=5, sticky="ew", ipadx=50
+        )
+        self.collector_name_entry.bind("<Return>", self.enter_collector_name)
+
+        # Save panel name button
+        self.save_collector_name_button = ttk.Button(
+            self.scrolled_frame,
+            bootstyle=f"{WARNING}-{TOOLBUTTON}",
+            text="Save",
+            command=self.enter_collector_name,
+        )
+        self.save_collector_name_button.grid(
+            row=2, column=4, padx=10, pady=5, sticky="ew"
+        )
+
+    def add_collector(self) -> None:
+        """Called when a user presses the new-collector button."""
+
+        # Determine the new name
+        new_name = "New collector {suffix}"
+        index = 0
+        suffix = ""
+        while new_name.format(suffix=suffix) in self.panel_name_values:
+            index += 1
+            suffix = f"({index})"
+
+        new_name = new_name.format(suffix=suffix)
+
+        self.collector_name_values[new_name] = ttk.StringVar(self, new_name)
+        self.populate_available_collectors()
+
+        # Update all the mappings stored
+        # self.nominal_power[new_name] = ttk.DoubleVar(self, 1)
+        # self.panel_lifetimes[new_name] = ttk.DoubleVar(self, 15)
+        # self.panel_tilt[new_name] = ttk.DoubleVar(self, 0)
+        # self.panel_orientation[new_name] = ttk.DoubleVar(self, 180)
+        # self.reference_efficiencies[new_name] = ttk.DoubleVar(self, 0.015)
+        # self.reference_temperature[new_name] = ttk.DoubleVar(self, 25)
+        # self.thermal_coefficient[new_name] = ttk.DoubleVar(self, 0.56)
+        # self.costs[new_name] = ttk.DoubleVar(self, 0)
+        # self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_costs[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_cost_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.o_and_m_costs[new_name] = ttk.DoubleVar(self, 0)
+        # self.embedded_emissions[new_name] = ttk.DoubleVar(self, 0)
+        # self.om_emissions[new_name] = ttk.DoubleVar(self, 0)
+        # self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_emissions[new_name] = ttk.DoubleVar(self, 0)
+        # self.installation_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
+        # self.tracking[new_name] = ttk.IntVar(self, 0)
+
+        # # Select the new panel and update the screen
+        # self.panel_selected = self.panel_name_values[new_name]
+        # self.pv_panel_combobox.configure(textvariable=self.panel_selected)
+        # self.panel_name_entry.configure(textvariable=self.panel_selected)
+        # self.update_panel_frame()
+
+        # Add the panel to the system frame's list of panels.
+        self.add_collector_to_scenario_frame(new_name)
+
+    def enter_collector_name(self, _=None) -> None:
+        """Called when someone enters a new collector name."""
+
+        self.populate_available_collectors()
+
+        # # Update all the mappings stored
+        # self.nominal_power = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.nominal_power.items()
+        # }
+        # self.panel_lifetimes = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.panel_lifetimes.items()
+        # }
+        # self.panel_tilt = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.panel_tilt.items()
+        # }
+        # self.panel_orientation = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.panel_orientation.items()
+        # }
+        # self.reference_efficiencies = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.reference_efficiencies.items()
+        # }
+        # self.reference_temperature = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.reference_temperature.items()
+        # }
+        # self.thermal_coefficient = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.thermal_coefficient.items()
+        # }
+        # self.costs = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.costs.items()
+        # }
+        # self.cost_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.cost_decrease.items()
+        # }
+        # self.installation_costs = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_costs.items()
+        # }
+        # self.installation_cost_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_cost_decrease.items()
+        # }
+        # self.o_and_m_costs = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.o_and_m_costs.items()
+        # }
+        # self.embedded_emissions = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.embedded_emissions.items()
+        # }
+        # self.annual_emissions_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.annual_emissions_decrease.items()
+        # }
+        # self.installation_emissions = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_emissions.items()
+        # }
+        # self.installation_emissions_decrease = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.installation_emissions_decrease.items()
+        # }
+        # self.om_emissions = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.om_emissions.items()
+        # }
+        # self.tracking = {
+        #     self.panel_name_values[key].get(): value
+        #     for key, value in self.tracking.items()
+        # }
+
+        # # Update the panel-name values.
+        # self.panel_name_values = {
+        #     entry.get(): entry for entry in self.panel_name_values.values()
+        # }
+
+        # # Update the panel name values in the system frame.
+        # self.set_panels_on_system_frame(list(self.panel_name_values.keys()))
+
+    def populate_available_collectors(self) -> None:
+        """Populate the combo box with the set of avialable panels."""
+
+        self.solar_thermal_collector_combobox["values"] = [
+            entry.get() for entry in self.collector_name_values.values()
+        ]
+
+    def select_solar_thermal_collector(self, _) -> None:
+        """Select the solar-thermal collector."""
+
+        # Determine the collector name pre- and post-selection
+        previous_collector_name: str = {
+            (entry == self.collector_selected): key
+            for key, entry in self.collector_name_values.items()
+        }[True]
+        selected_collector_name: str = self.solar_thermal_collector_combobox.get()
+
+        # Reset the value of the old variable
+        self.collector_name_values[previous_collector_name].set(previous_collector_name)
+
+        # Set the variable to be the new selected variable
+        self.collector_selected = self.collector_name_values[selected_collector_name]
+        self.solar_thermal_collector_combobox.configure(
+            textvariable=self.collector_selected
+        )
+        self.collector_name_entry.configure(textvariable=self.collector_selected)
+
+        # Update the tracking
+        self._tracking_callback()
+
+        # Update the variables being displayed.
+        self.update_panel_frame()
 
 
 class SolarFrame(ttk.Frame):
@@ -1455,17 +2030,16 @@ class SolarFrame(ttk.Frame):
             sticky="news",
         )
 
-        self.pv_t_frame = PVTFrame(self)
-        self.solar_notebook.add(
-            self.pv_t_frame,  text="PV-T collectors", sticky="news", state=DISABLED
-        )
+        self.pv_t_frame = PVTFrame(self, data_directory, renewables_ninja_token)
+        self.solar_notebook.add(self.pv_t_frame, text="PV-T collectors", sticky="news")
 
-        self.solar_thermal_frame = SolarThermalFrame(self)
+        self.solar_thermal_frame = SolarThermalFrame(
+            self, data_directory, renewables_ninja_token
+        )
         self.solar_notebook.add(
             self.solar_thermal_frame,
-             text="Solar-thermal collectors",
+            text="Solar-thermal collectors",
             sticky="news",
-            state=DISABLED,
         )
 
         # TODO: Add configuration frame widgets and layout
