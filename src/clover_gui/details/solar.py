@@ -45,7 +45,73 @@ _IMAGES_DIRECTORY: str = "images"
 __all__ = ("SolarFrame",)
 
 
-class PVFrame(ttk.Frame):
+class _BaseSolarFrame(ttk.Frame):
+    """
+    Constains base functionality utilised by all of the solar frames.
+
+    """
+
+    def __init__(self, parent) -> None:
+        """
+        Instantiate the base frame.
+
+        """
+
+        super().__init__(parent)
+
+    def _fixed_axis_callback(self) -> None:
+        """Callback when the fixed-tracking button is depressed."""
+
+        self.tracking[self.collector_selected.get()].set(Tracking.FIXED.value)
+        self.fixed_tracking.set(True)
+        self.single_axis_tracking.set(False)
+        self.dual_axis_tracking.set(False)
+
+        self.tilt_entry.configure(state=(_enabled := "enabled"))
+        self.tilt_slider.configure(state=_enabled)
+        self.azimuthal_orientation_entry.configure(state=_enabled)
+        self.azimuthal_orientation_slider.configure(state=_enabled)
+
+    def _single_axis_callback(self) -> None:
+        """Callback when the single-axis-tracking button is depressed."""
+
+        self.tracking[self.collector_selected.get()].set(Tracking.SINGLE_AXIS.value)
+        self.fixed_tracking.set(False)
+        self.single_axis_tracking.set(True)
+        self.dual_axis_tracking.set(False)
+
+        self.tilt_entry.configure(state=(_enabled := "enabled"))
+        self.tilt_slider.configure(state=_enabled)
+        self.azimuthal_orientation_entry.configure(state=DISABLED)
+        self.azimuthal_orientation_slider.configure(state=DISABLED)
+
+    def _dual_axis_callback(self) -> None:
+        """Callback when the dual-axis-tracking button is depressed."""
+
+        self.tracking[self.collector_selected.get()].set(Tracking.DUAL_AXIS.value)
+        self.fixed_tracking.set(False)
+        self.single_axis_tracking.set(False)
+        self.dual_axis_tracking.set(True)
+
+        self.tilt_entry.configure(state=DISABLED)
+        self.tilt_slider.configure(state=DISABLED)
+        self.azimuthal_orientation_entry.configure(state=DISABLED)
+        self.azimuthal_orientation_slider.configure(state=DISABLED)
+
+    def _tracking_callback(self) -> None:
+        """Deals with tracking callback."""
+
+        if (
+            _tracking := self.tracking[self.collector_selected.get()].get()
+        ) == Tracking.FIXED.value:
+            self._fixed_axis_callback()
+        elif _tracking == Tracking.SINGLE_AXIS.value:
+            self._single_axis_callback()
+        else:
+            self._dual_axis_callback()
+
+
+class PVFrame(_BaseSolarFrame):
     """
     Represents the Solar PV frame.
 
@@ -128,9 +194,9 @@ class PVFrame(ttk.Frame):
         )
 
         # Panel selected
-        self.panel_selected = ttk.StringVar(value="m-Si")
+        self.collector_selected = ttk.StringVar(value="m-Si")
         self.panel_name_values = {
-            "m-Si": self.panel_selected,
+            "m-Si": self.collector_selected,
             (panel_name := "p-Si"): ttk.StringVar(self, panel_name),
             (panel_name := "CdTe"): ttk.StringVar(self, panel_name),
         }
@@ -146,7 +212,7 @@ class PVFrame(ttk.Frame):
         self.pv_panel_combobox = ttk.Combobox(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.panel_selected,
+            textvariable=self.collector_selected,
             state=READONLY,
         )
         self.pv_panel_combobox.grid(
@@ -174,7 +240,7 @@ class PVFrame(ttk.Frame):
         )
 
         self.panel_name_entry = ttk.Entry(
-            self.scrolled_frame, bootstyle=WARNING, textvariable=self.panel_selected
+            self.scrolled_frame, bootstyle=WARNING, textvariable=self.collector_selected
         )
         self.panel_name_entry.grid(
             row=2, column=2, columnspan=2, padx=10, pady=5, sticky="ew", ipadx=50
@@ -206,7 +272,7 @@ class PVFrame(ttk.Frame):
         self.nominal_power_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.nominal_power[self.panel_selected.get()],
+            textvariable=self.nominal_power[self.collector_selected.get()],
         )
         self.nominal_power_entry.grid(
             row=3,
@@ -235,7 +301,7 @@ class PVFrame(ttk.Frame):
         }
 
         def scalar_lifetime(_):
-            self.panel_lifetimes[self.panel_selected.get()].set(
+            self.panel_lifetimes[self.collector_selected.get()].set(
                 int(self.lifetime_slider.get())
             )
             self.lifetime_entry.update()
@@ -248,24 +314,24 @@ class PVFrame(ttk.Frame):
             # length=320,
             command=scalar_lifetime,
             bootstyle=WARNING,
-            variable=self.panel_lifetimes[self.panel_selected.get()],
+            variable=self.panel_lifetimes[self.collector_selected.get()],
         )
         self.lifetime_slider.grid(
             row=4, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def enter_lifetime(_):
-            self.panel_lifetimes[self.panel_selected.get()].set(
+            self.panel_lifetimes[self.collector_selected.get()].set(
                 int(self.lifetime_entry.get())
             )
             self.lifetime_slider.set(
-                self.panel_lifetimes[self.panel_selected.get()].get()
+                self.panel_lifetimes[self.collector_selected.get()].get()
             )
 
         self.lifetime_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.panel_lifetimes[self.panel_selected.get()],
+            textvariable=self.panel_lifetimes[self.collector_selected.get()],
         )
         self.lifetime_entry.grid(row=4, column=5, padx=10, pady=5, sticky="ew")
         self.lifetime_entry.bind("<Return>", enter_lifetime)
@@ -336,7 +402,7 @@ class PVFrame(ttk.Frame):
         }
 
         def scalar_tilt(_):
-            self.panel_tilt[self.panel_selected.get()].set(
+            self.panel_tilt[self.collector_selected.get()].set(
                 round(self.tilt_slider.get(), 0)
             )
             self.tilt_entry.update()
@@ -349,24 +415,24 @@ class PVFrame(ttk.Frame):
             # length=320,
             command=scalar_tilt,
             bootstyle=WARNING,
-            variable=self.panel_tilt[self.panel_selected.get()],
+            variable=self.panel_tilt[self.collector_selected.get()],
         )
         self.tilt_slider.grid(
             row=6, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def enter_tilt(_):
-            self.panel_tilt[self.panel_selected.get()].set(
+            self.panel_tilt[self.collector_selected.get()].set(
                 round(float(self.tilt_entry.get()), 2)
             )
             self.tilt_slider.set(
-                round(self.panel_tilt[self.panel_selected.get()].get(), 2)
+                round(self.panel_tilt[self.collector_selected.get()].get(), 2)
             )
 
         self.tilt_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.panel_tilt[self.panel_selected.get()],
+            textvariable=self.panel_tilt[self.collector_selected.get()],
         )
         self.tilt_entry.grid(row=6, column=5, padx=10, pady=5, sticky="ew")
         self.tilt_entry.bind("<Return>", enter_tilt)
@@ -411,7 +477,7 @@ class PVFrame(ttk.Frame):
         }
 
         def scalar_azimuthal_orientation(_):
-            self.panel_orientation[self.panel_selected.get()].set(
+            self.panel_orientation[self.collector_selected.get()].set(
                 round(self.azimuthal_orientation_slider.get(), 0)
             )
             self.azimuthal_orientation_entry.update()
@@ -424,24 +490,24 @@ class PVFrame(ttk.Frame):
             # length=320,
             command=scalar_azimuthal_orientation,
             bootstyle=WARNING,
-            variable=self.panel_orientation[self.panel_selected.get()],
+            variable=self.panel_orientation[self.collector_selected.get()],
         )
         self.azimuthal_orientation_slider.grid(
             row=8, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def enter_azimuthal_orientation(_):
-            self.panel_orientation[self.panel_selected.get()].set(
+            self.panel_orientation[self.collector_selected.get()].set(
                 round(float(self.azimuthal_orientation_entry.get()), 2)
             )
             self.azimuthal_orientation_slider.set(
-                round(self.panel_orientation[self.panel_selected.get()].get(), 2)
+                round(self.panel_orientation[self.collector_selected.get()].get(), 2)
             )
 
         self.azimuthal_orientation_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.panel_orientation[self.panel_selected.get()],
+            textvariable=self.panel_orientation[self.collector_selected.get()],
         )
         self.azimuthal_orientation_entry.grid(
             row=8, column=5, padx=10, pady=5, sticky="ew"
@@ -471,7 +537,7 @@ class PVFrame(ttk.Frame):
         }
 
         def scalar_reference_efficiency(_):
-            self.reference_efficiencies[self.panel_selected.get()].set(
+            self.reference_efficiencies[self.collector_selected.get()].set(
                 self.reference_efficiency_slider.get()
             )
             self.reference_efficiency_entry.update()
@@ -485,25 +551,25 @@ class PVFrame(ttk.Frame):
             command=scalar_reference_efficiency,
             bootstyle=f"{WARNING}-inverted",
             state=DISABLED,
-            variable=self.reference_efficiencies[self.panel_selected.get()],
+            variable=self.reference_efficiencies[self.collector_selected.get()],
         )
         self.reference_efficiency_slider.grid(
             row=9, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def enter_reference_efficiency(_):
-            self.reference_efficiencies[self.panel_selected.get()].set(
+            self.reference_efficiencies[self.collector_selected.get()].set(
                 self.reference_efficiency_entry.get()
             )
             self.reference_efficiency_slider.set(
-                self.reference_efficiencies[self.panel_selected.get()].get()
+                self.reference_efficiencies[self.collector_selected.get()].get()
             )
 
         self.reference_efficiency_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=f"{WARNING}-inverted",
             state=DISABLED,
-            textvariable=self.reference_efficiencies[self.panel_selected.get()],
+            textvariable=self.reference_efficiencies[self.collector_selected.get()],
         )
         self.reference_efficiency_entry.grid(
             row=9, column=5, padx=10, pady=5, sticky="ew"
@@ -531,7 +597,7 @@ class PVFrame(ttk.Frame):
         self.reference_temperature_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.reference_temperature[self.panel_selected.get()],
+            textvariable=self.reference_temperature[self.collector_selected.get()],
             state=DISABLED,
         )
         self.reference_temperature_entry.grid(
@@ -567,7 +633,7 @@ class PVFrame(ttk.Frame):
         self.thermal_coefficient_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.thermal_coefficient[self.panel_selected.get()],
+            textvariable=self.thermal_coefficient[self.collector_selected.get()],
             state=DISABLED,
         )
         self.thermal_coefficient_entry.grid(
@@ -603,7 +669,7 @@ class PVFrame(ttk.Frame):
         self.cost_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.costs[self.panel_selected.get()],
+            textvariable=self.costs[self.collector_selected.get()],
         )
         self.cost_entry.grid(
             row=12, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
@@ -631,7 +697,7 @@ class PVFrame(ttk.Frame):
         self.cost_decrease_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.cost_decrease[self.panel_selected.get()],
+            textvariable=self.cost_decrease[self.collector_selected.get()],
         )
         self.cost_decrease_entry.grid(
             row=13,
@@ -664,7 +730,7 @@ class PVFrame(ttk.Frame):
         self.installation_cost_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.installation_costs[self.panel_selected.get()],
+            textvariable=self.installation_costs[self.collector_selected.get()],
         )
         self.installation_cost_entry.grid(
             row=14,
@@ -699,7 +765,7 @@ class PVFrame(ttk.Frame):
         self.installation_cost_decrease_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.installation_cost_decrease[self.panel_selected.get()],
+            textvariable=self.installation_cost_decrease[self.collector_selected.get()],
         )
         self.installation_cost_decrease_entry.grid(
             row=15,
@@ -734,7 +800,7 @@ class PVFrame(ttk.Frame):
         self.o_and_m_costs_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.o_and_m_costs[self.panel_selected.get()],
+            textvariable=self.o_and_m_costs[self.collector_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
             row=16,
@@ -767,7 +833,7 @@ class PVFrame(ttk.Frame):
         self.embedded_emissions_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.embedded_emissions[self.panel_selected.get()],
+            textvariable=self.embedded_emissions[self.collector_selected.get()],
         )
         self.embedded_emissions_entry.grid(
             row=17,
@@ -800,7 +866,7 @@ class PVFrame(ttk.Frame):
         self.annual_emissions_decrease_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.annual_emissions_decrease[self.panel_selected.get()],
+            textvariable=self.annual_emissions_decrease[self.collector_selected.get()],
         )
         self.annual_emissions_decrease_entry.grid(
             row=18,
@@ -835,7 +901,7 @@ class PVFrame(ttk.Frame):
         self.installation_emissions_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.installation_emissions[self.panel_selected.get()],
+            textvariable=self.installation_emissions[self.collector_selected.get()],
         )
         self.installation_emissions_entry.grid(
             row=19,
@@ -873,7 +939,7 @@ class PVFrame(ttk.Frame):
             self.scrolled_frame,
             bootstyle=WARNING,
             textvariable=self.installation_emissions_decrease[
-                self.panel_selected.get()
+                self.collector_selected.get()
             ],
         )
         self.installation_emissions_decrease_entry.grid(
@@ -909,7 +975,7 @@ class PVFrame(ttk.Frame):
         self.om_emissions_entry = ttk.Entry(
             self.scrolled_frame,
             bootstyle=WARNING,
-            textvariable=self.om_emissions[self.panel_selected.get()],
+            textvariable=self.om_emissions[self.collector_selected.get()],
         )
         self.om_emissions_entry.grid(
             row=21,
@@ -925,57 +991,6 @@ class PVFrame(ttk.Frame):
             text="kgCO2eq / kWp / year",
         )
         self.om_emissions_unit.grid(row=21, column=5, padx=10, pady=5, sticky="w")
-
-    def _fixed_axis_callback(self) -> None:
-        """Callback when the fixed-tracking button is depressed."""
-
-        self.tracking[self.panel_selected.get()].set(Tracking.FIXED.value)
-        self.fixed_tracking.set(True)
-        self.single_axis_tracking.set(False)
-        self.dual_axis_tracking.set(False)
-
-        self.tilt_entry.configure(state=(_enabled := "enabled"))
-        self.tilt_slider.configure(state=_enabled)
-        self.azimuthal_orientation_entry.configure(state=_enabled)
-        self.azimuthal_orientation_slider.configure(state=_enabled)
-
-    def _single_axis_callback(self) -> None:
-        """Callback when the single-axis-tracking button is depressed."""
-
-        self.tracking[self.panel_selected.get()].set(Tracking.SINGLE_AXIS.value)
-        self.fixed_tracking.set(False)
-        self.single_axis_tracking.set(True)
-        self.dual_axis_tracking.set(False)
-
-        self.tilt_entry.configure(state=(_enabled := "enabled"))
-        self.tilt_slider.configure(state=_enabled)
-        self.azimuthal_orientation_entry.configure(state=DISABLED)
-        self.azimuthal_orientation_slider.configure(state=DISABLED)
-
-    def _dual_axis_callback(self) -> None:
-        """Callback when the dual-axis-tracking button is depressed."""
-
-        self.tracking[self.panel_selected.get()].set(Tracking.DUAL_AXIS.value)
-        self.fixed_tracking.set(False)
-        self.single_axis_tracking.set(False)
-        self.dual_axis_tracking.set(True)
-
-        self.tilt_entry.configure(state=DISABLED)
-        self.tilt_slider.configure(state=DISABLED)
-        self.azimuthal_orientation_entry.configure(state=DISABLED)
-        self.azimuthal_orientation_slider.configure(state=DISABLED)
-
-    def _tracking_callback(self) -> None:
-        """Deals with tracking callback."""
-
-        if (
-            _tracking := self.tracking[self.panel_selected.get()].get()
-        ) == Tracking.FIXED.value:
-            self._fixed_axis_callback()
-        elif _tracking == Tracking.SINGLE_AXIS.value:
-            self._single_axis_callback()
-        else:
-            self._dual_axis_callback()
 
     def add_panel(self) -> None:
         """Called when a user presses the new-panel button."""
@@ -1014,9 +1029,9 @@ class PVFrame(ttk.Frame):
         self.tracking[new_name] = ttk.IntVar(self, 0)
 
         # Select the new panel and update the screen
-        self.panel_selected = self.panel_name_values[new_name]
-        self.pv_panel_combobox.configure(textvariable=self.panel_selected)
-        self.panel_name_entry.configure(textvariable=self.panel_selected)
+        self.collector_selected = self.panel_name_values[new_name]
+        self.pv_panel_combobox.configure(textvariable=self.collector_selected)
+        self.panel_name_entry.configure(textvariable=self.collector_selected)
         self.update_panel_frame()
 
         # Add the panel to the system frame's list of panels.
@@ -1121,7 +1136,7 @@ class PVFrame(ttk.Frame):
 
         # Determine the panel name pre- and post-selection
         previous_panel_name: str = {
-            (entry == self.panel_selected): key
+            (entry == self.collector_selected): key
             for key, entry in self.panel_name_values.items()
         }[True]
         selected_panel_name: str = self.pv_panel_combobox.get()
@@ -1130,9 +1145,9 @@ class PVFrame(ttk.Frame):
         self.panel_name_values[previous_panel_name].set(previous_panel_name)
 
         # Set the variable to be the new selected variable
-        self.panel_selected = self.panel_name_values[selected_panel_name]
-        self.pv_panel_combobox.configure(textvariable=self.panel_selected)
-        self.panel_name_entry.configure(textvariable=self.panel_selected)
+        self.collector_selected = self.panel_name_values[selected_panel_name]
+        self.pv_panel_combobox.configure(textvariable=self.collector_selected)
+        self.panel_name_entry.configure(textvariable=self.collector_selected)
 
         # Update the tracking
         self._tracking_callback()
@@ -1276,7 +1291,7 @@ class PVFrame(ttk.Frame):
                 self, this_pv_panel_emissions.get(OM_GHGS, 0)
             )
 
-        self.panel_selected = self.panel_name_values[
+        self.collector_selected = self.panel_name_values[
             (_selected_panel := pv_panels[0]).name
         ]
 
@@ -1284,8 +1299,8 @@ class PVFrame(ttk.Frame):
         self._tracking_callback()
 
         self.pv_panel_combobox["values"] = [panel.name for panel in pv_panels]
-        self.pv_panel_combobox.set(self.panel_selected.get())
-        self.select_pv_panel(self.panel_selected.get())
+        self.pv_panel_combobox.set(self.collector_selected.get())
+        self.select_pv_panel(self.collector_selected.get())
 
     def update_panel_frame(self) -> None:
         """
@@ -1294,63 +1309,69 @@ class PVFrame(ttk.Frame):
         """
 
         self.nominal_power_entry.configure(
-            textvariable=self.nominal_power[self.panel_selected.get()]
+            textvariable=self.nominal_power[self.collector_selected.get()]
         )
         self.lifetime_entry.configure(
-            textvariable=self.panel_lifetimes[self.panel_selected.get()]
+            textvariable=self.panel_lifetimes[self.collector_selected.get()]
         )
         self.lifetime_slider.configure(
-            variable=self.panel_lifetimes[self.panel_selected.get()]
+            variable=self.panel_lifetimes[self.collector_selected.get()]
         )
         self.tilt_entry.configure(
-            textvariable=self.panel_tilt[self.panel_selected.get()]
+            textvariable=self.panel_tilt[self.collector_selected.get()]
         )
-        self.tilt_slider.configure(variable=self.panel_tilt[self.panel_selected.get()])
+        self.tilt_slider.configure(
+            variable=self.panel_tilt[self.collector_selected.get()]
+        )
         self.azimuthal_orientation_entry.configure(
-            textvariable=self.panel_orientation[self.panel_selected.get()]
+            textvariable=self.panel_orientation[self.collector_selected.get()]
         )
         self.azimuthal_orientation_slider.configure(
-            variable=self.panel_orientation[self.panel_selected.get()]
+            variable=self.panel_orientation[self.collector_selected.get()]
         )
         self.reference_efficiency_entry.configure(
-            textvariable=self.reference_efficiencies[self.panel_selected.get()]
+            textvariable=self.reference_efficiencies[self.collector_selected.get()]
         )
         self.reference_efficiency_slider.configure(
-            variable=self.reference_efficiencies[self.panel_selected.get()]
+            variable=self.reference_efficiencies[self.collector_selected.get()]
         )
         self.reference_temperature_entry.configure(
-            textvariable=self.reference_temperature[self.panel_selected.get()]
+            textvariable=self.reference_temperature[self.collector_selected.get()]
         )
         self.thermal_coefficient_entry.configure(
-            textvariable=self.thermal_coefficient[self.panel_selected.get()]
+            textvariable=self.thermal_coefficient[self.collector_selected.get()]
         )
-        self.cost_entry.configure(textvariable=self.costs[self.panel_selected.get()])
+        self.cost_entry.configure(
+            textvariable=self.costs[self.collector_selected.get()]
+        )
         self.cost_decrease_entry.configure(
-            textvariable=self.cost_decrease[self.panel_selected.get()]
+            textvariable=self.cost_decrease[self.collector_selected.get()]
         )
         self.installation_cost_entry.configure(
-            textvariable=self.installation_costs[self.panel_selected.get()]
+            textvariable=self.installation_costs[self.collector_selected.get()]
         )
         self.installation_cost_decrease_entry.configure(
-            textvariable=self.installation_cost_decrease[self.panel_selected.get()]
+            textvariable=self.installation_cost_decrease[self.collector_selected.get()]
         )
         self.o_and_m_costs_entry.configure(
-            textvariable=self.o_and_m_costs[self.panel_selected.get()]
+            textvariable=self.o_and_m_costs[self.collector_selected.get()]
         )
         self.embedded_emissions_entry.configure(
-            textvariable=self.embedded_emissions[self.panel_selected.get()]
+            textvariable=self.embedded_emissions[self.collector_selected.get()]
         )
         self.annual_emissions_decrease_entry.configure(
-            textvariable=self.annual_emissions_decrease[self.panel_selected.get()]
+            textvariable=self.annual_emissions_decrease[self.collector_selected.get()]
         )
         self.installation_emissions_entry.configure(
-            textvariable=self.installation_emissions[self.panel_selected.get()]
+            textvariable=self.installation_emissions[self.collector_selected.get()]
         )
         self.installation_emissions_decrease_entry.configure(
-            textvariable=self.installation_emissions_decrease[self.panel_selected.get()]
+            textvariable=self.installation_emissions_decrease[
+                self.collector_selected.get()
+            ]
         )
         self.om_emissions_entry.configure(
-            textvariable=self.om_emissions[self.panel_selected.get()]
+            textvariable=self.om_emissions[self.collector_selected.get()]
         )
 
         # Update the entries
@@ -1374,7 +1395,7 @@ class PVFrame(ttk.Frame):
         self.om_emissions_entry.update()
 
 
-class PVTFrame(ttk.Frame):
+class PVTFrame(_BaseSolarFrame):
     """
     Represents the PV-T frame.
 
@@ -1453,8 +1474,10 @@ class PVTFrame(ttk.Frame):
         self.collector_selected = ttk.StringVar(value="sheet-and-tube")
         self.collector_name_values = {
             "sheet-and-tube": self.collector_selected,
-            (panel_name := "sheet-and-channel"): ttk.StringVar(self, panel_name),
-            (panel_name := "PV-air"): ttk.StringVar(self, panel_name),
+            (collector_name := "sheet-and-channel"): ttk.StringVar(
+                self, collector_name
+            ),
+            (collector_name := "PV-air"): ttk.StringVar(self, collector_name),
         }
 
         self.collector_label = ttk.Label(
@@ -1516,6 +1539,246 @@ class PVTFrame(ttk.Frame):
             row=2, column=4, padx=10, pady=5, sticky="ew"
         )
 
+        # Lifetime
+        self.lifetime_label = ttk.Label(
+            self.scrolled_frame,
+            text="Lifetime",
+        )
+        self.lifetime_label.grid(
+            row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.collector_lifetimes: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(self, 20, f"{collector_name}_lifetime")
+            for collector_name in self.collector_name_values
+        }
+
+        def scalar_lifetime(_):
+            self.collector_lifetimes[self.collector_selected.get()].set(
+                int(self.lifetime_slider.get())
+            )
+            self.lifetime_entry.update()
+
+        self.lifetime_slider = ttk.Scale(
+            self.scrolled_frame,
+            from_=0,
+            to=30,
+            orient=tk.HORIZONTAL,
+            # length=320,
+            command=scalar_lifetime,
+            bootstyle=WARNING,
+            variable=self.collector_lifetimes[self.collector_selected.get()],
+        )
+        self.lifetime_slider.grid(
+            row=3, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_lifetime(_):
+            self.collector_lifetimes[self.collector_selected.get()].set(
+                int(self.lifetime_entry.get())
+            )
+            self.lifetime_slider.set(
+                self.collector_lifetimes[self.collector_selected.get()].get()
+            )
+
+        self.lifetime_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.collector_lifetimes[self.collector_selected.get()],
+        )
+        self.lifetime_entry.grid(row=3, column=5, padx=10, pady=5, sticky="ew")
+        self.lifetime_entry.bind("<Return>", enter_lifetime)
+
+        self.lifetime_unit = ttk.Label(
+            self.scrolled_frame,
+            text="years",
+        )
+        self.lifetime_unit.grid(row=3, column=6, padx=15, pady=5, sticky="w")
+
+        # Tracking
+        self.tracking_label = ttk.Label(
+            self.scrolled_frame,
+            text="Tracking",
+        )
+        self.tracking_label.grid(
+            row=4, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        self.tracking: dict[str, ttk.IntVar] = {
+            collector_name: ttk.IntVar(self, 0, f"{collector_name}_tracking")
+            for collector_name in self.collector_name_values
+        }
+        self.fixed_tracking: ttk.BooleanVar = ttk.BooleanVar(self, True)
+        self.single_axis_tracking: ttk.BooleanVar = ttk.BooleanVar(self, False)
+        self.dual_axis_tracking: ttk.BooleanVar = ttk.BooleanVar(self, False)
+
+        self.fixed_tracking_button = ttk.Checkbutton(
+            self.scrolled_frame,
+            variable=self.fixed_tracking,
+            command=self._fixed_axis_callback,
+            bootstyle=f"{WARNING}-{TOOLBUTTON}",
+            text="Fixed",
+        )
+        self.fixed_tracking_button.grid(
+            row=4, column=2, padx=10, pady=5, ipadx=5, sticky="ew"
+        )
+
+        self.single_axis_tracking_button = ttk.Checkbutton(
+            self.scrolled_frame,
+            variable=self.single_axis_tracking,
+            command=self._single_axis_callback,
+            bootstyle=f"{WARNING}-{TOOLBUTTON}",
+            text="Single-axis",
+        )
+        self.single_axis_tracking_button.grid(
+            row=4, column=3, padx=10, pady=5, ipadx=5, sticky="ew"
+        )
+
+        self.dual_axis_tracking_button = ttk.Checkbutton(
+            self.scrolled_frame,
+            variable=self.dual_axis_tracking,
+            command=self._dual_axis_callback,
+            bootstyle=f"{WARNING}-{TOOLBUTTON}",
+            text="Dual-axis",
+        )
+        self.dual_axis_tracking_button.grid(
+            row=4, column=4, padx=10, pady=5, ipadx=5, sticky="ew"
+        )
+
+        # Tilt
+        self.tilt_label = ttk.Label(self.scrolled_frame, text="Tilt")
+        self.tilt_label.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+
+        self.collector_tilt: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.IntVar(self, 22, f"{collector_name}_tilt")
+            for collector_name in self.collector_name_values
+        }
+
+        def scalar_tilt(_):
+            self.collector_tilt[self.collector_selected.get()].set(
+                round(self.tilt_slider.get(), 0)
+            )
+            self.tilt_entry.update()
+
+        self.tilt_slider = ttk.Scale(
+            self.scrolled_frame,
+            from_=0,
+            to=90,
+            orient=tk.HORIZONTAL,
+            # length=320,
+            command=scalar_tilt,
+            bootstyle=WARNING,
+            variable=self.collector_tilt[self.collector_selected.get()],
+        )
+        self.tilt_slider.grid(
+            row=5, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_tilt(_):
+            self.collector_tilt[self.collector_selected.get()].set(
+                round(float(self.tilt_entry.get()), 2)
+            )
+            self.tilt_slider.set(
+                round(self.collector_tilt[self.collector_selected.get()].get(), 2)
+            )
+
+        self.tilt_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.collector_tilt[self.collector_selected.get()],
+        )
+        self.tilt_entry.grid(row=5, column=5, padx=10, pady=5, sticky="ew")
+        self.tilt_entry.bind("<Return>", enter_tilt)
+
+        self.tilt_unit = ttk.Label(
+            self.scrolled_frame,
+            text="degrees",
+        )
+        self.tilt_unit.grid(row=5, column=6, padx=15, pady=5, sticky="w")
+
+        # Azimuthal orientation
+        self.azimuthal_orientation_label = ttk.Label(
+            self.scrolled_frame,
+            text="Azimuthal orientation",
+        )
+        self.azimuthal_orientation_label.grid(
+            row=6, column=0, padx=10, pady=5, sticky="w"
+        )
+
+        self.azimuthal_orientation_help = ttk.Label(
+            self.scrolled_frame,
+            bootstyle=INFO,
+            image=self.help_image,
+            text="",
+        )
+        self.azimuthal_orientation_help.grid(
+            row=6, column=1, padx=10, pady=5, sticky="ew"
+        )
+        self.azimuthal_orientation_help_tooltip = ToolTip(
+            self.azimuthal_orientation_help,
+            bootstyle=f"{INFO}-{INVERSE}",
+            text="The azimuthal orientation is defined as the degrees orientation of "
+            "the panel from the equator. I.E., in the northern hemisphere, 180 degrees "
+            "corresponds to due-South orientation, and, in the southern hemisphere, it "
+            "corresponds to due-North orientation. For more information, consult the "
+            "documentation.",
+        )
+
+        self.collector_orientation: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.IntVar(
+                self, 180, f"{collector_name}_azimuthal_orientation"
+            )
+            for collector_name in self.collector_name_values
+        }
+
+        def scalar_azimuthal_orientation(_):
+            self.collector_orientation[self.collector_selected.get()].set(
+                round(self.azimuthal_orientation_slider.get(), 0)
+            )
+            self.azimuthal_orientation_entry.update()
+
+        self.azimuthal_orientation_slider = ttk.Scale(
+            self.scrolled_frame,
+            from_=0,
+            to=360,
+            orient=tk.HORIZONTAL,
+            # length=320,
+            command=scalar_azimuthal_orientation,
+            bootstyle=WARNING,
+            variable=self.collector_orientation[self.collector_selected.get()],
+        )
+        self.azimuthal_orientation_slider.grid(
+            row=6, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_azimuthal_orientation(_):
+            self.collector_orientation[self.collector_selected.get()].set(
+                round(float(self.azimuthal_orientation_entry.get()), 2)
+            )
+            self.azimuthal_orientation_slider.set(
+                round(
+                    self.collector_orientation[self.collector_selected.get()].get(), 2
+                )
+            )
+
+        self.azimuthal_orientation_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.collector_orientation[self.collector_selected.get()],
+        )
+        self.azimuthal_orientation_entry.grid(
+            row=6, column=5, padx=10, pady=5, sticky="ew"
+        )
+        self.azimuthal_orientation_entry.bind("<Return>", enter_azimuthal_orientation)
+
+        self.azimuthal_orientation_unit = ttk.Label(
+            self.scrolled_frame,
+            text="degrees",
+        )
+        self.azimuthal_orientation_unit.grid(
+            row=6, column=6, padx=(15, 20), pady=5, sticky="w"
+        )
+
     def add_collector(self) -> None:
         """Called when a user presses the new-collector button."""
 
@@ -1523,7 +1786,7 @@ class PVTFrame(ttk.Frame):
         new_name = "New collector {suffix}"
         index = 0
         suffix = ""
-        while new_name.format(suffix=suffix) in self.panel_name_values:
+        while new_name.format(suffix=suffix) in self.collector_name_values_name_values:
             index += 1
             suffix = f"({index})"
 
@@ -1533,10 +1796,9 @@ class PVTFrame(ttk.Frame):
         self.populate_available_collectors()
 
         # Update all the mappings stored
-        # self.nominal_power[new_name] = ttk.DoubleVar(self, 1)
-        # self.panel_lifetimes[new_name] = ttk.DoubleVar(self, 15)
-        # self.panel_tilt[new_name] = ttk.DoubleVar(self, 0)
-        # self.panel_orientation[new_name] = ttk.DoubleVar(self, 180)
+        self.collector_lifetimes[new_name] = ttk.DoubleVar(self, 15)
+        self.collector_tilt[new_name] = ttk.DoubleVar(self, 0)
+        self.collector_orientation[new_name] = ttk.DoubleVar(self, 180)
         # self.reference_efficiencies[new_name] = ttk.DoubleVar(self, 0.015)
         # self.reference_temperature[new_name] = ttk.DoubleVar(self, 25)
         # self.thermal_coefficient[new_name] = ttk.DoubleVar(self, 0.56)
@@ -1550,13 +1812,13 @@ class PVTFrame(ttk.Frame):
         # self.annual_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
         # self.installation_emissions[new_name] = ttk.DoubleVar(self, 0)
         # self.installation_emissions_decrease[new_name] = ttk.DoubleVar(self, 0)
-        # self.tracking[new_name] = ttk.IntVar(self, 0)
+        self.tracking[new_name] = ttk.IntVar(self, 0)
 
         # # Select the new panel and update the screen
-        # self.panel_selected = self.panel_name_values[new_name]
-        # self.pv_panel_combobox.configure(textvariable=self.panel_selected)
-        # self.panel_name_entry.configure(textvariable=self.panel_selected)
-        # self.update_panel_frame()
+        self.collector_selected = self.collector_name_values[new_name]
+        self.pv_collector_combobox.configure(textvariable=self.collector_selected)
+        self.collector_name_entry.configure(textvariable=self.collector_selected)
+        self.update_collector_frame()
 
         # Add the panel to the system frame's list of panels.
         self.add_collector_to_scenario_frame(new_name)
@@ -1566,23 +1828,19 @@ class PVTFrame(ttk.Frame):
 
         self.populate_available_collectors()
 
-        # # Update all the mappings stored
-        # self.nominal_power = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.nominal_power.items()
-        # }
-        # self.panel_lifetimes = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.panel_lifetimes.items()
-        # }
-        # self.panel_tilt = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.panel_tilt.items()
-        # }
-        # self.panel_orientation = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.panel_orientation.items()
-        # }
+        # Update all the mappings stored
+        self.collector_lifetimes = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.collector_lifetimes.items()
+        }
+        self.collector_tilt = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.collector_tilt.items()
+        }
+        self.panel_orientation = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.collector_orientation.items()
+        }
         # self.reference_efficiencies = {
         #     self.panel_name_values[key].get(): value
         #     for key, value in self.reference_efficiencies.items()
@@ -1635,15 +1893,15 @@ class PVTFrame(ttk.Frame):
         #     self.panel_name_values[key].get(): value
         #     for key, value in self.om_emissions.items()
         # }
-        # self.tracking = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.tracking.items()
-        # }
+        self.tracking = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.tracking.items()
+        }
 
-        # # Update the panel-name values.
-        # self.panel_name_values = {
-        #     entry.get(): entry for entry in self.panel_name_values.values()
-        # }
+        # Update the panel-name values.
+        self.collector_name_values = {
+            entry.get(): entry for entry in self.collector_name_values.values()
+        }
 
         # # Update the panel name values in the system frame.
         # self.set_panels_on_system_frame(list(self.panel_name_values.keys()))
@@ -1680,7 +1938,7 @@ class PVTFrame(ttk.Frame):
         self.update_panel_frame()
 
 
-class SolarThermalFrame(ttk.Frame):
+class SolarThermalFrame(_BaseSolarFrame):
     """
     Represents the solar-thermal frame.
 
@@ -1828,7 +2086,7 @@ class SolarThermalFrame(ttk.Frame):
         new_name = "New collector {suffix}"
         index = 0
         suffix = ""
-        while new_name.format(suffix=suffix) in self.panel_name_values:
+        while new_name.format(suffix=suffix) in self.collector_name_values:
             index += 1
             suffix = f"({index})"
 
@@ -1858,9 +2116,9 @@ class SolarThermalFrame(ttk.Frame):
         # self.tracking[new_name] = ttk.IntVar(self, 0)
 
         # # Select the new panel and update the screen
-        # self.panel_selected = self.panel_name_values[new_name]
-        # self.pv_panel_combobox.configure(textvariable=self.panel_selected)
-        # self.panel_name_entry.configure(textvariable=self.panel_selected)
+        # self.collector_selected = self.panel_name_values[new_name]
+        # self.pv_panel_combobox.configure(textvariable=self.collector_selected)
+        # self.panel_name_entry.configure(textvariable=self.collector_selected)
         # self.update_panel_frame()
 
         # Add the panel to the system frame's list of panels.

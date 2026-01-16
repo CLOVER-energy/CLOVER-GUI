@@ -314,7 +314,6 @@ class BatterySettingsWindow(customtkinter.CTkToplevel):
 
         self.label = customtkinter.CTkLabel(
             self,
-            
             text="Electric battery settings",
         )
         self.label.grid(row=0, column=0, columnspan=3, padx=20, pady=20)
@@ -333,7 +332,6 @@ class PVSettingsWindow(customtkinter.CTkToplevel):
 
         self.label = customtkinter.CTkLabel(
             self.frame,
-            
             text="Solar PV settings",
         )
         self.label.grid(row=0, column=0, columnspan=5, padx=20, pady=20)
@@ -509,7 +507,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
         label_1 = customtkinter.CTkLabel(
             master=self,
             justify=customtkinter.CENTER,
-            
             text="Scenario specification page",
         )
         label_1.grid(row=0, column=0, columnspan=4, pady=10, padx=10)
@@ -535,14 +532,12 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=pv_button_callback,
             fg_color="transparent",
             image=solar_images[solar_pv_selected.get()],
-            
             text="",
         )
         pv_button.grid(row=1, column=0, pady=10, padx=10)
 
         self.pv_settings = customtkinter.CTkButton(
             self,
-            
             text="PV settings",
             command=self.open_pv_settings,
         )
@@ -567,14 +562,12 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=battery_button_callback,
             fg_color="transparent",
             image=battery_images[battery_selected.get()],
-            
             text="",
         )
         battery_button.grid(row=1, column=1, pady=10, padx=10, sticky="")
 
         self.battery_settings = customtkinter.CTkButton(
             self,
-            
             text="Battery settings",
             command=self.open_battery_settings,
         )
@@ -597,7 +590,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=diesel_button_callback,
             fg_color="transparent",
             image=diesel_images[diesel_selected.get()],
-            
             text="",
         )
         diesel_button.grid(row=1, column=2, pady=10, padx=10)
@@ -616,7 +608,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=grid_button_callback,
             fg_color="transparent",
             image=grid_images[grid_selected.get()],
-            
             text="",
         )
         grid_button.grid(row=1, column=3, pady=10, padx=10)
@@ -674,7 +665,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             image=resource_images[ResourceType.ELECTRIC][
                 resource_selected[ResourceType.ELECTRIC].get()
             ],
-            
             text="",
         )
         electric_button.grid(row=3, column=0, pady=10, padx=10, sticky="")
@@ -685,7 +675,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             image=resource_images[ResourceType.HOT_WATER][
                 resource_selected[ResourceType.HOT_WATER].get()
             ],
-            
             text="",
         )
         hot_water_button.grid(row=4, column=0, pady=10, padx=10, sticky="")
@@ -698,7 +687,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             image=resource_images[ResourceType.COLD_WATER][
                 resource_selected[ResourceType.COLD_WATER].get()
             ],
-            
             text="",
         )
         cold_water_button.grid(row=5, column=0, pady=10, padx=10, sticky="")
@@ -761,7 +749,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(domestic_button_callback, ResourceType.ELECTRIC),
             fg_color="transparent",
             image=domestic_images[domestic_selected[ResourceType.ELECTRIC].get()],
-            
             text="",
         )
         electric_domestic_button.grid(row=3, column=1, pady=10, padx=10, sticky="")
@@ -771,7 +758,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(domestic_button_callback, ResourceType.HOT_WATER),
             fg_color="transparent",
             image=domestic_button_disabled_image,
-            
             text="",
         )
         hot_water_domestic_button.grid(row=4, column=1, pady=10, padx=10, sticky="")
@@ -783,7 +769,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=domestic_button_disabled_image,
-            
             text="",
         )
         cold_water_domestic_button.grid(row=5, column=1, pady=10, padx=10, sticky="")
@@ -807,7 +792,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=commercial_images[commercial_selected[ResourceType.ELECTRIC].get()],
-            
             text="",
         )
         electric_commercial_button.grid(row=3, column=2, pady=10, padx=10)
@@ -819,7 +803,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=commercial_button_disabled_image,
-            
             text="",
         )
         hot_water_commercial_button.grid(row=4, column=2, pady=10, padx=10)
@@ -831,7 +814,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             ),
             fg_color="transparent",
             image=commercial_button_disabled_image,
-            
             text="",
         )
         cold_water_commercial_button.grid(row=5, column=2, pady=10, padx=10)
@@ -853,7 +835,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(public_button_callback, ResourceType.ELECTRIC),
             fg_color="transparent",
             image=public_images[public_selected[ResourceType.ELECTRIC].get()],
-            
             text="",
         )
         electric_public_button.grid(row=3, column=3, pady=10, padx=10)
@@ -863,7 +844,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(public_button_callback, ResourceType.HOT_WATER),
             fg_color="transparent",
             image=public_button_disabled_image,
-            
             text="",
         )
         hot_water_public_button.grid(row=4, column=3, pady=10, padx=10)
@@ -873,7 +853,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
             command=functools.partial(public_button_callback, ResourceType.COLD_WATER),
             fg_color="transparent",
             image=public_button_disabled_image,
-            
             text="",
         )
         cold_water_public_button.grid(row=5, column=3, pady=10, padx=10)
@@ -885,7 +864,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
 
         entry_1 = customtkinter.CTkEntry(
             master=self,
-            placeholder_
             text="CTkEntry",
         )
         entry_1.grid(row=6, columnspan=4, column=0, pady=10, padx=10)
@@ -922,7 +900,6 @@ class ScenarioPage(customtkinter.CTkScrollableFrame):
 
         switch_1 = customtkinter.CTkSwitch(
             master=self,
-            
             text="the switch",
             onvalue=True,
             offvalue=False,
