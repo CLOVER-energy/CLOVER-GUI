@@ -1456,17 +1456,17 @@ class SolarFrame(ttk.Frame):
         )
 
         self.pv_t_frame = PVTFrame(self)
-        # self.solar_notebook.add(
-        #     self.pv_t_frame,  text="PV-T collectors", sticky="news", state=DISABLED
-        # )
+        self.solar_notebook.add(
+            self.pv_t_frame,  text="PV-T collectors", sticky="news", state=DISABLED
+        )
 
         self.solar_thermal_frame = SolarThermalFrame(self)
-        # self.solar_notebook.add(
-        #     self.solar_thermal_frame,
-        #      text="Solar-thermal collectors",
-        #     sticky="news",
-        #     state=DISABLED,
-        # )
+        self.solar_notebook.add(
+            self.solar_thermal_frame,
+             text="Solar-thermal collectors",
+            sticky="news",
+            state=DISABLED,
+        )
 
         # TODO: Add configuration frame widgets and layout
 
