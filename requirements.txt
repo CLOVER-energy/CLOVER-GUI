@@ -8,4 +8,4 @@ RangeSlider == 2023.7.2
 scipy == 1.11.4
 seaborn == 0.13.2
 tqdm == 4.67.1
-ttkbootstrap == 1.20.0
+ttkbootstrap == 1.10.1
