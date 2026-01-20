@@ -1839,13 +1839,13 @@ class PVTFrame(_BaseSolarFrame):
         }
         self.collector_nominal_flow_rates: dict[str, ttk.DoubleVar] = {
             collector_name: ttk.DoubleVar(
-                self, 20, f"{collector_name}_nominal_flow_rate"
+                self, 40, f"{collector_name}_nominal_flow_rate"
             )
             for collector_name in self.collector_name_values
         }
         self.collector_maximum_flow_rates: dict[str, ttk.DoubleVar] = {
             collector_name: ttk.DoubleVar(
-                self, 20, f"{collector_name}_maximum_flow_rate"
+                self, 60, f"{collector_name}_maximum_flow_rate"
             )
             for collector_name in self.collector_name_values
         }
@@ -2138,45 +2138,14 @@ class PVTFrame(_BaseSolarFrame):
             row=9, column=6, padx=10, pady=5, sticky="w"
         )
 
-        def maximum_flow_rate_enabled_callback():
-            new_state_bool = self.maximum_flow_rate_enabled[
-                self.collector_selected.get()
-            ].get()
-
-            if new_state_bool:
-                new_state: str = "enabled"
-                self.collector_maximum_flow_rates[self.collector_selected.get()].set(
-                    max(
-                        max(
-                            self.collector_maximum_flow_rates[
-                                self.collector_selected.get()
-                            ].get(),
-                            self.collector_minimum_flow_rates[
-                                self.collector_selected.get()
-                            ].get(),
-                        ),
-                        self.collector_nominal_flow_rates[
-                            self.collector_selected.get()
-                        ].get(),
-                    ),
-                )
-            else:
-                new_state = DISABLED
-
-            self.maximum_flow_rate_entry.configure(state=new_state)
-            self.maximum_flow_rate_entry.update()
-            self.nominal_flow_rate_slider.configure(state=new_state)
-            self.maximum_flow_rate_entry.update()
-            self.minimum_flow_rate_slider.configure(state=new_state)
-            self.maximum_flow_rate_entry.update()
-
-        self.minimum_flow_rate_none_checkbox = ttk.Checkbutton(
+        self.maximum_flow_rate_none_checkbox = ttk.Checkbutton(
             self.scrolled_frame,
             style=f"{WARNING}.{ROUND}.{TOGGLE}",
             variable=self.maximum_flow_rate_enabled[self.collector_selected.get()],
-            command=maximum_flow_rate_enabled_callback,
+            command=self.maximum_flow_rate_enabled_callback,
+            text="",
         )
-        self.minimum_flow_rate_none_checkbox.grid(
+        self.maximum_flow_rate_none_checkbox.grid(
             row=9, column=7, padx=10, pady=5, sticky="w"
         )
 
@@ -2595,9 +2564,10 @@ class PVTFrame(_BaseSolarFrame):
         self.collector_lifetimes[new_name] = ttk.DoubleVar(self, 15)
         self.collector_tilt[new_name] = ttk.DoubleVar(self, 0)
         self.collector_orientation[new_name] = ttk.DoubleVar(self, 180)
-        # self.reference_efficiencies[new_name] = ttk.DoubleVar(self, 0.015)
-        # self.reference_temperature[new_name] = ttk.DoubleVar(self, 25)
-        # self.thermal_coefficient[new_name] = ttk.DoubleVar(self, 0.56)
+        self.collector_minimum_flow_rates[new_name] = ttk.DoubleVar(self, 20)
+        self.collector_nominal_flow_rates[new_name] = ttk.DoubleVar(self, 40)
+        self.collector_maximum_flow_rates[new_name] = ttk.DoubleVar(self, 60)
+        self.maximum_flow_rate_enabled[new_name] = ttk.BooleanVar(self, True)
         self.costs[new_name] = ttk.DoubleVar(self, 0)
         self.cost_decrease[new_name] = ttk.DoubleVar(self, 0)
         self.installation_costs[new_name] = ttk.DoubleVar(self, 0)
@@ -2648,6 +2618,10 @@ class PVTFrame(_BaseSolarFrame):
         self.collector_maximum_flow_rates = {
             self.collector_name_values[key].get(): value
             for key, value in self.collector_maximum_flow_rates.items()
+        }
+        self.maximum_flow_rate_enabled = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.maximum_flow_rate_enabled.items()
         }
         self.costs = {
             self.collector_name_values[key].get(): value
@@ -2701,6 +2675,38 @@ class PVTFrame(_BaseSolarFrame):
 
         # # Update the panel name values in the system frame.
         # self.set_panels_on_system_frame(list(self.panel_name_values.keys()))
+
+    def maximum_flow_rate_enabled_callback(self):
+        new_state_bool = self.maximum_flow_rate_enabled[
+            self.collector_selected.get()
+        ].get()
+
+        if new_state_bool:
+            new_state: str = "enabled"
+            self.collector_maximum_flow_rates[self.collector_selected.get()].set(
+                max(
+                    max(
+                        self.collector_maximum_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                        self.collector_minimum_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                    ),
+                    self.collector_nominal_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                ),
+            )
+        else:
+            new_state = DISABLED
+
+        self.maximum_flow_rate_entry.configure(state=new_state)
+        self.maximum_flow_rate_entry.update()
+        self.nominal_flow_rate_slider.configure(state=new_state)
+        self.maximum_flow_rate_entry.update()
+        self.minimum_flow_rate_slider.configure(state=new_state)
+        self.maximum_flow_rate_entry.update()
 
     def populate_available_collectors(self) -> None:
         """Populate the combo box with the set of avialable panels."""
@@ -2784,6 +2790,9 @@ class PVTFrame(_BaseSolarFrame):
                 self.collector_selected.get()
             ]
         )
+        self.maximum_flow_rate_none_checkbox.configure(
+            variable=self.maximum_flow_rate_enabled[self.collector_selected.get()]
+        )
         self.cost_entry.configure(
             textvariable=self.costs[self.collector_selected.get()]
         )
@@ -2829,6 +2838,8 @@ class PVTFrame(_BaseSolarFrame):
         self.nominal_flow_rate_entry.update()
         self.nominal_flow_rate_slider.update()
         self.maximum_flow_rate_entry.update()
+        self.maximum_flow_rate_none_checkbox.update()
+        self.maximum_flow_rate_enabled_callback()
         self.cost_entry.update()
         self.cost_decrease_entry.update()
         self.o_and_m_costs_entry.update()
