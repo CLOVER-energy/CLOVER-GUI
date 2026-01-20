@@ -10,9 +10,11 @@
 ########################################################################################
 
 import os
-import tkinter as tk
 
 from typing import Callable
+
+import numpy as np
+import tkinter as tk
 
 import ttkbootstrap as ttk
 
@@ -1501,6 +1503,7 @@ class PVTFrame(_BaseSolarFrame):
         self.scrolled_frame.columnconfigure(4, weight=3)
         self.scrolled_frame.columnconfigure(5, weight=1)
         self.scrolled_frame.columnconfigure(6, weight=1)
+        self.scrolled_frame.columnconfigure(7, weight=1)
 
         self.renewables_ninja_token_entry = ttk.Entry(
             self.scrolled_frame,
@@ -1551,7 +1554,9 @@ class PVTFrame(_BaseSolarFrame):
             command=self.add_collector,
             text="New collector",
         )
-        self.new_collector_button.grid(row=1, column=5, padx=10, pady=5, ipadx=40)
+        self.new_collector_button.grid(
+            row=1, column=5, columnspan=2, padx=10, pady=5, ipadx=40
+        )
 
         # Panel name
         self.collector_name_label = ttk.Label(
@@ -1628,14 +1633,16 @@ class PVTFrame(_BaseSolarFrame):
             bootstyle=WARNING,
             textvariable=self.collector_lifetimes[self.collector_selected.get()],
         )
-        self.lifetime_entry.grid(row=3, column=5, padx=10, pady=5, sticky="ew")
+        self.lifetime_entry.grid(
+            row=3, column=5, columnspan=2, padx=10, pady=5, sticky="ew"
+        )
         self.lifetime_entry.bind("<Return>", enter_lifetime)
 
         self.lifetime_unit = ttk.Label(
             self.scrolled_frame,
             text="years",
         )
-        self.lifetime_unit.grid(row=3, column=6, padx=15, pady=5, sticky="w")
+        self.lifetime_unit.grid(row=3, column=7, padx=15, pady=5, sticky="w")
 
         # Tracking
         self.tracking_label = ttk.Label(
@@ -1729,14 +1736,16 @@ class PVTFrame(_BaseSolarFrame):
             bootstyle=WARNING,
             textvariable=self.collector_tilt[self.collector_selected.get()],
         )
-        self.tilt_entry.grid(row=5, column=5, padx=10, pady=5, sticky="ew")
+        self.tilt_entry.grid(
+            row=5, column=5, columnspan=2, padx=10, pady=5, sticky="ew"
+        )
         self.tilt_entry.bind("<Return>", enter_tilt)
 
         self.tilt_unit = ttk.Label(
             self.scrolled_frame,
             text="degrees",
         )
-        self.tilt_unit.grid(row=5, column=6, padx=15, pady=5, sticky="w")
+        self.tilt_unit.grid(row=5, column=7, padx=15, pady=5, sticky="w")
 
         # Azimuthal orientation
         self.azimuthal_orientation_label = ttk.Label(
@@ -1809,7 +1818,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.collector_orientation[self.collector_selected.get()],
         )
         self.azimuthal_orientation_entry.grid(
-            row=6, column=5, padx=10, pady=5, sticky="ew"
+            row=6, column=5, columnspan=2, padx=10, pady=5, sticky="ew"
         )
         self.azimuthal_orientation_entry.bind("<Return>", enter_azimuthal_orientation)
 
@@ -1818,7 +1827,7 @@ class PVTFrame(_BaseSolarFrame):
             text="degrees",
         )
         self.azimuthal_orientation_unit.grid(
-            row=6, column=6, padx=(15, 20), pady=5, sticky="w"
+            row=6, column=7, padx=(15, 20), pady=5, sticky="w"
         )
 
         # Minimum mass flow rate
@@ -1841,11 +1850,20 @@ class PVTFrame(_BaseSolarFrame):
             for collector_name in self.collector_name_values
         }
 
+        self.maximum_flow_rate_enabled: dict[str, ttk.BooleanVar] = {
+            collector_name: ttk.BooleanVar(
+                self, True, f"{collector_name}_max_flow_rate_enabled"
+            )
+            for collector_name in self.collector_name_values
+        }
+
         self.minimum_flow_rate_label = ttk.Label(
             self.scrolled_frame,
             text="Minimum mass flow rate",
         )
-        self.minimum_flow_rate_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+        self.minimum_flow_rate_label.grid(
+            row=7, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         def update_maximum_flow_rate():
             self.collector_maximum_flow_rates[self.collector_selected.get()].set(
@@ -1873,9 +1891,15 @@ class PVTFrame(_BaseSolarFrame):
                             self.collector_selected.get()
                         ].get(),
                     ),
-                    self.collector_maximum_flow_rates[
-                        self.collector_selected.get()
-                    ].get(),
+                    (
+                        self.collector_maximum_flow_rates[
+                            self.collector_selected.get()
+                        ].get()
+                        if self.maximum_flow_rate_enabled[
+                            self.collector_selected.get()
+                        ].get()
+                        else np.inf
+                    ),
                 )
             )
             self.nominal_flow_rate_entry.update()
@@ -1897,9 +1921,15 @@ class PVTFrame(_BaseSolarFrame):
                         self.collector_minimum_flow_rates[
                             self.collector_selected.get()
                         ].get(),
-                        self.collector_maximum_flow_rates[
-                            self.collector_selected.get()
-                        ].get(),
+                        (
+                            self.collector_maximum_flow_rates[
+                                self.collector_selected.get()
+                            ].get()
+                            if self.maximum_flow_rate_enabled[
+                                self.collector_selected.get()
+                            ].get()
+                            else np.inf
+                        ),
                     ),
                     0,
                 )
@@ -1914,11 +1944,11 @@ class PVTFrame(_BaseSolarFrame):
             to=self.collector_maximum_flow_rates[self.collector_selected.get()].get(),
             orient=ttk.HORIZONTAL,
             command=scalar_flow_rate_lowerbound,
-            # bootstyle=WARNING,
+            bootstyle=WARNING,
             variable=self.collector_minimum_flow_rates[self.collector_selected.get()],
         )
         self.minimum_flow_rate_slider.grid(
-            row=7, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=7, column=2, columnspan=2, padx=10, pady=5, sticky="ew"
         )
 
         def enter_minimum_flow_rate(_):
@@ -1933,7 +1963,7 @@ class PVTFrame(_BaseSolarFrame):
 
         self.minimum_flow_rate_entry = ttk.Entry(
             self.scrolled_frame,
-            # bootstyle=WARNING,
+            bootstyle=WARNING,
             textvariable=self.collector_minimum_flow_rates[
                 self.collector_selected.get()
             ],
@@ -1946,14 +1976,18 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kg / s",
         )
-        self.minimum_flow_rate_unit.grid(row=7, column=5, padx=10, pady=5, sticky="w")
+        self.minimum_flow_rate_unit.grid(
+            row=7, column=5, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         # Nominal mass flow rate
         self.nominal_flow_rate_label = ttk.Label(
             self.scrolled_frame,
             text="Nominal mass flow rate",
         )
-        self.nominal_flow_rate_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
+        self.nominal_flow_rate_label.grid(
+            row=8, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         def scalar_flow_rate_nominal(_):
             self.collector_nominal_flow_rates[self.collector_selected.get()].set(
@@ -1962,9 +1996,15 @@ class PVTFrame(_BaseSolarFrame):
                         self.collector_nominal_flow_rates[
                             self.collector_selected.get()
                         ].get(),
-                        self.collector_maximum_flow_rates[
-                            self.collector_selected.get()
-                        ].get(),
+                        (
+                            self.collector_maximum_flow_rates[
+                                self.collector_selected.get()
+                            ].get()
+                            if self.maximum_flow_rate_enabled[
+                                self.collector_selected.get()
+                            ].get()
+                            else np.inf
+                        ),
                     ),
                     self.collector_minimum_flow_rates[
                         self.collector_selected.get()
@@ -1983,11 +2023,11 @@ class PVTFrame(_BaseSolarFrame):
             to=self.collector_maximum_flow_rates[self.collector_selected.get()].get(),
             orient=ttk.HORIZONTAL,
             command=scalar_flow_rate_nominal,
-            # bootstyle=WARNING,
+            bootstyle=WARNING,
             variable=self.collector_nominal_flow_rates[self.collector_selected.get()],
         )
         self.nominal_flow_rate_slider.grid(
-            row=8, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=8, column=2, columnspan=2, padx=10, pady=5, sticky="ew"
         )
 
         def enter_nominal_flow_rate(_):
@@ -2001,9 +2041,15 @@ class PVTFrame(_BaseSolarFrame):
                             self.collector_selected.get()
                         ].get(),
                     ),
-                    self.collector_maximum_flow_rates[
-                        self.collector_selected.get()
-                    ].get(),
+                    (
+                        self.collector_maximum_flow_rates[
+                            self.collector_selected.get()
+                        ].get()
+                        if self.maximum_flow_rate_enabled[
+                            self.collector_selected.get()
+                        ].get()
+                        else np.inf
+                    ),
                 )
             )
             self.nominal_flow_rate_entry.update()
@@ -2013,7 +2059,7 @@ class PVTFrame(_BaseSolarFrame):
 
         self.nominal_flow_rate_entry = ttk.Entry(
             self.scrolled_frame,
-            # bootstyle=WARNING,
+            bootstyle=WARNING,
             textvariable=self.collector_nominal_flow_rates[
                 self.collector_selected.get()
             ],
@@ -2026,7 +2072,9 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kg / s",
         )
-        self.nominal_flow_rate_unit.grid(row=8, column=5, padx=10, pady=5, sticky="w")
+        self.nominal_flow_rate_unit.grid(
+            row=8, column=5, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         # Maximum mass flow rate
         self.maximum_flow_rate_label = ttk.Label(
@@ -2048,9 +2096,15 @@ class PVTFrame(_BaseSolarFrame):
                     self.collector_minimum_flow_rates[
                         self.collector_selected.get()
                     ].get(),
-                    self.collector_maximum_flow_rates[
-                        self.collector_selected.get()
-                    ].get(),
+                    (
+                        self.collector_maximum_flow_rates[
+                            self.collector_selected.get()
+                        ].get()
+                        if self.maximum_flow_rate_enabled[
+                            self.collector_selected.get()
+                        ].get()
+                        else np.inf
+                    ),
                 )
             )
             self.minimum_flow_rate_entry.update()
@@ -2076,6 +2130,56 @@ class PVTFrame(_BaseSolarFrame):
         )
         self.maximum_flow_rate_unit.grid(row=9, column=5, padx=10, pady=5, sticky="w")
 
+        self.maximum_flow_rate_none_label = ttk.Label(
+            self.scrolled_frame,
+            text="Bounded",
+        )
+        self.maximum_flow_rate_none_label.grid(
+            row=9, column=6, padx=10, pady=5, sticky="w"
+        )
+
+        def maximum_flow_rate_enabled_callback():
+            new_state_bool = self.maximum_flow_rate_enabled[
+                self.collector_selected.get()
+            ].get()
+
+            if new_state_bool:
+                new_state: str = "enabled"
+                self.collector_maximum_flow_rates[self.collector_selected.get()].set(
+                    max(
+                        max(
+                            self.collector_maximum_flow_rates[
+                                self.collector_selected.get()
+                            ].get(),
+                            self.collector_minimum_flow_rates[
+                                self.collector_selected.get()
+                            ].get(),
+                        ),
+                        self.collector_nominal_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                    ),
+                )
+            else:
+                new_state = DISABLED
+
+            self.maximum_flow_rate_entry.configure(state=new_state)
+            self.maximum_flow_rate_entry.update()
+            self.nominal_flow_rate_slider.configure(state=new_state)
+            self.maximum_flow_rate_entry.update()
+            self.minimum_flow_rate_slider.configure(state=new_state)
+            self.maximum_flow_rate_entry.update()
+
+        self.minimum_flow_rate_none_checkbox = ttk.Checkbutton(
+            self.scrolled_frame,
+            style=f"{WARNING}.{ROUND}.{TOGGLE}",
+            variable=self.maximum_flow_rate_enabled[self.collector_selected.get()],
+            command=maximum_flow_rate_enabled_callback,
+        )
+        self.minimum_flow_rate_none_checkbox.grid(
+            row=9, column=7, padx=10, pady=5, sticky="w"
+        )
+
         # Style
         bold_head = ttk.Style()
         bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
@@ -2096,7 +2200,7 @@ class PVTFrame(_BaseSolarFrame):
             text="",
         )
         self.impacts_label_help_icon.grid(
-            row=11, column=6, padx=20, pady=20, sticky="e"
+            row=11, column=7, padx=20, pady=20, sticky="e"
         )
 
         # self.scenario_information_text = ttk.Label(
@@ -2144,7 +2248,7 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp",
         )
-        self.cost_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
+        self.cost_unit.grid(row=13, column=5, columnspan=2, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
@@ -2177,7 +2281,9 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="%  / year",
         )
-        self.cost_decrease_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
+        self.cost_decrease_unit.grid(
+            row=14, column=5, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         # Installation cost
         self.installation_cost_label = ttk.Label(
@@ -2212,7 +2318,9 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp installed",
         )
-        self.installation_cost_unit.grid(row=15, column=5, padx=10, pady=5, sticky="w")
+        self.installation_cost_unit.grid(
+            row=15, column=5, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         # Installation cost decrease
         self.installation_cost_decrease_label = ttk.Label(
@@ -2248,7 +2356,7 @@ class PVTFrame(_BaseSolarFrame):
             text="%  / year",
         )
         self.installation_cost_decrease_unit.grid(
-            row=16, column=5, padx=10, pady=5, sticky="w"
+            row=16, column=5, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         # OPEX costs
@@ -2282,7 +2390,9 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp / year",
         )
-        self.o_and_m_costs_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
+        self.o_and_m_costs_unit.grid(
+            row=17, column=5, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
@@ -2315,7 +2425,9 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp",
         )
-        self.embedded_emissions_unit.grid(row=18, column=5, padx=10, pady=5, sticky="w")
+        self.embedded_emissions_unit.grid(
+            row=18, column=5, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
@@ -2349,7 +2461,7 @@ class PVTFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.annual_emissions_decrease_unit.grid(
-            row=19, column=5, padx=10, pady=5, sticky="w"
+            row=19, column=5, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         # Embedded installation emissions
@@ -2386,7 +2498,7 @@ class PVTFrame(_BaseSolarFrame):
             text="kgCO2eq / kWp",
         )
         self.installation_emissions_unit.grid(
-            row=20, column=5, padx=10, pady=5, sticky="w"
+            row=20, column=5, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         # Annual installation emissions decrease
@@ -2425,7 +2537,7 @@ class PVTFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.installation_emissions_decrease_unit.grid(
-            row=21, column=5, padx=10, pady=5, sticky="w"
+            row=21, column=5, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         # O&M emissions
@@ -2459,7 +2571,9 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp / year",
         )
-        self.om_emissions_unit.grid(row=22, column=5, padx=10, pady=5, sticky="w")
+        self.om_emissions_unit.grid(
+            row=22, column=5, columnspan=2, padx=10, pady=5, sticky="w"
+        )
 
     def add_collector(self) -> None:
         """Called when a user presses the new-collector button."""
