@@ -449,7 +449,7 @@ class PVFrame(_BaseSolarFrame):
             text="Azimuthal orientation",
         )
         self.azimuthal_orientation_label.grid(
-            row=8, column=0, padx=10, pady=5, sticky="w"
+            row=7, column=0, padx=10, pady=5, sticky="w"
         )
 
         self.azimuthal_orientation_help = ttk.Label(
@@ -459,7 +459,7 @@ class PVFrame(_BaseSolarFrame):
             text="",
         )
         self.azimuthal_orientation_help.grid(
-            row=8, column=1, padx=10, pady=5, sticky="ew"
+            row=7, column=1, padx=10, pady=5, sticky="ew"
         )
         self.azimuthal_orientation_help_tooltip = ToolTip(
             self.azimuthal_orientation_help,
@@ -493,7 +493,7 @@ class PVFrame(_BaseSolarFrame):
             variable=self.panel_orientation[self.collector_selected.get()],
         )
         self.azimuthal_orientation_slider.grid(
-            row=8, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=7, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def enter_azimuthal_orientation(_):
@@ -510,7 +510,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.panel_orientation[self.collector_selected.get()],
         )
         self.azimuthal_orientation_entry.grid(
-            row=8, column=5, padx=10, pady=5, sticky="ew"
+            row=7, column=5, padx=10, pady=5, sticky="ew"
         )
         self.azimuthal_orientation_entry.bind("<Return>", enter_azimuthal_orientation)
 
@@ -519,7 +519,7 @@ class PVFrame(_BaseSolarFrame):
             text="degrees",
         )
         self.azimuthal_orientation_unit.grid(
-            row=8, column=6, padx=(15, 20), pady=5, sticky="w"
+            row=7, column=6, padx=(15, 20), pady=5, sticky="w"
         )
 
         # Reference efficiency
@@ -528,7 +528,7 @@ class PVFrame(_BaseSolarFrame):
             text="Reference efficiency",
         )
         self.reference_efficiency_label.grid(
-            row=9, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=8, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.reference_efficiencies: dict[str, ttk.DoubleVar] = {
@@ -554,7 +554,7 @@ class PVFrame(_BaseSolarFrame):
             variable=self.reference_efficiencies[self.collector_selected.get()],
         )
         self.reference_efficiency_slider.grid(
-            row=9, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=8, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         def enter_reference_efficiency(_):
@@ -572,13 +572,13 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.reference_efficiencies[self.collector_selected.get()],
         )
         self.reference_efficiency_entry.grid(
-            row=9, column=5, padx=10, pady=5, sticky="ew"
+            row=8, column=5, padx=10, pady=5, sticky="ew"
         )
         self.reference_efficiency_entry.bind("<Return>", enter_reference_efficiency)
 
         self.reference_efficiency_unit = ttk.Label(self.scrolled_frame, text=f"%")
         self.reference_efficiency_unit.grid(
-            row=9, column=6, padx=15, pady=5, sticky="w"
+            row=8, column=6, padx=15, pady=5, sticky="w"
         )
 
         # Reference temperature
@@ -587,7 +587,7 @@ class PVFrame(_BaseSolarFrame):
             text="Reference temperature",
         )
         self.reference_temperature_label.grid(
-            row=10, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=9, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.reference_temperature: dict[str, ttk.DoubleVar] = {
@@ -601,7 +601,7 @@ class PVFrame(_BaseSolarFrame):
             state=DISABLED,
         )
         self.reference_temperature_entry.grid(
-            row=10,
+            row=9,
             column=2,
             columnspan=3,
             padx=10,
@@ -614,7 +614,7 @@ class PVFrame(_BaseSolarFrame):
             text="degrees Celsius",
         )
         self.reference_temperature_unit.grid(
-            row=10, column=5, padx=10, pady=5, sticky="w"
+            row=9, column=5, padx=10, pady=5, sticky="w"
         )
 
         # Thermal coefficient
@@ -623,7 +623,7 @@ class PVFrame(_BaseSolarFrame):
             text="Thermal coefficient",
         )
         self.thermal_coefficient_label.grid(
-            row=11, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=10, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.thermal_coefficient: dict[str, ttk.DoubleVar] = {
@@ -637,7 +637,7 @@ class PVFrame(_BaseSolarFrame):
             state=DISABLED,
         )
         self.thermal_coefficient_entry.grid(
-            row=11,
+            row=10,
             column=2,
             columnspan=3,
             padx=10,
@@ -650,8 +650,50 @@ class PVFrame(_BaseSolarFrame):
             text="% / degree Celsius",
         )
         self.thermal_coefficient_unit.grid(
-            row=11, column=5, padx=10, pady=5, sticky="w"
+            row=10, column=5, padx=10, pady=5, sticky="w"
         )
+
+        # Style
+        bold_head = ttk.Style()
+        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
+
+        # Scenario information helper
+        self.impacts_label = ttk.Label(
+            self.scrolled_frame,
+            text="Impact information: costs and emissions",
+            style="Bold.TLabel",
+        )
+        self.impacts_label.grid(
+            row=11, column=0, columnspan=5, padx=20, pady=10, sticky="w"
+        )
+        self.impacts_label_help_icon = ttk.Label(
+            self.scrolled_frame,
+            bootstyle=INFO,
+            image=self.help_image,
+            text="",
+        )
+        self.impacts_label_help_icon.grid(
+            row=11, column=6, padx=20, pady=20, sticky="e"
+        )
+
+        # self.scenario_information_text = ttk.Label(
+        #     self,
+        #      text="The secnario configures your CLOVER run. Here, you can toggle on "
+        #     "and off various power-generation sources \nand sources of demand. You "
+        #     "should check all the information on this screen before continuing to "
+        #     "ensure \nthat your system is correctly represented.",
+        # )
+        self.impacts_label_help_tooltip = ToolTip(
+            self.impacts_label_help_icon,
+            text="Impacts of the collector are specified. For each collector (or "
+            "panel), specify the impact in terms of its financial and environmental "
+            "impact. Technical impacts (e.g., land use) can be specified also.",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
+        # Horizontal separator
+        self.separator = ttk.Separator(self.scrolled_frame)
+        self.separator.grid(row=12, column=0, columnspan=5, sticky="ew", padx=(20, 20))
 
         # Cost
         self.cost_label = ttk.Label(
@@ -659,7 +701,7 @@ class PVFrame(_BaseSolarFrame):
             text="Module cost",
         )
         self.cost_label.grid(
-            row=12, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.costs: dict[str, ttk.DoubleVar] = {
@@ -672,14 +714,14 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.costs[self.collector_selected.get()],
         )
         self.cost_entry.grid(
-            row=12, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=13, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         self.cost_unit = ttk.Label(
             self.scrolled_frame,
             text="$ / kWp",
         )
-        self.cost_unit.grid(row=12, column=5, padx=10, pady=5, sticky="w")
+        self.cost_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
@@ -687,7 +729,7 @@ class PVFrame(_BaseSolarFrame):
             text="Module cost change",
         )
         self.cost_decrease_label.grid(
-            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -700,7 +742,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.cost_decrease[self.collector_selected.get()],
         )
         self.cost_decrease_entry.grid(
-            row=13,
+            row=14,
             column=2,
             columnspan=3,
             padx=10,
@@ -712,7 +754,7 @@ class PVFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="%  / year",
         )
-        self.cost_decrease_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
+        self.cost_decrease_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
 
         # Installation cost
         self.installation_cost_label = ttk.Label(
@@ -720,7 +762,7 @@ class PVFrame(_BaseSolarFrame):
             text="Installation cost",
         )
         self.installation_cost_label.grid(
-            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=15, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_costs: dict[str, ttk.DoubleVar] = {
@@ -733,7 +775,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.installation_costs[self.collector_selected.get()],
         )
         self.installation_cost_entry.grid(
-            row=14,
+            row=15,
             column=2,
             columnspan=3,
             padx=10,
@@ -745,7 +787,7 @@ class PVFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp installed",
         )
-        self.installation_cost_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
+        self.installation_cost_unit.grid(row=15, column=5, padx=10, pady=5, sticky="w")
 
         # Installation cost decrease
         self.installation_cost_decrease_label = ttk.Label(
@@ -753,7 +795,7 @@ class PVFrame(_BaseSolarFrame):
             text="Installation cost change",
         )
         self.installation_cost_decrease_label.grid(
-            row=15, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -768,7 +810,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.installation_cost_decrease[self.collector_selected.get()],
         )
         self.installation_cost_decrease_entry.grid(
-            row=15,
+            row=16,
             column=2,
             columnspan=3,
             padx=10,
@@ -781,7 +823,7 @@ class PVFrame(_BaseSolarFrame):
             text="%  / year",
         )
         self.installation_cost_decrease_unit.grid(
-            row=15, column=5, padx=10, pady=5, sticky="w"
+            row=16, column=5, padx=10, pady=5, sticky="w"
         )
 
         # OPEX costs
@@ -790,7 +832,7 @@ class PVFrame(_BaseSolarFrame):
             text="OPEX (O&M) costs",
         )
         self.opex_costs_label.grid(
-            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=17, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
@@ -803,7 +845,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.o_and_m_costs[self.collector_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
-            row=16,
+            row=17,
             column=2,
             columnspan=3,
             padx=10,
@@ -815,7 +857,7 @@ class PVFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp / year",
         )
-        self.o_and_m_costs_unit.grid(row=16, column=5, padx=10, pady=5, sticky="w")
+        self.o_and_m_costs_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
@@ -823,7 +865,7 @@ class PVFrame(_BaseSolarFrame):
             text="PV embedded emissions",
         )
         self.embedded_emissions_label.grid(
-            row=17, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=18, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.embedded_emissions: dict[str, ttk.DoubleVar] = {
@@ -836,7 +878,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.embedded_emissions[self.collector_selected.get()],
         )
         self.embedded_emissions_entry.grid(
-            row=17,
+            row=18,
             column=2,
             columnspan=3,
             padx=10,
@@ -848,7 +890,7 @@ class PVFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp",
         )
-        self.embedded_emissions_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
+        self.embedded_emissions_unit.grid(row=18, column=5, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
@@ -856,7 +898,7 @@ class PVFrame(_BaseSolarFrame):
             text="PV emissions change",
         )
         self.annual_emissions_decrease_label.grid(
-            row=18, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=19, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.annual_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -869,7 +911,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.annual_emissions_decrease[self.collector_selected.get()],
         )
         self.annual_emissions_decrease_entry.grid(
-            row=18,
+            row=19,
             column=2,
             columnspan=3,
             padx=10,
@@ -882,7 +924,7 @@ class PVFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.annual_emissions_decrease_unit.grid(
-            row=18, column=5, padx=10, pady=5, sticky="w"
+            row=19, column=5, padx=10, pady=5, sticky="w"
         )
 
         # Embedded installation emissions
@@ -891,7 +933,7 @@ class PVFrame(_BaseSolarFrame):
             text="Installation emissions",
         )
         self.installation_emissions_label.grid(
-            row=19, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=20, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_emissions: dict[str, ttk.DoubleVar] = {
@@ -904,7 +946,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.installation_emissions[self.collector_selected.get()],
         )
         self.installation_emissions_entry.grid(
-            row=19,
+            row=20,
             column=2,
             columnspan=3,
             padx=10,
@@ -917,7 +959,7 @@ class PVFrame(_BaseSolarFrame):
             text="kgCO2eq / kWp",
         )
         self.installation_emissions_unit.grid(
-            row=19, column=5, padx=10, pady=5, sticky="w"
+            row=20, column=5, padx=10, pady=5, sticky="w"
         )
 
         # Annual installation emissions decrease
@@ -926,7 +968,7 @@ class PVFrame(_BaseSolarFrame):
             text="Installation emissions change",
         )
         self.installation_emissions_decrease_label.grid(
-            row=20, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -943,7 +985,7 @@ class PVFrame(_BaseSolarFrame):
             ],
         )
         self.installation_emissions_decrease_entry.grid(
-            row=20,
+            row=21,
             column=2,
             columnspan=3,
             padx=10,
@@ -956,7 +998,7 @@ class PVFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.installation_emissions_decrease_unit.grid(
-            row=20, column=5, padx=10, pady=5, sticky="w"
+            row=21, column=5, padx=10, pady=5, sticky="w"
         )
 
         # O&M emissions
@@ -965,7 +1007,7 @@ class PVFrame(_BaseSolarFrame):
             text="O&M emissions",
         )
         self.om_emissions_label.grid(
-            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=22, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.om_emissions: dict[str, ttk.DoubleVar] = {
@@ -978,7 +1020,7 @@ class PVFrame(_BaseSolarFrame):
             textvariable=self.om_emissions[self.collector_selected.get()],
         )
         self.om_emissions_entry.grid(
-            row=21,
+            row=22,
             column=2,
             columnspan=3,
             padx=10,
@@ -990,7 +1032,7 @@ class PVFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp / year",
         )
-        self.om_emissions_unit.grid(row=21, column=5, padx=10, pady=5, sticky="w")
+        self.om_emissions_unit.grid(row=22, column=5, padx=10, pady=5, sticky="w")
 
     def add_panel(self) -> None:
         """Called when a user presses the new-panel button."""
@@ -1779,13 +1821,288 @@ class PVTFrame(_BaseSolarFrame):
             row=6, column=6, padx=(15, 20), pady=5, sticky="w"
         )
 
+        # Minimum mass flow rate
+        self.collector_minimum_flow_rates: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(
+                self, 20, f"{collector_name}_minimum_flow_rate"
+            )
+            for collector_name in self.collector_name_values
+        }
+        self.collector_nominal_flow_rates: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(
+                self, 20, f"{collector_name}_nominal_flow_rate"
+            )
+            for collector_name in self.collector_name_values
+        }
+        self.collector_maximum_flow_rates: dict[str, ttk.DoubleVar] = {
+            collector_name: ttk.DoubleVar(
+                self, 20, f"{collector_name}_maximum_flow_rate"
+            )
+            for collector_name in self.collector_name_values
+        }
+
+        self.minimum_flow_rate_label = ttk.Label(
+            self.scrolled_frame,
+            text="Minimum mass flow rate",
+        )
+        self.minimum_flow_rate_label.grid(row=7, column=0, padx=10, pady=5, sticky="w")
+
+        def update_maximum_flow_rate():
+            self.collector_maximum_flow_rates[self.collector_selected.get()].set(
+                max(
+                    self.collector_minimum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                    self.collector_maximum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                )
+            )
+            self.maximum_flow_rate_entry.update()
+
+            update_nominal_flow_rate()
+
+        def update_nominal_flow_rate():
+            self.collector_nominal_flow_rates[self.collector_selected.get()].set(
+                max(
+                    self.collector_maximum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                    self.collector_minimum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                )
+            )
+            self.nominal_flow_rate_entry.update()
+
+            self.nominal_flow_rate_slider.configure(
+                from_=self.minimum_flow_rate_entry.get(),
+                to=self.maximum_flow_rate_entry.get(),
+            )
+            self.nominal_flow_rate_slider.update()
+
+        def scalar_flow_rate_lowerbound(_):
+            self.collector_minimum_flow_rates[self.collector_selected.get()].set(
+                max(
+                    min(
+                        self.collector_minimum_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                        self.collector_maximum_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                    ),
+                    0,
+                )
+            )
+            self.minimum_flow_rate_entry.update()
+            update_maximum_flow_rate()
+            update_nominal_flow_rate()
+
+        self.minimum_flow_rate_slider = ttk.Scale(
+            self.scrolled_frame,
+            from_=0,
+            to=self.collector_maximum_flow_rates[self.collector_selected.get()].get(),
+            orient=ttk.HORIZONTAL,
+            command=scalar_flow_rate_lowerbound,
+            # bootstyle=WARNING,
+            variable=self.collector_minimum_flow_rates[self.collector_selected.get()],
+        )
+        self.minimum_flow_rate_slider.grid(
+            row=7, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_minimum_flow_rate(_):
+            self.collector_minimum_flow_rates[self.collector_selected.get()].set(
+                self.minimum_flow_rate_entry.get()
+            )
+            self.minimum_flow_rate_slider.set(
+                self.collector_minimum_flow_rates[self.collector_selected.get()]
+            )
+            update_maximum_flow_rate()
+
+        self.minimum_flow_rate_entry = ttk.Entry(
+            self.scrolled_frame,
+            # bootstyle=WARNING,
+            textvariable=self.collector_minimum_flow_rates[
+                self.collector_selected.get()
+            ],
+        )
+
+        self.minimum_flow_rate_entry.grid(row=7, column=4, padx=10, pady=5, sticky="ew")
+        self.minimum_flow_rate_entry.bind("<Return>", enter_minimum_flow_rate)
+
+        self.minimum_flow_rate_unit = ttk.Label(
+            self.scrolled_frame,
+            text="kg / s",
+        )
+        self.minimum_flow_rate_unit.grid(row=7, column=5, padx=10, pady=5, sticky="w")
+
+        # Nominal mass flow rate
+        self.nominal_flow_rate_label = ttk.Label(
+            self.scrolled_frame,
+            text="Nominal mass flow rate",
+        )
+        self.nominal_flow_rate_label.grid(row=8, column=0, padx=10, pady=5, sticky="w")
+
+        def scalar_flow_rate_nominal(_):
+            self.collector_nominal_flow_rates[self.collector_selected.get()].set(
+                max(
+                    min(
+                        self.collector_nominal_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                        self.collector_maximum_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                    ),
+                    self.collector_minimum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                )
+            )
+            self.nominal_flow_rate_entry.update()
+
+        self.nominal_flow_rate_slider = ttk.Scale(
+            self.scrolled_frame,
+            from_=self.collector_minimum_flow_rates[
+                self.collector_selected.get()
+            ].get(),
+            to=self.collector_maximum_flow_rates[self.collector_selected.get()].get(),
+            orient=ttk.HORIZONTAL,
+            command=scalar_flow_rate_lowerbound,
+            # bootstyle=WARNING,
+            variable=self.collector_minimum_flow_rates[self.collector_selected.get()],
+        )
+        self.nominal_flow_rate_slider.grid(
+            row=8, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+
+        def enter_nominal_flow_rate(_):
+            self.collector_nominal_flow_rates[self.collector_selected.get()].set(
+                min(
+                    max(
+                        self.minimum_flow_rate_entry.get(),
+                        self.nominal_flow_rate_entry.get(),
+                    ),
+                    self.maximum_flow_rate_entry.get(),
+                )
+            )
+            self.nominal_flow_rate_entry.update()
+
+        self.nominal_flow_rate_entry = ttk.Entry(
+            self.scrolled_frame,
+            # bootstyle=WARNING,
+            textvariable=self.collector_nominal_flow_rates[
+                self.collector_selected.get()
+            ],
+        )
+
+        self.nominal_flow_rate_entry.grid(row=8, column=4, padx=10, pady=5, sticky="ew")
+        self.nominal_flow_rate_entry.bind("<Return>", enter_nominal_flow_rate)
+
+        self.nominal_flow_rate_unit = ttk.Label(
+            self.scrolled_frame,
+            text="kg / s",
+        )
+        self.nominal_flow_rate_unit.grid(row=8, column=5, padx=10, pady=5, sticky="w")
+
+        # Maximum mass flow rate
+        self.maximum_flow_rate_label = ttk.Label(
+            self.scrolled_frame,
+            text="Nominal mass flow rate",
+        )
+        self.maximum_flow_rate_label.grid(
+            row=9, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+
+        def enter_maximum_flow_rate(_):
+            self.minimum_flow_rate_slider.configure(
+                to=self.maximum_flow_rate_entry.get()
+            )
+            self.minimum_flow_rate_slider.update()
+
+            self.collector_minimum_flow_rates[self.collector_selected.get()].set(
+                min(
+                    self.collector_minimum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                    self.collector_maximum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
+                )
+            )
+            self.minimum_flow_rate_entry.update()
+            self.minimum_flow_rate_slider.update()
+            update_nominal_flow_rate()
+
+        self.maximum_flow_rate_entry = ttk.Entry(
+            self.scrolled_frame,
+            bootstyle=WARNING,
+            textvariable=self.collector_maximum_flow_rates[
+                self.collector_selected.get()
+            ],
+        )
+        self.maximum_flow_rate_entry.grid(
+            row=9, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+        )
+        self.maximum_flow_rate_entry.bind("<Return>", enter_maximum_flow_rate)
+
+        self.maximum_flow_rate_unit = ttk.Label(
+            self.scrolled_frame,
+            text="kg / s",
+        )
+        self.maximum_flow_rate_unit.grid(row=9, column=5, padx=10, pady=5, sticky="w")
+
+        # Style
+        bold_head = ttk.Style()
+        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
+
+        # Scenario information helper
+        self.impacts_label = ttk.Label(
+            self.scrolled_frame,
+            text="Impact information: costs and emissions",
+            style="Bold.TLabel",
+        )
+        self.impacts_label.grid(
+            row=11, column=0, columnspan=5, padx=20, pady=10, sticky="w"
+        )
+        self.impacts_label_help_icon = ttk.Label(
+            self.scrolled_frame,
+            bootstyle=INFO,
+            image=self.help_image,
+            text="",
+        )
+        self.impacts_label_help_icon.grid(
+            row=11, column=6, padx=20, pady=20, sticky="e"
+        )
+
+        # self.scenario_information_text = ttk.Label(
+        #     self,
+        #      text="The secnario configures your CLOVER run. Here, you can toggle on "
+        #     "and off various power-generation sources \nand sources of demand. You "
+        #     "should check all the information on this screen before continuing to "
+        #     "ensure \nthat your system is correctly represented.",
+        # )
+        self.impacts_label_help_tooltip = ToolTip(
+            self.impacts_label_help_icon,
+            text="Impacts of the collector are specified. For each collector (or "
+            "panel), specify the impact in terms of its financial and environmental "
+            "impact. Technical impacts (e.g., land use) can be specified also.",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
+        # Horizontal separator
+        self.separator = ttk.Separator(self.scrolled_frame)
+        self.separator.grid(row=12, column=0, columnspan=5, sticky="ew", padx=(20, 20))
+
         # Cost
         self.cost_label = ttk.Label(
             self.scrolled_frame,
             text="Collector cost",
         )
         self.cost_label.grid(
-            row=12, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.costs: dict[str, ttk.DoubleVar] = {
@@ -1798,14 +2115,14 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.costs[self.collector_selected.get()],
         )
         self.cost_entry.grid(
-            row=12, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=13, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         self.cost_unit = ttk.Label(
             self.scrolled_frame,
             text="$ / kWp",
         )
-        self.cost_unit.grid(row=12, column=5, padx=10, pady=5, sticky="w")
+        self.cost_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
@@ -1813,7 +2130,7 @@ class PVTFrame(_BaseSolarFrame):
             text="Collector cost change",
         )
         self.cost_decrease_label.grid(
-            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -1826,7 +2143,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.cost_decrease[self.collector_selected.get()],
         )
         self.cost_decrease_entry.grid(
-            row=13,
+            row=14,
             column=2,
             columnspan=3,
             padx=10,
@@ -1838,7 +2155,7 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="%  / year",
         )
-        self.cost_decrease_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
+        self.cost_decrease_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
 
         # Installation cost
         self.installation_cost_label = ttk.Label(
@@ -1846,7 +2163,7 @@ class PVTFrame(_BaseSolarFrame):
             text="Installation cost",
         )
         self.installation_cost_label.grid(
-            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=15, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_costs: dict[str, ttk.DoubleVar] = {
@@ -1861,7 +2178,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.installation_costs[self.collector_selected.get()],
         )
         self.installation_cost_entry.grid(
-            row=14,
+            row=15,
             column=2,
             columnspan=3,
             padx=10,
@@ -1873,7 +2190,7 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp installed",
         )
-        self.installation_cost_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
+        self.installation_cost_unit.grid(row=15, column=5, padx=10, pady=5, sticky="w")
 
         # Installation cost decrease
         self.installation_cost_decrease_label = ttk.Label(
@@ -1881,7 +2198,7 @@ class PVTFrame(_BaseSolarFrame):
             text="Installation cost change",
         )
         self.installation_cost_decrease_label.grid(
-            row=15, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -1896,7 +2213,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.installation_cost_decrease[self.collector_selected.get()],
         )
         self.installation_cost_decrease_entry.grid(
-            row=15,
+            row=16,
             column=2,
             columnspan=3,
             padx=10,
@@ -1909,7 +2226,7 @@ class PVTFrame(_BaseSolarFrame):
             text="%  / year",
         )
         self.installation_cost_decrease_unit.grid(
-            row=15, column=5, padx=10, pady=5, sticky="w"
+            row=16, column=5, padx=10, pady=5, sticky="w"
         )
 
         # OPEX costs
@@ -1918,7 +2235,7 @@ class PVTFrame(_BaseSolarFrame):
             text="OPEX (O&M) costs",
         )
         self.opex_costs_label.grid(
-            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=17, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
@@ -1931,7 +2248,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.o_and_m_costs[self.collector_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
-            row=16,
+            row=17,
             column=2,
             columnspan=3,
             padx=10,
@@ -1943,7 +2260,7 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp / year",
         )
-        self.o_and_m_costs_unit.grid(row=16, column=5, padx=10, pady=5, sticky="w")
+        self.o_and_m_costs_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
@@ -1951,7 +2268,7 @@ class PVTFrame(_BaseSolarFrame):
             text="PV embedded emissions",
         )
         self.embedded_emissions_label.grid(
-            row=17, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=18, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.embedded_emissions: dict[str, ttk.DoubleVar] = {
@@ -1964,7 +2281,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.embedded_emissions[self.collector_selected.get()],
         )
         self.embedded_emissions_entry.grid(
-            row=17,
+            row=18,
             column=2,
             columnspan=3,
             padx=10,
@@ -1976,7 +2293,7 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp",
         )
-        self.embedded_emissions_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
+        self.embedded_emissions_unit.grid(row=18, column=5, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
@@ -1984,7 +2301,7 @@ class PVTFrame(_BaseSolarFrame):
             text="PV emissions change",
         )
         self.annual_emissions_decrease_label.grid(
-            row=18, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=19, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.annual_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -1997,7 +2314,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.annual_emissions_decrease[self.collector_selected.get()],
         )
         self.annual_emissions_decrease_entry.grid(
-            row=18,
+            row=19,
             column=2,
             columnspan=3,
             padx=10,
@@ -2010,7 +2327,7 @@ class PVTFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.annual_emissions_decrease_unit.grid(
-            row=18, column=5, padx=10, pady=5, sticky="w"
+            row=19, column=5, padx=10, pady=5, sticky="w"
         )
 
         # Embedded installation emissions
@@ -2019,7 +2336,7 @@ class PVTFrame(_BaseSolarFrame):
             text="Installation emissions",
         )
         self.installation_emissions_label.grid(
-            row=19, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=20, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_emissions: dict[str, ttk.DoubleVar] = {
@@ -2034,7 +2351,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.installation_emissions[self.collector_selected.get()],
         )
         self.installation_emissions_entry.grid(
-            row=19,
+            row=20,
             column=2,
             columnspan=3,
             padx=10,
@@ -2047,7 +2364,7 @@ class PVTFrame(_BaseSolarFrame):
             text="kgCO2eq / kWp",
         )
         self.installation_emissions_unit.grid(
-            row=19, column=5, padx=10, pady=5, sticky="w"
+            row=20, column=5, padx=10, pady=5, sticky="w"
         )
 
         # Annual installation emissions decrease
@@ -2056,7 +2373,7 @@ class PVTFrame(_BaseSolarFrame):
             text="Installation emissions change",
         )
         self.installation_emissions_decrease_label.grid(
-            row=20, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -2073,7 +2390,7 @@ class PVTFrame(_BaseSolarFrame):
             ],
         )
         self.installation_emissions_decrease_entry.grid(
-            row=20,
+            row=21,
             column=2,
             columnspan=3,
             padx=10,
@@ -2086,7 +2403,7 @@ class PVTFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.installation_emissions_decrease_unit.grid(
-            row=20, column=5, padx=10, pady=5, sticky="w"
+            row=21, column=5, padx=10, pady=5, sticky="w"
         )
 
         # O&M emissions
@@ -2095,7 +2412,7 @@ class PVTFrame(_BaseSolarFrame):
             text="O&M emissions",
         )
         self.om_emissions_label.grid(
-            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=22, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.om_emissions: dict[str, ttk.DoubleVar] = {
@@ -2108,7 +2425,7 @@ class PVTFrame(_BaseSolarFrame):
             textvariable=self.om_emissions[self.collector_selected.get()],
         )
         self.om_emissions_entry.grid(
-            row=21,
+            row=22,
             column=2,
             columnspan=3,
             padx=10,
@@ -2120,7 +2437,7 @@ class PVTFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp / year",
         )
-        self.om_emissions_unit.grid(row=21, column=5, padx=10, pady=5, sticky="w")
+        self.om_emissions_unit.grid(row=22, column=5, padx=10, pady=5, sticky="w")
 
     def add_collector(self) -> None:
         """Called when a user presses the new-collector button."""
@@ -2735,13 +3052,55 @@ class SolarThermalFrame(_BaseSolarFrame):
             row=6, column=6, padx=(15, 20), pady=5, sticky="w"
         )
 
+        # Style
+        bold_head = ttk.Style()
+        bold_head.configure("Bold.TLabel", font=("TkDefaultFont", 12, "bold"))
+
+        # Scenario information helper
+        self.impacts_label = ttk.Label(
+            self.scrolled_frame,
+            text="Impact information: costs and emissions",
+            style="Bold.TLabel",
+        )
+        self.impacts_label.grid(
+            row=11, column=0, columnspan=5, padx=20, pady=10, sticky="w"
+        )
+        self.impacts_label_help_icon = ttk.Label(
+            self.scrolled_frame,
+            bootstyle=INFO,
+            image=self.help_image,
+            text="",
+        )
+        self.impacts_label_help_icon.grid(
+            row=11, column=6, padx=20, pady=20, sticky="e"
+        )
+
+        # self.scenario_information_text = ttk.Label(
+        #     self,
+        #      text="The secnario configures your CLOVER run. Here, you can toggle on "
+        #     "and off various power-generation sources \nand sources of demand. You "
+        #     "should check all the information on this screen before continuing to "
+        #     "ensure \nthat your system is correctly represented.",
+        # )
+        self.impacts_label_help_tooltip = ToolTip(
+            self.impacts_label_help_icon,
+            text="Impacts of the collector are specified. For each collector (or "
+            "panel), specify the impact in terms of its financial and environmental "
+            "impact. Technical impacts (e.g., land use) can be specified also.",
+            bootstyle=f"{INFO}-{INVERSE}",
+        )
+
+        # Horizontal separator
+        self.separator = ttk.Separator(self.scrolled_frame)
+        self.separator.grid(row=12, column=0, columnspan=5, sticky="ew", padx=(20, 20))
+
         # Cost
         self.cost_label = ttk.Label(
             self.scrolled_frame,
             text="Collector cost",
         )
         self.cost_label.grid(
-            row=12, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.costs: dict[str, ttk.DoubleVar] = {
@@ -2754,14 +3113,14 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.costs[self.collector_selected.get()],
         )
         self.cost_entry.grid(
-            row=12, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
+            row=13, column=2, columnspan=3, padx=10, pady=5, sticky="ew"
         )
 
         self.cost_unit = ttk.Label(
             self.scrolled_frame,
             text="$ / kWp",
         )
-        self.cost_unit.grid(row=12, column=5, padx=10, pady=5, sticky="w")
+        self.cost_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
 
         # Cost decrease
         self.cost_decrease_label = ttk.Label(
@@ -2769,7 +3128,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="Collector cost change",
         )
         self.cost_decrease_label.grid(
-            row=13, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -2782,7 +3141,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.cost_decrease[self.collector_selected.get()],
         )
         self.cost_decrease_entry.grid(
-            row=13,
+            row=14,
             column=2,
             columnspan=3,
             padx=10,
@@ -2794,7 +3153,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="%  / year",
         )
-        self.cost_decrease_unit.grid(row=13, column=5, padx=10, pady=5, sticky="w")
+        self.cost_decrease_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
 
         # Installation cost
         self.installation_cost_label = ttk.Label(
@@ -2802,7 +3161,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="Installation cost",
         )
         self.installation_cost_label.grid(
-            row=14, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=15, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_costs: dict[str, ttk.DoubleVar] = {
@@ -2817,7 +3176,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.installation_costs[self.collector_selected.get()],
         )
         self.installation_cost_entry.grid(
-            row=14,
+            row=15,
             column=2,
             columnspan=3,
             padx=10,
@@ -2829,7 +3188,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp installed",
         )
-        self.installation_cost_unit.grid(row=14, column=5, padx=10, pady=5, sticky="w")
+        self.installation_cost_unit.grid(row=15, column=5, padx=10, pady=5, sticky="w")
 
         # Installation cost decrease
         self.installation_cost_decrease_label = ttk.Label(
@@ -2837,7 +3196,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="Installation cost change",
         )
         self.installation_cost_decrease_label.grid(
-            row=15, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_cost_decrease: dict[str, ttk.DoubleVar] = {
@@ -2852,7 +3211,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.installation_cost_decrease[self.collector_selected.get()],
         )
         self.installation_cost_decrease_entry.grid(
-            row=15,
+            row=16,
             column=2,
             columnspan=3,
             padx=10,
@@ -2865,7 +3224,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="%  / year",
         )
         self.installation_cost_decrease_unit.grid(
-            row=15, column=5, padx=10, pady=5, sticky="w"
+            row=16, column=5, padx=10, pady=5, sticky="w"
         )
 
         # OPEX costs
@@ -2874,7 +3233,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="OPEX (O&M) costs",
         )
         self.opex_costs_label.grid(
-            row=16, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=17, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.o_and_m_costs: dict[str, ttk.DoubleVar] = {
@@ -2887,7 +3246,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.o_and_m_costs[self.collector_selected.get()],
         )
         self.o_and_m_costs_entry.grid(
-            row=16,
+            row=17,
             column=2,
             columnspan=3,
             padx=10,
@@ -2899,7 +3258,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="$ / kWp / year",
         )
-        self.o_and_m_costs_unit.grid(row=16, column=5, padx=10, pady=5, sticky="w")
+        self.o_and_m_costs_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
 
         # Embedded emissions
         self.embedded_emissions_label = ttk.Label(
@@ -2907,7 +3266,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="PV embedded emissions",
         )
         self.embedded_emissions_label.grid(
-            row=17, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=18, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.embedded_emissions: dict[str, ttk.DoubleVar] = {
@@ -2920,7 +3279,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.embedded_emissions[self.collector_selected.get()],
         )
         self.embedded_emissions_entry.grid(
-            row=17,
+            row=18,
             column=2,
             columnspan=3,
             padx=10,
@@ -2932,7 +3291,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp",
         )
-        self.embedded_emissions_unit.grid(row=17, column=5, padx=10, pady=5, sticky="w")
+        self.embedded_emissions_unit.grid(row=18, column=5, padx=10, pady=5, sticky="w")
 
         # Annual emissions decrease
         self.annual_emissions_decrease_label = ttk.Label(
@@ -2940,7 +3299,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="PV emissions change",
         )
         self.annual_emissions_decrease_label.grid(
-            row=18, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=19, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.annual_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -2953,7 +3312,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.annual_emissions_decrease[self.collector_selected.get()],
         )
         self.annual_emissions_decrease_entry.grid(
-            row=18,
+            row=19,
             column=2,
             columnspan=3,
             padx=10,
@@ -2966,7 +3325,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.annual_emissions_decrease_unit.grid(
-            row=18, column=5, padx=10, pady=5, sticky="w"
+            row=19, column=5, padx=10, pady=5, sticky="w"
         )
 
         # Embedded installation emissions
@@ -2975,7 +3334,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="Installation emissions",
         )
         self.installation_emissions_label.grid(
-            row=19, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=20, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_emissions: dict[str, ttk.DoubleVar] = {
@@ -2990,7 +3349,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.installation_emissions[self.collector_selected.get()],
         )
         self.installation_emissions_entry.grid(
-            row=19,
+            row=20,
             column=2,
             columnspan=3,
             padx=10,
@@ -3003,7 +3362,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="kgCO2eq / kWp",
         )
         self.installation_emissions_unit.grid(
-            row=19, column=5, padx=10, pady=5, sticky="w"
+            row=20, column=5, padx=10, pady=5, sticky="w"
         )
 
         # Annual installation emissions decrease
@@ -3012,7 +3371,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="Installation emissions change",
         )
         self.installation_emissions_decrease_label.grid(
-            row=20, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.installation_emissions_decrease: dict[str, ttk.DoubleVar] = {
@@ -3029,7 +3388,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             ],
         )
         self.installation_emissions_decrease_entry.grid(
-            row=20,
+            row=21,
             column=2,
             columnspan=3,
             padx=10,
@@ -3042,7 +3401,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="% / year",
         )
         self.installation_emissions_decrease_unit.grid(
-            row=20, column=5, padx=10, pady=5, sticky="w"
+            row=21, column=5, padx=10, pady=5, sticky="w"
         )
 
         # O&M emissions
@@ -3051,7 +3410,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             text="O&M emissions",
         )
         self.om_emissions_label.grid(
-            row=21, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+            row=22, column=0, columnspan=2, padx=10, pady=5, sticky="w"
         )
 
         self.om_emissions: dict[str, ttk.DoubleVar] = {
@@ -3064,7 +3423,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             textvariable=self.om_emissions[self.collector_selected.get()],
         )
         self.om_emissions_entry.grid(
-            row=21,
+            row=22,
             column=2,
             columnspan=3,
             padx=10,
@@ -3076,7 +3435,7 @@ class SolarThermalFrame(_BaseSolarFrame):
             self.scrolled_frame,
             text="kgCO2eq / kWp / year",
         )
-        self.om_emissions_unit.grid(row=21, column=5, padx=10, pady=5, sticky="w")
+        self.om_emissions_unit.grid(row=22, column=5, padx=10, pady=5, sticky="w")
 
     def add_collector(self) -> None:
         """Called when a user presses the new-collector button."""
