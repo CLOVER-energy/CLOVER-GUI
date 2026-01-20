@@ -1926,8 +1926,9 @@ class PVTFrame(_BaseSolarFrame):
                 self.minimum_flow_rate_entry.get()
             )
             self.minimum_flow_rate_slider.set(
-                self.collector_minimum_flow_rates[self.collector_selected.get()]
+                self.collector_minimum_flow_rates[self.collector_selected.get()].get()
             )
+            update_nominal_flow_rate()
             update_maximum_flow_rate()
 
         self.minimum_flow_rate_entry = ttk.Entry(
@@ -2522,18 +2523,18 @@ class PVTFrame(_BaseSolarFrame):
             self.collector_name_values[key].get(): value
             for key, value in self.collector_orientation.items()
         }
-        # self.reference_efficiencies = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.reference_efficiencies.items()
-        # }
-        # self.reference_temperature = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.reference_temperature.items()
-        # }
-        # self.thermal_coefficient = {
-        #     self.panel_name_values[key].get(): value
-        #     for key, value in self.thermal_coefficient.items()
-        # }
+        self.collector_minimum_flow_rates = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.collector_minimum_flow_rates.items()
+        }
+        self.collector_nominal_flow_rates = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.collector_nominal_flow_rates.items()
+        }
+        self.collector_maximum_flow_rates = {
+            self.collector_name_values[key].get(): value
+            for key, value in self.collector_maximum_flow_rates.items()
+        }
         self.costs = {
             self.collector_name_values[key].get(): value
             for key, value in self.costs.items()
@@ -2642,6 +2643,33 @@ class PVTFrame(_BaseSolarFrame):
         self.azimuthal_orientation_slider.configure(
             variable=self.collector_orientation[self.collector_selected.get()]
         )
+        self.minimum_flow_rate_entry.configure(
+            textvariable=self.collector_minimum_flow_rates[
+                self.collector_selected.get()
+            ]
+        )
+        self.minimum_flow_rate_slider.configure(
+            to=self.collector_maximum_flow_rates[self.collector_selected.get()].get(),
+            from_=0,
+            variable=self.collector_minimum_flow_rates[self.collector_selected.get()],
+        )
+        self.nominal_flow_rate_entry.configure(
+            textvariable=self.collector_nominal_flow_rates[
+                self.collector_selected.get()
+            ]
+        )
+        self.nominal_flow_rate_slider.configure(
+            to=self.collector_maximum_flow_rates[self.collector_selected.get()].get(),
+            from_=self.collector_minimum_flow_rates[
+                self.collector_selected.get()
+            ].get(),
+            variable=self.collector_nominal_flow_rates[self.collector_selected.get()],
+        )
+        self.maximum_flow_rate_entry.configure(
+            textvariable=self.collector_maximum_flow_rates[
+                self.collector_selected.get()
+            ]
+        )
         self.cost_entry.configure(
             textvariable=self.costs[self.collector_selected.get()]
         )
@@ -2682,6 +2710,11 @@ class PVTFrame(_BaseSolarFrame):
         self.tilt_slider.update()
         self.azimuthal_orientation_entry.update()
         self.azimuthal_orientation_slider.update()
+        self.minimum_flow_rate_entry.update()
+        self.minimum_flow_rate_slider.update()
+        self.nominal_flow_rate_entry.update()
+        self.nominal_flow_rate_slider.update()
+        self.maximum_flow_rate_entry.update()
         self.cost_entry.update()
         self.cost_decrease_entry.update()
         self.o_and_m_costs_entry.update()
