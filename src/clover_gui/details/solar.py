@@ -1864,11 +1864,16 @@ class PVTFrame(_BaseSolarFrame):
 
         def update_nominal_flow_rate():
             self.collector_nominal_flow_rates[self.collector_selected.get()].set(
-                max(
+                min(
+                    max(
+                        self.collector_nominal_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                        self.collector_minimum_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                    ),
                     self.collector_maximum_flow_rates[
-                        self.collector_selected.get()
-                    ].get(),
-                    self.collector_minimum_flow_rates[
                         self.collector_selected.get()
                     ].get(),
                 )
@@ -1876,8 +1881,12 @@ class PVTFrame(_BaseSolarFrame):
             self.nominal_flow_rate_entry.update()
 
             self.nominal_flow_rate_slider.configure(
-                from_=self.minimum_flow_rate_entry.get(),
-                to=self.maximum_flow_rate_entry.get(),
+                from_=self.collector_minimum_flow_rates[
+                    self.collector_selected.get()
+                ].get(),
+                to=self.collector_maximum_flow_rates[
+                    self.collector_selected.get()
+                ].get(),
             )
             self.nominal_flow_rate_slider.update()
 
@@ -1963,6 +1972,8 @@ class PVTFrame(_BaseSolarFrame):
             )
             self.nominal_flow_rate_entry.update()
 
+            update_nominal_flow_rate()
+
         self.nominal_flow_rate_slider = ttk.Scale(
             self.scrolled_frame,
             from_=self.collector_minimum_flow_rates[
@@ -1970,9 +1981,9 @@ class PVTFrame(_BaseSolarFrame):
             ].get(),
             to=self.collector_maximum_flow_rates[self.collector_selected.get()].get(),
             orient=ttk.HORIZONTAL,
-            command=scalar_flow_rate_lowerbound,
+            command=scalar_flow_rate_nominal,
             # bootstyle=WARNING,
-            variable=self.collector_minimum_flow_rates[self.collector_selected.get()],
+            variable=self.collector_nominal_flow_rates[self.collector_selected.get()],
         )
         self.nominal_flow_rate_slider.grid(
             row=8, column=1, columnspan=3, padx=10, pady=5, sticky="ew"
@@ -1982,13 +1993,22 @@ class PVTFrame(_BaseSolarFrame):
             self.collector_nominal_flow_rates[self.collector_selected.get()].set(
                 min(
                     max(
-                        self.minimum_flow_rate_entry.get(),
-                        self.nominal_flow_rate_entry.get(),
+                        self.collector_minimum_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
+                        self.collector_nominal_flow_rates[
+                            self.collector_selected.get()
+                        ].get(),
                     ),
-                    self.maximum_flow_rate_entry.get(),
+                    self.collector_maximum_flow_rates[
+                        self.collector_selected.get()
+                    ].get(),
                 )
             )
             self.nominal_flow_rate_entry.update()
+            self.nominal_flow_rate_slider.update()
+
+            update_nominal_flow_rate()
 
         self.nominal_flow_rate_entry = ttk.Entry(
             self.scrolled_frame,
@@ -2034,6 +2054,7 @@ class PVTFrame(_BaseSolarFrame):
             )
             self.minimum_flow_rate_entry.update()
             self.minimum_flow_rate_slider.update()
+
             update_nominal_flow_rate()
 
         self.maximum_flow_rate_entry = ttk.Entry(
