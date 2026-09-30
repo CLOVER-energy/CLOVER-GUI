@@ -352,12 +352,12 @@ def clover_thread(clover_args: list[str]) -> Popen:
 
     try:
         return Popen(["clover"] + clover_args, stdout=PIPE, stderr=STDOUT)
-    except FileNotFoundError:
+    except Exception:
         try:
             return Popen(
                 ["python", "-m", "clover"] + clover_args, stdout=PIPE, stderr=STDOUT
             )
-        except FileNotFoundError:
+        except Exception:
             raise Exception("Could not launch CLOVER.") from None
 
 
