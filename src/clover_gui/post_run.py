@@ -31,7 +31,6 @@ from .__utils__ import (
     MENU_BAR_FONTSIZE,
 )
 
-
 __all__ = ("PostRunScreen",)
 
 # Plot base name:

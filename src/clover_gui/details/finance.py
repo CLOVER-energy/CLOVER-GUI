@@ -22,7 +22,6 @@ from ttkbootstrap.scrolled import *
 
 from ..__utils__ import MAIN_TEXT_FONTSIZE
 
-
 __all__ = ("FinanceFrame",)
 
 

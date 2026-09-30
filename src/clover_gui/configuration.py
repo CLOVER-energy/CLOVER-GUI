@@ -50,7 +50,6 @@ from ttkbootstrap.tooltip import ToolTip
 from .__utils__ import BaseScreen, clover_thread, IMAGES_DIRECTORY
 from .scenario import ConfigurationFrame
 
-
 __all__ = ("ConfigurationScreen",)
 
 
