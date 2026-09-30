@@ -295,7 +295,7 @@ class App(ttk.Window):
                 data_directory: str | None = importlib.resources.files(
                     "clover_gui"
                 ).joinpath("data")
-            except FileNotFoundError:
+            except (FileNotFoundError, ModuleNotFoundError):
                 data_directory = os.path.join("src", "clover_gui", "data")
 
             self._data_directory = data_directory
