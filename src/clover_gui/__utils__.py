@@ -350,7 +350,15 @@ def clover_thread(clover_args: list[str]) -> Popen:
 
     """
 
-    return Popen(["clover"] + clover_args, stdout=PIPE, stderr=STDOUT)
+    try:
+        return Popen(["clover"] + clover_args, stdout=PIPE, stderr=STDOUT)
+    except FileNotFoundError:
+        try:
+            return Popen(
+                ["python", "-m", "clover"] + clover_args, stdout=PIPE, stderr=STDOUT
+            )
+        except FileNotFoundError:
+            raise Exception("Could not launch CLOVER.") from None
 
 
 def parse_battery_inputs(
